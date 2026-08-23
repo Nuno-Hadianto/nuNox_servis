@@ -1,56 +1,54 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require('../database/db');
+const { users } = require('../database/drizzleSchema');
+const { eq, ne, and, desc, sql } = require('drizzle-orm');
 function getUserCount() {
-    const checkStmt = db.prepare(`SELECT COUNT(*) as count FROM users`);
-    return checkStmt.get().count;
+    const result = db.drizzle.select({ count: sql `count(*)` }).from(users).get();
+    return result.count;
 }
 function createDefaultAdmin(hash) {
-    const stmt = db.prepare(`INSERT INTO users (username, password, role) VALUES (?, ?, ?)`);
-    stmt.run('admin', hash, 'admin');
+    db.drizzle.insert(users).values({ username: 'admin', password: hash, role: 'admin' }).run();
 }
 function getUserByUsername(username) {
-    const stmt = db.prepare(`SELECT id, username, password, role FROM users WHERE username = ?`);
-    return stmt.get(username);
+    return db.drizzle.select({ id: users.id, username: users.username, password: users.password, role: users.role })
+        .from(users).where(eq(users.username, username)).get();
 }
 function getUsers() {
-    const stmt = db.prepare(`SELECT id, username, role, created_at FROM users ORDER BY created_at DESC`);
-    return stmt.all();
+    return db.drizzle.select({ id: users.id, username: users.username, role: users.role, created_at: users.created_at })
+        .from(users).orderBy(desc(users.created_at)).all();
 }
 function getUserById(id) {
-    const stmt = db.prepare(`SELECT id, username, role FROM users WHERE id = ?`);
-    return stmt.get(id);
+    return db.drizzle.select({ id: users.id, username: users.username, role: users.role })
+        .from(users).where(eq(users.id, Number(id))).get();
 }
 function checkUsernameExists(username) {
-    return db.prepare(`SELECT id FROM users WHERE username = ?`).get(username);
+    return db.drizzle.select({ id: users.id }).from(users).where(eq(users.username, username)).get();
 }
 function checkUsernameExistsExceptId(username, id) {
-    return db.prepare(`SELECT id FROM users WHERE username = ? AND id != ?`).get(username, id);
+    return db.drizzle.select({ id: users.id }).from(users).where(and(eq(users.username, username), ne(users.id, Number(id)))).get();
 }
 function addUser(username, hash, role) {
-    const stmt = db.prepare(`INSERT INTO users (username, password, role) VALUES (?, ?, ?)`);
-    const info = stmt.run(username, hash, role);
-    return info.lastInsertRowid;
+    const result = db.drizzle.insert(users).values({ username, password: hash, role }).run();
+    return result.lastInsertRowid;
 }
 function updateUserWithPassword(id, username, hash, role) {
-    const stmt = db.prepare(`UPDATE users SET username = ?, password = ?, role = ? WHERE id = ?`);
-    stmt.run(username, hash, role, id);
+    db.drizzle.update(users).set({ username, password: hash, role }).where(eq(users.id, Number(id))).run();
     return true;
 }
 function updateUserWithoutPassword(id, username, role) {
-    const stmt = db.prepare(`UPDATE users SET username = ?, role = ? WHERE id = ?`);
-    stmt.run(username, role, id);
+    db.drizzle.update(users).set({ username, role }).where(eq(users.id, Number(id))).run();
     return true;
 }
 function getUserRole(id) {
-    return db.prepare(`SELECT role FROM users WHERE id = ?`).get(id);
+    return db.drizzle.select({ role: users.role }).from(users).where(eq(users.id, Number(id))).get();
 }
 function getAdminCount() {
-    return db.prepare(`SELECT COUNT(*) as count FROM users WHERE role = 'admin'`).get().count;
+    const result = db.drizzle.select({ count: sql `count(*)` }).from(users).where(eq(users.role, 'admin')).get();
+    return result.count;
 }
 function deleteUser(id) {
-    const stmt = db.prepare(`DELETE FROM users WHERE id = ?`);
-    stmt.run(id);
+    db.drizzle.delete(users).where(eq(users.id, Number(id))).run();
     return true;
 }
 module.exports = {

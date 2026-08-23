@@ -1,44 +1,55 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require('../database/db');
+const { customers, serviceOrders } = require('../database/drizzleSchema');
+const { eq, like, or, asc, sql } = require('drizzle-orm');
 function getCustomers(searchQuery = '', page = 1, limit = 50) {
     const offset = (page - 1) * limit;
     let data, total;
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        data = db.prepare(`SELECT * FROM customers WHERE name LIKE ? OR phone LIKE ? ORDER BY name ASC LIMIT ? OFFSET ?`).all(queryStr, queryStr, limit, offset);
-        total = db.prepare(`SELECT COUNT(*) as count FROM customers WHERE name LIKE ? OR phone LIKE ?`).get(queryStr, queryStr).count;
+        const filter = or(like(customers.name, queryStr), like(customers.phone, queryStr));
+        data = db.drizzle.select().from(customers)
+            .where(filter)
+            .orderBy(asc(customers.name))
+            .limit(limit)
+            .offset(offset)
+            .all();
+        total = db.drizzle.select({ count: sql `count(*)` }).from(customers)
+            .where(filter).get().count;
     }
     else {
-        data = db.prepare(`SELECT * FROM customers ORDER BY name ASC LIMIT ? OFFSET ?`).all(limit, offset);
-        total = db.prepare(`SELECT COUNT(*) as count FROM customers`).get().count;
+        data = db.drizzle.select().from(customers)
+            .orderBy(asc(customers.name))
+            .limit(limit)
+            .offset(offset)
+            .all();
+        total = db.drizzle.select({ count: sql `count(*)` }).from(customers).get().count;
     }
     return { data, total, page, limit };
 }
 function getCustomerById(id) {
-    const stmt = db.prepare(`SELECT * FROM customers WHERE id = ?`);
-    return stmt.get(id);
+    return db.drizzle.select().from(customers).where(eq(customers.id, Number(id))).get();
 }
 function addCustomer(data) {
     const { name, phone, address, notes } = data;
-    const stmt = db.prepare(`INSERT INTO customers (name, phone, address, notes) VALUES (?, ?, ?, ?)`);
-    const info = stmt.run(name, phone, address, notes);
-    return info.lastInsertRowid;
+    const result = db.drizzle.insert(customers).values({ name, phone, address, notes }).run();
+    return result.lastInsertRowid;
 }
 function updateCustomer(id, data) {
     const { name, phone, address, notes } = data;
-    const stmt = db.prepare(`UPDATE customers SET name = ?, phone = ?, address = ?, notes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`);
-    stmt.run(name, phone, address, notes, id);
+    db.drizzle.update(customers)
+        .set({ name, phone, address, notes, updated_at: sql `CURRENT_TIMESTAMP` })
+        .where(eq(customers.id, Number(id))).run();
     return true;
 }
 function checkCustomerHasServiceOrders(id) {
-    const checkStmt = db.prepare(`SELECT COUNT(*) as count FROM service_orders WHERE customer_id = ?`);
-    const result = checkStmt.get(id);
+    const result = db.drizzle.select({ count: sql `count(*)` }).from(serviceOrders)
+        .where(eq(serviceOrders.customer_id, Number(id))).get();
     return result.count > 0;
 }
 function deleteCustomer(id) {
-    const stmt = db.prepare(`DELETE FROM customers WHERE id = ?`);
-    stmt.run(id);
+    db.drizzle.delete(customers).where(eq(customers.id, Number(id))).run();
     return true;
 }
 module.exports = {

@@ -1,56 +1,60 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require('../database/db');
+const { devices, customers, serviceOrders } = require('../database/drizzleSchema');
+const { eq, like, or, desc, sql } = require('drizzle-orm');
 function getDevices(searchQuery = '') {
-    let query = `
-        SELECT devices.*, customers.name as customer_name, customers.phone as customer_phone 
-        FROM devices 
-        JOIN customers ON devices.customer_id = customers.id
-    `;
+    const baseQuery = db.drizzle.select({
+        id: devices.id,
+        customer_id: devices.customer_id,
+        device_type: devices.device_type,
+        brand: devices.brand,
+        model: devices.model,
+        serial_number: devices.serial_number,
+        color: devices.color,
+        accessories: devices.accessories,
+        physical_condition: devices.physical_condition,
+        notes: devices.notes,
+        created_at: devices.created_at,
+        updated_at: devices.updated_at,
+        customer_name: customers.name,
+        customer_phone: customers.phone
+    }).from(devices).innerJoin(customers, eq(devices.customer_id, customers.id));
     if (searchQuery) {
-        query += ` WHERE devices.brand LIKE ? OR devices.model LIKE ? OR devices.serial_number LIKE ? OR customers.name LIKE ?`;
-        const stmt = db.prepare(query + ` ORDER BY devices.id DESC`);
-        return stmt.all(`%${searchQuery}%`, `%${searchQuery}%`, `%${searchQuery}%`, `%${searchQuery}%`);
+        const queryStr = `%${searchQuery}%`;
+        return baseQuery.where(or(like(devices.brand, queryStr), like(devices.model, queryStr), like(devices.serial_number, queryStr), like(customers.name, queryStr))).orderBy(desc(devices.id)).all();
     }
-    const stmt = db.prepare(query + ` ORDER BY devices.id DESC`);
-    return stmt.all();
+    return baseQuery.orderBy(desc(devices.id)).all();
 }
 function getDeviceById(id) {
-    const stmt = db.prepare(`SELECT * FROM devices WHERE id = ?`);
-    return stmt.get(id);
+    return db.drizzle.select().from(devices).where(eq(devices.id, Number(id))).get();
 }
 function getDevicesByCustomerId(customerId) {
-    const stmt = db.prepare(`SELECT * FROM devices WHERE customer_id = ? ORDER BY id DESC`);
-    return stmt.all(customerId);
+    return db.drizzle.select().from(devices)
+        .where(eq(devices.customer_id, Number(customerId)))
+        .orderBy(desc(devices.id)).all();
 }
 function addDevice(data) {
     const { customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes } = data;
-    const stmt = db.prepare(`
-        INSERT INTO devices (customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    const info = stmt.run(customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes);
-    return info.lastInsertRowid;
+    const result = db.drizzle.insert(devices).values({
+        customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes
+    }).run();
+    return result.lastInsertRowid;
 }
 function updateDevice(id, data) {
     const { customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes } = data;
-    const stmt = db.prepare(`
-        UPDATE devices SET 
-            customer_id = ?, device_type = ?, brand = ?, model = ?, serial_number = ?, 
-            color = ?, accessories = ?, physical_condition = ?, notes = ?, updated_at = CURRENT_TIMESTAMP 
-        WHERE id = ?
-    `);
-    stmt.run(customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes, id);
+    db.drizzle.update(devices).set({
+        customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes, updated_at: sql `CURRENT_TIMESTAMP`
+    }).where(eq(devices.id, Number(id))).run();
     return true;
 }
 function checkDeviceHasServiceOrders(id) {
-    const checkStmt = db.prepare(`SELECT COUNT(*) as count FROM service_orders WHERE device_id = ?`);
-    const result = checkStmt.get(id);
+    const result = db.drizzle.select({ count: sql `count(*)` }).from(serviceOrders)
+        .where(eq(serviceOrders.device_id, Number(id))).get();
     return result.count > 0;
 }
 function deleteDevice(id) {
-    const stmt = db.prepare(`DELETE FROM devices WHERE id = ?`);
-    stmt.run(id);
+    db.drizzle.delete(devices).where(eq(devices.id, Number(id))).run();
     return true;
 }
 module.exports = {

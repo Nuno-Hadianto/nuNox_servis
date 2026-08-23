@@ -23,4 +23,9 @@ if (process.env.NODE_ENV === 'test') {
 const db = new Database(dbPath);
 db.pragma('foreign_keys = ON');
 
+const { drizzle } = require('drizzle-orm/better-sqlite3');
+const drizzleSchema = require('./drizzleSchema');
+const dbDrizzle = drizzle(db, { schema: drizzleSchema });
+
+db.drizzle = dbDrizzle;
 module.exports = db;
