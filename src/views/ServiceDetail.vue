@@ -343,7 +343,7 @@ const loadServiceDetail = async () => {
   const id = route.params.id as string
   if (window.api && window.api.getService) {
       try {
-          const detail = (await window.api.getService(id)) as ServiceOrder
+          const detail = (await window.api.getService(Number(id))) as ServiceOrder
           if (detail) {
               service.value = detail
               updateForm.status = detail.service_status
@@ -361,34 +361,34 @@ const loadServiceDetail = async () => {
 const loadHistory = async () => {
   const id = route.params.id as string
   if (window.api && window.api.getServiceHistory) {
-      history.value = (await window.api.getServiceHistory(id)) as ServiceHistory[]
+      history.value = (await window.api.getServiceHistory(Number(id))) as ServiceHistory[]
   }
 }
 
 const loadItems = async () => {
   const id = route.params.id as string
   if (window.api && window.api.getServiceItems) {
-      items.value = (await window.api.getServiceItems(id)) as ServiceItem[]
+      items.value = (await window.api.getServiceItems(Number(id))) as ServiceItem[]
   }
 }
 
 const loadPayments = async () => {
   const id = route.params.id as string
   if (window.api && window.api.getPayments) {
-      payments.value = (await window.api.getPayments(id)) as Payment[]
+      payments.value = (await window.api.getPayments(Number(id))) as Payment[]
   }
 }
 
 const loadParts = async () => {
   if (window.api && window.api.getParts) {
-      parts.value = (await window.api.getParts()) as Part[]
+      parts.value = (await window.api.getParts('')) as Part[]
   }
 }
 
 const loadPhotos = async () => {
   const id = route.params.id as string
   if (window.api && window.api.getPhotos) {
-      photos.value = (await window.api.getPhotos(id)) as Photo[]
+      photos.value = (await window.api.getPhotos(Number(id))) as Photo[]
   }
 }
 
@@ -401,7 +401,7 @@ const handlePhotoUpload = async (e: Event, type: string) => {
     const buffer = await file.arrayBuffer()
     
     try {
-        const result = await window.api.uploadPhoto(service.value?.id, type, buffer, file.name)
+        const result = await window.api.uploadPhoto(service.value!.id, type, buffer, file.name)
         if (result.success) {
             await loadPhotos()
         } else {
@@ -503,10 +503,11 @@ const addItem = async () => {
   const data = {
       service_order_id: service.value.id,
       item_type: itemForm.type,
-      spare_part_id: partId || null,
+      spare_part_id: partId ? Number(partId) : null,
       description: desc,
       quantity: itemForm.qty,
-      price: itemForm.price
+      price: itemForm.price,
+      subtotal: itemForm.qty * itemForm.price
   }
 
   try {
@@ -562,7 +563,7 @@ const addPayment = async () => {
   }
 
   try {
-      await window.api.addPayment(data)
+      await window.api.addPayment(data as any)
       paymentForm.amount = 0
       await loadPayments()
       await loadServiceDetail()
@@ -580,7 +581,7 @@ const deletePayment = async (paymentId: number) => {
       confirmButtonText: 'Ya, Hapus'
   })
   if (result.isConfirmed) {
-      await window.api.deletePayment(paymentId, service.value.id)
+      await window.api.deletePayment(paymentId)
       await loadPayments()
       await loadServiceDetail()
   }

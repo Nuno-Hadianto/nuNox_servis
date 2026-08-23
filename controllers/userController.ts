@@ -16,7 +16,7 @@ function init() {
 // Panggil inisialisasi saat modul dimuat
 init();
 
-function login(username, password) {
+function login(username: string, password: string) {
     const user = userRepository.getUserByUsername(username);
     if (!user) {
         throw new Error("Username atau password salah!");
