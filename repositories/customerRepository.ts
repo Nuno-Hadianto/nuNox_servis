@@ -50,7 +50,7 @@ function updateCustomer(id: number | string, data: Customer) {
     return true;
 }
 
-function checkCustomerHasServiceOrders(id) {
+function checkCustomerHasServiceOrders(id: number | string) {
     const result = db.drizzle.select({ count: sql`count(*)` }).from(serviceOrders)
         .where(eq(serviceOrders.customer_id, Number(id))).get();
     return result.count > 0;

@@ -40,7 +40,7 @@ function getDeviceById(id: number | string) {
     return db.drizzle.select().from(devices).where(eq(devices.id, Number(id))).get();
 }
 
-function getDevicesByCustomerId(customerId) {
+function getDevicesByCustomerId(customerId: number | string) {
     return db.drizzle.select().from(devices)
         .where(eq(devices.customer_id, Number(customerId)))
         .orderBy(desc(devices.id)).all();
@@ -62,7 +62,7 @@ function updateDevice(id: number | string, data: Device) {
     return true;
 }
 
-function checkDeviceHasServiceOrders(id) {
+function checkDeviceHasServiceOrders(id: number | string) {
     const result = db.drizzle.select({ count: sql`count(*)` }).from(serviceOrders)
         .where(eq(serviceOrders.device_id, Number(id))).get();
     return result.count > 0;
