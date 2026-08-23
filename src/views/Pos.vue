@@ -188,7 +188,7 @@ const processSale = async () => {
           }).then(async (result: any) => {
               if (result.isConfirmed) {
                   try {
-                      const saleId = res.saleId;
+                      const saleId = res.saleId!;
                       const saleData = await window.api.getSale(saleId);
                       const saleItems = await window.api.getSaleItems(saleId);
                       const settings = await window.api.getSettings();
