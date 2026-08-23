@@ -95,28 +95,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { Package, Search, ShoppingCart, X, CheckCircle } from 'lucide-vue-next'
-import { Toast } from '../utils/toast'
+import { storeToRefs } from 'pinia'
+import { usePosStore } from '../stores/pos'
 import type { Part } from '../types'
 // import { generateSaleReceiptHtml, printHtml } from '../utils/printUtils'
 
+const posStore = usePosStore()
+const { cart, customerName, paymentMethod, cashGiven, totalAmount, changeAmount } = storeToRefs(posStore)
+const { addToCart, increaseQty, decreaseQty, removeFromCart } = posStore
+
 const parts = ref<Part[]>([])
 const searchQuery = ref('')
-const customerName = ref('')
-const paymentMethod = ref('Tunai')
-const cashGiven = ref<number | ''>('')
 const searchInput = ref<HTMLInputElement | null>(null)
 const cashInput = ref<HTMLInputElement | null>(null)
-
-interface CartItem {
-  id: number
-  name: string
-  price: number
-  qty: number
-  maxStock: number
-}
-const cart = ref<CartItem[]>([])
 
 const formatCurrency = (val: number | string | undefined | null) => new Intl.NumberFormat('id-ID', {
   style: 'currency', currency: 'IDR', minimumFractionDigits: 0
@@ -161,54 +154,7 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
 })
 
-const addToCart = (part: Part) => {
-  const existing = cart.value.find(item => item.id === part.id)
-  if (existing) {
-      if (existing.qty < existing.maxStock) {
-          existing.qty++
-      } else {
-          Toast.fire({ icon: 'warning', title: 'Stok tidak mencukupi' })
-      }
-  } else {
-      cart.value.push({
-          id: part.id,
-          name: part.name,
-          price: part.sell_price,
-          qty: 1,
-          maxStock: part.stock
-      })
-  }
-}
-
-const increaseQty = (index: number) => {
-  const item = cart.value[index]
-  if (item.qty < item.maxStock) {
-      item.qty++
-  } else {
-      Toast.fire({ icon: 'warning', title: 'Stok tidak mencukupi' })
-  }
-}
-
-const decreaseQty = (index: number) => {
-  if (cart.value[index].qty > 1) {
-      cart.value[index].qty--
-  } else {
-      removeFromCart(index)
-  }
-}
-
-const removeFromCart = (index: number) => {
-  cart.value.splice(index, 1)
-}
-
-const totalAmount = computed(() => {
-  return cart.value.reduce((total, item) => total + (item.price * item.qty), 0)
-})
-
-const changeAmount = computed(() => {
-  if (cashGiven.value === '') return 0 - totalAmount.value
-  return Number(cashGiven.value) - totalAmount.value
-})
+// State and cart logic extracted to posStore
 
 const processSale = async () => {
   if (cart.value.length === 0) return
@@ -245,10 +191,7 @@ const processSale = async () => {
                   window.Swal.fire('Info', 'Fitur cetak struk POS sedang disiapkan.', 'info')
               }
               // Reset
-              cart.value = []
-              customerName.value = ''
-              cashGiven.value = ''
-              paymentMethod.value = 'Tunai'
+              posStore.resetCart()
               searchQuery.value = ''
               await loadParts()
           })
