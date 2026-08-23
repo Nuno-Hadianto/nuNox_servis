@@ -132,16 +132,29 @@ app.on('window-all-closed', async () => {
             fs.mkdirSync(backupDir, { recursive: true });
         }
         const today = new Date().toISOString().split('T')[0];
-        const backupPath = path.join(backupDir, `AutoBackup_NuNox_${today}.db`);
+        const backupPathDb = path.join(backupDir, `AutoBackup_NuNox_${today}.db`);
+        const backupPathZip = path.join(backupDir, `AutoBackup_NuNox_${today}.zip`);
         if (fs.existsSync(dbPath)) {
-            await db.backup(backupPath);
-            log.info('Auto backup saved to:', backupPath);
-            // Also backup photos if the directory exists
-            const photosDir = path.join(app.getPath('userData'), 'photos');
-            if (fs.existsSync(photosDir)) {
-                // simple copy for photos isn't exactly easy for directories without extra modules,
-                // but we can copy the whole folder or just let the user know photos aren't backed up in the DB.
-                // For now, let's keep it simple and just backup the DB. The DB is the most critical.
+            // Create raw backup
+            await db.backup(backupPathDb);
+            try {
+                const AdmZip = require('adm-zip');
+                const zip = new AdmZip();
+                // Add DB to zip
+                zip.addLocalFile(backupPathDb);
+                // Add photos to zip if exists
+                const photosDir = path.join(app.getPath('userData'), 'photos');
+                if (fs.existsSync(photosDir)) {
+                    zip.addLocalFolder(photosDir, 'photos');
+                }
+                // Save zip and delete raw db backup
+                zip.writeZip(backupPathZip);
+                fs.unlinkSync(backupPathDb);
+                log.info('Auto backup (Zip) saved to:', backupPathZip);
+            }
+            catch (zipError) {
+                log.error('Error zipping backup:', zipError);
+                log.info('Fallback: Unzipped DB saved to:', backupPathDb);
             }
         }
     }
