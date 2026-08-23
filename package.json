@@ -20,7 +20,14 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "lint": "eslint \"src/**/*.{js,ts,vue}\" --fix",
-    "format": "prettier --write \"src/**/*.{js,ts,vue}\""
+    "format": "prettier --write \"src/**/*.{js,ts,vue}\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{js,ts,vue}": [
+      "npm run format",
+      "npm run lint"
+    ]
   },
   "build": {
     "appId": "com.nunox_servis.app",
@@ -68,7 +75,9 @@
     "electron-reload": "^2.0.0-alpha.1",
     "eslint": "^10.9.0",
     "eslint-plugin-vue": "^10.10.0",
+    "husky": "^9.1.7",
     "jest": "^30.4.2",
+    "lint-staged": "^17.3.0",
     "prettier": "^3.9.6",
     "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",

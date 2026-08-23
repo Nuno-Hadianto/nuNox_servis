@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "fix(deps):"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "sqlite3"
