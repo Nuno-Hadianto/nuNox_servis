@@ -128,16 +128,18 @@ onUnmounted(() => {
 
 const handleLogin = async () => {
   try {
-    const user = await window.api.login(loginForm.username, loginForm.password)
-    if (user) {
-      authStore.login(user)
+    const res = await window.api.login(loginForm.username, loginForm.password)
+    if (res.success && res.user) {
+      authStore.login(res.user)
       
       // Auto-login SweetAlert
       Toast.fire({
           icon: 'success',
-          title: `Selamat datang, ${user.username}!`
+          title: `Selamat datang, ${res.user.username}!`
       })
       router.push('/')
+    } else {
+      window.Swal.fire('Error', res.error || 'Login gagal', 'error')
     }
   } catch (error: any) {
     window.Swal.fire('Error', error.message || 'Login gagal', 'error')
