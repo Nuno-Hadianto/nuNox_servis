@@ -15,8 +15,23 @@ function init() {
 init();
 function login(username, password) {
     const user = userRepository.getUserByUsername(username);
-    if (!user || !bcrypt.compareSync(password, user.password)) {
+    if (!user) {
         throw new Error("Username atau password salah!");
+    }
+    // Check if password is a bcrypt hash (starts with $2a$, $2b$, or $2y$)
+    if (user.password.startsWith('$2')) {
+        if (!bcrypt.compareSync(password, user.password)) {
+            throw new Error("Username atau password salah!");
+        }
+    }
+    else {
+        // Legacy plain text comparison
+        if (password !== user.password) {
+            throw new Error("Username atau password salah!");
+        }
+        // Auto-migrate legacy plain text to bcrypt
+        const hash = bcrypt.hashSync(password, 10);
+        userRepository.updateUserWithPassword(user.id, user.username, hash, user.role);
     }
     // Remove password from user object before returning
     const { password: _, ...safeUser } = user;
