@@ -1,10 +1,11 @@
 export {};
+import type { IpcMainInvokeEvent } from 'electron';
 const { ipcMain } = require('electron');
 const saleController = require('../../controllers/saleController');
 const log = require('electron-log');
 
 function registerSaleIpc(mainWindow: any) {
-  ipcMain.handle('create-sale', (event: any, saleData: any, items: any[]) => {
+  ipcMain.handle('create-sale', (event: IpcMainInvokeEvent, saleData: any, items: any[]) => {
     try {
       const saleId = saleController.createSale(saleData, items);
       return { success: true, saleId };
@@ -14,7 +15,7 @@ function registerSaleIpc(mainWindow: any) {
     }
   });
 
-  ipcMain.handle('get-sales', (event: any, startDate?: string, endDate?: string) => {
+  ipcMain.handle('get-sales', (event: IpcMainInvokeEvent, startDate?: string, endDate?: string) => {
     try {
       return saleController.getSales(startDate, endDate);
     } catch (error: any) {
@@ -23,7 +24,7 @@ function registerSaleIpc(mainWindow: any) {
     }
   });
 
-  ipcMain.handle('get-sale-items', (event: any, saleId: number | string) => {
+  ipcMain.handle('get-sale-items', (event: IpcMainInvokeEvent, saleId: number | string) => {
     try {
       return saleController.getSaleItems(saleId);
     } catch (error: any) {

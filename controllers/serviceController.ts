@@ -14,7 +14,7 @@ function getServiceByTicketNumber(ticketNumber: string) {
     return serviceRepository.getServiceByTicketNumber(ticketNumber);
 }
 
-function getServiceStatusHistory(serviceOrderId: any) {
+function getServiceStatusHistory(serviceOrderId: number) {
     return serviceRepository.getServiceStatusHistory(serviceOrderId);
 }
 
@@ -26,7 +26,7 @@ function addService(data: ServiceOrder) {
     return serviceRepository.addService(validData);
 }
 
-function updateServiceStatus(id: any, status: any, notes: any, warrantyDays: any = 0) {
+function updateServiceStatus(id: number, status: string, notes: string, warrantyDays: number = 0) {
     return serviceRepository.updateServiceStatus(id, status, notes, warrantyDays);
 }
 
@@ -40,25 +40,25 @@ function deleteService(id: number | string) {
     return serviceRepository.deleteService(id);
 }
 
-function addPhoto(serviceOrderId: any, photoType: any, filepath: any) {
+function addPhoto(serviceOrderId: number, photoType: string, filepath: string) {
     return serviceRepository.addPhoto(serviceOrderId, photoType, filepath);
 }
 
-function getPhotos(serviceOrderId: any) {
+function getPhotos(serviceOrderId: number) {
     return serviceRepository.getPhotos(serviceOrderId);
 }
 
-function deletePhoto(id: any) {
+function deletePhoto(id: number) {
     // maybe we should delete the file from disk here too, or in IPC handler. 
     // IPC handler will call deletePhoto from disk.
     return serviceRepository.deletePhoto(id);
 }
 
-function getPhotoById(id: any) {
+function getPhotoById(id: number) {
     return serviceRepository.getPhotoById(id);
 }
 
-function checkWarranty(deviceId: any) {
+function checkWarranty(deviceId: number) {
     return serviceRepository.checkWarranty(deviceId);
 }
 

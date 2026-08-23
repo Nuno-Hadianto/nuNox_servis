@@ -32,7 +32,7 @@ function deletePart(id: number | string) {
     return partRepository.deletePart(id);
 }
 
-function importParts(dataArray: any[]) {
+function importParts(dataArray: Partial<Part>[]) {
     return partRepository.importParts(dataArray);
 }
 

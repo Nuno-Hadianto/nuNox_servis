@@ -1,4 +1,6 @@
 export {};
+import type { IpcMainInvokeEvent } from 'electron';
+import type { Settings } from '../../src/types';
 const { app, ipcMain, dialog, shell, BrowserWindow } = require('electron');
 const fs = require('fs');
 const path = require('path');
@@ -17,18 +19,18 @@ function registerMiscIpc(mainWindow: any) {
   ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
 
   // Payments
-  ipcMain.handle('get-payments', (event: any, serviceId: any) => paymentController.getPaymentsByServiceId(serviceId));
-  ipcMain.handle('add-payment', (event: any, data: any) => paymentController.addPayment(data));
-  ipcMain.handle('delete-payment', (event: any, id: any) => paymentController.deletePayment(id));
+  ipcMain.handle('get-payments', (event: IpcMainInvokeEvent, serviceId: number) => paymentController.getPaymentsByServiceId(serviceId));
+  ipcMain.handle('add-payment', (event: IpcMainInvokeEvent, data: any) => paymentController.addPayment(data));
+  ipcMain.handle('delete-payment', (event: IpcMainInvokeEvent, id: number) => paymentController.deletePayment(id));
 
   // Settings
   ipcMain.handle('get-settings', () => settingsController.getSettings());
-  ipcMain.handle('update-settings', (event: any, data: any) => settingsController.updateSettings(data));
+  ipcMain.handle('update-settings', (event: IpcMainInvokeEvent, data: Settings) => settingsController.updateSettings(data));
 
   // Reports
-  ipcMain.handle('get-income-report', (event: any, start: any, end: any) => reportController.getIncomeReport(start, end));
-  ipcMain.handle('get-completed-services', (event: any, start: any, end: any) => reportController.getCompletedServices(start, end));
-  ipcMain.handle('get-top-spareparts', (event: any, start: any, end: any) => reportController.getTopSpareparts(start, end));
+  ipcMain.handle('get-income-report', (event: IpcMainInvokeEvent, start: string, end: string) => reportController.getIncomeReport(start, end));
+  ipcMain.handle('get-completed-services', (event: IpcMainInvokeEvent, start: string, end: string) => reportController.getCompletedServices(start, end));
+  ipcMain.handle('get-top-spareparts', (event: IpcMainInvokeEvent, start: string, end: string) => reportController.getTopSpareparts(start, end));
 
   // Backup & Restore
   ipcMain.handle('backup-database', async () => {
@@ -79,7 +81,7 @@ function registerMiscIpc(mainWindow: any) {
   });
 
   // Export & Print
-  ipcMain.handle('export-excel', async (event: any, data: any) => {
+  ipcMain.handle('export-excel', async (event: IpcMainInvokeEvent, data: any) => {
     try {
       const { canceled, filePath } = await dialog.showSaveDialog({
         title: 'Simpan Laporan Excel',
@@ -104,7 +106,7 @@ function registerMiscIpc(mainWindow: any) {
     }
   });
 
-  ipcMain.handle('export-pdf', async (event: any, { html, filename }: any) => {
+  ipcMain.handle('export-pdf', async (event: IpcMainInvokeEvent, { html, filename }: any) => {
     try {
       const { canceled, filePath } = await dialog.showSaveDialog({
         title: 'Simpan PDF',
@@ -129,7 +131,7 @@ function registerMiscIpc(mainWindow: any) {
     }
   });
 
-  ipcMain.handle('print-preview', async (event: any, options: any = {}) => {
+  ipcMain.handle('print-preview', async (event: IpcMainInvokeEvent, options: any = {}) => {
     try {
       const pdfPath = path.join(os.tmpdir(), `nunox_print_${Date.now()}.pdf`);
       const pdfOptions: any = {
@@ -150,7 +152,7 @@ function registerMiscIpc(mainWindow: any) {
     }
   });
 
-  ipcMain.handle('open-external-url', async (event: any, url: any) => {
+  ipcMain.handle('open-external-url', async (event: IpcMainInvokeEvent, url: string) => {
     try {
       await shell.openExternal(url);
       return true;
