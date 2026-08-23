@@ -1,3 +1,4 @@
+export {};
 const db = require('../database/db');
 
 function getDashboardStats() {

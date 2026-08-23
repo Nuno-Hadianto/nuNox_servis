@@ -1,3 +1,4 @@
+export {};
 const { app, ipcMain, dialog, shell, BrowserWindow } = require('electron');
 const fs = require('fs');
 const path = require('path');
@@ -11,23 +12,23 @@ const settingsController = require('../../controllers/settingsController');
 const reportController = require('../../controllers/reportController');
 const log = require('electron-log');
 
-function registerMiscIpc(mainWindow) {
+function registerMiscIpc(mainWindow: any) {
   // Dashboard
   ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
 
   // Payments
-  ipcMain.handle('get-payments', (event, serviceId) => paymentController.getPaymentsByServiceId(serviceId));
-  ipcMain.handle('add-payment', (event, data) => paymentController.addPayment(data));
-  ipcMain.handle('delete-payment', (event, id) => paymentController.deletePayment(id));
+  ipcMain.handle('get-payments', (event: any, serviceId: any) => paymentController.getPaymentsByServiceId(serviceId));
+  ipcMain.handle('add-payment', (event: any, data: any) => paymentController.addPayment(data));
+  ipcMain.handle('delete-payment', (event: any, id: any) => paymentController.deletePayment(id));
 
   // Settings
   ipcMain.handle('get-settings', () => settingsController.getSettings());
-  ipcMain.handle('update-settings', (event, data) => settingsController.updateSettings(data));
+  ipcMain.handle('update-settings', (event: any, data: any) => settingsController.updateSettings(data));
 
   // Reports
-  ipcMain.handle('get-income-report', (event, start, end) => reportController.getIncomeReport(start, end));
-  ipcMain.handle('get-completed-services', (event, start, end) => reportController.getCompletedServices(start, end));
-  ipcMain.handle('get-top-spareparts', (event, start, end) => reportController.getTopSpareparts(start, end));
+  ipcMain.handle('get-income-report', (event: any, start: any, end: any) => reportController.getIncomeReport(start, end));
+  ipcMain.handle('get-completed-services', (event: any, start: any, end: any) => reportController.getCompletedServices(start, end));
+  ipcMain.handle('get-top-spareparts', (event: any, start: any, end: any) => reportController.getTopSpareparts(start, end));
 
   // Backup & Restore
   ipcMain.handle('backup-database', async () => {
@@ -78,7 +79,7 @@ function registerMiscIpc(mainWindow) {
   });
 
   // Export & Print
-  ipcMain.handle('export-excel', async (event, data) => {
+  ipcMain.handle('export-excel', async (event: any, data: any) => {
     try {
       const { canceled, filePath } = await dialog.showSaveDialog({
         title: 'Simpan Laporan Excel',
@@ -97,13 +98,13 @@ function registerMiscIpc(mainWindow) {
 
       xlsx.writeFile(workbook, filePath);
       return { success: true, filePath };
-    } catch (error) {
+    } catch (error: any) {
       log.error('Error exporting excel:', error);
       return { success: false, error: error.message };
     }
   });
 
-  ipcMain.handle('export-pdf', async (event, { html, filename }) => {
+  ipcMain.handle('export-pdf', async (event: any, { html, filename }: any) => {
     try {
       const { canceled, filePath } = await dialog.showSaveDialog({
         title: 'Simpan PDF',
@@ -122,13 +123,13 @@ function registerMiscIpc(mainWindow) {
       pdfWindow.close();
       
       return { success: true, filePath };
-    } catch (error) {
+    } catch (error: any) {
       log.error('Error generating PDF:', error);
       return { success: false, error: error.message };
     }
   });
 
-  ipcMain.handle('print-preview', async (event, options: any = {}) => {
+  ipcMain.handle('print-preview', async (event: any, options: any = {}) => {
     try {
       const pdfPath = path.join(os.tmpdir(), `nunox_print_${Date.now()}.pdf`);
       const pdfOptions: any = {
@@ -143,17 +144,17 @@ function registerMiscIpc(mainWindow) {
       fs.writeFileSync(pdfPath, pdfData);
       await shell.openPath(pdfPath);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       log.error('Error generating print preview:', error);
       throw error;
     }
   });
 
-  ipcMain.handle('open-external-url', async (event, url) => {
+  ipcMain.handle('open-external-url', async (event: any, url: any) => {
     try {
       await shell.openExternal(url);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       log.error('Failed to open external url:', error);
       return false;
     }
@@ -169,7 +170,7 @@ function registerMiscIpc(mainWindow) {
         return `data:${mimeType};base64,${bitmap.toString('base64')}`;
       }
       return null;
-    } catch (error) {
+    } catch (error: any) {
       log.error('Failed to read logo:', error);
       return null;
     }

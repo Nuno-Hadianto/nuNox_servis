@@ -1,3 +1,4 @@
+export {};
 const { ipcMain, dialog } = require('electron');
 const xlsx = require('xlsx');
 const partController = require('../../controllers/partController');
