@@ -14,7 +14,7 @@ declare global {
       getDashboardStats: () => Promise<any>;
       
       // Customers
-      getCustomers: (searchQuery: string, page: number, limit: number) => Promise<{ data: Customer[], total: number }>;
+      getCustomers: (searchQuery: string, page: number, limit: number) => Promise<{ data: Customer[], total: number, page: number }>;
       getCustomer: (id: number) => Promise<Customer>;
       addCustomer: (data: Omit<Customer, 'id'>) => Promise<number>;
       updateCustomer: (id: number, data: Partial<Customer>) => Promise<number>;
@@ -29,11 +29,11 @@ declare global {
       deleteDevice: (id: number) => Promise<number>;
 
       // Services
-      getServices: (searchQuery: string, page: number, limit: number) => Promise<{ data: ServiceOrder[], total: number }>;
+      getServices: (searchQuery: string, page: number, limit: number) => Promise<{ data: ServiceOrder[], total: number, page: number }>;
       getService: (id: number) => Promise<ServiceOrder>;
       getServiceByTicket: (ticket: string) => Promise<ServiceOrder>;
       getServiceHistory: (id: number) => Promise<any[]>;
-      addService: (data: Omit<ServiceOrder, 'id'>) => Promise<number>;
+      addService: (data: Partial<ServiceOrder>) => Promise<number>;
       updateServiceStatus: (id: number, status: string, notes: string, warrantyDays?: number) => Promise<number>;
       updateServiceDetails: (id: number, data: Partial<ServiceOrder>) => Promise<number>;
       deleteService: (id: number) => Promise<number>;

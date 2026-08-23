@@ -188,14 +188,14 @@ const onCustomerChange = async () => {
   customerDevices.value = []
   form.device_id = ''
   if (form.customer_id && window.api && window.api.getDevicesByCustomer) {
-      customerDevices.value = (await window.api.getDevicesByCustomer(form.customer_id)) as Device[]
+      customerDevices.value = (await window.api.getDevicesByCustomer(Number(form.customer_id))) as Device[]
   }
 }
 
 const onDeviceChange = async () => {
     if (form.device_id && window.api && window.api.checkWarranty) {
         try {
-            const warranty = await window.api.checkWarranty(form.device_id)
+            const warranty = await window.api.checkWarranty(Number(form.device_id))
             if (warranty) {
                 const dateStr = new Date(warranty.warranty_end_date).toLocaleDateString('id-ID')
                 window.Swal.fire({
