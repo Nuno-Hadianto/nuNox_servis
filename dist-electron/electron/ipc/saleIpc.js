@@ -32,5 +32,14 @@ function registerSaleIpc(mainWindow) {
             return [];
         }
     });
+    ipcMain.handle('get-sale', (event, saleId) => {
+        try {
+            return saleController.getSaleById(saleId);
+        }
+        catch (error) {
+            log.error('Error in getSale:', error);
+            return null;
+        }
+    });
 }
 module.exports = registerSaleIpc;

@@ -44,8 +44,13 @@ function getSaleItems(saleId: number | string) {
     return saleRepository.getSaleItems(saleId);
 }
 
+function getSaleById(saleId: number | string) {
+    return saleRepository.getSaleById(saleId);
+}
+
 module.exports = {
     createSale,
     getSales,
-    getSaleItems
+    getSaleItems,
+    getSaleById
 };

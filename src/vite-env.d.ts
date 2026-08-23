@@ -76,6 +76,7 @@ declare global {
       // Sales
       createSale: (saleData: any, items: any[]) => Promise<{ success: boolean, saleId?: number, error?: string }>;
       getSales: (startDate?: string, endDate?: string) => Promise<any[]>;
+      getSale: (saleId: number | string) => Promise<any>;
       getSaleItems: (saleId: number | string) => Promise<any[]>;
 
       // Backup & Utilities

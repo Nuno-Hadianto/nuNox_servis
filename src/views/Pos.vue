@@ -100,7 +100,7 @@ import { Package, Search, ShoppingCart, X, CheckCircle } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { usePosStore } from '../stores/pos'
 import type { Part } from '../types'
-// import { generateSaleReceiptHtml, printHtml } from '../utils/printUtils'
+import { generateSaleReceiptHtml, printHtml } from '../utils/printUtils'
 
 const posStore = usePosStore()
 const { cart, customerName, paymentMethod, cashGiven, totalAmount, changeAmount } = storeToRefs(posStore)
@@ -187,8 +187,19 @@ const processSale = async () => {
               cancelButtonText: 'Tidak'
           }).then(async (result: any) => {
               if (result.isConfirmed) {
-                  // TODO: Print Receipt for Sales
-                  window.Swal.fire('Info', 'Fitur cetak struk POS sedang disiapkan.', 'info')
+                  try {
+                      const saleId = res.saleId;
+                      const saleData = await window.api.getSale(saleId);
+                      const saleItems = await window.api.getSaleItems(saleId);
+                      const settings = await window.api.getSettings();
+                      const logo = await window.api.getLogoBase64();
+                      
+                      const html = generateSaleReceiptHtml(settings, saleData, saleItems, logo, Number(cashGiven.value), changeAmount.value);
+                      await printHtml(html, false, true); // true = thermal printing
+                  } catch (err) {
+                      console.error("Print Error:", err);
+                      window.Swal.fire('Error', 'Gagal mencetak struk', 'error');
+                  }
               }
               // Reset
               posStore.resetCart()

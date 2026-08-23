@@ -268,6 +268,96 @@ export const generateBlankNotaHtml = (settings: any, logoBase64: any) => {
     `;
 };
 
+export const generateSaleReceiptHtml = (settings: any, sale: any, items: any, logoBase64: any, cashGiven?: number, changeAmount?: number) => {
+    settings = settings || {};
+    const formatRp = (val: any) => new Intl.NumberFormat('id-ID', {
+        style: 'currency', currency: 'IDR', minimumFractionDigits: 0
+    }).format(val || 0);
+
+    let itemsHtml = '';
+    if (items && items.length > 0) {
+        items.forEach((i: any) => {
+            itemsHtml += `
+                <div>${i.part_name || i.spare_part_id || 'Item'}</div>
+                <div class="thm-row thm-text-sm" style="margin-bottom: 2px;">
+                    <span class="thm-val">${i.quantity} x ${formatRp(i.price)}</span>
+                    <span class="thm-val">${formatRp(i.total || (i.quantity * i.price))}</span>
+                </div>
+            `;
+        });
+    }
+
+    let paymentHtml = `
+            <div class="thm-row thm-bold" style="font-size: 11pt;">
+                <span class="thm-label">TOTAL:</span>
+                <span class="thm-val">${formatRp(sale.total_amount)}</span>
+            </div>
+            <div class="thm-row" style="margin-top: 5px;">
+                <span class="thm-label">Pembayaran:</span>
+                <span class="thm-val">${sale.payment_method}</span>
+            </div>
+    `;
+
+    if (sale.payment_method === 'Tunai' && cashGiven !== undefined && changeAmount !== undefined) {
+        paymentHtml += `
+            <div class="thm-row">
+                <span class="thm-label">Tunai:</span>
+                <span class="thm-val">${formatRp(cashGiven)}</span>
+            </div>
+            <div class="thm-row">
+                <span class="thm-label">Kembali:</span>
+                <span class="thm-val">${formatRp(changeAmount)}</span>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="print-thermal">
+            <!-- Header -->
+            <div class="thm-center">
+                ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="thm-logo" />` : ''}
+                <div class="thm-bold thm-biz-name">${settings.business_name || 'NUNOX SERVIS'}</div>
+                <div class="thm-biz-sub">${settings.address || ''}</div>
+                <div class="thm-biz-sub">WA: ${settings.whatsapp || settings.phone || ''}</div>
+            </div>
+            
+            <div class="thm-dashed"></div>
+            
+            <div class="thm-center thm-bold thm-title">STRUK PEMBELIAN</div>
+            
+            <div class="thm-row">
+                <span class="thm-label">No:</span>
+                <span class="thm-val thm-bold">${sale ? sale.invoice_number : '-'}</span>
+            </div>
+            <div class="thm-row">
+                <span class="thm-label">Tgl:</span>
+                <span class="thm-val">${sale ? new Date(sale.created_at + 'Z').toLocaleString('id-ID') : '-'}</span>
+            </div>
+            ${sale && sale.customer_name ? `
+            <div class="thm-row">
+                <span class="thm-label">Plg:</span>
+                <span class="thm-val">${sale.customer_name}</span>
+            </div>
+            ` : ''}
+            
+            <div class="thm-dashed"></div>
+            
+            ${itemsHtml}
+            
+            <div class="thm-dashed"></div>
+            
+            ${paymentHtml}
+            
+            <div class="thm-dashed"></div>
+            
+            <div class="thm-center thm-footer">
+                ${settings.receipt_footer || 'Terima kasih atas kunjungannya.'}
+            </div>
+            <div class="thm-gap"></div>
+        </div>
+    `;
+};
+
 export const generateBlankReceiptHtml = (settings: any, logoBase64: any) => {
     settings = settings || {};
     return `

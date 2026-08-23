@@ -37,8 +37,12 @@ function getSales(startDate, endDate) {
 function getSaleItems(saleId) {
     return saleRepository.getSaleItems(saleId);
 }
+function getSaleById(saleId) {
+    return saleRepository.getSaleById(saleId);
+}
 module.exports = {
     createSale,
     getSales,
-    getSaleItems
+    getSaleItems,
+    getSaleById
 };

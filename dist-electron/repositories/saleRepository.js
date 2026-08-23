@@ -52,8 +52,13 @@ function getSaleItems(saleId) {
     `);
     return stmt.all(saleId);
 }
+function getSaleById(saleId) {
+    const stmt = db.prepare(`SELECT * FROM sales WHERE id = ?`);
+    return stmt.get(saleId);
+}
 module.exports = {
     createSale,
     getSales,
-    getSaleItems
+    getSaleItems,
+    getSaleById
 };
