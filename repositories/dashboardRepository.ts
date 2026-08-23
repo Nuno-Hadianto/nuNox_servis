@@ -1,5 +1,7 @@
 export {};
 const db = require('../database/db');
+const { serviceOrders, payments, serviceItems, spareParts, settings, customers } = require('../database/drizzleSchema');
+const { eq, notLike, like, notInArray, lte, asc, sql, and, isNotNull } = require('drizzle-orm');
 
 function getDashboardStats() {
     const d = new Date();
@@ -7,46 +9,59 @@ function getDashboardStats() {
     const currentMonth = today.substring(0, 7); // YYYY-MM
 
     // Servis Hari Ini
-    const todayServicesQuery = db.prepare(`SELECT COUNT(*) as count FROM service_orders WHERE DATE(created_at, 'localtime') = ?`);
-    const todayServices = todayServicesQuery.get(today).count;
+    const todayServicesQuery = db.drizzle.select({ count: sql`COUNT(*)` })
+        .from(serviceOrders)
+        .where(eq(sql`DATE(${serviceOrders.created_at}, 'localtime')`, today))
+        .get();
+    const todayServices = todayServicesQuery?.count || 0;
 
     // Sedang Dikerjakan
-    const inProgressQuery = db.prepare(`SELECT COUNT(*) as count FROM service_orders WHERE service_status NOT LIKE '%Selesai%' AND service_status NOT IN ('Batal', 'Dibatalkan')`);
-    const inProgress = inProgressQuery.get().count;
+    const inProgressQuery = db.drizzle.select({ count: sql`COUNT(*)` })
+        .from(serviceOrders)
+        .where(and(
+            notLike(serviceOrders.service_status, '%Selesai%'),
+            notInArray(serviceOrders.service_status, ['Batal', 'Dibatalkan'])
+        ))
+        .get();
+    const inProgress = inProgressQuery?.count || 0;
 
     // Selesai (hari ini atau bulan ini atau total?) Let's say all time total completed, or just completed
-    const completedQuery = db.prepare(`SELECT COUNT(*) as count FROM service_orders WHERE service_status LIKE '%Selesai%'`);
-    const completed = completedQuery.get().count;
+    const completedQuery = db.drizzle.select({ count: sql`COUNT(*)` })
+        .from(serviceOrders)
+        .where(like(serviceOrders.service_status, '%Selesai%'))
+        .get();
+    const completed = completedQuery?.count || 0;
 
     // Pendapatan Bulan Ini (Total dari payments)
-    const incomeMonthQuery = db.prepare(`SELECT SUM(amount) as total FROM payments WHERE strftime('%Y-%m', payment_date, 'localtime') = ?`);
-    const incomeMonth = incomeMonthQuery.get(currentMonth).total || 0;
+    const incomeMonthQuery = db.drizzle.select({ total: sql`SUM(${payments.amount})` })
+        .from(payments)
+        .where(eq(sql`strftime('%Y-%m', ${payments.payment_date}, 'localtime')`, currentMonth))
+        .get();
+    const incomeMonth = incomeMonthQuery?.total || 0;
 
     // HPP (Modal Sparepart) untuk transaksi yang diselesaikan bulan ini
-    const hppMonthQuery = db.prepare(`
-        SELECT SUM(si.cost_price) as hpp 
-        FROM service_items si
-        JOIN service_orders so ON si.service_order_id = so.id
-        WHERE strftime('%Y-%m', so.completed_date, 'localtime') = ?
-    `);
-    const hppMonth = hppMonthQuery.get(currentMonth).hpp || 0;
+    const hppMonthQuery = db.drizzle.select({ hpp: sql`SUM(${serviceItems.cost_price})` })
+        .from(serviceItems)
+        .innerJoin(serviceOrders, eq(serviceItems.service_order_id, serviceOrders.id))
+        .where(eq(sql`strftime('%Y-%m', ${serviceOrders.completed_date}, 'localtime')`, currentMonth))
+        .get();
+    const hppMonth = hppMonthQuery?.hpp || 0;
     const labaBersih = incomeMonth - hppMonth;
 
-    // Chart Data (Income last 6 months)
-    const chartQuery = db.prepare(`
+    // Chart Data (Income last 6 months) - using raw sql for complex group by
+    const chartDataRaw = db.prepare(`
         SELECT strftime('%Y-%m', payment_date, 'localtime') as month, SUM(amount) as total 
         FROM payments 
         WHERE date(payment_date, 'localtime') >= date('now', 'localtime', 'start of month', '-5 months')
         GROUP BY month 
         ORDER BY month ASC
-    `);
-    const chartDataRaw = chartQuery.all();
+    `).all();
 
     const chartLabels = [];
     const chartValues = [];
     for (let i = 5; i >= 0; i--) {
         const d = new Date();
-        d.setDate(1); // Prevent date overflow bug (e.g. March 31 -> Feb 31 -> March 3)
+        d.setDate(1); // Prevent date overflow bug
         d.setMonth(new Date().getMonth() - i);
         const yyyymm = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
         const monthName = d.toLocaleString('id-ID', { month: 'short' });
@@ -59,58 +74,72 @@ function getDashboardStats() {
     // Get threshold from settings
     let threshold = 3; // default
     try {
-        const settingsQuery = db.prepare(`SELECT value FROM settings WHERE key = 'low_stock_threshold'`);
-        const row = settingsQuery.get();
-        if (row && row.value !== undefined) {
+        const row = db.drizzle.select({ value: settings.value }).from(settings)
+            .where(eq(settings.key, 'low_stock_threshold')).get();
+        if (row && row.value !== undefined && row.value !== null) {
             threshold = Number(row.value);
         }
     } catch (e) {
         // ignore
     }
 
-    // Peringatan Stok Menipis (Stok <= threshold)
-    const lowStockParts = db.prepare(`SELECT * FROM spare_parts WHERE stock <= ? ORDER BY stock ASC LIMIT 20`).all(threshold);
+    // Peringatan Stok Menipis
+    const lowStockParts = db.drizzle.select().from(spareParts)
+        .where(lte(spareParts.stock, threshold))
+        .orderBy(asc(spareParts.stock))
+        .limit(20).all();
+
     // Barang Terlantar / Follow Up
     // 1. Menunggu Sparepart > 7 hari
-    const waitingQuery = db.prepare(`
-        SELECT so.id, so.ticket_number, c.name as customer_name, c.phone as customer_phone, so.service_status, 
-               CAST(julianday('now', 'localtime') - julianday(so.created_at, 'localtime') AS INTEGER) as days_pending
-        FROM service_orders so
-        JOIN customers c ON so.customer_id = c.id
-        WHERE so.service_status = 'Menunggu Sparepart' 
-          AND (julianday('now', 'localtime') - julianday(so.created_at, 'localtime')) > 7
-    `);
+    const waitingQuery = db.drizzle.select({
+        id: serviceOrders.id,
+        ticket_number: serviceOrders.ticket_number,
+        customer_name: customers.name,
+        customer_phone: customers.phone,
+        service_status: serviceOrders.service_status,
+        days_pending: sql`CAST(julianday('now', 'localtime') - julianday(${serviceOrders.created_at}, 'localtime') AS INTEGER)`
+    }).from(serviceOrders)
+      .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
+      .where(and(
+          eq(serviceOrders.service_status, 'Menunggu Sparepart'),
+          sql`(julianday('now', 'localtime') - julianday(${serviceOrders.created_at}, 'localtime')) > 7`
+      )).all();
     
     // 2. Selesai (Belum Diambil) > 14 hari
-    const completedNotPickedQuery = db.prepare(`
-        SELECT so.id, so.ticket_number, c.name as customer_name, c.phone as customer_phone, so.service_status, 
-               CAST(julianday('now', 'localtime') - julianday(so.completed_date, 'localtime') AS INTEGER) as days_pending
-        FROM service_orders so
-        JOIN customers c ON so.customer_id = c.id
-        WHERE so.service_status = 'Selesai (Belum Diambil)' 
-          AND so.completed_date IS NOT NULL
-          AND (julianday('now', 'localtime') - julianday(so.completed_date, 'localtime')) > 14
-    `);
+    const completedNotPickedQuery = db.drizzle.select({
+        id: serviceOrders.id,
+        ticket_number: serviceOrders.ticket_number,
+        customer_name: customers.name,
+        customer_phone: customers.phone,
+        service_status: serviceOrders.service_status,
+        days_pending: sql`CAST(julianday('now', 'localtime') - julianday(${serviceOrders.completed_date}, 'localtime') AS INTEGER)`
+    }).from(serviceOrders)
+      .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
+      .where(and(
+          eq(serviceOrders.service_status, 'Selesai (Belum Diambil)'),
+          isNotNull(serviceOrders.completed_date),
+          sql`(julianday('now', 'localtime') - julianday(${serviceOrders.completed_date}, 'localtime')) > 14`
+      )).all();
 
     const abandonedServices = [
-        ...waitingQuery.all(),
-        ...completedNotPickedQuery.all()
+        ...waitingQuery,
+        ...completedNotPickedQuery
     ];
 
     // Service Status Distribution (Donut Chart)
-    const statusQuery = db.prepare(`
+    const statusData = db.prepare(`
         SELECT service_status, COUNT(*) as count 
         FROM service_orders 
         GROUP BY service_status
-    `);
-    const statusData = statusQuery.all();
+    `).all();
+    
     const serviceStatusChart = {
         labels: statusData.map((s: any) => s.service_status),
         values: statusData.map((s: any) => s.count)
     };
 
-    // Top 5 Spare Parts (Bar Chart)
-    const topPartsQuery = db.prepare(`
+    // Top 5 Spare Parts (Bar Chart) - Complex union all
+    const topPartsData = db.prepare(`
         SELECT sp.name, SUM(total_qty) as qty FROM (
             SELECT spare_part_id, quantity as total_qty FROM sale_items
             UNION ALL
@@ -120,8 +149,8 @@ function getDashboardStats() {
         GROUP BY sp.id
         ORDER BY qty DESC
         LIMIT 5
-    `);
-    const topPartsData = topPartsQuery.all();
+    `).all();
+    
     const topPartsChart = {
         labels: topPartsData.map((p: any) => p.name),
         values: topPartsData.map((p: any) => p.qty)

@@ -50,6 +50,7 @@ exports.serviceOrders = (0, sqlite_core_1.sqliteTable)('service_orders', {
     service_status: (0, sqlite_core_1.text)('service_status').default('Diterima'),
     payment_status: (0, sqlite_core_1.text)('payment_status').default('Belum Bayar'),
     completed_date: (0, sqlite_core_1.text)('completed_date'),
+    warranty_end_date: (0, sqlite_core_1.text)('warranty_end_date'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
 });

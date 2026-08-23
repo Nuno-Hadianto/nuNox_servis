@@ -1,11 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require('../database/db');
+const { serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts, servicePhotos } = require('../database/drizzleSchema');
+const { eq, like, or, asc, desc, sql, and, gte, isNotNull } = require('drizzle-orm');
 function generateTicketNumber() {
     const year = new Date().getFullYear();
     const prefix = `NSV-${year}-`;
-    const stmt = db.prepare(`SELECT ticket_number FROM service_orders WHERE ticket_number LIKE ? ORDER BY id DESC LIMIT 1`);
-    const lastOrder = stmt.get(`${prefix}%`);
+    const lastOrder = db.drizzle.select({ ticket_number: serviceOrders.ticket_number })
+        .from(serviceOrders)
+        .where(like(serviceOrders.ticket_number, `${prefix}%`))
+        .orderBy(desc(serviceOrders.id))
+        .limit(1).get();
     let nextNum = 1;
     if (lastOrder && lastOrder.ticket_number) {
         const parts = lastOrder.ticket_number.split('-');
@@ -17,149 +22,199 @@ function generateTicketNumber() {
 }
 function getServices(searchQuery = '', page = 1, limit = 50) {
     const offset = (page - 1) * limit;
-    let query = `
-        SELECT so.*, c.name as customer_name, d.brand, d.model, d.device_type
-        FROM service_orders so
-        JOIN customers c ON so.customer_id = c.id
-        JOIN devices d ON so.device_id = d.id
-    `;
-    let countQuery = `
-        SELECT COUNT(*) as count
-        FROM service_orders so
-        JOIN customers c ON so.customer_id = c.id
-        JOIN devices d ON so.device_id = d.id
-    `;
+    let baseQuery = db.drizzle.select({
+        id: serviceOrders.id,
+        ticket_number: serviceOrders.ticket_number,
+        customer_id: serviceOrders.customer_id,
+        device_id: serviceOrders.device_id,
+        received_date: serviceOrders.received_date,
+        estimated_completion_date: serviceOrders.estimated_completion_date,
+        technician: serviceOrders.technician,
+        customer_complaint: serviceOrders.customer_complaint,
+        diagnosis_result: serviceOrders.diagnosis_result,
+        actions_taken: serviceOrders.actions_taken,
+        technician_notes: serviceOrders.technician_notes,
+        estimated_cost: serviceOrders.estimated_cost,
+        total_cost: serviceOrders.total_cost,
+        service_status: serviceOrders.service_status,
+        payment_status: serviceOrders.payment_status,
+        completed_date: serviceOrders.completed_date,
+        created_at: serviceOrders.created_at,
+        updated_at: serviceOrders.updated_at,
+        customer_name: customers.name,
+        brand: devices.brand,
+        model: devices.model,
+        device_type: devices.device_type
+    }).from(serviceOrders)
+        .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
+        .innerJoin(devices, eq(serviceOrders.device_id, devices.id));
+    let countQuery = db.drizzle.select({ count: sql `count(*)` })
+        .from(serviceOrders)
+        .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
+        .innerJoin(devices, eq(serviceOrders.device_id, devices.id));
     let data, total;
     if (searchQuery) {
-        const whereClause = ` WHERE so.ticket_number LIKE ? OR c.name LIKE ? OR d.brand LIKE ?`;
-        query += whereClause + ` ORDER BY so.id DESC LIMIT ? OFFSET ?`;
-        countQuery += whereClause;
         const qStr = `%${searchQuery}%`;
-        data = db.prepare(query).all(qStr, qStr, qStr, limit, offset);
-        total = db.prepare(countQuery).get(qStr, qStr, qStr).count;
+        const condition = or(like(serviceOrders.ticket_number, qStr), like(customers.name, qStr), like(devices.brand, qStr));
+        data = baseQuery.where(condition).orderBy(desc(serviceOrders.id)).limit(limit).offset(offset).all();
+        const t = countQuery.where(condition).get();
+        total = t?.count || 0;
     }
     else {
-        query += ` ORDER BY so.id DESC LIMIT ? OFFSET ?`;
-        data = db.prepare(query).all(limit, offset);
-        total = db.prepare(countQuery).get().count;
+        data = baseQuery.orderBy(desc(serviceOrders.id)).limit(limit).offset(offset).all();
+        const t = countQuery.get();
+        total = t?.count || 0;
     }
     return { data, total, page, limit };
 }
 function getServiceById(id) {
-    const stmt = db.prepare(`
-        SELECT so.*, 
-               c.name as customer_name, c.phone as customer_phone, c.address as customer_address, 
-               d.brand, d.model, d.device_type, d.serial_number, d.color, d.accessories
-        FROM service_orders so
-        JOIN customers c ON so.customer_id = c.id
-        JOIN devices d ON so.device_id = d.id
-        WHERE so.id = ?
-    `);
-    return stmt.get(id);
+    return db.drizzle.select({
+        id: serviceOrders.id,
+        ticket_number: serviceOrders.ticket_number,
+        customer_id: serviceOrders.customer_id,
+        device_id: serviceOrders.device_id,
+        received_date: serviceOrders.received_date,
+        estimated_completion_date: serviceOrders.estimated_completion_date,
+        technician: serviceOrders.technician,
+        customer_complaint: serviceOrders.customer_complaint,
+        diagnosis_result: serviceOrders.diagnosis_result,
+        actions_taken: serviceOrders.actions_taken,
+        technician_notes: serviceOrders.technician_notes,
+        estimated_cost: serviceOrders.estimated_cost,
+        total_cost: serviceOrders.total_cost,
+        service_status: serviceOrders.service_status,
+        payment_status: serviceOrders.payment_status,
+        completed_date: serviceOrders.completed_date,
+        created_at: serviceOrders.created_at,
+        updated_at: serviceOrders.updated_at,
+        warranty_end_date: serviceOrders.warranty_end_date,
+        customer_name: customers.name,
+        customer_phone: customers.phone,
+        customer_address: customers.address,
+        brand: devices.brand,
+        model: devices.model,
+        device_type: devices.device_type,
+        serial_number: devices.serial_number,
+        color: devices.color,
+        accessories: devices.accessories
+    }).from(serviceOrders)
+        .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
+        .innerJoin(devices, eq(serviceOrders.device_id, devices.id))
+        .where(eq(serviceOrders.id, Number(id)))
+        .get();
 }
 function getServiceByTicketNumber(ticketNumber) {
-    const stmt = db.prepare(`
-        SELECT id FROM service_orders WHERE ticket_number = ?
-    `);
-    return stmt.get(ticketNumber);
+    return db.drizzle.select({ id: serviceOrders.id }).from(serviceOrders)
+        .where(eq(serviceOrders.ticket_number, ticketNumber)).get();
 }
 function getServiceStatusHistory(serviceOrderId) {
-    const stmt = db.prepare(`SELECT * FROM service_status_history WHERE service_order_id = ? ORDER BY id ASC`);
-    return stmt.all(serviceOrderId);
+    return db.drizzle.select().from(serviceStatusHistory)
+        .where(eq(serviceStatusHistory.service_order_id, Number(serviceOrderId)))
+        .orderBy(asc(serviceStatusHistory.id)).all();
 }
 function addService(data) {
     const { customer_id, device_id, estimated_completion_date, technician, customer_complaint, estimated_cost } = data;
     const ticket_number = generateTicketNumber();
-    const tx = db.transaction(() => {
-        const stmt = db.prepare(`
-            INSERT INTO service_orders (ticket_number, customer_id, device_id, estimated_completion_date, technician, customer_complaint, estimated_cost, service_status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'Diterima')
-        `);
-        const info = stmt.run(ticket_number, customer_id, device_id, estimated_completion_date, technician, customer_complaint, estimated_cost || 0);
-        // Add history
-        const historyStmt = db.prepare(`INSERT INTO service_status_history (service_order_id, status, notes) VALUES (?, ?, ?)`);
-        historyStmt.run(info.lastInsertRowid, 'Diterima', 'Servis diterima');
-        return info.lastInsertRowid;
-    });
-    return tx();
+    return db.transaction(() => {
+        const info = db.drizzle.insert(serviceOrders).values({
+            ticket_number,
+            customer_id,
+            device_id,
+            estimated_completion_date,
+            technician,
+            customer_complaint,
+            estimated_cost: estimated_cost || 0,
+            service_status: 'Diterima'
+        }).run();
+        const serviceOrderId = info.lastInsertRowid;
+        db.drizzle.insert(serviceStatusHistory).values({
+            service_order_id: serviceOrderId,
+            status: 'Diterima',
+            notes: 'Servis diterima'
+        }).run();
+        return serviceOrderId;
+    })();
 }
 function updateServiceStatus(id, status, notes, warrantyDays = 0) {
-    const tx = db.transaction(() => {
-        const stmt = db.prepare(`UPDATE service_orders SET service_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`);
-        stmt.run(status, id);
-        const historyStmt = db.prepare(`INSERT INTO service_status_history (service_order_id, status, notes) VALUES (?, ?, ?)`);
-        historyStmt.run(id, status, notes);
+    return db.transaction(() => {
+        db.drizzle.update(serviceOrders).set({
+            service_status: status,
+            updated_at: sql `CURRENT_TIMESTAMP`
+        }).where(eq(serviceOrders.id, Number(id))).run();
+        db.drizzle.insert(serviceStatusHistory).values({
+            service_order_id: Number(id),
+            status,
+            notes
+        }).run();
         if (status === 'Selesai (Belum Diambil)' || status === 'Selesai (Sudah Diambil)' || status.includes('Selesai')) {
-            // Hanya set completed_date jika masih kosong agar tanggal aslinya tidak berubah-ubah
-            const checkStmt = db.prepare(`SELECT completed_date FROM service_orders WHERE id = ?`);
-            const so = checkStmt.get(id);
-            if (!so.completed_date) {
-                const finishStmt = db.prepare(`UPDATE service_orders SET completed_date = CURRENT_TIMESTAMP WHERE id = ?`);
-                finishStmt.run(id);
+            const so = db.drizzle.select({ completed_date: serviceOrders.completed_date })
+                .from(serviceOrders).where(eq(serviceOrders.id, Number(id))).get();
+            if (so && !so.completed_date) {
+                db.drizzle.update(serviceOrders).set({ completed_date: sql `CURRENT_TIMESTAMP` })
+                    .where(eq(serviceOrders.id, Number(id))).run();
             }
             if (warrantyDays > 0) {
-                const wStmt = db.prepare(`UPDATE service_orders SET warranty_end_date = datetime('now', '+' || ? || ' days') WHERE id = ?`);
-                wStmt.run(warrantyDays, id);
+                db.drizzle.update(serviceOrders).set({
+                    warranty_end_date: sql `datetime('now', '+' || ${warrantyDays} || ' days')`
+                }).where(eq(serviceOrders.id, Number(id))).run();
             }
         }
         return true;
-    });
-    return tx();
+    })();
 }
 function updateServiceDetails(id, data) {
     const { diagnosis_result, actions_taken, technician_notes } = data;
-    const stmt = db.prepare(`
-        UPDATE service_orders SET 
-            diagnosis_result = ?, actions_taken = ?, technician_notes = ?, updated_at = CURRENT_TIMESTAMP 
-        WHERE id = ?
-    `);
-    stmt.run(diagnosis_result, actions_taken, technician_notes, id);
+    db.drizzle.update(serviceOrders).set({
+        diagnosis_result,
+        actions_taken,
+        technician_notes,
+        updated_at: sql `CURRENT_TIMESTAMP`
+    }).where(eq(serviceOrders.id, Number(id))).run();
     return true;
 }
 function deleteService(id) {
-    const tx = db.transaction(() => {
-        // Ambil semua item sparepart untuk dikembalikan stoknya sebelum order dihapus
-        const items = db.prepare(`SELECT * FROM service_items WHERE service_order_id = ? AND item_type = 'Sparepart' AND spare_part_id IS NOT NULL`).all(id);
-        const updateStock = db.prepare(`UPDATE spare_parts SET stock = stock + ? WHERE id = ?`);
+    return db.transaction(() => {
+        const items = db.drizzle.select().from(serviceItems)
+            .where(and(eq(serviceItems.service_order_id, Number(id)), eq(serviceItems.item_type, 'Sparepart'), isNotNull(serviceItems.spare_part_id)))
+            .all();
         for (const item of items) {
-            updateStock.run(item.quantity, item.spare_part_id);
+            db.drizzle.update(spareParts).set({
+                stock: sql `stock + ${item.quantity}`
+            }).where(eq(spareParts.id, item.spare_part_id)).run();
         }
-        // Hapus service_order (service_items akan terhapus otomatis karena ON DELETE CASCADE)
-        const stmt = db.prepare(`DELETE FROM service_orders WHERE id = ?`);
-        stmt.run(id);
+        db.drizzle.delete(serviceOrders).where(eq(serviceOrders.id, Number(id))).run();
         return true;
-    });
-    return tx();
+    })();
 }
 // Photos logic
 function addPhoto(serviceOrderId, photoType, filepath) {
-    const stmt = db.prepare(`INSERT INTO service_photos (service_order_id, photo_type, filepath) VALUES (?, ?, ?)`);
-    const info = stmt.run(serviceOrderId, photoType, filepath);
+    const info = db.drizzle.insert(servicePhotos).values({
+        service_order_id: Number(serviceOrderId),
+        photo_type: photoType,
+        filepath: filepath
+    }).run();
     return info.lastInsertRowid;
 }
 function getPhotos(serviceOrderId) {
-    const stmt = db.prepare(`SELECT * FROM service_photos WHERE service_order_id = ? ORDER BY id ASC`);
-    return stmt.all(serviceOrderId);
+    return db.drizzle.select().from(servicePhotos)
+        .where(eq(servicePhotos.service_order_id, Number(serviceOrderId)))
+        .orderBy(asc(servicePhotos.id)).all();
 }
 function getPhotoById(id) {
-    const stmt = db.prepare(`SELECT * FROM service_photos WHERE id = ?`);
-    return stmt.get(id);
+    return db.drizzle.select().from(servicePhotos).where(eq(servicePhotos.id, Number(id))).get();
 }
 function deletePhoto(id) {
-    const stmt = db.prepare(`DELETE FROM service_photos WHERE id = ?`);
-    stmt.run(id);
+    db.drizzle.delete(servicePhotos).where(eq(servicePhotos.id, Number(id))).run();
     return true;
 }
 // Warranty Logic
 function checkWarranty(deviceId) {
-    const stmt = db.prepare(`
-        SELECT ticket_number, warranty_end_date 
-        FROM service_orders 
-        WHERE device_id = ? AND warranty_end_date IS NOT NULL AND warranty_end_date >= datetime('now') 
-        ORDER BY warranty_end_date DESC 
-        LIMIT 1
-    `);
-    return stmt.get(deviceId) || null;
+    return db.drizzle.select({ ticket_number: serviceOrders.ticket_number, warranty_end_date: serviceOrders.warranty_end_date })
+        .from(serviceOrders)
+        .where(and(eq(serviceOrders.device_id, Number(deviceId)), isNotNull(serviceOrders.warranty_end_date), gte(serviceOrders.warranty_end_date, sql `datetime('now')`)))
+        .orderBy(desc(serviceOrders.warranty_end_date))
+        .limit(1)
+        .get() || null;
 }
 module.exports = {
     generateTicketNumber,

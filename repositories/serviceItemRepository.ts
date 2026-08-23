@@ -1,16 +1,26 @@
 import { ServiceItem } from '../shared/types';
 const db = require('../database/db');
 const paymentRepository = require('./paymentRepository');
+const { serviceItems, spareParts, serviceOrders } = require('../database/drizzleSchema');
+const { eq, asc, sql } = require('drizzle-orm');
 
-function getServiceItems(serviceOrderId) {
-    const stmt = db.prepare(`
-        SELECT si.*, sp.name as part_name 
-        FROM service_items si 
-        LEFT JOIN spare_parts sp ON si.spare_part_id = sp.id 
-        WHERE si.service_order_id = ?
-        ORDER BY si.id ASC
-    `);
-    return stmt.all(serviceOrderId);
+function getServiceItems(serviceOrderId: number | string) {
+    return db.drizzle.select({
+        id: serviceItems.id,
+        service_order_id: serviceItems.service_order_id,
+        item_type: serviceItems.item_type,
+        spare_part_id: serviceItems.spare_part_id,
+        description: serviceItems.description,
+        quantity: serviceItems.quantity,
+        price: serviceItems.price,
+        cost_price: serviceItems.cost_price,
+        total: serviceItems.total,
+        part_name: spareParts.name
+    }).from(serviceItems)
+      .leftJoin(spareParts, eq(serviceItems.spare_part_id, spareParts.id))
+      .where(eq(serviceItems.service_order_id, Number(serviceOrderId)))
+      .orderBy(asc(serviceItems.id))
+      .all();
 }
 
 function addServiceItem(data: ServiceItem) {
@@ -24,7 +34,9 @@ function addServiceItem(data: ServiceItem) {
 
     let cost_price = 0;
     if (item_type === 'Sparepart' && spare_part_id) {
-        const part = db.prepare(`SELECT stock, buy_price FROM spare_parts WHERE id = ?`).get(spare_part_id);
+        const part = db.drizzle.select({ stock: spareParts.stock, buy_price: spareParts.buy_price })
+            .from(spareParts).where(eq(spareParts.id, spare_part_id)).get();
+            
         if (part) {
             if (part.stock < quantity) {
                 throw new Error(`Stok sparepart tidak mencukupi (Tersisa: ${part.stock})`);
@@ -33,55 +45,60 @@ function addServiceItem(data: ServiceItem) {
         }
     }
 
-    const tx = db.transaction(() => {
-        const stmt = db.prepare(`
-            INSERT INTO service_items (service_order_id, item_type, spare_part_id, description, quantity, price, cost_price, total) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-
-        const info = stmt.run(service_order_id, item_type, spare_part_id || null, description, quantity, price, cost_price, total);
+    return db.transaction(() => {
+        const info = db.drizzle.insert(serviceItems).values({
+            service_order_id, 
+            item_type, 
+            spare_part_id: spare_part_id || null, 
+            description, 
+            quantity, 
+            price, 
+            cost_price, 
+            total
+        }).run();
 
         // Update stock if it's a spare part
         if (item_type === 'Sparepart' && spare_part_id) {
-            db.prepare(`UPDATE spare_parts SET stock = stock - ? WHERE id = ?`).run(quantity, spare_part_id);
+            db.drizzle.update(spareParts).set({
+                stock: sql`stock - ${quantity}`
+            }).where(eq(spareParts.id, spare_part_id)).run();
         }
 
         // Recalculate total cost in service_orders
         recalculateServiceTotal(service_order_id);
 
         return info.lastInsertRowid;
-    });
-
-    return tx();
+    })();
 }
 
 function deleteServiceItem(id: number | string) {
-    const item = db.prepare(`SELECT * FROM service_items WHERE id = ?`).get(id);
+    const item = db.drizzle.select().from(serviceItems).where(eq(serviceItems.id, Number(id))).get();
     if (!item) return false;
 
-    const tx = db.transaction(() => {
-        const stmt = db.prepare(`DELETE FROM service_items WHERE id = ?`);
-        stmt.run(id);
+    return db.transaction(() => {
+        db.drizzle.delete(serviceItems).where(eq(serviceItems.id, Number(id))).run();
 
         // Return stock if it was a spare part
         if (item.item_type === 'Sparepart' && item.spare_part_id) {
-            db.prepare(`UPDATE spare_parts SET stock = stock + ? WHERE id = ?`).run(item.quantity, item.spare_part_id);
+            db.drizzle.update(spareParts).set({
+                stock: sql`stock + ${item.quantity}`
+            }).where(eq(spareParts.id, item.spare_part_id)).run();
         }
 
         recalculateServiceTotal(item.service_order_id);
         return true;
-    });
-
-    return tx();
+    })();
 }
 
-function recalculateServiceTotal(serviceOrderId) {
-    const items = db.prepare(`SELECT SUM(total) as grand_total FROM service_items WHERE service_order_id = ?`).get(serviceOrderId);
-    const total = items.grand_total || 0;
+function recalculateServiceTotal(serviceOrderId: number | string) {
+    const items = db.drizzle.select({ grand_total: sql`SUM(${serviceItems.total})` })
+        .from(serviceItems).where(eq(serviceItems.service_order_id, Number(serviceOrderId))).get();
+        
+    const total = items?.grand_total || 0;
 
-    db.prepare(`UPDATE service_orders SET total_cost = ? WHERE id = ?`).run(total, serviceOrderId);
+    db.drizzle.update(serviceOrders).set({ total_cost: total })
+        .where(eq(serviceOrders.id, Number(serviceOrderId))).run();
     
-    // Payment status might change if total cost changes (e.g. from Lunas to DP / Sebagian)
     paymentRepository.updateServicePaymentStatus(serviceOrderId);
 }
 

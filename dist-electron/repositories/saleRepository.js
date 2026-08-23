@@ -1,60 +1,62 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require('../database/db');
+const { sales, saleItems, spareParts } = require('../database/drizzleSchema');
+const { eq, gte, lte, and, desc, sql } = require('drizzle-orm');
 function createSale(saleData, items) {
     return db.transaction(() => {
         // Create Sale
-        const stmt = db.prepare(`
-            INSERT INTO sales (invoice_number, customer_name, total_amount, payment_method)
-            VALUES (?, ?, ?, ?)
-        `);
-        const info = stmt.run(saleData.invoice_number, saleData.customer_name || '', saleData.total_amount, saleData.payment_method);
-        const saleId = info.lastInsertRowid;
+        const saleResult = db.drizzle.insert(sales).values({
+            invoice_number: saleData.invoice_number,
+            customer_name: saleData.customer_name || '',
+            total_amount: saleData.total_amount,
+            payment_method: saleData.payment_method
+        }).run();
+        const saleId = saleResult.lastInsertRowid;
         // Insert Items and Deduct Stock
-        const itemStmt = db.prepare(`
-            INSERT INTO sale_items (sale_id, spare_part_id, quantity, price, total)
-            VALUES (?, ?, ?, ?, ?)
-        `);
-        const stockStmt = db.prepare(`
-            UPDATE spare_parts SET stock = stock - ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?
-        `);
         for (const item of items) {
-            itemStmt.run(saleId, item.spare_part_id, item.quantity, item.price, item.total);
-            stockStmt.run(item.quantity, item.spare_part_id);
+            db.drizzle.insert(saleItems).values({
+                sale_id: saleId,
+                spare_part_id: item.spare_part_id,
+                quantity: item.quantity,
+                price: item.price,
+                total: item.total
+            }).run();
+            db.drizzle.update(spareParts).set({
+                stock: sql `stock - ${item.quantity}`,
+                updated_at: sql `CURRENT_TIMESTAMP`
+            }).where(eq(spareParts.id, item.spare_part_id)).run();
         }
         return saleId;
     })();
 }
 function getSales(startDate, endDate) {
+    const baseQuery = db.drizzle.select().from(sales);
     if (startDate && endDate) {
-        const stmt = db.prepare(`
-            SELECT * FROM sales 
-            WHERE date(created_at, 'localtime') >= ? AND date(created_at, 'localtime') <= ?
-            ORDER BY created_at DESC
-        `);
-        return stmt.all(startDate, endDate);
+        // Using sql to format date
+        const condition = and(gte(sql `date(${sales.created_at}, 'localtime')`, startDate), lte(sql `date(${sales.created_at}, 'localtime')`, endDate));
+        return baseQuery.where(condition).orderBy(desc(sales.created_at)).all();
     }
     else {
-        const stmt = db.prepare(`
-            SELECT * FROM sales 
-            ORDER BY created_at DESC 
-            LIMIT 50
-        `);
-        return stmt.all();
+        return baseQuery.orderBy(desc(sales.created_at)).limit(50).all();
     }
 }
 function getSaleItems(saleId) {
-    const stmt = db.prepare(`
-        SELECT si.*, sp.name as part_name, sp.part_code
-        FROM sale_items si
-        LEFT JOIN spare_parts sp ON si.spare_part_id = sp.id
-        WHERE si.sale_id = ?
-    `);
-    return stmt.all(saleId);
+    return db.drizzle.select({
+        id: saleItems.id,
+        sale_id: saleItems.sale_id,
+        spare_part_id: saleItems.spare_part_id,
+        quantity: saleItems.quantity,
+        price: saleItems.price,
+        total: saleItems.total,
+        part_name: spareParts.name,
+        part_code: spareParts.part_code
+    }).from(saleItems)
+        .leftJoin(spareParts, eq(saleItems.spare_part_id, spareParts.id))
+        .where(eq(saleItems.sale_id, Number(saleId))).all();
 }
 function getSaleById(saleId) {
-    const stmt = db.prepare(`SELECT * FROM sales WHERE id = ?`);
-    return stmt.get(saleId);
+    return db.drizzle.select().from(sales).where(eq(sales.id, Number(saleId))).get();
 }
 module.exports = {
     createSale,

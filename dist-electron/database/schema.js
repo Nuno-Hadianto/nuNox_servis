@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS service_orders (
     service_status TEXT DEFAULT 'Diterima',
     payment_status TEXT DEFAULT 'Belum Bayar',
     completed_date DATETIME,
+    warranty_end_date DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customers(id),

@@ -51,6 +51,7 @@ export const serviceOrders = sqliteTable('service_orders', {
   service_status: text('service_status').default('Diterima'),
   payment_status: text('payment_status').default('Belum Bayar'),
   completed_date: text('completed_date'),
+  warranty_end_date: text('warranty_end_date'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
 });
