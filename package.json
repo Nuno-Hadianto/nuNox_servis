@@ -96,7 +96,9 @@
     },
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "__tests__/e2e.spec.js"
-    ]
+      "__tests__/e2e.spec.js",
+      "__tests__/setup.ts"
+    ],
+    "setupFilesAfterEnv": ["<rootDir>/__tests__/setup.ts"]
   }
 }

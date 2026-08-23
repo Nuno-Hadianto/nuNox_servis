@@ -26,10 +26,26 @@
       </div>
 
   <div class="dashboard-grid">
-      <div class="card chart-container">
-          <h2>Tren Pendapatan (6 Bulan)</h2>
-          <div style="position: relative; height: 300px; width: 100%;">
-              <canvas id="income-chart"></canvas>
+      <div style="display: flex; flex-direction: column; gap: 25px;">
+          <div class="card chart-container">
+              <h2>Tren Pendapatan (6 Bulan)</h2>
+              <div style="position: relative; height: 250px; width: 100%;">
+                  <canvas id="income-chart"></canvas>
+              </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+              <div class="card chart-container">
+                  <h2 style="font-size: 1.1rem; text-align: center;">Distribusi Status Servis</h2>
+                  <div style="position: relative; height: 220px; width: 100%;">
+                      <canvas id="status-chart"></canvas>
+                  </div>
+              </div>
+              <div class="card chart-container">
+                  <h2 style="font-size: 1.1rem; text-align: center;">Top 5 Sparepart</h2>
+                  <div style="position: relative; height: 220px; width: 100%;">
+                      <canvas id="top-parts-chart"></canvas>
+                  </div>
+              </div>
           </div>
       </div>
 
@@ -129,11 +145,15 @@ const stats = ref<DashboardStats>({
   incomeMonth: 0,
   labaBersih: 0,
   chartData: { labels: [], values: [] },
+  serviceStatusChart: { labels: [], values: [] },
+  topPartsChart: { labels: [], values: [] },
   lowStockParts: [],
   abandonedServices: []
 })
 
 let chartInstance: any = null
+let statusChartInstance: any = null
+let topPartsChartInstance: any = null
 
 const formatCurrency = (amount: number | string | undefined | null) => {
   return 'Rp ' + parseInt(String(amount || 0)).toLocaleString('id-ID')
@@ -167,6 +187,8 @@ const loadDashboard = async () => {
           const data = await window.api.getDashboardStats()
           stats.value = data
           renderChart(data.chartData)
+          if (data.serviceStatusChart) renderStatusChart(data.serviceStatusChart)
+          if (data.topPartsChart) renderTopPartsChart(data.topPartsChart)
       } catch (error) {
           console.error("Failed to load dashboard stats:", error)
       }
@@ -188,8 +210,10 @@ const renderChart = (chartData: { labels: string[], values: number[] }) => {
           datasets: [{
               label: 'Pendapatan',
               data: chartData.values,
-              backgroundColor: '#4f46e5',
-              borderRadius: 4
+              backgroundColor: 'rgba(99, 102, 241, 0.8)',
+              borderColor: 'rgba(99, 102, 241, 1)',
+              borderWidth: 1,
+              borderRadius: 6
           }]
       },
       options: {
@@ -201,11 +225,83 @@ const renderChart = (chartData: { labels: string[], values: number[] }) => {
           scales: {
               y: { 
                   beginAtZero: true,
+                  grid: { color: 'rgba(255, 255, 255, 0.1)' },
                   ticks: {
+                      color: 'rgba(255, 255, 255, 0.7)',
                       callback: function(value: number | string) {
                           return 'Rp ' + value.toLocaleString('id-ID')
                       }
                   }
+              },
+              x: {
+                  grid: { display: false },
+                  ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+              }
+          }
+      }
+  })
+}
+
+const renderStatusChart = (chartData: { labels: string[], values: number[] }) => {
+  if (statusChartInstance) statusChartInstance.destroy();
+  const ctx = document.getElementById('status-chart') as HTMLCanvasElement;
+  if (!ctx) return;
+
+  statusChartInstance = new window.Chart(ctx, {
+      type: 'doughnut',
+      data: {
+          labels: chartData.labels,
+          datasets: [{
+              data: chartData.values,
+              backgroundColor: [
+                  '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
+              ],
+              borderWidth: 0,
+              hoverOffset: 4
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: { position: 'right', labels: { color: 'rgba(255,255,255,0.8)' } }
+          }
+      }
+  })
+}
+
+const renderTopPartsChart = (chartData: { labels: string[], values: number[] }) => {
+  if (topPartsChartInstance) topPartsChartInstance.destroy();
+  const ctx = document.getElementById('top-parts-chart') as HTMLCanvasElement;
+  if (!ctx) return;
+
+  topPartsChartInstance = new window.Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: chartData.labels,
+          datasets: [{
+              label: 'Terjual',
+              data: chartData.values,
+              backgroundColor: 'rgba(16, 185, 129, 0.8)',
+              borderRadius: 4
+          }]
+      },
+      options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: { display: false }
+          },
+          scales: {
+              x: { 
+                  beginAtZero: true, 
+                  grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                  ticks: { color: 'rgba(255, 255, 255, 0.7)', precision: 0 }
+              },
+              y: {
+                  grid: { display: false },
+                  ticks: { color: 'rgba(255, 255, 255, 0.8)' }
               }
           }
       }

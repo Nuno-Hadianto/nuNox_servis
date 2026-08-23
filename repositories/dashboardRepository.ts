@@ -97,6 +97,36 @@ function getDashboardStats() {
         ...completedNotPickedQuery.all()
     ];
 
+    // Service Status Distribution (Donut Chart)
+    const statusQuery = db.prepare(`
+        SELECT service_status, COUNT(*) as count 
+        FROM service_orders 
+        GROUP BY service_status
+    `);
+    const statusData = statusQuery.all();
+    const serviceStatusChart = {
+        labels: statusData.map((s: any) => s.service_status),
+        values: statusData.map((s: any) => s.count)
+    };
+
+    // Top 5 Spare Parts (Bar Chart)
+    const topPartsQuery = db.prepare(`
+        SELECT sp.name, SUM(total_qty) as qty FROM (
+            SELECT spare_part_id, quantity as total_qty FROM sale_items
+            UNION ALL
+            SELECT spare_part_id, quantity as total_qty FROM service_items WHERE item_type = 'Sparepart'
+        ) items
+        JOIN spare_parts sp ON sp.id = items.spare_part_id
+        GROUP BY sp.id
+        ORDER BY qty DESC
+        LIMIT 5
+    `);
+    const topPartsData = topPartsQuery.all();
+    const topPartsChart = {
+        labels: topPartsData.map((p: any) => p.name),
+        values: topPartsData.map((p: any) => p.qty)
+    };
+
     return {
         todayServices,
         inProgress,
@@ -104,6 +134,8 @@ function getDashboardStats() {
         incomeMonth,
         labaBersih,
         chartData: { labels: chartLabels, values: chartValues },
+        serviceStatusChart,
+        topPartsChart,
         lowStockParts,
         abandonedServices
     };

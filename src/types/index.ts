@@ -28,12 +28,11 @@ export interface DashboardStats {
   completed: number;
   incomeMonth: number;
   labaBersih: number;
-  chartData: {
-    labels: string[];
-    values: number[];
-  };
-  lowStockParts: LowStockPart[];
-  abandonedServices?: AbandonedService[];
+  chartData: { labels: string[], values: number[] };
+  serviceStatusChart?: { labels: string[], values: number[] };
+  topPartsChart?: { labels: string[], values: number[] };
+  lowStockParts: Part[];
+  abandonedServices: AbandonedService[];
 }
 
 export interface Customer {

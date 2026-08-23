@@ -312,6 +312,10 @@ a {
   outline: none;
 }
 
+.btn:active {
+  transform: scale(0.95);
+}
+
 .btn-sm {
   padding: 6px 14px;
   font-size: 0.85rem;
@@ -363,7 +367,9 @@ a {
 }
 
 .card:hover {
-  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
 }
 
 /* Stats Dashboard specifically */
