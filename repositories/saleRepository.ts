@@ -3,7 +3,7 @@ const db = require('../database/db');
 const { sales, saleItems, spareParts } = require('../database/drizzleSchema');
 const { eq, gte, lte, and, desc, sql } = require('drizzle-orm');
 
-function createSale(saleData: any, items: any[]) {
+function createSale(saleData: { invoice_number: string, customer_name?: string, total_amount: number, payment_method: string }, items: { spare_part_id: number, quantity: number, price: number, total: number }[]) {
     return db.transaction(() => {
         // Create Sale
         const saleResult = db.drizzle.insert(sales).values({

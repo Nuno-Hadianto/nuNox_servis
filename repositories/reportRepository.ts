@@ -2,7 +2,7 @@ const db = require('../database/db');
 const { payments, serviceOrders, customers, devices, serviceItems, spareParts } = require('../database/drizzleSchema');
 const { sql, and, gte, lte, eq, like } = require('drizzle-orm');
 
-function getIncomeReport(startDate: any, endDate: any) {
+function getIncomeReport(startDate: string, endDate: string) {
     const report = db.drizzle.select({
         total_income: sql`SUM(${payments.amount})`,
         transaction_count: sql`COUNT(${payments.id})`
@@ -15,7 +15,7 @@ function getIncomeReport(startDate: any, endDate: any) {
     return report || { total_income: 0, transaction_count: 0 };
 }
 
-function getCompletedServices(startDate: any, endDate: any) {
+function getCompletedServices(startDate: string, endDate: string) {
     return db.drizzle.select({
         ticket_number: serviceOrders.ticket_number,
         customer_name: customers.name,
@@ -34,7 +34,7 @@ function getCompletedServices(startDate: any, endDate: any) {
       )).all();
 }
 
-function getTopSpareparts(startDate: any, endDate: any) {
+function getTopSpareparts(startDate: string, endDate: string) {
     return db.drizzle.select({
         part_name: spareParts.name,
         total_sold: sql`SUM(${serviceItems.quantity})`

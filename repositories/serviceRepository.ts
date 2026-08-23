@@ -121,7 +121,7 @@ function getServiceByTicketNumber(ticketNumber: string) {
         .where(eq(serviceOrders.ticket_number, ticketNumber)).get();
 }
 
-function getServiceStatusHistory(serviceOrderId: any) {
+function getServiceStatusHistory(serviceOrderId: number | string) {
     return db.drizzle.select().from(serviceStatusHistory)
         .where(eq(serviceStatusHistory.service_order_id, Number(serviceOrderId)))
         .orderBy(asc(serviceStatusHistory.id)).all();
@@ -155,7 +155,7 @@ function addService(data: ServiceOrder) {
     })();
 }
 
-function updateServiceStatus(id: any, status: any, notes: any, warrantyDays: any = 0) {
+function updateServiceStatus(id: number | string, status: string, notes: string, warrantyDays: number = 0) {
     return db.transaction(() => {
         db.drizzle.update(serviceOrders).set({
             service_status: status,
@@ -220,7 +220,7 @@ function deleteService(id: number | string) {
 }
 
 // Photos logic
-function addPhoto(serviceOrderId: any, photoType: any, filepath: any) {
+function addPhoto(serviceOrderId: number | string, photoType: string, filepath: string) {
     const info = db.drizzle.insert(servicePhotos).values({
         service_order_id: Number(serviceOrderId),
         photo_type: photoType,
@@ -229,23 +229,23 @@ function addPhoto(serviceOrderId: any, photoType: any, filepath: any) {
     return info.lastInsertRowid;
 }
 
-function getPhotos(serviceOrderId: any) {
+function getPhotos(serviceOrderId: number | string) {
     return db.drizzle.select().from(servicePhotos)
         .where(eq(servicePhotos.service_order_id, Number(serviceOrderId)))
         .orderBy(asc(servicePhotos.id)).all();
 }
 
-function getPhotoById(id: any) {
+function getPhotoById(id: number | string) {
     return db.drizzle.select().from(servicePhotos).where(eq(servicePhotos.id, Number(id))).get();
 }
 
-function deletePhoto(id: any) {
+function deletePhoto(id: number | string) {
     db.drizzle.delete(servicePhotos).where(eq(servicePhotos.id, Number(id))).run();
     return true;
 }
 
 // Warranty Logic
-function checkWarranty(deviceId: any) {
+function checkWarranty(deviceId: number | string) {
     return db.drizzle.select({ ticket_number: serviceOrders.ticket_number, warranty_end_date: serviceOrders.warranty_end_date })
         .from(serviceOrders)
         .where(and(

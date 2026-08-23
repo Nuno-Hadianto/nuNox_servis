@@ -60,9 +60,9 @@ function importParts(dataArray) {
             if (!name)
                 continue;
             const category = row['Kategori'] || row['category'] || '';
-            const stock = parseInt(row['Stok'] || row['stock'] || 0, 10);
-            const buy_price = parseFloat(row['Harga Beli'] || row['buy_price'] || 0);
-            const sell_price = parseFloat(row['Harga Jual'] || row['sell_price'] || 0);
+            const stock = parseInt(String(row['Stok'] || row['stock'] || 0), 10);
+            const buy_price = parseFloat(String(row['Harga Beli'] || row['buy_price'] || 0));
+            const sell_price = parseFloat(String(row['Harga Jual'] || row['sell_price'] || 0));
             const unit = row['Satuan'] || row['unit'] || 'pcs';
             const notes = row['Keterangan'] || row['notes'] || '';
             if (part_code) {

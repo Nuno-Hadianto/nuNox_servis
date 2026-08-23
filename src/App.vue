@@ -1,22 +1,36 @@
 <template>
   <div v-if="!isLoggedIn" class="login-screen fade-in">
     <div class="login-card">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin-bottom: 25px;">
-            <img src="/img/logo.png" alt="nuNox_servis Logo" style="width: 100%; max-width: 280px; height: auto; object-fit: contain;" />
-            <h2 style="margin: 0; color: var(--text-primary); font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">nuNox_<span style="color: var(--primary);">servis</span></h2>
+      <div class="login-header">
+        <img src="/img/logo.png" alt="nuNox_servis Logo" class="login-logo" />
+        <h2 class="login-title">nuNox_<span class="brand-accent">servis</span></h2>
+      </div>
+      <form @submit.prevent="handleLogin" class="login-form">
+        <div class="form-group text-left">
+          <label>Username</label>
+          <input
+            type="text"
+            class="form-control"
+            v-model="loginForm.username"
+            required
+            autocomplete="off"
+            placeholder="Masukkan username"
+          />
         </div>
-        <form @submit.prevent="handleLogin" style="display: flex; flex-direction: column; gap: 20px;">
-            <div class="form-group" style="text-align: left;">
-                <label>Username</label>
-                <input type="text" class="form-control" v-model="loginForm.username" required autocomplete="off" placeholder="Masukkan username">
-            </div>
-            <div class="form-group" style="text-align: left;">
-                <label>Password</label>
-                <input type="password" class="form-control" v-model="loginForm.password" required autocomplete="off" placeholder="Masukkan password">
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Masuk</button>
-        </form>
-        <p style="margin-top: 25px; font-size: 0.85rem; color: var(--text-muted);">Default admin: admin / admin123</p>
+        <div class="form-group text-left">
+          <label>Password</label>
+          <input
+            type="password"
+            class="form-control"
+            v-model="loginForm.password"
+            required
+            autocomplete="off"
+            placeholder="Masukkan password"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mt-2">Masuk</button>
+      </form>
+      <p class="login-hint">Default admin: admin / admin123</p>
     </div>
   </div>
 
@@ -26,16 +40,16 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <Topbar :title="pageTitle" @toggle-theme="toggleTheme" />
+      <Topbar :title="pageTitle" @toggle-theme="toggleTheme" />
 
-        <div class="content-area">
-            <!-- Router View render halaman yang aktif -->
-            <router-view v-slot="{ Component }">
-                <transition name="fade" mode="out-in">
-                    <component :is="Component" />
-                </transition>
-            </router-view>
-        </div>
+      <div class="content-area">
+        <!-- Router View render halaman yang aktif -->
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </div>
     </main>
   </div>
 
@@ -62,47 +76,47 @@ let barcodeBuffer = ''
 let barcodeTimeout: any = null
 
 const handleGlobalKeydown = async (e: KeyboardEvent) => {
-    // Abaikan jika mengetik di input, textarea, select
-    const target = e.target as HTMLElement
-    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable) {
-        return
-    }
+  // Abaikan jika mengetik di input, textarea, select
+  const target = e.target as HTMLElement
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable) {
+    return
+  }
 
-    if (e.key === 'Escape') {
-        const closeBtn = document.querySelector('.modal.show .close-modal') as HTMLElement
-        if (closeBtn) closeBtn.click()
-    }
+  if (e.key === 'Escape') {
+    const closeBtn = document.querySelector('.modal.show .close-modal') as HTMLElement
+    if (closeBtn) closeBtn.click()
+  }
 
-    if (e.key === 'Enter') {
-        if (barcodeBuffer.startsWith('NSV-')) {
-            // Valid barcode format
-            try {
-                if (window.api && window.api.getServiceByTicket) {
-                    const svc = await window.api.getServiceByTicket(barcodeBuffer)
-                    if (svc && svc.id) {
-                        Toast.fire({ icon: 'success', title: 'Tiket ditemukan!' })
-                        router.push('/services/' + svc.id)
-                    } else {
-                        Toast.fire({ icon: 'error', title: 'Tiket tidak ditemukan' })
-                    }
-                }
-            } catch (err) {
-                console.error(err)
-            }
+  if (e.key === 'Enter') {
+    if (barcodeBuffer.startsWith('NSV-')) {
+      // Valid barcode format
+      try {
+        if (window.api && window.api.getServiceByTicket) {
+          const svc = await window.api.getServiceByTicket(barcodeBuffer)
+          if (svc && svc.id) {
+            Toast.fire({ icon: 'success', title: 'Tiket ditemukan!' })
+            router.push('/services/' + svc.id)
+          } else {
+            Toast.fire({ icon: 'error', title: 'Tiket tidak ditemukan' })
+          }
         }
-        barcodeBuffer = ''
-        return
+      } catch (err) {
+        console.error(err)
+      }
     }
+    barcodeBuffer = ''
+    return
+  }
 
-    // Hanya tangkap karakter alphanumeric dan dash
-    if (/^[-a-zA-Z0-9]$/.test(e.key)) {
-        barcodeBuffer += e.key
-        
-        if (barcodeTimeout) clearTimeout(barcodeTimeout)
-        barcodeTimeout = setTimeout(() => {
-            barcodeBuffer = ''
-        }, 50) // Scanner ngetik sangat cepat (< 50ms)
-    }
+  // Hanya tangkap karakter alphanumeric dan dash
+  if (/^[-a-zA-Z0-9]$/.test(e.key)) {
+    barcodeBuffer += e.key
+
+    if (barcodeTimeout) clearTimeout(barcodeTimeout)
+    barcodeTimeout = setTimeout(() => {
+      barcodeBuffer = ''
+    }, 50) // Scanner ngetik sangat cepat (< 50ms)
+  }
 }
 
 const loginForm = reactive({
@@ -114,7 +128,6 @@ const pageTitle = computed<string>(() => {
   return (route.meta.title as string) || 'nuNox_servis'
 })
 
-
 onMounted(() => {
   if (window.api && window.api.appReady) {
     window.api.appReady()
@@ -124,9 +137,9 @@ onMounted(() => {
   // Initialize theme from localStorage
   const savedTheme = localStorage.getItem('theme')
   if (savedTheme === 'dark') {
-      document.body.classList.add('dark-mode')
+    document.body.classList.add('dark-mode')
   } else if (savedTheme === 'light') {
-      document.body.classList.remove('dark-mode')
+    document.body.classList.remove('dark-mode')
   }
 })
 
@@ -139,11 +152,11 @@ const handleLogin = async () => {
     const res = await window.api.login(loginForm.username, loginForm.password)
     if (res.success && res.user) {
       authStore.login(res.user)
-      
+
       // Auto-login SweetAlert
       Toast.fire({
-          icon: 'success',
-          title: `Selamat datang, ${res.user.username}!`
+        icon: 'success',
+        title: `Selamat datang, ${res.user.username}!`
       })
       router.push('/')
     } else {
@@ -181,5 +194,47 @@ const toggleTheme = () => {
 .fade-leave-to {
   opacity: 0;
   transform: translateX(15px);
+}
+
+/* Login specific styles */
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 25px;
+}
+.login-logo {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  object-fit: contain;
+}
+.login-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.login-hint {
+  margin-top: 25px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.text-left {
+  text-align: left;
+}
+.w-100 {
+  width: 100%;
+}
+.mt-2 {
+  margin-top: 10px;
 }
 </style>

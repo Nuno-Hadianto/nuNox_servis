@@ -1,11 +1,11 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const CustomerSchema = z.object({
   name: z.string().min(1, 'Nama pelanggan wajib diisi.').max(100, 'Nama terlalu panjang.'),
   phone: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
-});
+  notes: z.string().optional().nullable()
+})
 
 export const SparepartSchema = z.object({
   part_code: z.string().optional().nullable(),
@@ -15,8 +15,8 @@ export const SparepartSchema = z.object({
   buy_price: z.number().min(0, 'Harga beli tidak boleh negatif.').optional().default(0),
   sell_price: z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0),
   unit: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
-});
+  notes: z.string().optional().nullable()
+})
 
 export const DeviceSchema = z.object({
   customer_id: z.number().int('ID Pelanggan tidak valid.'),
@@ -27,8 +27,8 @@ export const DeviceSchema = z.object({
   color: z.string().optional().nullable(),
   accessories: z.string().optional().nullable(),
   physical_condition: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
-});
+  notes: z.string().optional().nullable()
+})
 
 export const ServiceOrderSchema = z.object({
   customer_id: z.number().int('ID Pelanggan tidak valid.'),
@@ -39,36 +39,36 @@ export const ServiceOrderSchema = z.object({
   diagnosis_result: z.string().optional().nullable(),
   actions_taken: z.string().optional().nullable(),
   technician_notes: z.string().optional().nullable(),
-  estimated_cost: z.number().min(0, 'Estimasi biaya tidak boleh negatif.').default(0),
-});
+  estimated_cost: z.number().min(0, 'Estimasi biaya tidak boleh negatif.').default(0)
+})
 
 export const ServiceItemSchema = z.object({
   service_order_id: z.number().int('ID Servis tidak valid.'),
   item_type: z.enum(['Jasa', 'Sparepart', 'Biaya lainnya', 'Diskon'] as const, {
-      message: 'Jenis item tidak valid.'
+    message: 'Jenis item tidak valid.'
   }),
   spare_part_id: z.number().int().optional().nullable(),
   description: z.string().min(1, 'Deskripsi wajib diisi.'),
   quantity: z.number().int('Kuantitas harus berupa bilangan bulat.').min(1, 'Kuantitas minimal 1.'),
-  price: z.number().min(0, 'Harga tidak boleh negatif.'),
-});
+  price: z.number().min(0, 'Harga tidak boleh negatif.')
+})
 
 export const PaymentSchema = z.object({
   service_order_id: z.number().int('ID Servis tidak valid.'),
   amount: z.number().min(1, 'Jumlah pembayaran minimal 1.'),
   payment_method: z.string().min(1, 'Metode pembayaran wajib diisi.'),
-  notes: z.string().optional().nullable(),
-});
+  notes: z.string().optional().nullable()
+})
 
 export const validateData = (schema: z.ZodSchema<any>, data: any) => {
   try {
-      return schema.parse(data);
+    return schema.parse(data)
   } catch (error) {
-      if (error instanceof z.ZodError) {
-          // Flatten error messages to a single readable string
-          const errMessages = (error as any).issues.map((err: any) => err.message).join(' | ');
-          throw new Error(`Validasi Gagal: ${errMessages}`);
-      }
-      throw error;
+    if (error instanceof z.ZodError) {
+      // Flatten error messages to a single readable string
+      const errMessages = (error as any).issues.map((err: any) => err.message).join(' | ')
+      throw new Error(`Validasi Gagal: ${errMessages}`)
+    }
+    throw error
   }
-};
+}

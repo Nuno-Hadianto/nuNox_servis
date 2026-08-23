@@ -66,7 +66,7 @@ function getDashboardStats() {
         const yyyymm = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
         const monthName = d.toLocaleString('id-ID', { month: 'short' });
         
-        const row = chartDataRaw.find((r: any) => r.month === yyyymm);
+        const row = chartDataRaw.find((r: { month: string; total: number }) => r.month === yyyymm);
         chartLabels.push(monthName);
         chartValues.push(row ? row.total : 0);
     }
@@ -134,8 +134,8 @@ function getDashboardStats() {
     `).all();
     
     const serviceStatusChart = {
-        labels: statusData.map((s: any) => s.service_status),
-        values: statusData.map((s: any) => s.count)
+        labels: statusData.map((s: { service_status: string; count: number }) => s.service_status),
+        values: statusData.map((s: { service_status: string; count: number }) => s.count)
     };
 
     // Top 5 Spare Parts (Bar Chart) - Complex union all
@@ -152,8 +152,8 @@ function getDashboardStats() {
     `).all();
     
     const topPartsChart = {
-        labels: topPartsData.map((p: any) => p.name),
-        values: topPartsData.map((p: any) => p.qty)
+        labels: topPartsData.map((p: { name: string; qty: number }) => p.name),
+        values: topPartsData.map((p: { name: string; qty: number }) => p.qty)
     };
 
     return {

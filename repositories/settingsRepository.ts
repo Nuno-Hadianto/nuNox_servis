@@ -3,18 +3,18 @@ const db = require('../database/db');
 const { settings } = require('../database/drizzleSchema');
 const { sql } = require('drizzle-orm');
 
-function getSettings() {
+function getSettings(): Record<string, string | null> {
     const rows = db.drizzle.select({ key: settings.key, value: settings.value }).from(settings).all();
-    const result: any = {};
-    rows.forEach((row: any) => {
+    const result: Record<string, string | null> = {};
+    rows.forEach((row: { key: string; value: string | null }) => {
         result[row.key] = row.value;
     });
     return result;
 }
 
-function updateSettings(data: any) {
+function updateSettings(data: Record<string, string | number | boolean>) {
     // We can still use better-sqlite3 transactions if needed, or simply run multiple queries
-    const transaction = db.transaction((settingsData: any) => {
+    const transaction = db.transaction((settingsData: Record<string, string | number | boolean>) => {
         for (const [key, value] of Object.entries(settingsData)) {
             db.drizzle.insert(settings)
                 .values({ key, value: String(value) })

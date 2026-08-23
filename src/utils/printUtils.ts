@@ -1,6 +1,11 @@
-export const generateNotaHtml = (settings: any, service: any, logoBase64: any, qrBase64: any = null) => {
-    settings = settings || {};
-    return `
+export const generateNotaHtml = (
+  settings: any,
+  service: any,
+  logoBase64: any,
+  qrBase64: any = null
+) => {
+  settings = settings || {}
+  return `
         <div class="print-nota nota-wrapper">
             <!-- Header -->
             <div class="nota-header">
@@ -25,8 +30,8 @@ export const generateNotaHtml = (settings: any, service: any, logoBase64: any, q
                     <h4 class="nota-col-title">Data Pelanggan</h4>
                     <table class="nota-table">
                         <tr><td class="nota-label">Nama</td><td>: <strong>${service ? service.customer_name : '.......................'}</strong></td></tr>
-                        <tr><td class="nota-label">No. HP</td><td>: ${service ? (service.customer_phone || '-') : '.......................'}</td></tr>
-                        <tr><td class="nota-label">Alamat</td><td>: ${service ? (service.customer_address || '-') : '.......................'}</td></tr>
+                        <tr><td class="nota-label">No. HP</td><td>: ${service ? service.customer_phone || '-' : '.......................'}</td></tr>
+                        <tr><td class="nota-label">Alamat</td><td>: ${service ? service.customer_address || '-' : '.......................'}</td></tr>
                     </table>
                 </div>
                 
@@ -36,7 +41,7 @@ export const generateNotaHtml = (settings: any, service: any, logoBase64: any, q
                     <table class="nota-table">
                         <tr><td class="nota-label">Jenis</td><td>: <strong>${service ? service.device_type : '.......................'}</strong></td></tr>
                         <tr><td class="nota-label">Merk/Tipe</td><td>: ${service ? (service.brand || '') + ' ' + (service.model || '') : '.......................'}</td></tr>
-                        <tr><td class="nota-label">SN</td><td>: ${service ? (service.serial_number || '-') : '.......................'}</td></tr>
+                        <tr><td class="nota-label">SN</td><td>: ${service ? service.serial_number || '-' : '.......................'}</td></tr>
                     </table>
                 </div>
                 
@@ -68,21 +73,30 @@ export const generateNotaHtml = (settings: any, service: any, logoBase64: any, q
                 </div>
             </div>
         </div>
-    `;
-};
+    `
+}
 
-export const generateInvoiceHtml = (settings: any, service: any, items: any, payments: any, logoBase64: any) => {
-    settings = settings || {};
-    const formatRp = (val: any) => new Intl.NumberFormat('id-ID', {
-        style: 'currency', currency: 'IDR', minimumFractionDigits: 0
-    }).format(val || 0);
-    
-    let itemsHtml = '';
-    if (items && items.length > 0) {
-        items.forEach((i: any) => {
-            let desc = i.description;
-            if (i.item_type === 'Sparepart') desc = i.part_name || desc;
-            itemsHtml += `
+export const generateInvoiceHtml = (
+  settings: any,
+  service: any,
+  items: any,
+  payments: any,
+  logoBase64: any
+) => {
+  settings = settings || {}
+  const formatRp = (val: any) =>
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(val || 0)
+
+  let itemsHtml = ''
+  if (items && items.length > 0) {
+    items.forEach((i: any) => {
+      let desc = i.description
+      if (i.item_type === 'Sparepart') desc = i.part_name || desc
+      itemsHtml += `
                 <tr class="inv-tr">
                     <td class="inv-td-desc">
                         <div class="inv-item-title">${desc}</div>
@@ -90,23 +104,23 @@ export const generateInvoiceHtml = (settings: any, service: any, items: any, pay
                     </td>
                     <td class="inv-td-amount">${formatRp(i.subtotal || i.total)}</td>
                 </tr>
-            `;
-        });
-    } else {
-        itemsHtml = `<tr><td colspan="2" class="inv-empty">Belum ada rincian biaya.</td></tr>`;
-    }
-    
-    let totalPaid = 0;
-    if (payments && payments.length > 0) {
-        totalPaid = payments.reduce((acc: any, p: any) => acc + p.amount, 0);
-    }
-    let remaining = (service.total_cost || 0) - totalPaid;
-    
-    const logoHtml = logoBase64 
-        ? `<img src="${logoBase64}" alt="Logo" class="inv-logo" />`
-        : `<div class="inv-logo-placeholder">${(settings.business_name || 'N').charAt(0)}</div>`;
-    
-    return `
+            `
+    })
+  } else {
+    itemsHtml = `<tr><td colspan="2" class="inv-empty">Belum ada rincian biaya.</td></tr>`
+  }
+
+  let totalPaid = 0
+  if (payments && payments.length > 0) {
+    totalPaid = payments.reduce((acc: any, p: any) => acc + p.amount, 0)
+  }
+  let remaining = (service.total_cost || 0) - totalPaid
+
+  const logoHtml = logoBase64
+    ? `<img src="${logoBase64}" alt="Logo" class="inv-logo" />`
+    : `<div class="inv-logo-placeholder">${(settings.business_name || 'N').charAt(0)}</div>`
+
+  return `
         <div class="print-invoice invoice-box">
             <!-- Header Section -->
             <div class="inv-header">
@@ -193,12 +207,12 @@ export const generateInvoiceHtml = (settings: any, service: any, items: any, pay
                 </div>
             </div>
         </div>
-    `;
-};
+    `
+}
 
 export const generateBlankNotaHtml = (settings: any, logoBase64: any) => {
-    settings = settings || {};
-    return `
+  settings = settings || {}
+  return `
         <div class="print-nota nota-wrapper">
             <!-- Header -->
             <div class="nota-header">
@@ -265,29 +279,39 @@ export const generateBlankNotaHtml = (settings: any, logoBase64: any) => {
                 ${settings.receipt_footer || 'Bawa nota ini saat pengambilan barang.'}
             </div>
         </div>
-    `;
-};
+    `
+}
 
-export const generateSaleReceiptHtml = (settings: any, sale: any, items: any, logoBase64: any, cashGiven?: number, changeAmount?: number) => {
-    settings = settings || {};
-    const formatRp = (val: any) => new Intl.NumberFormat('id-ID', {
-        style: 'currency', currency: 'IDR', minimumFractionDigits: 0
-    }).format(val || 0);
+export const generateSaleReceiptHtml = (
+  settings: any,
+  sale: any,
+  items: any,
+  logoBase64: any,
+  cashGiven?: number,
+  changeAmount?: number
+) => {
+  settings = settings || {}
+  const formatRp = (val: any) =>
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(val || 0)
 
-    let itemsHtml = '';
-    if (items && items.length > 0) {
-        items.forEach((i: any) => {
-            itemsHtml += `
+  let itemsHtml = ''
+  if (items && items.length > 0) {
+    items.forEach((i: any) => {
+      itemsHtml += `
                 <div>${i.part_name || i.spare_part_id || 'Item'}</div>
                 <div class="thm-row thm-text-sm" style="margin-bottom: 2px;">
                     <span class="thm-val">${i.quantity} x ${formatRp(i.price)}</span>
-                    <span class="thm-val">${formatRp(i.total || (i.quantity * i.price))}</span>
+                    <span class="thm-val">${formatRp(i.total || i.quantity * i.price)}</span>
                 </div>
-            `;
-        });
-    }
+            `
+    })
+  }
 
-    let paymentHtml = `
+  let paymentHtml = `
             <div class="thm-row thm-bold" style="font-size: 11pt;">
                 <span class="thm-label">TOTAL:</span>
                 <span class="thm-val">${formatRp(sale.total_amount)}</span>
@@ -296,10 +320,10 @@ export const generateSaleReceiptHtml = (settings: any, sale: any, items: any, lo
                 <span class="thm-label">Pembayaran:</span>
                 <span class="thm-val">${sale.payment_method}</span>
             </div>
-    `;
+    `
 
-    if (sale.payment_method === 'Tunai' && cashGiven !== undefined && changeAmount !== undefined) {
-        paymentHtml += `
+  if (sale.payment_method === 'Tunai' && cashGiven !== undefined && changeAmount !== undefined) {
+    paymentHtml += `
             <div class="thm-row">
                 <span class="thm-label">Tunai:</span>
                 <span class="thm-val">${formatRp(cashGiven)}</span>
@@ -308,10 +332,10 @@ export const generateSaleReceiptHtml = (settings: any, sale: any, items: any, lo
                 <span class="thm-label">Kembali:</span>
                 <span class="thm-val">${formatRp(changeAmount)}</span>
             </div>
-        `;
-    }
+        `
+  }
 
-    return `
+  return `
         <div class="print-thermal">
             <!-- Header -->
             <div class="thm-center">
@@ -333,12 +357,16 @@ export const generateSaleReceiptHtml = (settings: any, sale: any, items: any, lo
                 <span class="thm-label">Tgl:</span>
                 <span class="thm-val">${sale ? new Date(sale.created_at + 'Z').toLocaleString('id-ID') : '-'}</span>
             </div>
-            ${sale && sale.customer_name ? `
+            ${
+              sale && sale.customer_name
+                ? `
             <div class="thm-row">
                 <span class="thm-label">Plg:</span>
                 <span class="thm-val">${sale.customer_name}</span>
             </div>
-            ` : ''}
+            `
+                : ''
+            }
             
             <div class="thm-dashed"></div>
             
@@ -355,12 +383,12 @@ export const generateSaleReceiptHtml = (settings: any, sale: any, items: any, lo
             </div>
             <div class="thm-gap"></div>
         </div>
-    `;
-};
+    `
+}
 
 export const generateBlankReceiptHtml = (settings: any, logoBase64: any) => {
-    settings = settings || {};
-    return `
+  settings = settings || {}
+  return `
         <div class="print-receipt rcpt-wrapper">
             <div class="rcpt-header">
                 <div>
@@ -418,19 +446,32 @@ export const generateBlankReceiptHtml = (settings: any, logoBase64: any) => {
                 <p style="margin: 0;">${settings.receipt_footer || 'Terima kasih atas kepercayaannya menggunakan jasa kami.'}</p>
             </div>
         </div>
-    `;
-};
+    `
+}
 
-export const generateReportHtml = (settings: any, services: any, startDate: any, endDate: any, totalOmset: any, totalModal: any, netProfit: any, logoBase64: any, topParts: any = []) => {
-    settings = settings || {};
-    const formatRp = (val: any) => new Intl.NumberFormat('id-ID', {
-        style: 'currency', currency: 'IDR', minimumFractionDigits: 0
-    }).format(val || 0);
+export const generateReportHtml = (
+  settings: any,
+  services: any,
+  startDate: any,
+  endDate: any,
+  totalOmset: any,
+  totalModal: any,
+  netProfit: any,
+  logoBase64: any,
+  topParts: any = []
+) => {
+  settings = settings || {}
+  const formatRp = (val: any) =>
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(val || 0)
 
-    let rowsHtml = '';
-    if (services && services.length > 0) {
-        services.forEach((s: any, idx: any) => {
-            rowsHtml += `
+  let rowsHtml = ''
+  if (services && services.length > 0) {
+    services.forEach((s: any, idx: any) => {
+      rowsHtml += `
                 <tr>
                     <td class="rep-td-center">${idx + 1}</td>
                     <td class="rep-td">${s.ticket_number}</td>
@@ -439,38 +480,42 @@ export const generateReportHtml = (settings: any, services: any, startDate: any,
                     <td class="rep-td">${s.brand || ''} ${s.model || ''}</td>
                     <td class="rep-td-right">${formatRp(s.total_cost)}</td>
                 </tr>
-            `;
-        });
-    } else {
-        rowsHtml = `<tr><td colspan="6" class="rep-td-center" style="padding: 15px;">Tidak ada transaksi</td></tr>`;
-    }
+            `
+    })
+  } else {
+    rowsHtml = `<tr><td colspan="6" class="rep-td-center" style="padding: 15px;">Tidak ada transaksi</td></tr>`
+  }
 
-    let topPartsHtml = '';
-    if (topParts && topParts.length > 0) {
-        topPartsHtml = `
+  let topPartsHtml = ''
+  if (topParts && topParts.length > 0) {
+    topPartsHtml = `
             <div style="margin-top: 30px; margin-bottom: 20px;">
                 <h3 style="font-size: 14pt; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px;">Peringkat 5 Sparepart Terlaris</h3>
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    ${topParts.map((p: any, i: any) => `
+                    ${topParts
+                      .map(
+                        (p: any, i: any) => `
                         <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 15px; flex: 1; min-width: 120px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                            <div style="font-size: 9pt; color: #64748b; font-weight: 600; margin-bottom: 4px;">Peringkat #${i+1}</div>
+                            <div style="font-size: 9pt; color: #64748b; font-weight: 600; margin-bottom: 4px;">Peringkat #${i + 1}</div>
                             <div style="font-size: 11pt; font-weight: bold; color: #0f172a; margin-bottom: 8px;">${p.part_name}</div>
                             <div style="font-size: 10pt; color: #10b981; font-weight: bold;">Terjual: ${p.total_sold} unit</div>
                         </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                 </div>
             </div>
-        `;
-    } else {
-        topPartsHtml = `
+        `
+  } else {
+    topPartsHtml = `
             <div style="margin-top: 30px; margin-bottom: 20px;">
                 <h3 style="font-size: 14pt; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px;">Peringkat 5 Sparepart Terlaris</h3>
                 <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 15px; color: #64748b; text-align: center;">Belum ada data penjualan sparepart di periode ini.</div>
             </div>
-        `;
-    }
+        `
+  }
 
-    return `
+  return `
         <div class="print-report" style="max-width: 100%; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; color: #333;">
             <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #4f46e5; padding-bottom: 20px;">
                 ${logoBase64 ? `<img src="${logoBase64}" style="max-height: 70px; margin-bottom: 10px;" />` : ''}
@@ -524,55 +569,66 @@ export const generateReportHtml = (settings: any, services: any, startDate: any,
                 <div style="margin-top: 10px; font-weight: bold;">( ${settings.business_name || 'Pemilik'} )</div>
             </div>
         </div>
-    `;
+    `
 }
 
-export const printHtml = async (html: string, landscape: boolean = false, isThermal: boolean = false) => {
-    const printArea = document.getElementById('print-area');
-    if (printArea) {
-        printArea.innerHTML = html;
-        
-        let styleTag = document.getElementById('dynamic-print-style');
-        if (!styleTag) {
-            styleTag = document.createElement('style');
-            styleTag.id = 'dynamic-print-style';
-            document.head.appendChild(styleTag);
-        }
-        if (isThermal) {
-            styleTag.innerHTML = '@media print { @page { size: 58mm auto; margin: 0; } }';
-        } else {
-            styleTag.innerHTML = landscape ? '@media print { @page { size: A5 landscape; } }' : '@media print { @page { size: A4 portrait; } }';
-        }
+export const printHtml = async (
+  html: string,
+  landscape: boolean = false,
+  isThermal: boolean = false
+) => {
+  const printArea = document.getElementById('print-area')
+  if (printArea) {
+    printArea.innerHTML = html
 
-        if (window.api && window.api.printPreview) {
-            try {
-                let pdfOptions: any = { landscape: landscape && !isThermal };
-                if (!isThermal) {
-                    pdfOptions.pageSize = landscape ? 'A5' : 'A4';
-                }
-                await window.api.printPreview(pdfOptions);
-            } catch (err) {
-                console.error("Print preview error:", err);
-            }
-        } else {
-            // Fallback for native browser
-            window.print();
-        }
-        printArea.innerHTML = '';
-        if (styleTag) styleTag.innerHTML = '';
+    let styleTag = document.getElementById('dynamic-print-style')
+    if (!styleTag) {
+      styleTag = document.createElement('style')
+      styleTag.id = 'dynamic-print-style'
+      document.head.appendChild(styleTag)
     }
-};
+    if (isThermal) {
+      styleTag.innerHTML = '@media print { @page { size: 58mm auto; margin: 0; } }'
+    } else {
+      styleTag.innerHTML = landscape
+        ? '@media print { @page { size: A5 landscape; } }'
+        : '@media print { @page { size: A4 portrait; } }'
+    }
+
+    if (window.api && window.api.printPreview) {
+      try {
+        let pdfOptions: any = { landscape: landscape && !isThermal }
+        if (!isThermal) {
+          pdfOptions.pageSize = landscape ? 'A5' : 'A4'
+        }
+        await window.api.printPreview(pdfOptions)
+      } catch (err) {
+        console.error('Print preview error:', err)
+      }
+    } else {
+      // Fallback for native browser
+      window.print()
+    }
+    printArea.innerHTML = ''
+    if (styleTag) styleTag.innerHTML = ''
+  }
+}
 
 export const exportHtmlToPdf = async (html: string, filename: string) => {
-    if (window.api && window.api.exportPdf) {
-        return await window.api.exportPdf({ html, filename });
-    }
-    return { success: false, error: 'API exportPdf not found' };
-};
+  if (window.api && window.api.exportPdf) {
+    return await window.api.exportPdf({ html, filename })
+  }
+  return { success: false, error: 'API exportPdf not found' }
+}
 
-export const generateThermalNotaHtml = (settings: any, service: any, logoBase64: any, qrBase64: any = null) => {
-    settings = settings || {};
-    return `
+export const generateThermalNotaHtml = (
+  settings: any,
+  service: any,
+  logoBase64: any,
+  qrBase64: any = null
+) => {
+  settings = settings || {}
+  return `
         <div class="print-thermal">
             <!-- Header -->
             <div class="thm-center">
@@ -635,5 +691,5 @@ export const generateThermalNotaHtml = (settings: any, service: any, logoBase64:
             ${qrBase64 ? `<div class="thm-center" style="margin-top: 15px;"><img src="${qrBase64}" alt="QR" style="width: 100px; height: 100px;" /><div style="font-size: 8pt; margin-top: 5px;">Scan untuk detail</div></div>` : ''}
             <div class="thm-gap"></div> <!-- Extra space for tearing -->
         </div>
-    `;
-};
+    `
+}
