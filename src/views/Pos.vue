@@ -10,7 +10,7 @@
               
               <div class="search-bar" style="margin-bottom: 20px;">
                   <Search class="search-icon" :size="18" />
-                  <input type="text" v-model="searchQuery" placeholder="Cari nama atau kode sparepart..." @input="handleSearch" class="form-control" style="border-radius: 20px; padding: 10px 15px 10px 40px; width: 100%;">
+                  <input ref="searchInput" type="text" v-model="searchQuery" placeholder="Cari nama atau kode sparepart... [F2]" @input="handleSearch" class="form-control" style="border-radius: 20px; padding: 10px 15px 10px 40px; width: 100%;">
               </div>
               
               <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
@@ -78,7 +78,7 @@
                   </div>
                   <div class="form-group" v-if="paymentMethod === 'Tunai'">
                       <label style="font-size: 0.85rem;">Nominal Dibayar</label>
-                      <input type="number" v-model="cashGiven" class="form-control" style="border-radius: var(--radius-sm); font-size: 1.1rem; font-weight: bold;">
+                      <input ref="cashInput" type="number" v-model="cashGiven" placeholder="[F4]" class="form-control" style="border-radius: var(--radius-sm); font-size: 1.1rem; font-weight: bold;">
                   </div>
                   <div v-if="paymentMethod === 'Tunai' && Number(cashGiven) > 0" style="display: flex; justify-content: space-between; font-size: 1rem; margin-top: 10px; color: var(--text-muted);">
                       <span>Kembalian:</span>
@@ -87,7 +87,7 @@
               </div>
               
               <button @click="processSale" class="btn btn-primary" :disabled="cart.length === 0 || (paymentMethod === 'Tunai' && changeAmount < 0)" style="width: 100%; padding: 12px; border-radius: 20px; font-size: 1.1rem; font-weight: 600; display: flex; justify-content: center; gap: 8px;">
-                  <CheckCircle :size="20" /> Proses Transaksi
+                  <CheckCircle :size="20" /> Proses Transaksi [F8]
               </button>
           </div>
       </div>
@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { Package, Search, ShoppingCart, X, CheckCircle } from 'lucide-vue-next'
 import { Toast } from '../utils/toast'
 import type { Part } from '../types'
@@ -106,6 +106,8 @@ const searchQuery = ref('')
 const customerName = ref('')
 const paymentMethod = ref('Tunai')
 const cashGiven = ref<number | ''>('')
+const searchInput = ref<HTMLInputElement | null>(null)
+const cashInput = ref<HTMLInputElement | null>(null)
 
 interface CartItem {
   id: number
@@ -134,8 +136,29 @@ const handleSearch = () => {
   }, 300)
 }
 
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'F2') {
+    e.preventDefault()
+    searchInput.value?.focus()
+  } else if (e.key === 'F4') {
+    e.preventDefault()
+    if (paymentMethod.value === 'Tunai') {
+      cashInput.value?.focus()
+    }
+  } else if (e.key === 'F8') {
+    e.preventDefault()
+    // processSale already has its own validation checks
+    processSale()
+  }
+}
+
 onMounted(() => {
   loadParts()
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
 })
 
 const addToCart = (part: Part) => {
