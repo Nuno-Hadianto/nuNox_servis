@@ -1,4 +1,4 @@
-import { Payment } from '../src/types';
+import { Payment } from '../shared/types';
 const db = require('../database/db');
 
 function generatePaymentNumber() {

@@ -84,7 +84,8 @@
 <script setup lang="ts">
 import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import type { Customer } from '../types'
+import type { Customer } from '../../shared/types'
+import { CustomerSchema } from '../utils/validators'
 
 const customers = ref<Customer[]>([])
 const searchQuery = ref<string>('')
@@ -155,6 +156,19 @@ const editCustomer = async (c: Customer) => {
 
 const saveCustomer = async () => {
   try {
+      // Validasi dengan Zod
+      try {
+          CustomerSchema.parse(form)
+      } catch (validationError: any) {
+          const errMsgs = validationError.issues.map((err: any) => err.message).join('<br/>')
+          window.Swal.fire({
+              icon: 'error',
+              title: 'Validasi Gagal',
+              html: errMsgs
+          })
+          return
+      }
+
       if (formId.value) {
           await window.api.updateCustomer(formId.value, { ...form })
       } else {

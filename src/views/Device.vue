@@ -107,7 +107,7 @@
 <script setup lang="ts">
 import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import type { Device, Customer } from '../types'
+import type { Device, Customer } from '../../shared/types'
 
 const devices = ref<Device[]>([])
 const customers = ref<Customer[]>([])

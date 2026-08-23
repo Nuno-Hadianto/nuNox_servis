@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import type { User, Customer, Device, ServiceOrder, Part, ServiceItem, Payment, Settings, Receipt } from './types';
+import type { User, Customer, Device, ServiceOrder, Part, ServiceItem, Payment, Settings, Receipt } from '../shared/types';
 
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'

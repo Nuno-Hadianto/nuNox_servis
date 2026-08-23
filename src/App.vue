@@ -50,7 +50,7 @@ import { useAuthStore } from './stores/auth'
 import { Toast } from './utils/toast'
 import Sidebar from './components/Sidebar.vue'
 import Topbar from './components/Topbar.vue'
-import type { User } from './types'
+import type { User } from '../shared/types'
 
 const router = useRouter()
 const route = useRoute()
@@ -120,6 +120,14 @@ onMounted(() => {
     window.api.appReady()
   }
   window.addEventListener('keydown', handleGlobalKeydown)
+
+  // Initialize theme from localStorage
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme === 'dark') {
+      document.body.classList.add('dark-mode')
+  } else if (savedTheme === 'light') {
+      document.body.classList.remove('dark-mode')
+  }
 })
 
 onUnmounted(() => {

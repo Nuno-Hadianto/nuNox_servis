@@ -1,4 +1,4 @@
-import { User } from '../src/types';
+import { User } from '../shared/types';
 const userRepository = require('../repositories/userRepository');
 const bcrypt = require('bcryptjs');
 

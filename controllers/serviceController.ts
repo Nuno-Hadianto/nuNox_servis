@@ -1,4 +1,4 @@
-import { ServiceOrder } from '../src/types';
+import { ServiceOrder } from '../shared/types';
 const serviceRepository = require('../repositories/serviceRepository');
 const { ServiceOrderSchema, validateData } = require('../src/utils/validators');
 

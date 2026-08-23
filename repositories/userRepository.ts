@@ -1,4 +1,4 @@
-import { User } from '../src/types';
+import { User } from '../shared/types';
 const db = require('../database/db');
 
 function getUserCount() {

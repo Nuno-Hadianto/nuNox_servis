@@ -1,5 +1,5 @@
 import type { IpcMainInvokeEvent } from 'electron';
-import type { ServiceOrder, ServiceItem } from '../../src/types';
+import type { ServiceOrder, ServiceItem } from '../../shared/types';
 const { ipcMain } = require('electron');
 const serviceController = require('../../controllers/serviceController');
 const serviceItemController = require('../../controllers/serviceItemController');

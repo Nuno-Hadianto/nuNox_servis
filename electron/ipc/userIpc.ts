@@ -1,6 +1,6 @@
 export {};
 import type { IpcMainInvokeEvent } from 'electron';
-import type { User } from '../../src/types';
+import type { User } from '../../shared/types';
 const { ipcMain } = require('electron');
 const userController = require('../../controllers/userController');
 const log = require('electron-log');

@@ -99,7 +99,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { Package, Search, ShoppingCart, X, CheckCircle } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { usePosStore } from '../stores/pos'
-import type { Part } from '../types'
+import type { Part } from '../../shared/types'
 import { generateSaleReceiptHtml, printHtml } from '../utils/printUtils'
 
 const posStore = usePosStore()

@@ -1,4 +1,4 @@
-import { Customer } from '../src/types';
+import { Customer } from '../shared/types';
 const customerRepository = require('../repositories/customerRepository');
 const { CustomerSchema, validateData } = require('../src/utils/validators');
 

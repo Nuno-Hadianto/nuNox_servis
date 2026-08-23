@@ -1,4 +1,4 @@
-import { ServiceOrder } from '../src/types';
+import { ServiceOrder } from '../shared/types';
 const db = require('../database/db');
 
 function generateTicketNumber() {

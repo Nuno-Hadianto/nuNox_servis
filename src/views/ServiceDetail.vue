@@ -256,7 +256,8 @@ import {
   Wrench, CheckCircle, CreditCard, Camera, Trash2, PlusCircle, Paperclip
 } from 'lucide-vue-next'
 import QRCode from 'qrcode'
-import type { ServiceOrder, ServiceHistory, ServiceItem, Payment, Part, Settings, Photo } from '../types'
+import type { ServiceOrder, ServiceHistory, ServiceItem, Payment, Part, Settings, Photo } from '../../shared/types'
+import { ServiceItemSchema, PaymentSchema } from '../utils/validators'
 import { generateInvoiceHtml, generateNotaHtml, generateThermalNotaHtml, printHtml, exportHtmlToPdf } from '../utils/printUtils.js'
 
 const route = useRoute()
@@ -496,22 +497,29 @@ const addItem = async () => {
       if (!desc) return window.Swal.fire('Info', 'Keterangan wajib diisi!', 'info')
   }
 
-  if (!itemForm.qty || isNaN(itemForm.price)) {
-      return window.Swal.fire('Info', 'Qty dan Harga harus valid!', 'info')
-  }
-
   const data = {
       service_order_id: service.value.id,
       item_type: itemForm.type,
       spare_part_id: partId ? Number(partId) : null,
       description: desc,
-      quantity: itemForm.qty,
-      price: itemForm.price,
-      subtotal: itemForm.qty * itemForm.price
+      quantity: Number(itemForm.qty),
+      price: Number(itemForm.price),
+  }
+  
+  try {
+      ServiceItemSchema.parse(data)
+  } catch (validationError: any) {
+      const errMsgs = validationError.issues.map((err: any) => err.message).join('<br/>')
+      return window.Swal.fire({ icon: 'error', title: 'Validasi Gagal', html: errMsgs })
+  }
+
+  const finalData = {
+      ...data,
+      subtotal: data.quantity * data.price
   }
 
   try {
-      await window.api.addServiceItem(data)
+      await window.api.addServiceItem(finalData)
       itemForm.desc = ''
       itemForm.partId = ''
       itemForm.price = 0
@@ -557,9 +565,16 @@ const addPayment = async () => {
 
   const data = {
       service_order_id: service.value.id,
-      amount: paymentForm.amount,
+      amount: Number(paymentForm.amount),
       payment_method: paymentForm.method,
       notes: ''
+  }
+
+  try {
+      PaymentSchema.parse(data)
+  } catch (validationError: any) {
+      const errMsgs = validationError.issues.map((err: any) => err.message).join('<br/>')
+      return window.Swal.fire({ icon: 'error', title: 'Validasi Gagal', html: errMsgs })
   }
 
   try {

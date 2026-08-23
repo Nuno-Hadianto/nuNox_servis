@@ -1,4 +1,4 @@
-import { Customer } from '../src/types';
+import { Customer } from '../shared/types';
 const db = require('../database/db');
 
 function getCustomers(searchQuery: string = '', page: number = 1, limit: number = 50) {

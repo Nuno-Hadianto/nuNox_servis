@@ -1,4 +1,4 @@
-import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>{t=(e,t,n)=>(e||={},`
+import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l,u=e((()=>{t=(e,t,n,r=null)=>(e||={},`
         <div class="print-nota nota-wrapper">
             <!-- Header -->
             <div class="nota-header">
@@ -12,6 +12,7 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                     <h1 class="nota-title">TANDA TERIMA</h1>
                     <div class="nota-no"><strong>No:</strong> ${t?t.ticket_number:`..............................`}</div>
                     <div class="nota-date">Tanggal: ${t?new Date(t.created_at+`Z`).toLocaleDateString(`id-ID`):`..............................`}</div>
+                    ${r?`<img src="${r}" alt="QR Code" style="width: 80px; height: 80px; margin-top: 5px;" />`:``}
                 </div>
             </div>
             
@@ -227,7 +228,75 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                 ${e.receipt_footer||`Bawa nota ini saat pengambilan barang.`}
             </div>
         </div>
-    `),i=(e,t)=>(e||={},`
+    `),i=(e,t,n,r,i,a)=>{e||={};let o=e=>new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,minimumFractionDigits:0}).format(e||0),s=``;n&&n.length>0&&n.forEach(e=>{s+=`
+                <div>${e.part_name||e.spare_part_id||`Item`}</div>
+                <div class="thm-row thm-text-sm" style="margin-bottom: 2px;">
+                    <span class="thm-val">${e.quantity} x ${o(e.price)}</span>
+                    <span class="thm-val">${o(e.total||e.quantity*e.price)}</span>
+                </div>
+            `});let c=`
+            <div class="thm-row thm-bold" style="font-size: 11pt;">
+                <span class="thm-label">TOTAL:</span>
+                <span class="thm-val">${o(t.total_amount)}</span>
+            </div>
+            <div class="thm-row" style="margin-top: 5px;">
+                <span class="thm-label">Pembayaran:</span>
+                <span class="thm-val">${t.payment_method}</span>
+            </div>
+    `;return t.payment_method===`Tunai`&&i!==void 0&&a!==void 0&&(c+=`
+            <div class="thm-row">
+                <span class="thm-label">Tunai:</span>
+                <span class="thm-val">${o(i)}</span>
+            </div>
+            <div class="thm-row">
+                <span class="thm-label">Kembali:</span>
+                <span class="thm-val">${o(a)}</span>
+            </div>
+        `),`
+        <div class="print-thermal">
+            <!-- Header -->
+            <div class="thm-center">
+                ${r?`<img src="${r}" alt="Logo" class="thm-logo" />`:``}
+                <div class="thm-bold thm-biz-name">${e.business_name||`NUNOX SERVIS`}</div>
+                <div class="thm-biz-sub">${e.address||``}</div>
+                <div class="thm-biz-sub">WA: ${e.whatsapp||e.phone||``}</div>
+            </div>
+            
+            <div class="thm-dashed"></div>
+            
+            <div class="thm-center thm-bold thm-title">STRUK PEMBELIAN</div>
+            
+            <div class="thm-row">
+                <span class="thm-label">No:</span>
+                <span class="thm-val thm-bold">${t?t.invoice_number:`-`}</span>
+            </div>
+            <div class="thm-row">
+                <span class="thm-label">Tgl:</span>
+                <span class="thm-val">${t?new Date(t.created_at+`Z`).toLocaleString(`id-ID`):`-`}</span>
+            </div>
+            ${t&&t.customer_name?`
+            <div class="thm-row">
+                <span class="thm-label">Plg:</span>
+                <span class="thm-val">${t.customer_name}</span>
+            </div>
+            `:``}
+            
+            <div class="thm-dashed"></div>
+            
+            ${s}
+            
+            <div class="thm-dashed"></div>
+            
+            ${c}
+            
+            <div class="thm-dashed"></div>
+            
+            <div class="thm-center thm-footer">
+                ${e.receipt_footer||`Terima kasih atas kunjungannya.`}
+            </div>
+            <div class="thm-gap"></div>
+        </div>
+    `},a=(e,t)=>(e||={},`
         <div class="print-receipt rcpt-wrapper">
             <div class="rcpt-header">
                 <div>
@@ -285,7 +354,7 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                 <p style="margin: 0;">${e.receipt_footer||`Terima kasih atas kepercayaannya menggunakan jasa kami.`}</p>
             </div>
         </div>
-    `),a=(e,t,n,r,i,a,o,s,c=[])=>{e||={};let l=e=>new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,minimumFractionDigits:0}).format(e||0),u=``;t&&t.length>0?t.forEach((e,t)=>{u+=`
+    `),o=(e,t,n,r,i,a,o,s,c=[])=>{e||={};let l=e=>new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,minimumFractionDigits:0}).format(e||0),u=``;t&&t.length>0?t.forEach((e,t)=>{u+=`
                 <tr>
                     <td class="rep-td-center">${t+1}</td>
                     <td class="rep-td">${e.ticket_number}</td>
@@ -366,7 +435,7 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                 <div style="margin-top: 10px; font-weight: bold;">( ${e.business_name||`Pemilik`} )</div>
             </div>
         </div>
-    `},o=async(e,t=!1,n=!1)=>{let r=document.getElementById(`print-area`);if(r){r.innerHTML=e;let i=document.getElementById(`dynamic-print-style`);if(i||(i=document.createElement(`style`),i.id=`dynamic-print-style`,document.head.appendChild(i)),n?i.innerHTML=`@media print { @page { size: 58mm auto; margin: 0; } }`:i.innerHTML=t?`@media print { @page { size: A5 landscape; } }`:`@media print { @page { size: A4 portrait; } }`,window.api&&window.api.printPreview)try{let e={landscape:t&&!n};n||(e.pageSize=t?`A5`:`A4`),await window.api.printPreview(e)}catch(e){console.error(`Print preview error:`,e)}else window.print();r.innerHTML=``,i&&(i.innerHTML=``)}},s=async(e,t)=>window.api&&window.api.exportPdf?await window.api.exportPdf({html:e,filename:t}):{success:!1,error:`API exportPdf not found`},c=(e,t,n)=>(e||={},`
+    `},s=async(e,t=!1,n=!1)=>{let r=document.getElementById(`print-area`);if(r){r.innerHTML=e;let i=document.getElementById(`dynamic-print-style`);if(i||(i=document.createElement(`style`),i.id=`dynamic-print-style`,document.head.appendChild(i)),n?i.innerHTML=`@media print { @page { size: 58mm auto; margin: 0; } }`:i.innerHTML=t?`@media print { @page { size: A5 landscape; } }`:`@media print { @page { size: A4 portrait; } }`,window.api&&window.api.printPreview)try{let e={landscape:t&&!n};n||(e.pageSize=t?`A5`:`A4`),await window.api.printPreview(e)}catch(e){console.error(`Print preview error:`,e)}else window.print();r.innerHTML=``,i&&(i.innerHTML=``)}},c=async(e,t)=>window.api&&window.api.exportPdf?await window.api.exportPdf({html:e,filename:t}):{success:!1,error:`API exportPdf not found`},l=(e,t,n,r=null)=>(e||={},`
         <div class="print-thermal">
             <!-- Header -->
             <div class="thm-center">
@@ -426,6 +495,7 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
             <div class="thm-center thm-footer">
                 * Harap bawa struk ini saat mengambil barang.
             </div>
+            ${r?`<div class="thm-center" style="margin-top: 15px;"><img src="${r}" alt="QR" style="width: 100px; height: 100px;" /><div style="font-size: 8pt; margin-top: 5px;">Scan untuk detail</div></div>`:``}
             <div class="thm-gap"></div> <!-- Extra space for tearing -->
         </div>
-    `)}));export{t as a,l as c,n as i,o as l,r as n,a as o,i as r,c as s,s as t};
+    `)}));export{t as a,l as c,n as i,u as l,r as n,o,a as r,i as s,c as t,s as u};

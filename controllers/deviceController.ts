@@ -1,4 +1,4 @@
-import { Device } from '../src/types';
+import { Device } from '../shared/types';
 const deviceRepository = require('../repositories/deviceRepository');
 const { DeviceSchema, validateData } = require('../src/utils/validators');
 

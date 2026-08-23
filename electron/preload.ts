@@ -1,4 +1,4 @@
-import type { User, Customer, Device, ServiceOrder, Part, ServiceItem, Payment, Settings } from '../src/types';
+import type { User, Customer, Device, ServiceOrder, Part, ServiceItem, Payment, Settings } from '../shared/types';
 const { contextBridge, ipcRenderer } = require('electron');
 
 const invokeSafe = async (channel: any, ...args: any[]) => {

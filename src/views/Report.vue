@@ -72,7 +72,7 @@ import { ref, onMounted } from 'vue'
 import { generateBlankNotaHtml, generateBlankReceiptHtml, generateReportHtml, printHtml, exportHtmlToPdf } from '../utils/printUtils'
 import { Toast } from '../utils/toast'
 import StatCard from '../components/StatCard.vue'
-import type { ServiceOrder, Settings } from '../types'
+import type { ServiceOrder, Settings } from '../../shared/types'
 
 const startDate = ref<string>('')
 const endDate = ref<string>('')

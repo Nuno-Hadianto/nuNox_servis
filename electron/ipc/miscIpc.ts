@@ -1,6 +1,6 @@
 export {};
 import type { IpcMainInvokeEvent } from 'electron';
-import type { Settings } from '../../src/types';
+import type { Settings } from '../../shared/types';
 const { app, ipcMain, dialog, shell, BrowserWindow } = require('electron');
 const fs = require('fs');
 const path = require('path');

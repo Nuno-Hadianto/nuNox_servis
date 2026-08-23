@@ -1,4 +1,4 @@
-import { Payment } from '../src/types';
+import { Payment } from '../shared/types';
 const paymentRepository = require('../repositories/paymentRepository');
 const { PaymentSchema, validateData } = require('../src/utils/validators');
 

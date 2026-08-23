@@ -1,4 +1,4 @@
-import { ServiceItem } from '../src/types';
+import { ServiceItem } from '../shared/types';
 const serviceItemRepository = require('../repositories/serviceItemRepository');
 const { ServiceItemSchema, validateData } = require('../src/utils/validators');
 

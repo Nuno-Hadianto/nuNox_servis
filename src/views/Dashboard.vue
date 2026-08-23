@@ -136,7 +136,7 @@ import { useRouter } from 'vue-router'
 import { Wrench, Hourglass, CheckCircle, Wallet, TrendingUp, AlertOctagon, AlertTriangle } from 'lucide-vue-next'
 import { Chart, registerables } from 'chart.js'
 import StatCard from '../components/StatCard.vue'
-import type { DashboardStats, AbandonedService } from '../types'
+import type { DashboardStats, AbandonedService } from '../../shared/types'
 
 const stats = ref<DashboardStats>({
   todayServices: 0,

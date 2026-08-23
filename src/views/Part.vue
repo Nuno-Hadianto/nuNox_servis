@@ -114,7 +114,7 @@
 import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import type { Part } from '../types'
+import type { Part } from '../../shared/types'
 
 const route = useRoute()
 const parts = ref<Part[]>([])

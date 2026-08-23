@@ -1,4 +1,4 @@
-import { Settings } from '../src/types';
+import { Settings } from '../shared/types';
 const db = require('../database/db');
 
 function getSettings() {

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Part } from '../types'
+import type { Part } from '../../shared/types'
 import { Toast } from '../utils/toast'
 
 export interface CartItem {

@@ -1,4 +1,4 @@
-import { Part } from '../src/types';
+import { Part } from '../shared/types';
 const partRepository = require('../repositories/partRepository');
 const { SparepartSchema, validateData } = require('../src/utils/validators');
 

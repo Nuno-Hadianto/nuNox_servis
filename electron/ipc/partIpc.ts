@@ -1,6 +1,6 @@
 export {};
 import type { IpcMainInvokeEvent } from 'electron';
-import type { Part } from '../../src/types';
+import type { Part } from '../../shared/types';
 const { ipcMain, dialog } = require('electron');
 const xlsx = require('xlsx');
 const partController = require('../../controllers/partController');

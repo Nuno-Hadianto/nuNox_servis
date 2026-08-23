@@ -75,7 +75,7 @@
 <script setup lang="ts">
 import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted } from 'vue'
-import type { User } from '../types'
+import type { User } from '../../shared/types'
 
 const users = ref<User[]>([])
 const searchQuery = ref<string>('')

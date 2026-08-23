@@ -109,7 +109,8 @@
 import { Search, Plus } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import type { ServiceOrder, Customer, Device } from '../types'
+import type { ServiceOrder, Customer, Device } from '../../shared/types'
+import { ServiceOrderSchema } from '../utils/validators'
 
 const router = useRouter()
 const route = useRoute()
@@ -238,7 +239,34 @@ const openAddModal = async () => {
 
 const saveService = async () => {
   try {
-      await window.api.addService({ ...form })
+      // Validasi dengan Zod
+      try {
+          // parse estimated_cost if string
+          const payload = {
+              ...form,
+              customer_id: Number(form.customer_id),
+              device_id: Number(form.device_id),
+              estimated_cost: form.estimated_cost ? Number(form.estimated_cost) : 0
+          };
+          ServiceOrderSchema.parse(payload)
+      } catch (validationError: any) {
+          const errMsgs = validationError.issues.map((err: any) => err.message).join('<br/>')
+          window.Swal.fire({
+              icon: 'error',
+              title: 'Validasi Gagal',
+              html: errMsgs
+          })
+          return
+      }
+
+      const finalPayload = {
+          ...form,
+          customer_id: Number(form.customer_id),
+          device_id: Number(form.device_id),
+          estimated_cost: form.estimated_cost ? Number(form.estimated_cost) : 0
+      };
+
+      await window.api.addService(finalPayload)
       isModalOpen.value = false
       loadServices()
       window.Swal.fire({

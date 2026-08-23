@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import type { Settings } from '../types'
+import type { Settings } from '../../shared/types'
 
 const form = reactive<Settings>({
   business_name: '',

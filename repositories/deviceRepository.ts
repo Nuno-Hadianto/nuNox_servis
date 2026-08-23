@@ -1,4 +1,4 @@
-import { Device } from '../src/types';
+import { Device } from '../shared/types';
 const db = require('../database/db');
 
 function getDevices(searchQuery = '') {

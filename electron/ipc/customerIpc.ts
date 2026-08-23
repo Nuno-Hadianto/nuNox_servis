@@ -1,5 +1,5 @@
 import type { IpcMainInvokeEvent } from 'electron';
-import type { Customer } from '../../src/types';
+import type { Customer } from '../../shared/types';
 const { ipcMain } = require('electron');
 const customerController = require('../../controllers/customerController');
 

@@ -1,4 +1,4 @@
-import { ServiceItem } from '../src/types';
+import { ServiceItem } from '../shared/types';
 const db = require('../database/db');
 const paymentRepository = require('./paymentRepository');
 

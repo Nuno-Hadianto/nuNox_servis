@@ -1,4 +1,4 @@
-import { Part } from '../src/types';
+import { Part } from '../shared/types';
 const db = require('../database/db');
 
 function getParts(searchQuery = '') {
