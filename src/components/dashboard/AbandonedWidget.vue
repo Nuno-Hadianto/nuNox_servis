@@ -46,9 +46,7 @@
                 <span class="badge badge-danger"> {{ srv.days_pending }} Hari </span>
               </td>
               <td>
-                <button @click.stop="$emit('send-wa', srv)" class="btn btn-sm btn-wa">
-                  💬 WA
-                </button>
+                <button @click.stop="$emit('send-wa', srv)" class="btn btn-sm btn-wa">💬 WA</button>
               </td>
             </tr>
           </template>

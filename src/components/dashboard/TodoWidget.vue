@@ -1,8 +1,6 @@
 <template>
   <div class="card warning-card">
-    <h2 class="warning-title text-primary">
-      <ClipboardList :size="24" /> To-Do Teknisi
-    </h2>
+    <h2 class="warning-title text-primary"><ClipboardList :size="24" /> To-Do Teknisi</h2>
     <div class="table-container table-scroll">
       <table class="data-table">
         <thead>
@@ -25,7 +23,9 @@
           <!-- Actual Data -->
           <template v-else>
             <tr v-if="!items || items.length === 0">
-              <td colspan="3" class="text-center empty-state">Tidak ada tugas mendesak hari ini.</td>
+              <td colspan="3" class="text-center empty-state">
+                Tidak ada tugas mendesak hari ini.
+              </td>
             </tr>
             <tr
               v-for="todo in items"
@@ -40,7 +40,9 @@
               </td>
               <td>
                 <span v-if="todo.type === 'overdue'" class="badge badge-danger">Terlewat</span>
-                <span v-else-if="todo.type === 'deadline_today'" class="badge badge-warning">Hari Ini</span>
+                <span v-else-if="todo.type === 'deadline_today'" class="badge badge-warning"
+                  >Hari Ini</span
+                >
                 <span v-else class="badge badge-info">Menunggu</span>
               </td>
             </tr>

@@ -1291,7 +1291,7 @@ Terima kasih telah mempercayakan perbaikan kepada kami.`
 const confirmSendWa = () => {
   if (!service.value) return
   const phone = service.value.customer_phone || ''
-  let targetPhone = phone.replace(/^0/, '62')
+  const targetPhone = phone.replace(/^0/, '62')
 
   const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(waMessage.value)}`
   if (window.api && window.api.openExternalUrl) {

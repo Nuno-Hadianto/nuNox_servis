@@ -114,7 +114,7 @@ export const generateInvoiceHtml = (
   if (payments && payments.length > 0) {
     totalPaid = payments.reduce((acc: any, p: any) => acc + p.amount, 0)
   }
-  let remaining = (service.total_cost || 0) - totalPaid
+  const remaining = (service.total_cost || 0) - totalPaid
 
   const logoHtml = logoBase64
     ? `<img src="${logoBase64}" alt="Logo" class="inv-logo" />`
@@ -597,7 +597,7 @@ export const printHtml = async (
 
     if (window.api && window.api.printPreview) {
       try {
-        let pdfOptions: any = { landscape: landscape && !isThermal }
+        const pdfOptions: any = { landscape: landscape && !isThermal }
         if (!isThermal) {
           pdfOptions.pageSize = landscape ? 'A5' : 'A4'
         }

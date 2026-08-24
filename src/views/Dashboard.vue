@@ -75,7 +75,11 @@
 
       <div class="dashboard-column">
         <TodoWidget :items="stats.todoItems" :isLoading="isLoading" />
-        <AbandonedWidget :items="stats.abandonedServices" :isLoading="isLoading" @send-wa="sendWaDashboard" />
+        <AbandonedWidget
+          :items="stats.abandonedServices"
+          :isLoading="isLoading"
+          @send-wa="sendWaDashboard"
+        />
         <LowStockWidget :items="stats.lowStockParts" :isLoading="isLoading" />
       </div>
     </div>
@@ -85,13 +89,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import {
-  Wrench,
-  Hourglass,
-  CheckCircle,
-  Wallet,
-  TrendingUp
-} from 'lucide-vue-next'
+import { Wrench, Hourglass, CheckCircle, Wallet, TrendingUp } from 'lucide-vue-next'
 import { Chart, registerables } from 'chart.js'
 import StatCard from '../components/StatCard.vue'
 import TodoWidget from '../components/dashboard/TodoWidget.vue'
@@ -132,8 +130,8 @@ const sendWaDashboard = (srv: AbandonedService) => {
     return
   }
 
-  let targetPhone = srv.customer_phone.replace(/^0/, '62')
-  
+  const targetPhone = srv.customer_phone.replace(/^0/, '62')
+
   let text = `Halo Kak ${srv.customer_name},
 Mengingatkan bahwa perangkat Anda dengan No Tiket *${srv.ticket_number}* saat ini berstatus: *${srv.service_status}*.
 Mohon konfirmasinya. Terima kasih.`
@@ -164,7 +162,7 @@ const loadDashboard = async () => {
       renderChart(data.chartData)
       if (data.serviceStatusChart) renderStatusChart(data.serviceStatusChart)
       if (data.topPartsChart) renderTopPartsChart(data.topPartsChart)
-      
+
       const settings = await window.api.getSettings()
       if (settings && settings.wa_template_status) {
         waTemplate.value = settings.wa_template_status

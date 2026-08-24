@@ -3,15 +3,18 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  width?: string
-  height?: string
-  radius?: string
-}>(), {
-  width: '100%',
-  height: '20px',
-  radius: '8px'
-})
+withDefaults(
+  defineProps<{
+    width?: string
+    height?: string
+    radius?: string
+  }>(),
+  {
+    width: '100%',
+    height: '20px',
+    radius: '8px'
+  }
+)
 </script>
 
 <style scoped>

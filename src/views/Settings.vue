@@ -289,7 +289,9 @@ const loadSettings = async () => {
       form.address = settings.address || ''
       form.receipt_footer = settings.receipt_footer || ''
       form.auto_backup_path = settings.auto_backup_path || ''
-      form.wa_template_status = settings.wa_template_status || 'Halo Kak {nama}, perangkat Anda dengan No Tiket *{tiket}* saat ini berstatus: *{status}*. Mohon konfirmasinya. Terima kasih.'
+      form.wa_template_status =
+        settings.wa_template_status ||
+        'Halo Kak {nama}, perangkat Anda dengan No Tiket *{tiket}* saat ini berstatus: *{status}*. Mohon konfirmasinya. Terima kasih.'
       form.low_stock_threshold =
         settings.low_stock_threshold !== undefined ? Number(settings.low_stock_threshold) : 3
     } catch (error) {
