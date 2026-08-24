@@ -75,22 +75,20 @@ import {
   Sun,
   Moon
 } from 'lucide-vue-next'
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '../stores/auth'
+import { useThemeStore } from '../stores/theme'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const { currentUser } = storeToRefs(authStore)
 
-const isDark = ref<boolean>(
-  document.body.classList.contains('dark-mode') || !document.body.classList.contains('light-mode')
-)
+const themeStore = useThemeStore()
+const { isDark } = storeToRefs(themeStore)
 
 const toggleTheme = () => {
-  document.body.classList.toggle('dark-mode')
-  isDark.value = !isDark.value
+  themeStore.toggleTheme()
 }
 
 const handleLogout = () => {

@@ -40,7 +40,7 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <Topbar :title="pageTitle" @toggle-theme="toggleTheme" />
+      <Topbar :title="pageTitle" />
 
       <div class="content-area">
         <!-- Router View render halaman yang aktif -->
@@ -168,10 +168,6 @@ const handleLogout = () => {
   loginForm.username = ''
   loginForm.password = ''
   router.push('/')
-}
-
-const toggleTheme = () => {
-  themeStore.toggleTheme()
 }
 </script>
 

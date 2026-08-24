@@ -53,7 +53,6 @@ defineProps<{
   title?: string
 }>()
 
-const emit = defineEmits(['toggle-theme'])
 const themeStore = useThemeStore()
 const { isDark } = storeToRefs(themeStore)
 
@@ -74,7 +73,7 @@ const updateDateTime = () => {
 }
 
 const toggleTheme = () => {
-  emit('toggle-theme')
+  themeStore.toggleTheme()
 }
 
 onMounted(() => {
