@@ -1,7 +1,7 @@
 <template>
   <div class="card warning-card">
     <h2 class="warning-title text-warning">
-      <AlertTriangle :size="24" /> Peringatan Stok Sparepart Menipis
+      <AlertTriangle style="width: 24px; height: 24px;" /> Peringatan Stok Sparepart Menipis
     </h2>
     <div class="table-container table-scroll">
       <table class="data-table">

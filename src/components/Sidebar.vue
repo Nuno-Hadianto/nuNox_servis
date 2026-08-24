@@ -48,12 +48,12 @@
             <strong class="user-name">{{ currentUser ? currentUser.username : '-' }}</strong>
           </div>
           <button @click="toggleTheme" class="btn btn-secondary theme-toggle-btn">
-            <Moon v-if="!isDark" :size="16" />
-            <Sun v-else :size="16" />
+            <Moon v-if="!isDark" style="width: 16px; height: 16px;" />
+            <Sun v-else style="width: 16px; height: 16px;" />
           </button>
         </div>
         <button @click="handleLogout" class="btn btn-danger logout-btn">
-          <LogOut :size="18" /> Logout
+          <LogOut style="width: 18px; height: 18px;" /> Logout
         </button>
       </div>
     </nav>

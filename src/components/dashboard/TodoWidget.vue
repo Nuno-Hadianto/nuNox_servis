@@ -1,6 +1,8 @@
 <template>
   <div class="card warning-card">
-    <h2 class="warning-title text-primary"><ClipboardList :size="24" /> To-Do Teknisi</h2>
+    <h2 class="warning-title text-primary">
+      <ClipboardList style="width: 24px; height: 24px;" /> To-Do Teknisi
+    </h2>
     <div class="table-container table-scroll">
       <table class="data-table">
         <thead>

@@ -18,7 +18,7 @@
           gap: 8px;
         "
       >
-        <Clock :size="16" /> {{ currentDateTime }}
+        <Clock style="width: 16px; height: 16px;" /> {{ currentDateTime }}
       </div>
       <button
         @click="toggleTheme"
@@ -36,8 +36,8 @@
           transition: var(--transition);
         "
       >
-        <Sun v-if="isDark" :size="20" />
-        <Moon v-else :size="20" />
+        <Sun v-if="isDark" style="width: 20px; height: 20px;" />
+        <Moon v-else style="width: 20px; height: 20px;" />
       </button>
     </div>
   </header>

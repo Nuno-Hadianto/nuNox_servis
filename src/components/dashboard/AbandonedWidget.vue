@@ -1,8 +1,10 @@
 <template>
   <div class="card warning-card">
-    <h2 class="warning-title text-danger">
-      <AlertOctagon :size="24" /> Peringatan Follow-up Pelanggan
-    </h2>
+    <div class="warning-header">
+      <h2 class="warning-title text-danger">
+        <AlertOctagon style="width: 24px; height: 24px;" /> Peringatan Follow-up Pelanggan
+      </h2>
+    </div>
     <div class="table-container table-scroll">
       <table class="data-table">
         <thead>
