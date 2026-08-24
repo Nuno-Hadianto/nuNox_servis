@@ -61,6 +61,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from './stores/auth'
+import { useThemeStore } from './stores/theme'
 import { Toast } from './utils/toast'
 import Sidebar from './components/Sidebar.vue'
 import Topbar from './components/Topbar.vue'
@@ -71,6 +72,7 @@ const route = useRoute()
 
 const authStore = useAuthStore()
 const { isLoggedIn, currentUser } = storeToRefs(authStore)
+const themeStore = useThemeStore()
 
 let barcodeBuffer = ''
 let barcodeTimeout: any = null
@@ -134,13 +136,7 @@ onMounted(() => {
   }
   window.addEventListener('keydown', handleGlobalKeydown)
 
-  // Initialize theme from localStorage
-  const savedTheme = localStorage.getItem('theme')
-  if (savedTheme === 'dark') {
-    document.body.classList.add('dark-mode')
-  } else if (savedTheme === 'light') {
-    document.body.classList.remove('dark-mode')
-  }
+  themeStore.initTheme()
 })
 
 onUnmounted(() => {
@@ -175,7 +171,7 @@ const handleLogout = () => {
 }
 
 const toggleTheme = () => {
-  document.body.classList.toggle('dark-mode')
+  themeStore.toggleTheme()
 }
 </script>
 

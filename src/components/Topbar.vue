@@ -46,15 +46,18 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Clock, Sun, Moon } from 'lucide-vue-next'
+import { useThemeStore } from '../stores/theme'
+import { storeToRefs } from 'pinia'
 
 defineProps<{
   title?: string
 }>()
 
 const emit = defineEmits(['toggle-theme'])
+const themeStore = useThemeStore()
+const { isDark } = storeToRefs(themeStore)
 
 const currentDateTime = ref<string>('')
-const isDark = ref<boolean>(!document.body.classList.contains('light-mode'))
 let timer: ReturnType<typeof setInterval> | null = null
 
 const updateDateTime = () => {
@@ -71,21 +74,12 @@ const updateDateTime = () => {
 }
 
 const toggleTheme = () => {
-  // style.css uses body:not(.dark-mode) for light mode fallback.
-  // Let's toggle .dark-mode explicitly on body.
-  document.body.classList.toggle('dark-mode')
-  isDark.value = document.body.classList.contains('dark-mode')
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-  // Also notify parent if needed
   emit('toggle-theme')
 }
 
 onMounted(() => {
   updateDateTime()
   timer = setInterval(updateDateTime, 1000)
-
-  // Set initial theme based on body class which should have been set by App.vue
-  isDark.value = document.body.classList.contains('dark-mode')
 })
 
 onUnmounted(() => {

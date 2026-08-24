@@ -129,6 +129,27 @@ function getDashboardStats() {
         labels: topPartsData.map((p) => p.name),
         values: topPartsData.map((p) => p.qty)
     };
+    // Todo Items untuk Teknisi
+    // 1. Deadline Hari Ini atau Terlewat (Overdue)
+    const deadlineQuery = db.drizzle.select({
+        id: serviceOrders.id,
+        ticket_number: serviceOrders.ticket_number,
+        type: sql `CASE WHEN date(${serviceOrders.estimated_completion_date}, 'localtime') < ${today} THEN 'overdue' ELSE 'deadline_today' END`,
+        description: sql `'Deadline ' || date(${serviceOrders.estimated_completion_date}, 'localtime')`
+    }).from(serviceOrders)
+        .where(and(isNotNull(serviceOrders.estimated_completion_date), lte(sql `date(${serviceOrders.estimated_completion_date}, 'localtime')`, today), notLike(serviceOrders.service_status, '%Selesai%'), notInArray(serviceOrders.service_status, ['Batal', 'Dibatalkan']))).all();
+    // 2. Menunggu Sparepart
+    const waitingPartQuery = db.drizzle.select({
+        id: serviceOrders.id,
+        ticket_number: serviceOrders.ticket_number,
+        type: sql `'waiting_part'`,
+        description: sql `'Menunggu sparepart'`
+    }).from(serviceOrders)
+        .where(eq(serviceOrders.service_status, 'Menunggu Sparepart')).all();
+    const todoItems = [
+        ...deadlineQuery,
+        ...waitingPartQuery
+    ];
     return {
         todayServices,
         inProgress,
@@ -139,7 +160,8 @@ function getDashboardStats() {
         serviceStatusChart,
         topPartsChart,
         lowStockParts,
-        abandonedServices
+        abandonedServices,
+        todoItems
     };
 }
 module.exports = {

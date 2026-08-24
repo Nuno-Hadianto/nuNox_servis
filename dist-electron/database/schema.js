@@ -173,7 +173,8 @@ INSERT OR IGNORE INTO settings (key, value) VALUES
 ('whatsapp', ''),
 ('address', ''),
 ('email', ''),
-('receipt_footer', 'Terima kasih telah menggunakan jasa NUNOX_SERVIS.');
+('receipt_footer', 'Terima kasih telah menggunakan jasa NUNOX_SERVIS.'),
+('wa_template_status', 'Halo Kak {nama}, perangkat Anda dengan No Tiket *{tiket}* saat ini berstatus: *{status}*. Mohon konfirmasinya. Terima kasih.');
 `;
 module.exports = {
     createTables,

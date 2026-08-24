@@ -74,134 +74,9 @@
       </div>
 
       <div class="dashboard-column">
-        <!-- To-Do Teknisi -->
-        <div class="card warning-card">
-          <h2 class="warning-title text-primary">
-            <ClipboardList :size="24" /> To-Do Teknisi
-          </h2>
-          <div class="table-container table-scroll">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>No. Tiket</th>
-                  <th>Keterangan</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-if="!stats.todoItems || stats.todoItems.length === 0">
-                  <td colspan="3" class="text-center empty-state">Tidak ada tugas mendesak hari ini.</td>
-                </tr>
-                <tr
-                  v-for="todo in stats.todoItems"
-                  :key="todo.id"
-                  @click="$router.push('/services/' + todo.id)"
-                  class="clickable-row"
-                  title="Klik untuk Buka Detail"
-                >
-                  <td class="ticket-col">{{ todo.ticket_number }}</td>
-                  <td>
-                    <strong>{{ todo.description }}</strong>
-                  </td>
-                  <td>
-                    <span v-if="todo.type === 'overdue'" class="badge badge-danger">Terlewat</span>
-                    <span v-else-if="todo.type === 'deadline_today'" class="badge badge-warning">Hari Ini</span>
-                    <span v-else class="badge badge-info">Menunggu</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Peringatan Barang Terlantar -->
-        <div class="card warning-card">
-          <h2 class="warning-title text-danger">
-            <AlertOctagon :size="24" /> Peringatan Follow-up Pelanggan
-          </h2>
-          <div class="table-container table-scroll">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>No. Tiket</th>
-                  <th>Status</th>
-                  <th>Lama (Hari)</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-if="!stats.abandonedServices || stats.abandonedServices.length === 0">
-                  <td colspan="4" class="text-center empty-state">
-                    Tidak ada barang tertunda/terlantar.
-                  </td>
-                </tr>
-                <tr
-                  v-for="srv in stats.abandonedServices"
-                  :key="srv.id"
-                  @click="$router.push('/services/' + srv.id)"
-                  class="clickable-row"
-                  title="Klik untuk Buka Detail"
-                >
-                  <td class="ticket-col">{{ srv.ticket_number }}</td>
-                  <td>
-                    <span class="badge badge-warning">{{ srv.service_status }}</span>
-                  </td>
-                  <td>
-                    <span class="badge badge-danger"> {{ srv.days_pending }} Hari </span>
-                  </td>
-                  <td>
-                    <button @click.stop="sendWaDashboard(srv)" class="btn btn-sm btn-wa">
-                      💬 WA
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Peringatan Stok -->
-        <div class="card warning-card">
-          <h2 class="warning-title text-warning">
-            <AlertTriangle :size="24" /> Peringatan Stok Sparepart Menipis
-          </h2>
-          <div class="table-container table-scroll">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Kode</th>
-                  <th>Nama</th>
-                  <th>Stok</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-if="stats.lowStockParts.length === 0">
-                  <td colspan="4" class="text-center empty-state">Semua stok sparepart aman.</td>
-                </tr>
-                <tr v-for="part in stats.lowStockParts" :key="part.id">
-                  <td>{{ part.part_code || '-' }}</td>
-                  <td>
-                    <strong>{{ part.name }}</strong>
-                  </td>
-                  <td>
-                    <span class="badge badge-danger">
-                      {{ part.stock }}
-                    </span>
-                  </td>
-                  <td>
-                    <button
-                      @click="$router.push('/parts?search=' + (part.part_code || part.name))"
-                      class="btn btn-sm btn-primary btn-action"
-                    >
-                      + Isi Stok
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <TodoWidget :items="stats.todoItems" :isLoading="isLoading" />
+        <AbandonedWidget :items="stats.abandonedServices" :isLoading="isLoading" @send-wa="sendWaDashboard" />
+        <LowStockWidget :items="stats.lowStockParts" :isLoading="isLoading" />
       </div>
     </div>
   </div>
@@ -215,14 +90,16 @@ import {
   Hourglass,
   CheckCircle,
   Wallet,
-  TrendingUp,
-  AlertOctagon,
-  AlertTriangle,
-  ClipboardList
+  TrendingUp
 } from 'lucide-vue-next'
 import { Chart, registerables } from 'chart.js'
 import StatCard from '../components/StatCard.vue'
+import TodoWidget from '../components/dashboard/TodoWidget.vue'
+import AbandonedWidget from '../components/dashboard/AbandonedWidget.vue'
+import LowStockWidget from '../components/dashboard/LowStockWidget.vue'
 import type { DashboardStats, AbandonedService } from '../../shared/types'
+
+const isLoading = ref(true)
 
 const stats = ref<DashboardStats>({
   todayServices: 0,
@@ -279,6 +156,7 @@ Mohon konfirmasinya. Terima kasih.`
 }
 
 const loadDashboard = async () => {
+  isLoading.value = true
   if (window.api && window.api.getDashboardStats) {
     try {
       const data = await window.api.getDashboardStats()
@@ -293,7 +171,11 @@ const loadDashboard = async () => {
       }
     } catch (error) {
       console.error('Failed to load dashboard stats:', error)
+    } finally {
+      isLoading.value = false
     }
+  } else {
+    isLoading.value = false
   }
 }
 
@@ -447,56 +329,10 @@ onMounted(() => {
   height: 220px;
   width: 100%;
 }
-.warning-title {
-  margin-bottom: 15px;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.table-scroll {
-  max-height: 250px;
-}
-.empty-state {
-  padding: 20px;
-  color: #64748b;
-}
-.clickable-row {
-  cursor: pointer;
-}
-.ticket-col {
-  color: var(--primary);
-  font-weight: bold;
-}
-.btn-wa {
-  background-color: #25d366;
-  color: white;
-  border: none;
-  padding: 4px 10px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-}
-.btn-action {
-  padding: 4px 10px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-}
 .text-success {
   color: #10b981;
 }
 .text-danger {
   color: #ef4444;
-}
-.text-warning {
-  color: var(--warning);
-}
-.text-center {
-  text-align: center;
 }
 </style>
