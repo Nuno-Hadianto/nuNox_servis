@@ -87,6 +87,24 @@
               >Munculkan peringatan di Dasbor jika stok sparepart <= angka ini.</small
             >
           </div>
+          <div class="form-group">
+            <label style="font-weight: 500; font-size: 0.9rem">Template Pesan WhatsApp</label>
+            <textarea
+              v-model="form.wa_template_status"
+              rows="3"
+              style="
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-sm);
+                padding: 10px;
+                width: 100%;
+                resize: vertical;
+              "
+              placeholder="Halo Kak {nama}, tiket {tiket} status: {status}"
+            ></textarea>
+            <small style="color: var(--text-muted); display: block; margin-top: 4px"
+              >Gunakan kode otomatis: {nama}, {tiket}, {status}</small
+            >
+          </div>
           <div style="margin-top: 25px; text-align: right">
             <button
               type="submit"
@@ -258,7 +276,8 @@ const form = reactive<Settings>({
   phone: '',
   address: '',
   receipt_footer: '',
-  auto_backup_path: ''
+  auto_backup_path: '',
+  wa_template_status: ''
 })
 
 const loadSettings = async () => {
@@ -270,6 +289,7 @@ const loadSettings = async () => {
       form.address = settings.address || ''
       form.receipt_footer = settings.receipt_footer || ''
       form.auto_backup_path = settings.auto_backup_path || ''
+      form.wa_template_status = settings.wa_template_status || 'Halo Kak {nama}, perangkat Anda dengan No Tiket *{tiket}* saat ini berstatus: *{status}*. Mohon konfirmasinya. Terima kasih.'
       form.low_stock_threshold =
         settings.low_stock_threshold !== undefined ? Number(settings.low_stock_threshold) : 3
     } catch (error) {
@@ -287,6 +307,7 @@ const saveSettings = async () => {
       address: form.address,
       receipt_footer: form.receipt_footer,
       auto_backup_path: form.auto_backup_path,
+      wa_template_status: form.wa_template_status,
       low_stock_threshold: form.low_stock_threshold
     }
     await window.api.updateSettings(data)

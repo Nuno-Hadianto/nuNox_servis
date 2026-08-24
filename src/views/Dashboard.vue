@@ -74,6 +74,46 @@
       </div>
 
       <div class="dashboard-column">
+        <!-- To-Do Teknisi -->
+        <div class="card warning-card">
+          <h2 class="warning-title text-primary">
+            <ClipboardList :size="24" /> To-Do Teknisi
+          </h2>
+          <div class="table-container table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>No. Tiket</th>
+                  <th>Keterangan</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="!stats.todoItems || stats.todoItems.length === 0">
+                  <td colspan="3" class="text-center empty-state">Tidak ada tugas mendesak hari ini.</td>
+                </tr>
+                <tr
+                  v-for="todo in stats.todoItems"
+                  :key="todo.id"
+                  @click="$router.push('/services/' + todo.id)"
+                  class="clickable-row"
+                  title="Klik untuk Buka Detail"
+                >
+                  <td class="ticket-col">{{ todo.ticket_number }}</td>
+                  <td>
+                    <strong>{{ todo.description }}</strong>
+                  </td>
+                  <td>
+                    <span v-if="todo.type === 'overdue'" class="badge badge-danger">Terlewat</span>
+                    <span v-else-if="todo.type === 'deadline_today'" class="badge badge-warning">Hari Ini</span>
+                    <span v-else class="badge badge-info">Menunggu</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- Peringatan Barang Terlantar -->
         <div class="card warning-card">
           <h2 class="warning-title text-danger">
@@ -177,7 +217,8 @@ import {
   Wallet,
   TrendingUp,
   AlertOctagon,
-  AlertTriangle
+  AlertTriangle,
+  ClipboardList
 } from 'lucide-vue-next'
 import { Chart, registerables } from 'chart.js'
 import StatCard from '../components/StatCard.vue'
@@ -193,8 +234,11 @@ const stats = ref<DashboardStats>({
   serviceStatusChart: { labels: [], values: [] },
   topPartsChart: { labels: [], values: [] },
   lowStockParts: [],
-  abandonedServices: []
+  abandonedServices: [],
+  todoItems: []
 })
+
+const waTemplate = ref<string>('')
 
 let chartInstance: any = null
 let statusChartInstance: any = null
@@ -212,9 +256,17 @@ const sendWaDashboard = (srv: AbandonedService) => {
   }
 
   let targetPhone = srv.customer_phone.replace(/^0/, '62')
-  const text = `Halo Kak ${srv.customer_name},
+  
+  let text = `Halo Kak ${srv.customer_name},
 Mengingatkan bahwa perangkat Anda dengan No Tiket *${srv.ticket_number}* saat ini berstatus: *${srv.service_status}*.
 Mohon konfirmasinya. Terima kasih.`
+
+  if (waTemplate.value) {
+    text = waTemplate.value
+      .replace(/{nama}/g, srv.customer_name)
+      .replace(/{tiket}/g, srv.ticket_number)
+      .replace(/{status}/g, srv.service_status)
+  }
 
   const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`
   // @ts-ignore
@@ -234,6 +286,11 @@ const loadDashboard = async () => {
       renderChart(data.chartData)
       if (data.serviceStatusChart) renderStatusChart(data.serviceStatusChart)
       if (data.topPartsChart) renderTopPartsChart(data.topPartsChart)
+      
+      const settings = await window.api.getSettings()
+      if (settings && settings.wa_template_status) {
+        waTemplate.value = settings.wa_template_status
+      }
     } catch (error) {
       console.error('Failed to load dashboard stats:', error)
     }

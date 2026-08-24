@@ -1011,9 +1011,37 @@ const loadParts = async () => {
 const loadPhotos = async () => {
   const id = route.params.id as string
   if (window.api && window.api.getPhotos) {
-    photos.value = (await window.api.getPhotos(Number(id))) as Photo[]
+    try {
+      const res = await window.api.getPhotos(Number(id))
+      photos.value = res as Photo[]
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
+
+const waTemplate = ref<string>('')
+const loadSettings = async () => {
+  if (window.api && window.api.getSettings) {
+    try {
+      const settings = await window.api.getSettings()
+      if (settings && settings.wa_template_status) {
+        waTemplate.value = settings.wa_template_status
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}
+
+onMounted(() => {
+  loadServiceDetail()
+  loadHistory()
+  loadItems()
+  loadPayments()
+  loadPhotos()
+  loadSettings()
+})
 
 const handlePhotoUpload = async (e: Event, type: string) => {
   const target = e.target as HTMLInputElement
@@ -1244,10 +1272,17 @@ const sendWhatsApp = () => {
     return window.Swal.fire('Info', 'Pelanggan tidak memiliki nomor telepon', 'info')
   }
 
-  const text = `Halo Kak ${service.value.customer_name},
+  let text = `Halo Kak ${service.value.customer_name},
 Perangkat ${service.value.brand || ''} ${service.value.model || ''} dengan No Tiket *${service.value.ticket_number}* saat ini berstatus: *${service.value.service_status}*.
 Sisa Tagihan: *${formatCurrency(remainingBill.value)}*.
 Terima kasih telah mempercayakan perbaikan kepada kami.`
+
+  if (waTemplate.value) {
+    text = waTemplate.value
+      .replace(/{nama}/g, service.value.customer_name || '')
+      .replace(/{tiket}/g, service.value.ticket_number || '')
+      .replace(/{status}/g, service.value.service_status || '')
+  }
 
   waMessage.value = text
   isWaModalOpen.value = true

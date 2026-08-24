@@ -33,6 +33,7 @@ export interface DashboardStats {
   topPartsChart?: { labels: string[], values: number[] };
   lowStockParts: Part[];
   abandonedServices: AbandonedService[];
+  todoItems: TodoItem[];
 }
 
 export interface Customer {
@@ -133,6 +134,7 @@ export interface Settings {
   receipt_footer: string;
   auto_backup_path?: string;
   low_stock_threshold?: number;
+  wa_template_status?: string;
 }
 
 export interface Photo {
@@ -141,4 +143,11 @@ export interface Photo {
   photo_type: string;
   filepath: string;
   created_at: string;
+}
+
+export interface TodoItem {
+  id: number;
+  ticket_number: string;
+  type: string; // e.g., 'deadline_today', 'overdue', 'waiting_part'
+  description: string;
 }
