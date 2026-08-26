@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateData = exports.PaymentSchema = exports.ServiceItemSchema = exports.ServiceOrderSchema = exports.DeviceSchema = exports.SparepartSchema = exports.CustomerSchema = void 0;
+exports.validateData = exports.SaleItemSchema = exports.SaleSchema = exports.UserSchema = exports.PaymentSchema = exports.ServiceItemSchema = exports.ServiceOrderSchema = exports.DeviceSchema = exports.SparepartSchema = exports.CustomerSchema = void 0;
 const zod_1 = require("zod");
 exports.CustomerSchema = zod_1.z.object({
     name: zod_1.z.string().min(1, 'Nama pelanggan wajib diisi.').max(100, 'Nama terlalu panjang.'),
@@ -55,6 +55,24 @@ exports.PaymentSchema = zod_1.z.object({
     amount: zod_1.z.number().min(1, 'Jumlah pembayaran minimal 1.'),
     payment_method: zod_1.z.string().min(1, 'Metode pembayaran wajib diisi.'),
     notes: zod_1.z.string().optional().nullable()
+});
+exports.UserSchema = zod_1.z.object({
+    username: zod_1.z.string().min(3, 'Username minimal 3 karakter.').max(50, 'Username terlalu panjang.'),
+    password: zod_1.z.string().min(6, 'Password minimal 6 karakter.'),
+    role: zod_1.z.enum(['admin', 'kasir', 'teknisi']).default('kasir')
+});
+exports.SaleSchema = zod_1.z.object({
+    invoice_number: zod_1.z.string().min(1, 'Nomor invoice wajib diisi.'),
+    customer_name: zod_1.z.string().optional().nullable(),
+    total_amount: zod_1.z.number().min(0, 'Total harus lebih besar atau sama dengan 0.'),
+    payment_method: zod_1.z.string().default('Tunai')
+});
+exports.SaleItemSchema = zod_1.z.object({
+    sale_id: zod_1.z.number().int('ID Penjualan tidak valid.'),
+    spare_part_id: zod_1.z.number().int('ID Sparepart tidak valid.'),
+    quantity: zod_1.z.number().int('Kuantitas harus bilangan bulat.').min(1, 'Kuantitas minimal 1.'),
+    price: zod_1.z.number().min(0, 'Harga tidak boleh negatif.'),
+    total: zod_1.z.number().min(0, 'Total tidak boleh negatif.')
 });
 const validateData = (schema, data) => {
     try {

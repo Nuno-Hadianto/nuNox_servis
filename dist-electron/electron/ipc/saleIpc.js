@@ -3,10 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const { ipcMain } = require('electron');
 const saleController = require('../../controllers/saleController');
 const log = require('electron-log');
+const { validateData, SaleSchema, SaleItemSchema } = require('../../src/utils/validators');
 function registerSaleIpc(mainWindow) {
     ipcMain.handle('create-sale', (event, saleData, items) => {
         try {
-            const saleId = saleController.createSale(saleData, items);
+            const validSaleData = validateData(SaleSchema, saleData);
+            const validItems = items.map(item => validateData(SaleItemSchema, item));
+            const saleId = saleController.createSale(validSaleData, validItems);
             return { success: true, saleId };
         }
         catch (error) {

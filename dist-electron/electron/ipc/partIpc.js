@@ -4,11 +4,18 @@ const { ipcMain, dialog } = require('electron');
 const xlsx = require('xlsx');
 const partController = require('../../controllers/partController');
 const log = require('electron-log');
+const { validateData, SparepartSchema } = require('../../src/utils/validators');
 function registerPartIpc(mainWindow) {
     ipcMain.handle('get-parts', (event, searchQuery) => partController.getParts(searchQuery));
     ipcMain.handle('get-part', (event, id) => partController.getPartById(id));
-    ipcMain.handle('add-part', (event, data) => partController.addPart(data));
-    ipcMain.handle('update-part', (event, id, data) => partController.updatePart(id, data));
+    ipcMain.handle('add-part', (event, data) => {
+        const validData = validateData(SparepartSchema, data);
+        return partController.addPart(validData);
+    });
+    ipcMain.handle('update-part', (event, id, data) => {
+        const validData = validateData(SparepartSchema.partial(), data);
+        return partController.updatePart(id, validData);
+    });
     ipcMain.handle('update-part-stock', (event, id, change) => partController.updatePartStock(id, change));
     ipcMain.handle('delete-part', (event, id) => partController.deletePart(id));
     ipcMain.handle('get-low-stock-parts', (event, threshold) => partController.getLowStockParts(threshold));

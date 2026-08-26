@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const { ipcMain } = require('electron');
 const userController = require('../../controllers/userController');
 const log = require('electron-log');
+const { validateData, UserSchema } = require('../../src/utils/validators');
 function registerUserIpc() {
     ipcMain.handle('login', (event, username, password) => {
         try {
@@ -17,7 +18,8 @@ function registerUserIpc() {
     ipcMain.handle('get-user', (event, id) => userController.getUserById(id));
     ipcMain.handle('add-user', (event, data) => {
         try {
-            return { success: true, id: userController.addUser(data) };
+            const validData = validateData(UserSchema, data);
+            return { success: true, id: userController.addUser(validData) };
         }
         catch (err) {
             log.error('Error in add-user:', err);
@@ -26,7 +28,8 @@ function registerUserIpc() {
     });
     ipcMain.handle('update-user', (event, id, data) => {
         try {
-            return { success: true, result: userController.updateUser(id, data) };
+            const validData = validateData(UserSchema.partial(), data);
+            return { success: true, result: userController.updateUser(id, validData) };
         }
         catch (err) {
             log.error('Error in update-user:', err);

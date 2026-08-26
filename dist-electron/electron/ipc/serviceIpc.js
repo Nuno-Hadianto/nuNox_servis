@@ -4,18 +4,28 @@ const { ipcMain } = require('electron');
 const serviceController = require('../../controllers/serviceController');
 const serviceItemController = require('../../controllers/serviceItemController');
 const log = require('electron-log');
+const { validateData, ServiceOrderSchema, ServiceItemSchema } = require('../../src/utils/validators');
 function registerServiceIpc() {
     ipcMain.handle('get-services', (event, searchQuery, page, limit) => serviceController.getServices(searchQuery, page, limit));
     ipcMain.handle('get-service', (event, id) => serviceController.getServiceById(id));
     ipcMain.handle('get-service-by-ticket', (event, ticketNumber) => serviceController.getServiceByTicketNumber(ticketNumber));
     ipcMain.handle('get-service-history', (event, id) => serviceController.getServiceStatusHistory(id));
-    ipcMain.handle('add-service', (event, data) => serviceController.addService(data));
+    ipcMain.handle('add-service', (event, data) => {
+        const validData = validateData(ServiceOrderSchema, data);
+        return serviceController.addService(validData);
+    });
     ipcMain.handle('update-service-status', (event, id, status, notes, warrantyDays = 0) => serviceController.updateServiceStatus(id, status, notes, warrantyDays));
-    ipcMain.handle('update-service-details', (event, id, data) => serviceController.updateServiceDetails(id, data));
+    ipcMain.handle('update-service-details', (event, id, data) => {
+        const validData = validateData(ServiceOrderSchema.partial(), data);
+        return serviceController.updateServiceDetails(id, validData);
+    });
     ipcMain.handle('delete-service', (event, id) => serviceController.deleteService(id));
     // Service Items
     ipcMain.handle('get-service-items', (event, serviceId) => serviceItemController.getServiceItems(serviceId));
-    ipcMain.handle('add-service-item', (event, data) => serviceItemController.addServiceItem(data));
+    ipcMain.handle('add-service-item', (event, data) => {
+        const validData = validateData(ServiceItemSchema, data);
+        return serviceItemController.addServiceItem(validData);
+    });
     ipcMain.handle('delete-service-item', (event, id) => serviceItemController.deleteServiceItem(id));
     // Warranty
     ipcMain.handle('check-warranty', (event, deviceId) => serviceController.checkWarranty(deviceId));
