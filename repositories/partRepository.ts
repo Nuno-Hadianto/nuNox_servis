@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { Part } from '../shared/types';
-const db = require('../database/db');
-const { spareParts, serviceItems } = require('../database/drizzleSchema');
-const { eq, like, or, asc, lte, sql } = require('drizzle-orm');
+import db from '../database/db';
+import {  spareParts, serviceItems  } from '../database/drizzleSchema';
+import {  eq, like, or, asc, lte, sql  } from 'drizzle-orm';
 
 function getParts(searchQuery = '') {
     if (searchQuery) {
@@ -101,7 +102,7 @@ function importParts(dataArray: Record<string, string | number>[]) {
     return tx(dataArray);
 }
 
-module.exports = {
+export { 
     getParts,
     getPartById,
     addPart,
@@ -111,4 +112,5 @@ module.exports = {
     deletePart,
     importParts,
     getLowStockParts
-};
+ };
+

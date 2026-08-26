@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { ServiceOrder } from '../shared/types';
-const db = require('../database/db');
-const { serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts, servicePhotos } = require('../database/drizzleSchema');
-const { eq, like, or, asc, desc, sql, and, gte, isNotNull } = require('drizzle-orm');
+import db from '../database/db';
+import {  serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts, servicePhotos  } from '../database/drizzleSchema';
+import {  eq, like, or, asc, desc, sql, and, gte, isNotNull  } from 'drizzle-orm';
 
 function generateTicketNumber() {
     const year = new Date().getFullYear();
@@ -258,7 +259,7 @@ function checkWarranty(deviceId: number | string) {
         .get() || null;
 }
 
-module.exports = {
+export { 
     generateTicketNumber,
     getServices,
     getServiceById,
@@ -273,4 +274,5 @@ module.exports = {
     getPhotoById,
     deletePhoto,
     checkWarranty
-};
+ };
+

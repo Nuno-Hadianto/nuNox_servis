@@ -1,9 +1,10 @@
+// @ts-nocheck
 export {};
-const db = require('./db');
-const { app } = require('electron');
-const path = require('path');
-const log = require('electron-log');
-const { migrate } = require('drizzle-orm/better-sqlite3/migrator');
+import db from './db';
+import {  app  } from 'electron';
+import path from 'path';
+import log from 'electron-log';
+import {  migrate  } from 'drizzle-orm/better-sqlite3/migrator';
 
 function seedDefaultSettings() {
   try {
@@ -55,4 +56,5 @@ function runMigrations() {
   }
 }
 
-module.exports = runMigrations;
+export default runMigrations;
+

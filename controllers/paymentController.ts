@@ -1,6 +1,6 @@
 import { Payment } from '../shared/types';
-const paymentRepository = require('../repositories/paymentRepository');
-const { PaymentSchema, validateData } = require('../src/utils/validators');
+import * as paymentRepository from '../repositories/paymentRepository';
+import {  PaymentSchema, validateData  } from '../src/utils/validators';
 
 function getPaymentsByServiceId(serviceOrderId) {
     return paymentRepository.getPaymentsByServiceId(serviceOrderId);
@@ -19,9 +19,9 @@ function updateServicePaymentStatus(serviceOrderId) {
     return paymentRepository.updateServicePaymentStatus(serviceOrderId);
 }
 
-module.exports = {
+export { 
     getPaymentsByServiceId,
     addPayment,
     deletePayment,
     updateServicePaymentStatus
-};
+ };

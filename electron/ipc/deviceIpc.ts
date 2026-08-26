@@ -1,6 +1,6 @@
-const { ipcMain } = require('electron');
-const deviceController = require('../../controllers/deviceController');
-const { validateData, DeviceSchema } = require('../../src/utils/validators');
+import {  ipcMain  } from 'electron';
+import * as deviceController from '../../controllers/deviceController';
+import {  validateData, DeviceSchema  } from '../../src/utils/validators';
 
 function registerDeviceIpc() {
   ipcMain.handle('get-devices', (event, searchQuery) => deviceController.getDevices(searchQuery));
@@ -17,4 +17,4 @@ function registerDeviceIpc() {
   ipcMain.handle('delete-device', (event, id) => deviceController.deleteDevice(id));
 }
 
-module.exports = { registerDeviceIpc };
+export {  registerDeviceIpc  };

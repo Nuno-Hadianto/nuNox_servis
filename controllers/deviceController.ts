@@ -1,6 +1,6 @@
 import { Device } from '../shared/types';
-const deviceRepository = require('../repositories/deviceRepository');
-const { DeviceSchema, validateData } = require('../src/utils/validators');
+import * as deviceRepository from '../repositories/deviceRepository';
+import {  DeviceSchema, validateData  } from '../src/utils/validators';
 
 function getDevices(searchQuery = '') {
     return deviceRepository.getDevices(searchQuery);
@@ -32,11 +32,11 @@ function deleteDevice(id: number | string) {
     return deviceRepository.deleteDevice(id);
 }
 
-module.exports = {
+export { 
     getDevices,
     getDeviceById,
     getDevicesByCustomerId,
     addDevice,
     updateDevice,
     deleteDevice
-};
+ };

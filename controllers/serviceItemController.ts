@@ -1,6 +1,6 @@
 import { ServiceItem } from '../shared/types';
-const serviceItemRepository = require('../repositories/serviceItemRepository');
-const { ServiceItemSchema, validateData } = require('../src/utils/validators');
+import * as serviceItemRepository from '../repositories/serviceItemRepository';
+import {  ServiceItemSchema, validateData  } from '../src/utils/validators';
 
 function getServiceItems(serviceOrderId) {
     return serviceItemRepository.getServiceItems(serviceOrderId);
@@ -15,8 +15,8 @@ function deleteServiceItem(id: number | string) {
     return serviceItemRepository.deleteServiceItem(id);
 }
 
-module.exports = {
+export { 
     getServiceItems,
     addServiceItem,
     deleteServiceItem
-};
+ };

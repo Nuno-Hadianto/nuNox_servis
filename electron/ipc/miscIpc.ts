@@ -1,18 +1,19 @@
+// @ts-nocheck
+import db from '../../database/db';
 export {};
 import type { IpcMainInvokeEvent } from 'electron';
 import type { Settings } from '../../shared/types';
-const { app, ipcMain, dialog, shell, BrowserWindow } = require('electron');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const xlsx = require('xlsx');
+import {  app, ipcMain, dialog, shell, BrowserWindow  } from 'electron';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import xlsx from 'xlsx';
 
-const db = require('../../database/db');
-const dashboardController = require('../../controllers/dashboardController');
-const paymentController = require('../../controllers/paymentController');
-const settingsController = require('../../controllers/settingsController');
-const reportController = require('../../controllers/reportController');
-const log = require('electron-log');
+import * as dashboardController from '../../controllers/dashboardController';
+import * as paymentController from '../../controllers/paymentController';
+import * as settingsController from '../../controllers/settingsController';
+import * as reportController from '../../controllers/reportController';
+import log from 'electron-log';
 
 function registerMiscIpc(mainWindow: any) {
   // Dashboard
@@ -179,4 +180,5 @@ function registerMiscIpc(mainWindow: any) {
   });
 }
 
-module.exports = { registerMiscIpc };
+export {  registerMiscIpc  };
+

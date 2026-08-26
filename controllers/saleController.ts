@@ -1,6 +1,6 @@
 export {};
-const saleRepository = require('../repositories/saleRepository');
-const partRepository = require('../repositories/partRepository');
+import * as saleRepository from '../repositories/saleRepository';
+import * as partRepository from '../repositories/partRepository';
 
 function createSale(saleData: any, items: any[]) {
     // Basic validation
@@ -48,9 +48,9 @@ function getSaleById(saleId: number | string) {
     return saleRepository.getSaleById(saleId);
 }
 
-module.exports = {
+export { 
     createSale,
     getSales,
     getSaleItems,
     getSaleById
-};
+ };

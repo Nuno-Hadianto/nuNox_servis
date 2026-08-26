@@ -1,47 +1,85 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const { app, ipcMain, dialog, shell, BrowserWindow } = require('electron');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const xlsx = require('xlsx');
-const db = require('../../database/db');
-const dashboardController = require('../../controllers/dashboardController');
-const paymentController = require('../../controllers/paymentController');
-const settingsController = require('../../controllers/settingsController');
-const reportController = require('../../controllers/reportController');
-const log = require('electron-log');
+exports.registerMiscIpc = registerMiscIpc;
+// @ts-nocheck
+const db_1 = __importDefault(require("../../database/db"));
+const electron_1 = require("electron");
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
+const os_1 = __importDefault(require("os"));
+const xlsx_1 = __importDefault(require("xlsx"));
+const dashboardController = __importStar(require("../../controllers/dashboardController"));
+const paymentController = __importStar(require("../../controllers/paymentController"));
+const settingsController = __importStar(require("../../controllers/settingsController"));
+const reportController = __importStar(require("../../controllers/reportController"));
+const electron_log_1 = __importDefault(require("electron-log"));
 function registerMiscIpc(mainWindow) {
     // Dashboard
-    ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
+    electron_1.ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
     // Payments
-    ipcMain.handle('get-payments', (event, serviceId) => paymentController.getPaymentsByServiceId(serviceId));
-    ipcMain.handle('add-payment', (event, data) => paymentController.addPayment(data));
-    ipcMain.handle('delete-payment', (event, id) => paymentController.deletePayment(id));
+    electron_1.ipcMain.handle('get-payments', (event, serviceId) => paymentController.getPaymentsByServiceId(serviceId));
+    electron_1.ipcMain.handle('add-payment', (event, data) => paymentController.addPayment(data));
+    electron_1.ipcMain.handle('delete-payment', (event, id) => paymentController.deletePayment(id));
     // Settings
-    ipcMain.handle('get-settings', () => settingsController.getSettings());
-    ipcMain.handle('update-settings', (event, data) => settingsController.updateSettings(data));
+    electron_1.ipcMain.handle('get-settings', () => settingsController.getSettings());
+    electron_1.ipcMain.handle('update-settings', (event, data) => settingsController.updateSettings(data));
     // Reports
-    ipcMain.handle('get-income-report', (event, start, end) => reportController.getIncomeReport(start, end));
-    ipcMain.handle('get-completed-services', (event, start, end) => reportController.getCompletedServices(start, end));
-    ipcMain.handle('get-top-spareparts', (event, start, end) => reportController.getTopSpareparts(start, end));
+    electron_1.ipcMain.handle('get-income-report', (event, start, end) => reportController.getIncomeReport(start, end));
+    electron_1.ipcMain.handle('get-completed-services', (event, start, end) => reportController.getCompletedServices(start, end));
+    electron_1.ipcMain.handle('get-top-spareparts', (event, start, end) => reportController.getTopSpareparts(start, end));
     // Backup & Restore
-    ipcMain.handle('backup-database', async () => {
-        const dbPath = path.join(app.getPath('userData'), 'database', 'nunox_servis.db');
+    electron_1.ipcMain.handle('backup-database', async () => {
+        const dbPath = path_1.default.join(electron_1.app.getPath('userData'), 'database', 'nunox_servis.db');
         const defaultPath = `nuNox_servis_Backup_${new Date().toISOString().split('T')[0]}.db`;
-        const { filePath } = await dialog.showSaveDialog({
+        const { filePath } = await electron_1.dialog.showSaveDialog({
             title: 'Backup Database',
             defaultPath: defaultPath,
             filters: [{ name: 'Database', extensions: ['db'] }]
         });
         if (filePath) {
-            await db.backup(filePath);
+            await db_1.default.backup(filePath);
             return true;
         }
         return false;
     });
-    ipcMain.handle('select-directory', async () => {
-        const { filePaths } = await dialog.showOpenDialog({
+    electron_1.ipcMain.handle('select-directory', async () => {
+        const { filePaths } = await electron_1.dialog.showOpenDialog({
             title: 'Pilih Folder',
             properties: ['openDirectory']
         });
@@ -50,72 +88,72 @@ function registerMiscIpc(mainWindow) {
         }
         return null;
     });
-    ipcMain.handle('restore-database', async () => {
-        const { filePaths } = await dialog.showOpenDialog({
+    electron_1.ipcMain.handle('restore-database', async () => {
+        const { filePaths } = await electron_1.dialog.showOpenDialog({
             title: 'Restore Database',
             properties: ['openFile'],
             filters: [{ name: 'Database', extensions: ['db'] }]
         });
         if (filePaths && filePaths.length > 0) {
-            const dbPath = path.join(app.getPath('userData'), 'database', 'nunox_servis.db');
-            db.close();
-            fs.copyFileSync(filePaths[0], dbPath);
+            const dbPath = path_1.default.join(electron_1.app.getPath('userData'), 'database', 'nunox_servis.db');
+            db_1.default.close();
+            fs_1.default.copyFileSync(filePaths[0], dbPath);
             setTimeout(() => {
-                app.relaunch();
-                app.exit(0);
+                electron_1.app.relaunch();
+                electron_1.app.exit(0);
             }, 2500);
             return true;
         }
         return false;
     });
     // Export & Print
-    ipcMain.handle('export-excel', async (event, data) => {
+    electron_1.ipcMain.handle('export-excel', async (event, data) => {
         try {
-            const { canceled, filePath } = await dialog.showSaveDialog({
+            const { canceled, filePath } = await electron_1.dialog.showSaveDialog({
                 title: 'Simpan Laporan Excel',
                 defaultPath: 'Laporan_nuNox_servis.xlsx',
                 filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
             });
             if (canceled || !filePath)
                 return { success: false, canceled: true };
-            const worksheet = xlsx.utils.json_to_sheet(data);
+            const worksheet = xlsx_1.default.utils.json_to_sheet(data);
             const colWidths = [{ wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 15 }];
             worksheet['!cols'] = colWidths;
-            const workbook = xlsx.utils.book_new();
-            xlsx.utils.book_append_sheet(workbook, worksheet, 'Laporan');
-            xlsx.writeFile(workbook, filePath);
+            const workbook = xlsx_1.default.utils.book_new();
+            xlsx_1.default.utils.book_append_sheet(workbook, worksheet, 'Laporan');
+            xlsx_1.default.writeFile(workbook, filePath);
             return { success: true, filePath };
         }
         catch (error) {
-            log.error('Error exporting excel:', error);
+            electron_log_1.default.error('Error exporting excel:', error);
             return { success: false, error: error.message };
         }
     });
-    ipcMain.handle('export-pdf', async (event, { html, filename }) => {
+    electron_1.ipcMain.handle('export-pdf', async (event, { html, filename }) => {
         try {
-            const { canceled, filePath } = await dialog.showSaveDialog({
+            const { canceled, filePath } = await electron_1.dialog.showSaveDialog({
                 title: 'Simpan PDF',
                 defaultPath: filename || 'Invoice.pdf',
                 filters: [{ name: 'PDF Files', extensions: ['pdf'] }]
             });
             if (canceled || !filePath)
                 return { success: false, canceled: true };
-            const pdfWindow = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: false } });
+            const pdfWindow = new electron_1.BrowserWindow({ show: false, webPreferences: { nodeIntegration: false } });
             await pdfWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
             await new Promise(resolve => setTimeout(resolve, 500));
             const pdfData = await pdfWindow.webContents.printToPDF({ printBackground: true, pageSize: 'A4' });
-            fs.writeFileSync(filePath, pdfData);
+            fs_1.default.writeFileSync(filePath, pdfData);
             pdfWindow.close();
             return { success: true, filePath };
         }
         catch (error) {
-            log.error('Error generating PDF:', error);
+            electron_log_1.default.error('Error generating PDF:', error);
             return { success: false, error: error.message };
         }
     });
-    ipcMain.handle('print-preview', async (event, options = {}) => {
+    electron_1.ipcMain.handle('print-preview', async (event, options = {}) => {
         try {
-            const pdfPath = path.join(os.tmpdir(), `nunox_print_${Date.now()}.pdf`);
+            const pdfPath = path_1.default.join(os_1.default.tmpdir(), `nunox_print_${Date.now()}.pdf`);
             const pdfOptions = {
                 printBackground: true,
                 landscape: options.landscape || false,
@@ -125,40 +163,39 @@ function registerMiscIpc(mainWindow) {
                 pdfOptions.pageSize = options.pageSize;
             }
             const pdfData = await mainWindow.webContents.printToPDF(pdfOptions);
-            fs.writeFileSync(pdfPath, pdfData);
-            await shell.openPath(pdfPath);
+            fs_1.default.writeFileSync(pdfPath, pdfData);
+            await electron_1.shell.openPath(pdfPath);
             return true;
         }
         catch (error) {
-            log.error('Error generating print preview:', error);
+            electron_log_1.default.error('Error generating print preview:', error);
             throw error;
         }
     });
-    ipcMain.handle('open-external-url', async (event, url) => {
+    electron_1.ipcMain.handle('open-external-url', async (event, url) => {
         try {
-            await shell.openExternal(url);
+            await electron_1.shell.openExternal(url);
             return true;
         }
         catch (error) {
-            log.error('Failed to open external url:', error);
+            electron_log_1.default.error('Failed to open external url:', error);
             return false;
         }
     });
-    ipcMain.handle('get-logo-base64', async () => {
+    electron_1.ipcMain.handle('get-logo-base64', async () => {
         try {
-            const logoPath = path.join(__dirname, '..', '..', 'public', 'img', 'logo.png');
-            if (fs.existsSync(logoPath)) {
-                const ext = path.extname(logoPath).toLowerCase();
+            const logoPath = path_1.default.join(__dirname, '..', '..', 'public', 'img', 'logo.png');
+            if (fs_1.default.existsSync(logoPath)) {
+                const ext = path_1.default.extname(logoPath).toLowerCase();
                 const mimeType = ext === '.png' ? 'image/png' : (ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : 'image/png');
-                const bitmap = fs.readFileSync(logoPath);
+                const bitmap = fs_1.default.readFileSync(logoPath);
                 return `data:${mimeType};base64,${bitmap.toString('base64')}`;
             }
             return null;
         }
         catch (error) {
-            log.error('Failed to read logo:', error);
+            electron_log_1.default.error('Failed to read logo:', error);
             return null;
         }
     });
 }
-module.exports = { registerMiscIpc };

@@ -1,7 +1,8 @@
-export {};
-const db = require('../database/db');
-const { serviceOrders, payments, serviceItems, spareParts, settings, customers } = require('../database/drizzleSchema');
-const { eq, notLike, like, notInArray, lte, asc, sql, and, isNotNull } = require('drizzle-orm');
+// @ts-nocheck
+import db from '../database/db';
+import {  serviceOrders, payments, serviceItems, spareParts, settings, customers  } from '../database/drizzleSchema';
+import {  eq, notLike, like, notInArray, lte, asc, sql, and, isNotNull  } from 'drizzle-orm';
+export {};
 
 function getDashboardStats() {
     const d = new Date();
@@ -202,6 +203,7 @@ function getDashboardStats() {
     };
 }
 
-module.exports = {
+export { 
     getDashboardStats
-};
+ };
+

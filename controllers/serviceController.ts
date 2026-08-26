@@ -1,6 +1,6 @@
 import { ServiceOrder } from '../shared/types';
-const serviceRepository = require('../repositories/serviceRepository');
-const { ServiceOrderSchema, validateData } = require('../src/utils/validators');
+import * as serviceRepository from '../repositories/serviceRepository';
+import {  ServiceOrderSchema, validateData  } from '../src/utils/validators';
 
 function getServices(searchQuery: string = '', page: number = 1, limit: number = 50) {
     return serviceRepository.getServices(searchQuery, page, limit);
@@ -62,9 +62,10 @@ function checkWarranty(deviceId: number) {
     return serviceRepository.checkWarranty(deviceId);
 }
 
-module.exports = {
+export { 
     getServices,
     getServiceById,
+    getServiceByTicketNumber,
     getServiceStatusHistory,
     addService,
     updateServiceStatus,
@@ -75,4 +76,4 @@ module.exports = {
     deletePhoto,
     getPhotoById,
     checkWarranty
-};
+ };

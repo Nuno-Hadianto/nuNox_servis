@@ -1,8 +1,8 @@
 import type { IpcMainInvokeEvent } from 'electron';
 import type { Customer } from '../../shared/types';
-const { ipcMain } = require('electron');
-const customerController = require('../../controllers/customerController');
-const { validateData, CustomerSchema } = require('../../src/utils/validators');
+import {  ipcMain  } from 'electron';
+import * as customerController from '../../controllers/customerController';
+import {  validateData, CustomerSchema  } from '../../src/utils/validators';
 
 function registerCustomerIpc() {
   ipcMain.handle('get-customers', (event: IpcMainInvokeEvent, searchQuery: string, page: number, limit: number) => customerController.getCustomers(searchQuery, page, limit));
@@ -20,4 +20,4 @@ function registerCustomerIpc() {
   ipcMain.handle('delete-customer', (event: IpcMainInvokeEvent, id: number) => customerController.deleteCustomer(id));
 }
 
-module.exports = { registerCustomerIpc };
+export {  registerCustomerIpc  };

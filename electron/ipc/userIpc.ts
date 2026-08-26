@@ -1,10 +1,10 @@
 export {};
 import type { IpcMainInvokeEvent } from 'electron';
 import type { User } from '../../shared/types';
-const { ipcMain } = require('electron');
-const userController = require('../../controllers/userController');
-const log = require('electron-log');
-const { validateData, UserSchema } = require('../../src/utils/validators');
+import {  ipcMain  } from 'electron';
+import * as userController from '../../controllers/userController';
+import log from 'electron-log';
+import {  validateData, UserSchema  } from '../../src/utils/validators';
 
 function registerUserIpc() {
   ipcMain.handle('login', (event: IpcMainInvokeEvent, username: string, password: string) => {
@@ -45,4 +45,4 @@ function registerUserIpc() {
   });
 }
 
-module.exports = { registerUserIpc };
+export {  registerUserIpc  };

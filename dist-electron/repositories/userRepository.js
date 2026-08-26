@@ -1,68 +1,69 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const db = require('../database/db');
-const { users } = require('../database/drizzleSchema');
-const { eq, ne, and, desc, sql } = require('drizzle-orm');
+exports.getUserCount = getUserCount;
+exports.createDefaultAdmin = createDefaultAdmin;
+exports.getUserByUsername = getUserByUsername;
+exports.getUsers = getUsers;
+exports.getUserById = getUserById;
+exports.checkUsernameExists = checkUsernameExists;
+exports.checkUsernameExistsExceptId = checkUsernameExistsExceptId;
+exports.addUser = addUser;
+exports.updateUserWithPassword = updateUserWithPassword;
+exports.updateUserWithoutPassword = updateUserWithoutPassword;
+exports.getUserRole = getUserRole;
+exports.getAdminCount = getAdminCount;
+exports.deleteUser = deleteUser;
+const db_1 = __importDefault(require("../database/db"));
+const drizzleSchema_1 = require("../database/drizzleSchema");
+const drizzle_orm_1 = require("drizzle-orm");
 function getUserCount() {
-    const result = db.drizzle.select({ count: sql `count(*)` }).from(users).get();
+    const result = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.users).get();
     return result.count;
 }
 function createDefaultAdmin(hash) {
-    db.drizzle.insert(users).values({ username: 'admin', password: hash, role: 'admin' }).run();
+    db_1.default.drizzle.insert(drizzleSchema_1.users).values({ username: 'admin', password: hash, role: 'admin' }).run();
 }
 function getUserByUsername(username) {
-    return db.drizzle.select({ id: users.id, username: users.username, password: users.password, role: users.role })
-        .from(users).where(eq(users.username, username)).get();
+    return db_1.default.drizzle.select({ id: drizzleSchema_1.users.id, username: drizzleSchema_1.users.username, password: drizzleSchema_1.users.password, role: drizzleSchema_1.users.role })
+        .from(drizzleSchema_1.users).where((0, drizzle_orm_1.eq)(drizzleSchema_1.users.username, username)).get();
 }
 function getUsers() {
-    return db.drizzle.select({ id: users.id, username: users.username, role: users.role, created_at: users.created_at })
-        .from(users).orderBy(desc(users.created_at)).all();
+    return db_1.default.drizzle.select({ id: drizzleSchema_1.users.id, username: drizzleSchema_1.users.username, role: drizzleSchema_1.users.role, created_at: drizzleSchema_1.users.created_at })
+        .from(drizzleSchema_1.users).orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.users.created_at)).all();
 }
 function getUserById(id) {
-    return db.drizzle.select({ id: users.id, username: users.username, role: users.role })
-        .from(users).where(eq(users.id, Number(id))).get();
+    return db_1.default.drizzle.select({ id: drizzleSchema_1.users.id, username: drizzleSchema_1.users.username, role: drizzleSchema_1.users.role })
+        .from(drizzleSchema_1.users).where((0, drizzle_orm_1.eq)(drizzleSchema_1.users.id, Number(id))).get();
 }
 function checkUsernameExists(username) {
-    return db.drizzle.select({ id: users.id }).from(users).where(eq(users.username, username)).get();
+    return db_1.default.drizzle.select({ id: drizzleSchema_1.users.id }).from(drizzleSchema_1.users).where((0, drizzle_orm_1.eq)(drizzleSchema_1.users.username, username)).get();
 }
 function checkUsernameExistsExceptId(username, id) {
-    return db.drizzle.select({ id: users.id }).from(users).where(and(eq(users.username, username), ne(users.id, Number(id)))).get();
+    return db_1.default.drizzle.select({ id: drizzleSchema_1.users.id }).from(drizzleSchema_1.users).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.users.username, username), (0, drizzle_orm_1.ne)(drizzleSchema_1.users.id, Number(id)))).get();
 }
 function addUser(username, hash, role) {
-    const result = db.drizzle.insert(users).values({ username, password: hash, role }).run();
+    const result = db_1.default.drizzle.insert(drizzleSchema_1.users).values({ username, password: hash, role }).run();
     return result.lastInsertRowid;
 }
 function updateUserWithPassword(id, username, hash, role) {
-    db.drizzle.update(users).set({ username, password: hash, role }).where(eq(users.id, Number(id))).run();
+    db_1.default.drizzle.update(drizzleSchema_1.users).set({ username, password: hash, role }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.users.id, Number(id))).run();
     return true;
 }
 function updateUserWithoutPassword(id, username, role) {
-    db.drizzle.update(users).set({ username, role }).where(eq(users.id, Number(id))).run();
+    db_1.default.drizzle.update(drizzleSchema_1.users).set({ username, role }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.users.id, Number(id))).run();
     return true;
 }
 function getUserRole(id) {
-    return db.drizzle.select({ role: users.role }).from(users).where(eq(users.id, Number(id))).get();
+    return db_1.default.drizzle.select({ role: drizzleSchema_1.users.role }).from(drizzleSchema_1.users).where((0, drizzle_orm_1.eq)(drizzleSchema_1.users.id, Number(id))).get();
 }
 function getAdminCount() {
-    const result = db.drizzle.select({ count: sql `count(*)` }).from(users).where(eq(users.role, 'admin')).get();
+    const result = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.users).where((0, drizzle_orm_1.eq)(drizzleSchema_1.users.role, 'admin')).get();
     return result.count;
 }
 function deleteUser(id) {
-    db.drizzle.delete(users).where(eq(users.id, Number(id))).run();
+    db_1.default.drizzle.delete(drizzleSchema_1.users).where((0, drizzle_orm_1.eq)(drizzleSchema_1.users.id, Number(id))).run();
     return true;
 }
-module.exports = {
-    getUserCount,
-    createDefaultAdmin,
-    getUserByUsername,
-    getUsers,
-    getUserById,
-    checkUsernameExists,
-    checkUsernameExistsExceptId,
-    addUser,
-    updateUserWithPassword,
-    updateUserWithoutPassword,
-    getUserRole,
-    getAdminCount,
-    deleteUser
-};

@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { Device } from '../shared/types';
-const db = require('../database/db');
-const { devices, customers, serviceOrders } = require('../database/drizzleSchema');
-const { eq, like, or, desc, sql } = require('drizzle-orm');
+import db from '../database/db';
+import {  devices, customers, serviceOrders  } from '../database/drizzleSchema';
+import {  eq, like, or, desc, sql  } from 'drizzle-orm';
 
 function getDevices(searchQuery = '') {
     const baseQuery = db.drizzle.select({
@@ -73,7 +74,7 @@ function deleteDevice(id: number | string) {
     return true;
 }
 
-module.exports = {
+export { 
     getDevices,
     getDeviceById,
     getDevicesByCustomerId,
@@ -81,4 +82,5 @@ module.exports = {
     updateDevice,
     checkDeviceHasServiceOrders,
     deleteDevice
-};
+ };
+

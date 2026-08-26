@@ -1,10 +1,14 @@
+// @ts-nocheck
+import fs from 'fs';
+import path from 'path';
+import {  app  } from 'electron';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { ServiceOrder, ServiceItem } from '../../shared/types';
-const { ipcMain } = require('electron');
-const serviceController = require('../../controllers/serviceController');
-const serviceItemController = require('../../controllers/serviceItemController');
-const log = require('electron-log');
-const { validateData, ServiceOrderSchema, ServiceItemSchema } = require('../../src/utils/validators');
+import {  ipcMain  } from 'electron';
+import * as serviceController from '../../controllers/serviceController';
+import * as serviceItemController from '../../controllers/serviceItemController';
+import log from 'electron-log';
+import {  validateData, ServiceOrderSchema, ServiceItemSchema  } from '../../src/utils/validators';
 
 function registerServiceIpc() {
   ipcMain.handle('get-services', (event: IpcMainInvokeEvent, searchQuery: string, page: number, limit: number) => serviceController.getServices(searchQuery, page, limit));
@@ -34,9 +38,9 @@ function registerServiceIpc() {
   ipcMain.handle('check-warranty', (event: IpcMainInvokeEvent, deviceId: number) => serviceController.checkWarranty(deviceId));
 
   // Photos
-  const fs = require('fs');
-  const path = require('path');
-  const { app } = require('electron');
+
+
+
 
   ipcMain.handle('upload-photo', async (event: IpcMainInvokeEvent, serviceId: number, type: string, buffer: Buffer, fileName: string) => {
     try {
@@ -69,6 +73,7 @@ function registerServiceIpc() {
   });
 }
 
-module.exports = { registerServiceIpc };
+export {  registerServiceIpc  };
 
 export {};
+

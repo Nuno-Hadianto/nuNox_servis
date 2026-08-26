@@ -1,5 +1,5 @@
 import { Settings } from '../shared/types';
-const settingsRepository = require('../repositories/settingsRepository');
+import * as settingsRepository from '../repositories/settingsRepository';
 
 function getSettings() {
     return settingsRepository.getSettings();
@@ -9,7 +9,7 @@ function updateSettings(data) {
     return settingsRepository.updateSettings(data);
 }
 
-module.exports = {
+export { 
     getSettings,
     updateSettings
-};
+ };

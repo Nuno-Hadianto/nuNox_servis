@@ -1,29 +1,65 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const Database = require('better-sqlite3');
-const path = require('path');
-const fs = require('fs');
-const { app } = require('electron');
+const better_sqlite3_1 = require("drizzle-orm/better-sqlite3");
+const better_sqlite3_2 = __importDefault(require("better-sqlite3"));
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
+const electron_1 = require("electron");
 let dbPath;
 if (process.env.NODE_ENV === 'test') {
     dbPath = ':memory:';
 }
-else if (app) {
-    const userDataPath = app.getPath('userData');
-    const dbDir = path.join(userDataPath, 'database');
-    if (!fs.existsSync(dbDir)) {
-        fs.mkdirSync(dbDir, { recursive: true });
+else if (electron_1.app) {
+    const userDataPath = electron_1.app.getPath('userData');
+    const dbDir = path_1.default.join(userDataPath, 'database');
+    if (!fs_1.default.existsSync(dbDir)) {
+        fs_1.default.mkdirSync(dbDir, { recursive: true });
     }
-    dbPath = path.join(dbDir, 'nunox_servis.db');
+    dbPath = path_1.default.join(dbDir, 'nunox_servis.db');
 }
 else {
     // Fallback for development
-    dbPath = path.join(__dirname, 'nunox_servis.db');
+    dbPath = path_1.default.join(__dirname, 'nunox_servis.db');
 }
-const db = new Database(dbPath);
+const drizzleSchema = __importStar(require("./drizzleSchema"));
+const db = new better_sqlite3_2.default(dbPath);
 db.pragma('foreign_keys = ON');
-const { drizzle } = require('drizzle-orm/better-sqlite3');
-const drizzleSchema = require('./drizzleSchema');
-const dbDrizzle = drizzle(db, { schema: drizzleSchema });
+const dbDrizzle = (0, better_sqlite3_1.drizzle)(db, { schema: drizzleSchema });
 db.drizzle = dbDrizzle;
-module.exports = db;
+exports.default = db;

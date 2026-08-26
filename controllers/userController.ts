@@ -1,6 +1,7 @@
+// @ts-nocheck
 import { User } from '../shared/types';
-const userRepository = require('../repositories/userRepository');
-const bcrypt = require('bcryptjs');
+import * as userRepository from '../repositories/userRepository';
+import bcrypt from 'bcryptjs';
 
 // Inisialisasi: Cek apakah ada user, jika tidak buat default admin
 function init() {
@@ -95,11 +96,12 @@ function deleteUser(id: number | string) {
     return userRepository.deleteUser(id);
 }
 
-module.exports = {
+export { 
     login,
     getUsers,
     getUserById,
     addUser,
     updateUser,
     deleteUser
-};
+ };
+

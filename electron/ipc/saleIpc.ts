@@ -1,9 +1,9 @@
 export {};
 import type { IpcMainInvokeEvent } from 'electron';
-const { ipcMain } = require('electron');
-const saleController = require('../../controllers/saleController');
-const log = require('electron-log');
-const { validateData, SaleSchema, SaleItemSchema } = require('../../src/utils/validators');
+import {  ipcMain  } from 'electron';
+import * as saleController from '../../controllers/saleController';
+import log from 'electron-log';
+import {  validateData, SaleSchema, SaleItemSchema  } from '../../src/utils/validators';
 
 function registerSaleIpc(mainWindow: any) {
   ipcMain.handle('create-sale', (event: IpcMainInvokeEvent, saleData: any, items: any[]) => {
@@ -46,4 +46,4 @@ function registerSaleIpc(mainWindow: any) {
   });
 }
 
-module.exports = registerSaleIpc;
+export default registerSaleIpc;

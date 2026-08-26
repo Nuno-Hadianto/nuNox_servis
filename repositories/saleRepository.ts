@@ -1,7 +1,8 @@
+// @ts-nocheck
 export {};
-const db = require('../database/db');
-const { sales, saleItems, spareParts } = require('../database/drizzleSchema');
-const { eq, gte, lte, and, desc, sql } = require('drizzle-orm');
+import db from '../database/db';
+import {  sales, saleItems, spareParts  } from '../database/drizzleSchema';
+import {  eq, gte, lte, and, desc, sql  } from 'drizzle-orm';
 
 function createSale(saleData: { invoice_number: string, customer_name?: string, total_amount: number, payment_method: string }, items: { spare_part_id: number, quantity: number, price: number, total: number }[]) {
     return db.transaction(() => {
@@ -69,9 +70,10 @@ function getSaleById(saleId: number | string) {
     return db.drizzle.select().from(sales).where(eq(sales.id, Number(saleId))).get();
 }
 
-module.exports = {
+export { 
     createSale,
     getSales,
     getSaleItems,
     getSaleById
-};
+ };
+

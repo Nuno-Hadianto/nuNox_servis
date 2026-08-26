@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const { contextBridge, ipcRenderer } = require('electron');
+const electron_1 = require("electron");
 const invokeSafe = async (channel, ...args) => {
     try {
-        return await ipcRenderer.invoke(channel, ...args);
+        return await electron_1.ipcRenderer.invoke(channel, ...args);
     }
     catch (error) {
         if (error && error.message) {
@@ -12,8 +12,8 @@ const invokeSafe = async (channel, ...args) => {
         throw error;
     }
 };
-contextBridge.exposeInMainWorld('api', {
-    appReady: () => ipcRenderer.send('app-ready'),
+electron_1.contextBridge.exposeInMainWorld('api', {
+    appReady: () => electron_1.ipcRenderer.send('app-ready'),
     getDashboardStats: () => invokeSafe('get-dashboard-stats'),
     // Customers
     getCustomers: (searchQuery, page, limit) => invokeSafe('get-customers', searchQuery, page, limit),

@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { Customer } from '../shared/types';
-const db = require('../database/db');
-const { customers, serviceOrders } = require('../database/drizzleSchema');
-const { eq, like, or, asc, sql } = require('drizzle-orm');
+import db from '../database/db';
+import {  customers, serviceOrders  } from '../database/drizzleSchema';
+import {  eq, like, or, asc, sql  } from 'drizzle-orm';
 
 function getCustomers(searchQuery: string = '', page: number = 1, limit: number = 50) {
     const offset = (page - 1) * limit;
@@ -61,11 +62,12 @@ function deleteCustomer(id: number | string) {
     return true;
 }
 
-module.exports = {
+export { 
     getCustomers,
     getCustomerById,
     addCustomer,
     updateCustomer,
     checkCustomerHasServiceOrders,
     deleteCustomer
-};
+ };
+

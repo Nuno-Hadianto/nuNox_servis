@@ -1,68 +1,69 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const db = require('../database/db');
-const { devices, customers, serviceOrders } = require('../database/drizzleSchema');
-const { eq, like, or, desc, sql } = require('drizzle-orm');
+exports.getDevices = getDevices;
+exports.getDeviceById = getDeviceById;
+exports.getDevicesByCustomerId = getDevicesByCustomerId;
+exports.addDevice = addDevice;
+exports.updateDevice = updateDevice;
+exports.checkDeviceHasServiceOrders = checkDeviceHasServiceOrders;
+exports.deleteDevice = deleteDevice;
+const db_1 = __importDefault(require("../database/db"));
+const drizzleSchema_1 = require("../database/drizzleSchema");
+const drizzle_orm_1 = require("drizzle-orm");
 function getDevices(searchQuery = '') {
-    const baseQuery = db.drizzle.select({
-        id: devices.id,
-        customer_id: devices.customer_id,
-        device_type: devices.device_type,
-        brand: devices.brand,
-        model: devices.model,
-        serial_number: devices.serial_number,
-        color: devices.color,
-        accessories: devices.accessories,
-        physical_condition: devices.physical_condition,
-        notes: devices.notes,
-        created_at: devices.created_at,
-        updated_at: devices.updated_at,
-        customer_name: customers.name,
-        customer_phone: customers.phone
-    }).from(devices).innerJoin(customers, eq(devices.customer_id, customers.id));
+    const baseQuery = db_1.default.drizzle.select({
+        id: drizzleSchema_1.devices.id,
+        customer_id: drizzleSchema_1.devices.customer_id,
+        device_type: drizzleSchema_1.devices.device_type,
+        brand: drizzleSchema_1.devices.brand,
+        model: drizzleSchema_1.devices.model,
+        serial_number: drizzleSchema_1.devices.serial_number,
+        color: drizzleSchema_1.devices.color,
+        accessories: drizzleSchema_1.devices.accessories,
+        physical_condition: drizzleSchema_1.devices.physical_condition,
+        notes: drizzleSchema_1.devices.notes,
+        created_at: drizzleSchema_1.devices.created_at,
+        updated_at: drizzleSchema_1.devices.updated_at,
+        customer_name: drizzleSchema_1.customers.name,
+        customer_phone: drizzleSchema_1.customers.phone
+    }).from(drizzleSchema_1.devices).innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.devices.customer_id, drizzleSchema_1.customers.id));
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        return baseQuery.where(or(like(devices.brand, queryStr), like(devices.model, queryStr), like(devices.serial_number, queryStr), like(customers.name, queryStr))).orderBy(desc(devices.id)).all();
+        return baseQuery.where((0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.model, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.serial_number, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, queryStr))).orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.id)).all();
     }
-    return baseQuery.orderBy(desc(devices.id)).all();
+    return baseQuery.orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.id)).all();
 }
 function getDeviceById(id) {
-    return db.drizzle.select().from(devices).where(eq(devices.id, Number(id))).get();
+    return db_1.default.drizzle.select().from(drizzleSchema_1.devices).where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.id, Number(id))).get();
 }
 function getDevicesByCustomerId(customerId) {
-    return db.drizzle.select().from(devices)
-        .where(eq(devices.customer_id, Number(customerId)))
-        .orderBy(desc(devices.id)).all();
+    return db_1.default.drizzle.select().from(drizzleSchema_1.devices)
+        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.customer_id, Number(customerId)))
+        .orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.id)).all();
 }
 function addDevice(data) {
     const { customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes } = data;
-    const result = db.drizzle.insert(devices).values({
+    const result = db_1.default.drizzle.insert(drizzleSchema_1.devices).values({
         customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes
     }).run();
     return result.lastInsertRowid;
 }
 function updateDevice(id, data) {
     const { customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes } = data;
-    db.drizzle.update(devices).set({
-        customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes, updated_at: sql `CURRENT_TIMESTAMP`
-    }).where(eq(devices.id, Number(id))).run();
+    db_1.default.drizzle.update(drizzleSchema_1.devices).set({
+        customer_id, device_type, brand, model, serial_number, color, accessories, physical_condition, notes, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
+    }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.id, Number(id))).run();
     return true;
 }
 function checkDeviceHasServiceOrders(id) {
-    const result = db.drizzle.select({ count: sql `count(*)` }).from(serviceOrders)
-        .where(eq(serviceOrders.device_id, Number(id))).get();
+    const result = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.serviceOrders)
+        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.device_id, Number(id))).get();
     return result.count > 0;
 }
 function deleteDevice(id) {
-    db.drizzle.delete(devices).where(eq(devices.id, Number(id))).run();
+    db_1.default.drizzle.delete(drizzleSchema_1.devices).where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.id, Number(id))).run();
     return true;
 }
-module.exports = {
-    getDevices,
-    getDeviceById,
-    getDevicesByCustomerId,
-    addDevice,
-    updateDevice,
-    checkDeviceHasServiceOrders,
-    deleteDevice
-};

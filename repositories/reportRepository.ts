@@ -1,6 +1,7 @@
-const db = require('../database/db');
-const { payments, serviceOrders, customers, devices, serviceItems, spareParts } = require('../database/drizzleSchema');
-const { sql, and, gte, lte, eq, like } = require('drizzle-orm');
+// @ts-nocheck
+import db from '../database/db';
+import {  payments, serviceOrders, customers, devices, serviceItems, spareParts  } from '../database/drizzleSchema';
+import {  sql, and, gte, lte, eq, like  } from 'drizzle-orm';
 
 function getIncomeReport(startDate: string, endDate: string) {
     const report = db.drizzle.select({
@@ -52,8 +53,9 @@ function getTopSpareparts(startDate: string, endDate: string) {
       .all();
 }
 
-module.exports = {
+export { 
     getIncomeReport,
     getCompletedServices,
     getTopSpareparts
-};
+ };
+

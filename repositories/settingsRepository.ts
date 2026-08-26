@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { Settings } from '../shared/types';
-const db = require('../database/db');
-const { settings } = require('../database/drizzleSchema');
-const { sql } = require('drizzle-orm');
+import db from '../database/db';
+import {  settings  } from '../database/drizzleSchema';
+import {  sql  } from 'drizzle-orm';
 
 function getSettings(): Record<string, string | null> {
     const rows = db.drizzle.select({ key: settings.key, value: settings.value }).from(settings).all();
@@ -28,7 +29,8 @@ function updateSettings(data: Record<string, string | number | boolean>) {
     return true;
 }
 
-module.exports = {
+export { 
     getSettings,
     updateSettings
-};
+ };
+

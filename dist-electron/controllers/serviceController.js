@@ -1,7 +1,53 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-const serviceRepository = require('../repositories/serviceRepository');
-const { ServiceOrderSchema, validateData } = require('../src/utils/validators');
+exports.getServices = getServices;
+exports.getServiceById = getServiceById;
+exports.getServiceByTicketNumber = getServiceByTicketNumber;
+exports.getServiceStatusHistory = getServiceStatusHistory;
+exports.addService = addService;
+exports.updateServiceStatus = updateServiceStatus;
+exports.updateServiceDetails = updateServiceDetails;
+exports.deleteService = deleteService;
+exports.addPhoto = addPhoto;
+exports.getPhotos = getPhotos;
+exports.deletePhoto = deletePhoto;
+exports.getPhotoById = getPhotoById;
+exports.checkWarranty = checkWarranty;
+const serviceRepository = __importStar(require("../repositories/serviceRepository"));
+const validators_1 = require("../src/utils/validators");
 function getServices(searchQuery = '', page = 1, limit = 50) {
     return serviceRepository.getServices(searchQuery, page, limit);
 }
@@ -18,7 +64,7 @@ function addService(data) {
     // Make sure we only validate the keys that matter for creation, or partial validation
     // because estimated_cost might be missing on creation.
     // wait, Zod schema has default(0) for estimated_cost.
-    const validData = validateData(ServiceOrderSchema, data);
+    const validData = (0, validators_1.validateData)(validators_1.ServiceOrderSchema, data);
     return serviceRepository.addService(validData);
 }
 function updateServiceStatus(id, status, notes, warrantyDays = 0) {
@@ -26,7 +72,7 @@ function updateServiceStatus(id, status, notes, warrantyDays = 0) {
 }
 function updateServiceDetails(id, data) {
     // For update details, some fields might not be present (like customer_id), so we should use partial validation
-    const validData = validateData(ServiceOrderSchema.partial(), data);
+    const validData = (0, validators_1.validateData)(validators_1.ServiceOrderSchema.partial(), data);
     return serviceRepository.updateServiceDetails(id, validData);
 }
 function deleteService(id) {
@@ -49,17 +95,3 @@ function getPhotoById(id) {
 function checkWarranty(deviceId) {
     return serviceRepository.checkWarranty(deviceId);
 }
-module.exports = {
-    getServices,
-    getServiceById,
-    getServiceStatusHistory,
-    addService,
-    updateServiceStatus,
-    updateServiceDetails,
-    deleteService,
-    addPhoto,
-    getPhotos,
-    deletePhoto,
-    getPhotoById,
-    checkWarranty
-};

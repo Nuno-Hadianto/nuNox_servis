@@ -1,6 +1,6 @@
 import { Part } from '../shared/types';
-const partRepository = require('../repositories/partRepository');
-const { SparepartSchema, validateData } = require('../src/utils/validators');
+import * as partRepository from '../repositories/partRepository';
+import {  SparepartSchema, validateData  } from '../src/utils/validators';
 
 function getParts(searchQuery = '') {
     return partRepository.getParts(searchQuery);
@@ -40,7 +40,7 @@ function getLowStockParts(threshold: number) {
     return partRepository.getLowStockParts(threshold);
 }
 
-module.exports = {
+export { 
     getParts,
     getPartById,
     addPart,
@@ -49,4 +49,4 @@ module.exports = {
     deletePart,
     importParts,
     getLowStockParts
-};
+ };

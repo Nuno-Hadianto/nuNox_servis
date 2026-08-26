@@ -1,13 +1,55 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const userRepository = require('../repositories/userRepository');
-const bcrypt = require('bcryptjs');
+exports.login = login;
+exports.getUsers = getUsers;
+exports.getUserById = getUserById;
+exports.addUser = addUser;
+exports.updateUser = updateUser;
+exports.deleteUser = deleteUser;
+const userRepository = __importStar(require("../repositories/userRepository"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 // Inisialisasi: Cek apakah ada user, jika tidak buat default admin
 function init() {
     const count = userRepository.getUserCount();
     if (count === 0) {
         console.log("No users found. Creating default admin...");
-        const hash = bcrypt.hashSync('admin123', 10);
+        const hash = bcryptjs_1.default.hashSync('admin123', 10);
         userRepository.createDefaultAdmin(hash);
     }
 }
@@ -20,7 +62,7 @@ function login(username, password) {
     }
     // Check if password is a bcrypt hash (starts with $2a$, $2b$, or $2y$)
     if (user.password.startsWith('$2')) {
-        if (!bcrypt.compareSync(password, user.password)) {
+        if (!bcryptjs_1.default.compareSync(password, user.password)) {
             throw new Error("Username atau password salah!");
         }
     }
@@ -30,7 +72,7 @@ function login(username, password) {
             throw new Error("Username atau password salah!");
         }
         // Auto-migrate legacy plain text to bcrypt
-        const hash = bcrypt.hashSync(password, 10);
+        const hash = bcryptjs_1.default.hashSync(password, 10);
         userRepository.updateUserWithPassword(user.id, user.username, hash, user.role);
     }
     // Remove password from user object before returning
@@ -50,7 +92,7 @@ function addUser(data) {
     if (existing) {
         throw new Error("Username sudah digunakan!");
     }
-    const hash = bcrypt.hashSync(password, 10);
+    const hash = bcryptjs_1.default.hashSync(password, 10);
     return userRepository.addUser(username, hash, role);
 }
 function updateUser(id, data) {
@@ -61,7 +103,7 @@ function updateUser(id, data) {
         throw new Error("Username sudah digunakan oleh akun lain!");
     }
     if (password && password.trim() !== '') {
-        const hash = bcrypt.hashSync(password, 10);
+        const hash = bcryptjs_1.default.hashSync(password, 10);
         userRepository.updateUserWithPassword(id, username, hash, role);
     }
     else {
@@ -80,11 +122,3 @@ function deleteUser(id) {
     }
     return userRepository.deleteUser(id);
 }
-module.exports = {
-    login,
-    getUsers,
-    getUserById,
-    addUser,
-    updateUser,
-    deleteUser
-};

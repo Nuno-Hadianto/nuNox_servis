@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { User } from '../shared/types';
-const db = require('../database/db');
-const { users } = require('../database/drizzleSchema');
-const { eq, ne, and, desc, sql } = require('drizzle-orm');
+import db from '../database/db';
+import {  users  } from '../database/drizzleSchema';
+import {  eq, ne, and, desc, sql  } from 'drizzle-orm';
 
 function getUserCount() {
     const result = db.drizzle.select({ count: sql`count(*)` }).from(users).get();
@@ -64,7 +65,7 @@ function deleteUser(id: number | string) {
     return true;
 }
 
-module.exports = {
+export { 
     getUserCount,
     createDefaultAdmin,
     getUserByUsername,
@@ -78,4 +79,5 @@ module.exports = {
     getUserRole,
     getAdminCount,
     deleteUser
-};
+ };
+

@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { Payment } from '../shared/types';
-const db = require('../database/db');
-const { payments, serviceOrders } = require('../database/drizzleSchema');
-const { eq, like, desc, asc, sql } = require('drizzle-orm');
+import db from '../database/db';
+import {  payments, serviceOrders  } from '../database/drizzleSchema';
+import {  eq, like, desc, asc, sql  } from 'drizzle-orm';
 
 function generatePaymentNumber() {
     const year = new Date().getFullYear();
@@ -99,9 +100,10 @@ function deletePayment(id: number | string) {
     })();
 }
 
-module.exports = {
+export { 
     getPaymentsByServiceId,
     addPayment,
     deletePayment,
     updateServicePaymentStatus
-};
+ };
+

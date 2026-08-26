@@ -1,11 +1,11 @@
 export {};
 import type { IpcMainInvokeEvent } from 'electron';
 import type { Part } from '../../shared/types';
-const { ipcMain, dialog } = require('electron');
-const xlsx = require('xlsx');
-const partController = require('../../controllers/partController');
-const log = require('electron-log');
-const { validateData, SparepartSchema } = require('../../src/utils/validators');
+import {  ipcMain, dialog  } from 'electron';
+import xlsx from 'xlsx';
+import * as partController from '../../controllers/partController';
+import log from 'electron-log';
+import {  validateData, SparepartSchema  } from '../../src/utils/validators';
 
 function registerPartIpc(mainWindow: any) {
   ipcMain.handle('get-parts', (event: IpcMainInvokeEvent, searchQuery: string) => partController.getParts(searchQuery));
@@ -50,4 +50,4 @@ function registerPartIpc(mainWindow: any) {
   });
 }
 
-module.exports = { registerPartIpc };
+export {  registerPartIpc  };

@@ -1,9 +1,9 @@
-const dashboardRepository = require('../repositories/dashboardRepository');
+import * as dashboardRepository from '../repositories/dashboardRepository';
 
 function getDashboardStats() {
     return dashboardRepository.getDashboardStats();
 }
 
-module.exports = {
+export { 
     getDashboardStats
-};
+ };

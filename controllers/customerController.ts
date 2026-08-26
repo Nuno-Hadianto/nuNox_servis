@@ -1,6 +1,6 @@
 import { Customer } from '../shared/types';
-const customerRepository = require('../repositories/customerRepository');
-const { CustomerSchema, validateData } = require('../src/utils/validators');
+import * as customerRepository from '../repositories/customerRepository';
+import {  CustomerSchema, validateData  } from '../src/utils/validators';
 
 function getCustomers(searchQuery: string = '', page: number = 1, limit: number = 50) {
     return customerRepository.getCustomers(searchQuery, page, limit);
@@ -28,10 +28,10 @@ function deleteCustomer(id: number | string) {
     return customerRepository.deleteCustomer(id);
 }
 
-module.exports = {
+export { 
     getCustomers,
     getCustomerById,
     addCustomer,
     updateCustomer,
     deleteCustomer
-};
+ };

@@ -1,57 +1,69 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const db = require('../database/db');
-const { spareParts, serviceItems } = require('../database/drizzleSchema');
-const { eq, like, or, asc, lte, sql } = require('drizzle-orm');
+exports.getParts = getParts;
+exports.getPartById = getPartById;
+exports.addPart = addPart;
+exports.updatePart = updatePart;
+exports.updatePartStock = updatePartStock;
+exports.checkPartHasServiceItems = checkPartHasServiceItems;
+exports.deletePart = deletePart;
+exports.importParts = importParts;
+exports.getLowStockParts = getLowStockParts;
+const db_1 = __importDefault(require("../database/db"));
+const drizzleSchema_1 = require("../database/drizzleSchema");
+const drizzle_orm_1 = require("drizzle-orm");
 function getParts(searchQuery = '') {
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        return db.drizzle.select().from(spareParts)
-            .where(or(like(spareParts.name, queryStr), like(spareParts.part_code, queryStr)))
-            .orderBy(asc(spareParts.name)).all();
+        return db_1.default.drizzle.select().from(drizzleSchema_1.spareParts)
+            .where((0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.name, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.part_code, queryStr)))
+            .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.name)).all();
     }
-    return db.drizzle.select().from(spareParts).orderBy(asc(spareParts.name)).all();
+    return db_1.default.drizzle.select().from(drizzleSchema_1.spareParts).orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.name)).all();
 }
 function getPartById(id) {
-    return db.drizzle.select().from(spareParts).where(eq(spareParts.id, Number(id))).get();
+    return db_1.default.drizzle.select().from(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).get();
 }
 function getLowStockParts(threshold) {
-    return db.drizzle.select().from(spareParts)
-        .where(lte(spareParts.stock, threshold))
-        .orderBy(asc(spareParts.stock)).all();
+    return db_1.default.drizzle.select().from(drizzleSchema_1.spareParts)
+        .where((0, drizzle_orm_1.lte)(drizzleSchema_1.spareParts.stock, threshold))
+        .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.stock)).all();
 }
 function addPart(data) {
     const { part_code, name, category, stock, buy_price, sell_price, unit, notes } = data;
-    const result = db.drizzle.insert(spareParts).values({
+    const result = db_1.default.drizzle.insert(drizzleSchema_1.spareParts).values({
         part_code, name, category, stock, buy_price, sell_price, unit, notes
     }).run();
     return result.lastInsertRowid;
 }
 function updatePart(id, data) {
     const { part_code, name, category, stock, buy_price, sell_price, unit, notes } = data;
-    db.drizzle.update(spareParts).set({
-        part_code, name, category, stock, buy_price, sell_price, unit, notes, updated_at: sql `CURRENT_TIMESTAMP`
-    }).where(eq(spareParts.id, Number(id))).run();
+    db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
+        part_code, name, category, stock, buy_price, sell_price, unit, notes, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
+    }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).run();
     return true;
 }
 function updatePartStock(id, change) {
-    db.drizzle.update(spareParts).set({
-        stock: sql `stock + ${change}`,
-        updated_at: sql `CURRENT_TIMESTAMP`
-    }).where(eq(spareParts.id, Number(id))).run();
+    db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
+        stock: (0, drizzle_orm_1.sql) `stock + ${change}`,
+        updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
+    }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).run();
     return true;
 }
 function checkPartHasServiceItems(id) {
-    const result = db.drizzle.select({ count: sql `count(*)` }).from(serviceItems)
-        .where(eq(serviceItems.spare_part_id, Number(id))).get();
+    const result = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.serviceItems)
+        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.spare_part_id, Number(id))).get();
     return result.count > 0;
 }
 function deletePart(id) {
-    db.drizzle.delete(spareParts).where(eq(spareParts.id, Number(id))).run();
+    db_1.default.drizzle.delete(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).run();
     return true;
 }
 function importParts(dataArray) {
-    const tx = db.transaction((arr) => {
+    const tx = db_1.default.transaction((arr) => {
         let imported = 0;
         let updated = 0;
         for (const row of arr) {
@@ -66,18 +78,18 @@ function importParts(dataArray) {
             const unit = row['Satuan'] || row['unit'] || 'pcs';
             const notes = row['Keterangan'] || row['notes'] || '';
             if (part_code) {
-                const existing = db.drizzle.select({ id: spareParts.id }).from(spareParts)
-                    .where(eq(spareParts.part_code, part_code)).get();
+                const existing = db_1.default.drizzle.select({ id: drizzleSchema_1.spareParts.id }).from(drizzleSchema_1.spareParts)
+                    .where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.part_code, part_code)).get();
                 if (existing) {
-                    db.drizzle.update(spareParts).set({
-                        name, category, stock: sql `stock + ${stock || 0}`, buy_price: buy_price || 0,
-                        sell_price: sell_price || 0, unit, notes, updated_at: sql `CURRENT_TIMESTAMP`
-                    }).where(eq(spareParts.id, existing.id)).run();
+                    db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
+                        name, category, stock: (0, drizzle_orm_1.sql) `stock + ${stock || 0}`, buy_price: buy_price || 0,
+                        sell_price: sell_price || 0, unit, notes, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
+                    }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, existing.id)).run();
                     updated++;
                     continue;
                 }
             }
-            db.drizzle.insert(spareParts).values({
+            db_1.default.drizzle.insert(drizzleSchema_1.spareParts).values({
                 part_code: part_code || null, name, category, stock: stock || 0,
                 buy_price: buy_price || 0, sell_price: sell_price || 0, unit, notes
             }).run();
@@ -87,14 +99,3 @@ function importParts(dataArray) {
     });
     return tx(dataArray);
 }
-module.exports = {
-    getParts,
-    getPartById,
-    addPart,
-    updatePart,
-    updatePartStock,
-    checkPartHasServiceItems,
-    deletePart,
-    importParts,
-    getLowStockParts
-};

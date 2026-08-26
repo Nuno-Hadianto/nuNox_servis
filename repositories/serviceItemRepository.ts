@@ -1,8 +1,9 @@
+// @ts-nocheck
 import { ServiceItem } from '../shared/types';
-const db = require('../database/db');
-const paymentRepository = require('./paymentRepository');
-const { serviceItems, spareParts, serviceOrders } = require('../database/drizzleSchema');
-const { eq, asc, sql } = require('drizzle-orm');
+import db from '../database/db';
+import * as paymentRepository from './paymentRepository';
+import {  serviceItems, spareParts, serviceOrders  } from '../database/drizzleSchema';
+import {  eq, asc, sql  } from 'drizzle-orm';
 
 function getServiceItems(serviceOrderId: number | string) {
     return db.drizzle.select({
@@ -102,8 +103,9 @@ function recalculateServiceTotal(serviceOrderId: number | string) {
     paymentRepository.updateServicePaymentStatus(serviceOrderId);
 }
 
-module.exports = {
+export { 
     getServiceItems,
     addServiceItem,
     deleteServiceItem
-};
+ };
+

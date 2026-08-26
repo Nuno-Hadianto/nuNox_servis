@@ -1,8 +1,8 @@
-export {};
-const Database = require('better-sqlite3');
-const path = require('path');
-const fs = require('fs');
-const { app } = require('electron');
+import { drizzle, BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
+import Database from 'better-sqlite3';
+import path from 'path';
+import fs from 'fs';
+import { app } from 'electron';
 
 let dbPath;
 if (process.env.NODE_ENV === 'test') {
@@ -19,12 +19,16 @@ if (process.env.NODE_ENV === 'test') {
     dbPath = path.join(__dirname, 'nunox_servis.db');
 }
 
-const db = new Database(dbPath);
+import * as drizzleSchema from './drizzleSchema';
+
+export interface AppDatabase extends Database.Database {
+  drizzle: BetterSQLite3Database<typeof drizzleSchema>;
+}
+
+const db = new Database(dbPath) as AppDatabase;
 db.pragma('foreign_keys = ON');
 
-const { drizzle } = require('drizzle-orm/better-sqlite3');
-const drizzleSchema = require('./drizzleSchema');
 const dbDrizzle = drizzle(db, { schema: drizzleSchema });
-
 db.drizzle = dbDrizzle;
-module.exports = db;
+
+export default db as any;

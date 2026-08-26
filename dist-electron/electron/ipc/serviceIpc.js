@@ -1,64 +1,101 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const { ipcMain } = require('electron');
-const serviceController = require('../../controllers/serviceController');
-const serviceItemController = require('../../controllers/serviceItemController');
-const log = require('electron-log');
-const { validateData, ServiceOrderSchema, ServiceItemSchema } = require('../../src/utils/validators');
+exports.registerServiceIpc = registerServiceIpc;
+// @ts-nocheck
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
+const electron_1 = require("electron");
+const electron_2 = require("electron");
+const serviceController = __importStar(require("../../controllers/serviceController"));
+const serviceItemController = __importStar(require("../../controllers/serviceItemController"));
+const electron_log_1 = __importDefault(require("electron-log"));
+const validators_1 = require("../../src/utils/validators");
 function registerServiceIpc() {
-    ipcMain.handle('get-services', (event, searchQuery, page, limit) => serviceController.getServices(searchQuery, page, limit));
-    ipcMain.handle('get-service', (event, id) => serviceController.getServiceById(id));
-    ipcMain.handle('get-service-by-ticket', (event, ticketNumber) => serviceController.getServiceByTicketNumber(ticketNumber));
-    ipcMain.handle('get-service-history', (event, id) => serviceController.getServiceStatusHistory(id));
-    ipcMain.handle('add-service', (event, data) => {
-        const validData = validateData(ServiceOrderSchema, data);
+    electron_2.ipcMain.handle('get-services', (event, searchQuery, page, limit) => serviceController.getServices(searchQuery, page, limit));
+    electron_2.ipcMain.handle('get-service', (event, id) => serviceController.getServiceById(id));
+    electron_2.ipcMain.handle('get-service-by-ticket', (event, ticketNumber) => serviceController.getServiceByTicketNumber(ticketNumber));
+    electron_2.ipcMain.handle('get-service-history', (event, id) => serviceController.getServiceStatusHistory(id));
+    electron_2.ipcMain.handle('add-service', (event, data) => {
+        const validData = (0, validators_1.validateData)(validators_1.ServiceOrderSchema, data);
         return serviceController.addService(validData);
     });
-    ipcMain.handle('update-service-status', (event, id, status, notes, warrantyDays = 0) => serviceController.updateServiceStatus(id, status, notes, warrantyDays));
-    ipcMain.handle('update-service-details', (event, id, data) => {
-        const validData = validateData(ServiceOrderSchema.partial(), data);
+    electron_2.ipcMain.handle('update-service-status', (event, id, status, notes, warrantyDays = 0) => serviceController.updateServiceStatus(id, status, notes, warrantyDays));
+    electron_2.ipcMain.handle('update-service-details', (event, id, data) => {
+        const validData = (0, validators_1.validateData)(validators_1.ServiceOrderSchema.partial(), data);
         return serviceController.updateServiceDetails(id, validData);
     });
-    ipcMain.handle('delete-service', (event, id) => serviceController.deleteService(id));
+    electron_2.ipcMain.handle('delete-service', (event, id) => serviceController.deleteService(id));
     // Service Items
-    ipcMain.handle('get-service-items', (event, serviceId) => serviceItemController.getServiceItems(serviceId));
-    ipcMain.handle('add-service-item', (event, data) => {
-        const validData = validateData(ServiceItemSchema, data);
+    electron_2.ipcMain.handle('get-service-items', (event, serviceId) => serviceItemController.getServiceItems(serviceId));
+    electron_2.ipcMain.handle('add-service-item', (event, data) => {
+        const validData = (0, validators_1.validateData)(validators_1.ServiceItemSchema, data);
         return serviceItemController.addServiceItem(validData);
     });
-    ipcMain.handle('delete-service-item', (event, id) => serviceItemController.deleteServiceItem(id));
+    electron_2.ipcMain.handle('delete-service-item', (event, id) => serviceItemController.deleteServiceItem(id));
     // Warranty
-    ipcMain.handle('check-warranty', (event, deviceId) => serviceController.checkWarranty(deviceId));
+    electron_2.ipcMain.handle('check-warranty', (event, deviceId) => serviceController.checkWarranty(deviceId));
     // Photos
-    const fs = require('fs');
-    const path = require('path');
-    const { app } = require('electron');
-    ipcMain.handle('upload-photo', async (event, serviceId, type, buffer, fileName) => {
+    electron_2.ipcMain.handle('upload-photo', async (event, serviceId, type, buffer, fileName) => {
         try {
-            const photosDir = path.join(app.getPath('userData'), 'photos');
+            const photosDir = path_1.default.join(electron_1.app.getPath('userData'), 'photos');
             const uniqueName = Date.now() + '_' + fileName;
-            const filepath = path.join(photosDir, uniqueName);
-            fs.writeFileSync(filepath, Buffer.from(buffer));
+            const filepath = path_1.default.join(photosDir, uniqueName);
+            fs_1.default.writeFileSync(filepath, Buffer.from(buffer));
             const id = serviceController.addPhoto(serviceId, type, filepath);
             return { success: true, id, filepath };
         }
         catch (e) {
-            log.error('Error in upload-photo:', e);
+            electron_log_1.default.error('Error in upload-photo:', e);
             return { success: false, error: e.message };
         }
     });
-    ipcMain.handle('get-photos', (event, serviceId) => serviceController.getPhotos(serviceId));
-    ipcMain.handle('delete-photo', (event, id) => {
+    electron_2.ipcMain.handle('get-photos', (event, serviceId) => serviceController.getPhotos(serviceId));
+    electron_2.ipcMain.handle('delete-photo', (event, id) => {
         const photo = serviceController.getPhotoById(id);
         if (photo && photo.filepath) {
             try {
-                fs.unlinkSync(photo.filepath);
+                fs_1.default.unlinkSync(photo.filepath);
             }
             catch (e) {
-                log.error("Failed to delete photo from disk:", e);
+                electron_log_1.default.error("Failed to delete photo from disk:", e);
             }
         }
         return serviceController.deletePhoto(id);
     });
 }
-module.exports = { registerServiceIpc };

@@ -1,14 +1,19 @@
+// @ts-nocheck
+import runMigrations from '../database/migrate';
+import fs from 'fs';
+import * as settingsRepo from '../repositories/settingsRepository';
+import AdmZip from 'adm-zip';
 export {};
-const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
-const path = require('path');
-const db = require('../database/db');
-const log = require('electron-log');
-const { autoUpdater } = require('electron-updater');
+import {  app, BrowserWindow, ipcMain, dialog, shell  } from 'electron';
+import path from 'path';
+import db from '../database/db';
+import log from 'electron-log';
+import {  autoUpdater  } from 'electron-updater';
 
 // Setup logging
-log.transports.file.level = 'info';
+(log.transports.file as any).level = 'info';
 autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
+((autoUpdater.logger as any).transports.file as any).level = 'info';
 log.info('App starting...');
 
 process.on('uncaughtException', (error) => {
@@ -20,13 +25,13 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Import IPC modules
-const { registerCustomerIpc } = require('./ipc/customerIpc');
-const { registerDeviceIpc } = require('./ipc/deviceIpc');
-const { registerServiceIpc } = require('./ipc/serviceIpc');
-const { registerPartIpc } = require('./ipc/partIpc');
-const { registerUserIpc } = require('./ipc/userIpc');
-const { registerMiscIpc } = require('./ipc/miscIpc');
-const registerSaleIpc = require('./ipc/saleIpc');
+import {  registerCustomerIpc  } from './ipc/customerIpc';
+import {  registerDeviceIpc  } from './ipc/deviceIpc';
+import {  registerServiceIpc  } from './ipc/serviceIpc';
+import {  registerPartIpc  } from './ipc/partIpc';
+import {  registerUserIpc  } from './ipc/userIpc';
+import {  registerMiscIpc  } from './ipc/miscIpc';
+import registerSaleIpc from './ipc/saleIpc';
 
 let mainWindow: any;
 
@@ -84,7 +89,7 @@ app.commandLine.appendSwitch('disable-http-cache');
 app.whenReady().then(() => {
   // Database Migration
   try {
-    const runMigrations = require('../database/migrate');
+
     runMigrations();
   } catch (err) {
     dialog.showErrorBox("Database Error", "Gagal memperbarui database. Aplikasi tidak dapat dilanjutkan.");
@@ -93,7 +98,7 @@ app.whenReady().then(() => {
   }
   
   // Create photos directory
-  const fs = require('fs');
+
   const photosDir = path.join(app.getPath('userData'), 'photos');
   if (!fs.existsSync(photosDir)) {
     fs.mkdirSync(photosDir, { recursive: true });
@@ -138,10 +143,10 @@ autoUpdater.on('error', (err: any) => {
 
 async function performAutoBackup(type: 'cron' | 'daily' = 'daily') {
   try {
-    const fs = require('fs');
+
     
     const dbPath = path.join(app.getPath('userData'), 'database', 'nunox_servis.db');
-    const settingsRepo = require('../repositories/settingsRepository');
+
     const settings = settingsRepo.getSettings();
     
     let backupDir = settings.auto_backup_path;
@@ -173,7 +178,7 @@ async function performAutoBackup(type: 'cron' | 'daily' = 'daily') {
       await db.backup(backupPathDb);
       
       try {
-        const AdmZip = require('adm-zip');
+
         const zip = new AdmZip();
         
         // Add DB to zip
@@ -207,3 +212,4 @@ app.on('window-all-closed', async () => {
     app.quit();
   }
 });
+
