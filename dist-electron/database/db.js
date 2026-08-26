@@ -4,7 +4,6 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 const { app } = require('electron');
-const schema = require('./schema');
 let dbPath;
 if (process.env.NODE_ENV === 'test') {
     dbPath = ':memory:';

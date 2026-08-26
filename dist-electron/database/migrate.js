@@ -1,60 +1,54 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require('./db');
-const schema = require('./schema');
+const { app } = require('electron');
+const path = require('path');
 const log = require('electron-log');
-// Array of migration functions. Index 0 corresponds to Version 1, Index 1 to Version 2, etc.
-const migrations = [
-    // Version 1: Initial schema creation
-    function up_v1() {
-        db.exec(schema.createTables);
-        db.exec(schema.insertDefaultSettings);
-    },
-    // Version 2: Add warranty_end_date to service_orders (replacing the hardcoded ALTER TABLE in main.ts)
-    function up_v2() {
-        try {
-            db.prepare('ALTER TABLE service_orders ADD COLUMN warranty_end_date DATETIME').run();
-        }
-        catch (e) {
-            // Ignore if the column already exists (e.g. from the old naive migration method)
-            if (!e.message.includes('duplicate column name')) {
-                throw e;
-            }
-        }
-    },
-    // Version 3: Add cost_price to service_items (moved from db.ts)
-    function up_v3() {
-        try {
-            db.prepare('ALTER TABLE service_items ADD COLUMN cost_price REAL DEFAULT 0').run();
-        }
-        catch (e) {
-            if (!e.message.includes('duplicate column name')) {
-                throw e;
-            }
-        }
-    }
-];
-function runMigrations() {
-    const currentVersionResult = db.pragma('user_version', { simple: true });
-    const currentVersion = typeof currentVersionResult === 'number' ? currentVersionResult : 0;
-    log.info(`Current database version: ${currentVersion}`);
-    if (currentVersion >= migrations.length) {
-        log.info('Database is up to date.');
-        return;
-    }
-    const runTransaction = db.transaction(() => {
-        for (let i = currentVersion; i < migrations.length; i++) {
-            const targetVersion = i + 1;
-            log.info(`Migrating database to version ${targetVersion}...`);
-            // Execute the migration step
-            migrations[i]();
-            // Update user_version
-            db.pragma(`user_version = ${targetVersion}`);
-        }
-    });
+const { migrate } = require('drizzle-orm/better-sqlite3/migrator');
+function seedDefaultSettings() {
     try {
-        runTransaction();
+        const settingsCount = db.prepare('SELECT COUNT(*) as count FROM settings').get();
+        if (settingsCount.count === 0) {
+            log.info('Seeding default settings...');
+            const insertDefaultSettings = `
+        INSERT OR IGNORE INTO settings (key, value) VALUES 
+        ('business_name', 'NUNOX_SERVIS'),
+        ('app_name', 'nuNox_servis'),
+        ('business_type', 'Laptop & Computer Service'),
+        ('owner_name', ''),
+        ('phone', ''),
+        ('whatsapp', ''),
+        ('address', ''),
+        ('email', ''),
+        ('receipt_footer', 'Terima kasih telah menggunakan jasa NUNOX_SERVIS.'),
+        ('wa_template_status', 'Halo Kak {nama}, perangkat Anda dengan No Tiket *{tiket}* saat ini berstatus: *{status}*. Mohon konfirmasinya. Terima kasih.');
+      `;
+            db.exec(insertDefaultSettings);
+        }
+    }
+    catch (err) {
+        log.error('Error seeding default settings:', err);
+    }
+}
+function runMigrations() {
+    try {
+        let migrationsFolder;
+        if (app) {
+            if (app.isPackaged) {
+                migrationsFolder = path.join(process.resourcesPath, 'app.asar', 'database', 'migrations');
+            }
+            else {
+                migrationsFolder = path.join(__dirname, '..', '..', 'database', 'migrations');
+            }
+        }
+        else {
+            // fallback for test
+            migrationsFolder = path.join(__dirname, '..', '..', 'database', 'migrations');
+        }
+        log.info(`Running migrations from ${migrationsFolder}...`);
+        migrate(db.drizzle, { migrationsFolder });
         log.info('Database migration completed successfully.');
+        seedDefaultSettings();
     }
     catch (error) {
         log.error('Database migration failed:', error);
