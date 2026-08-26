@@ -1,4 +1,4 @@
-CREATE TABLE `customers` (
+CREATE TABLE IF NOT EXISTS `customers` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
 	`phone` text,
@@ -8,7 +8,7 @@ CREATE TABLE `customers` (
 	`updated_at` text DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
-CREATE TABLE `devices` (
+CREATE TABLE IF NOT EXISTS `devices` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`customer_id` integer NOT NULL,
 	`device_type` text NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `devices` (
 	FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `payments` (
+CREATE TABLE IF NOT EXISTS `payments` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`service_order_id` integer NOT NULL,
 	`payment_number` text NOT NULL,
@@ -36,8 +36,8 @@ CREATE TABLE `payments` (
 	FOREIGN KEY (`service_order_id`) REFERENCES `service_orders`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `payments_payment_number_unique` ON `payments` (`payment_number`);--> statement-breakpoint
-CREATE TABLE `receipts` (
+CREATE UNIQUE INDEX IF NOT EXISTS `payments_payment_number_unique` ON `payments` (`payment_number`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `receipts` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`service_order_id` integer NOT NULL,
 	`receipt_number` text NOT NULL,
@@ -48,8 +48,8 @@ CREATE TABLE `receipts` (
 	FOREIGN KEY (`service_order_id`) REFERENCES `service_orders`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `receipts_receipt_number_unique` ON `receipts` (`receipt_number`);--> statement-breakpoint
-CREATE TABLE `sale_items` (
+CREATE UNIQUE INDEX IF NOT EXISTS `receipts_receipt_number_unique` ON `receipts` (`receipt_number`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `sale_items` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`sale_id` integer NOT NULL,
 	`spare_part_id` integer NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE `sale_items` (
 	FOREIGN KEY (`spare_part_id`) REFERENCES `spare_parts`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE TABLE `sales` (
+CREATE TABLE IF NOT EXISTS `sales` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`invoice_number` text NOT NULL,
 	`customer_name` text,
@@ -69,8 +69,8 @@ CREATE TABLE `sales` (
 	`created_at` text DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `sales_invoice_number_unique` ON `sales` (`invoice_number`);--> statement-breakpoint
-CREATE TABLE `service_items` (
+CREATE UNIQUE INDEX IF NOT EXISTS `sales_invoice_number_unique` ON `sales` (`invoice_number`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `service_items` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`service_order_id` integer NOT NULL,
 	`item_type` text NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE `service_items` (
 	FOREIGN KEY (`spare_part_id`) REFERENCES `spare_parts`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE TABLE `service_orders` (
+CREATE TABLE IF NOT EXISTS `service_orders` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`ticket_number` text NOT NULL,
 	`customer_id` integer NOT NULL,
@@ -109,8 +109,8 @@ CREATE TABLE `service_orders` (
 	FOREIGN KEY (`device_id`) REFERENCES `devices`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `service_orders_ticket_number_unique` ON `service_orders` (`ticket_number`);--> statement-breakpoint
-CREATE TABLE `service_photos` (
+CREATE UNIQUE INDEX IF NOT EXISTS `service_orders_ticket_number_unique` ON `service_orders` (`ticket_number`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `service_photos` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`service_order_id` integer NOT NULL,
 	`photo_type` text NOT NULL,
@@ -119,7 +119,7 @@ CREATE TABLE `service_photos` (
 	FOREIGN KEY (`service_order_id`) REFERENCES `service_orders`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `service_status_history` (
+CREATE TABLE IF NOT EXISTS `service_status_history` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`service_order_id` integer NOT NULL,
 	`status` text NOT NULL,
@@ -128,15 +128,15 @@ CREATE TABLE `service_status_history` (
 	FOREIGN KEY (`service_order_id`) REFERENCES `service_orders`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `settings` (
+CREATE TABLE IF NOT EXISTS `settings` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`key` text NOT NULL,
 	`value` text,
 	`updated_at` text DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `settings_key_unique` ON `settings` (`key`);--> statement-breakpoint
-CREATE TABLE `spare_parts` (
+CREATE UNIQUE INDEX IF NOT EXISTS `settings_key_unique` ON `settings` (`key`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `spare_parts` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`part_code` text,
 	`name` text NOT NULL,
@@ -150,8 +150,8 @@ CREATE TABLE `spare_parts` (
 	`updated_at` text DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `spare_parts_part_code_unique` ON `spare_parts` (`part_code`);--> statement-breakpoint
-CREATE TABLE `users` (
+CREATE UNIQUE INDEX IF NOT EXISTS `spare_parts_part_code_unique` ON `spare_parts` (`part_code`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `users` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`username` text NOT NULL,
 	`password` text NOT NULL,
@@ -159,4 +159,4 @@ CREATE TABLE `users` (
 	`created_at` text DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);
+CREATE UNIQUE INDEX IF NOT EXISTS `users_username_unique` ON `users` (`username`);

@@ -96,6 +96,10 @@ app.whenReady().then(() => {
             createWindow();
         }
     });
+    // Schedule auto backup every 2 hours (2 * 60 * 60 * 1000 = 7200000 ms)
+    setInterval(() => {
+        performAutoBackup('cron');
+    }, 7200000);
 });
 autoUpdater.on('update-available', () => {
     log.info('Update available.');
@@ -116,8 +120,7 @@ autoUpdater.on('update-downloaded', () => {
 autoUpdater.on('error', (err) => {
     log.error('Error in auto-updater. ' + err);
 });
-app.on('window-all-closed', async () => {
-    // Auto Backup before quitting
+async function performAutoBackup(type = 'daily') {
     try {
         const fs = require('fs');
         const dbPath = path.join(app.getPath('userData'), 'database', 'nunox_servis.db');
@@ -131,9 +134,16 @@ app.on('window-all-closed', async () => {
         if (!fs.existsSync(backupDir)) {
             fs.mkdirSync(backupDir, { recursive: true });
         }
-        const today = new Date().toISOString().split('T')[0];
-        const backupPathDb = path.join(backupDir, `AutoBackup_NuNox_${today}.db`);
-        const backupPathZip = path.join(backupDir, `AutoBackup_NuNox_${today}.zip`);
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
+        let fileNameSuffix = 'Daily';
+        if (type === 'cron') {
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            fileNameSuffix = `${hours}-${minutes}`;
+        }
+        const backupPathDb = path.join(backupDir, `AutoBackup_NuNox_${dateStr}_${fileNameSuffix}.db`);
+        const backupPathZip = path.join(backupDir, `AutoBackup_NuNox_${dateStr}_${fileNameSuffix}.zip`);
         if (fs.existsSync(dbPath)) {
             // Create raw backup
             await db.backup(backupPathDb);
@@ -150,7 +160,7 @@ app.on('window-all-closed', async () => {
                 // Save zip and delete raw db backup
                 zip.writeZip(backupPathZip);
                 fs.unlinkSync(backupPathDb);
-                log.info('Auto backup (Zip) saved to:', backupPathZip);
+                log.info(`Auto backup (${type}) saved to:`, backupPathZip);
             }
             catch (zipError) {
                 log.error('Error zipping backup:', zipError);
@@ -159,8 +169,12 @@ app.on('window-all-closed', async () => {
         }
     }
     catch (error) {
-        log.error('Failed to perform auto backup:', error);
+        log.error(`Failed to perform auto backup (${type}):`, error);
     }
+}
+app.on('window-all-closed', async () => {
+    // Auto Backup before quitting
+    await performAutoBackup('daily');
     if (process.platform !== 'darwin') {
         app.quit();
     }
