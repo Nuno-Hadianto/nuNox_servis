@@ -209,9 +209,9 @@ const renderChart = (chartData: { labels: string[]; values: number[] }) => {
       scales: {
         y: {
           beginAtZero: true,
-          grid: { color: 'rgba(255, 255, 255, 0.1)' },
+          grid: { color: 'rgba(0, 0, 0, 0.05)' },
           ticks: {
-            color: 'rgba(255, 255, 255, 0.7)',
+            color: 'rgba(0, 0, 0, 0.6)',
             callback: function (value: number | string) {
               return 'Rp ' + value.toLocaleString('id-ID')
             }
@@ -219,7 +219,7 @@ const renderChart = (chartData: { labels: string[]; values: number[] }) => {
         },
         x: {
           grid: { display: false },
-          ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+          ticks: { color: 'rgba(0, 0, 0, 0.6)' }
         }
       }
     }
@@ -248,8 +248,21 @@ const renderStatusChart = (chartData: { labels: string[]; values: number[] }) =>
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'right', labels: { color: 'rgba(255,255,255,0.8)' } }
-      }
+        legend: { 
+          position: 'bottom', 
+          labels: { 
+            color: 'rgba(0,0,0,0.7)',
+            padding: 15,
+            usePointStyle: true,
+            font: { size: 10 },
+            boxWidth: 8
+          } 
+        }
+      },
+      layout: {
+        padding: { top: 10, bottom: 30, left: 10, right: 10 }
+      },
+      cutout: '70%'
     }
   })
 }
@@ -282,12 +295,12 @@ const renderTopPartsChart = (chartData: { labels: string[]; values: number[] }) 
       scales: {
         x: {
           beginAtZero: true,
-          grid: { color: 'rgba(255, 255, 255, 0.1)' },
-          ticks: { color: 'rgba(255, 255, 255, 0.7)', precision: 0 }
+          grid: { color: 'rgba(0, 0, 0, 0.05)' },
+          ticks: { color: 'rgba(0, 0, 0, 0.6)', precision: 0 }
         },
         y: {
           grid: { display: false },
-          ticks: { color: 'rgba(255, 255, 255, 0.8)' }
+          ticks: { color: 'rgba(0, 0, 0, 0.7)' }
         }
       }
     }
@@ -324,7 +337,7 @@ onMounted(() => {
 }
 .chart-wrapper-sub {
   position: relative;
-  height: 220px;
+  height: 260px;
   width: 100%;
 }
 .text-success {
