@@ -20,25 +20,6 @@
       >
         <Clock style="width: 16px; height: 16px;" /> {{ currentDateTime }}
       </div>
-      <button
-        @click="toggleTheme"
-        class="btn"
-        style="
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid var(--glass-border);
-          border-radius: 50%;
-          width: 40px;
-          height: 40px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: var(--text-primary);
-          transition: var(--transition);
-        "
-      >
-        <Sun v-if="isDark" style="width: 20px; height: 20px;" />
-        <Moon v-else style="width: 20px; height: 20px;" />
-      </button>
     </div>
   </header>
 </template>

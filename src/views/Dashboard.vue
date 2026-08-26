@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Wrench, Hourglass, CheckCircle, Wallet, TrendingUp } from 'lucide-vue-next'
 import { Chart, registerables } from 'chart.js'
@@ -96,6 +96,8 @@ import TodoWidget from '../components/dashboard/TodoWidget.vue'
 import AbandonedWidget from '../components/dashboard/AbandonedWidget.vue'
 import LowStockWidget from '../components/dashboard/LowStockWidget.vue'
 import type { DashboardStats, AbandonedService } from '../../shared/types'
+import { useThemeStore } from '../stores/theme'
+import { storeToRefs } from 'pinia'
 
 const isLoading = ref(true)
 
@@ -113,11 +115,17 @@ const stats = ref<DashboardStats>({
   todoItems: []
 })
 
+const themeStore = useThemeStore()
+const { isDark } = storeToRefs(themeStore)
+
 const waTemplate = ref<string>('')
 
 let chartInstance: any = null
 let statusChartInstance: any = null
 let topPartsChartInstance: any = null
+
+const getTextColor = () => isDark.value ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'
+const getGridColor = () => isDark.value ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'
 
 const formatCurrency = (amount: number | string | undefined | null) => {
   return 'Rp ' + parseInt(String(amount || 0)).toLocaleString('id-ID')
@@ -209,9 +217,9 @@ const renderChart = (chartData: { labels: string[]; values: number[] }) => {
       scales: {
         y: {
           beginAtZero: true,
-          grid: { color: 'rgba(0, 0, 0, 0.05)' },
+          grid: { color: getGridColor() },
           ticks: {
-            color: 'rgba(0, 0, 0, 0.6)',
+            color: getTextColor(),
             callback: function (value: number | string) {
               return 'Rp ' + value.toLocaleString('id-ID')
             }
@@ -219,7 +227,7 @@ const renderChart = (chartData: { labels: string[]; values: number[] }) => {
         },
         x: {
           grid: { display: false },
-          ticks: { color: 'rgba(0, 0, 0, 0.6)' }
+          ticks: { color: getTextColor() }
         }
       }
     }
@@ -251,7 +259,7 @@ const renderStatusChart = (chartData: { labels: string[]; values: number[] }) =>
         legend: { 
           position: 'bottom', 
           labels: { 
-            color: 'rgba(0,0,0,0.7)',
+            color: getTextColor(),
             padding: 15,
             usePointStyle: true,
             font: { size: 10 },
@@ -295,12 +303,12 @@ const renderTopPartsChart = (chartData: { labels: string[]; values: number[] }) 
       scales: {
         x: {
           beginAtZero: true,
-          grid: { color: 'rgba(0, 0, 0, 0.05)' },
-          ticks: { color: 'rgba(0, 0, 0, 0.6)', precision: 0 }
+          grid: { color: getGridColor() },
+          ticks: { color: getTextColor(), precision: 0 }
         },
         y: {
           grid: { display: false },
-          ticks: { color: 'rgba(0, 0, 0, 0.7)' }
+          ticks: { color: getTextColor() }
         }
       }
     }
@@ -309,6 +317,27 @@ const renderTopPartsChart = (chartData: { labels: string[]; values: number[] }) 
 
 onMounted(() => {
   loadDashboard()
+})
+
+watch(isDark, () => {
+  if (chartInstance) {
+    chartInstance.options.scales.x.ticks.color = getTextColor()
+    chartInstance.options.scales.y.ticks.color = getTextColor()
+    chartInstance.options.scales.y.grid.color = getGridColor()
+    chartInstance.update()
+  }
+  
+  if (statusChartInstance) {
+    statusChartInstance.options.plugins.legend.labels.color = getTextColor()
+    statusChartInstance.update()
+  }
+
+  if (topPartsChartInstance) {
+    topPartsChartInstance.options.scales.x.ticks.color = getTextColor()
+    topPartsChartInstance.options.scales.x.grid.color = getGridColor()
+    topPartsChartInstance.options.scales.y.ticks.color = getTextColor()
+    topPartsChartInstance.update()
+  }
 })
 </script>
 

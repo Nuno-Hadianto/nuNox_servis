@@ -15,8 +15,8 @@
           <Package :size="20" /> Pilih Barang
         </h2>
 
-        <div class="search-bar" style="margin-bottom: 20px">
-          <Search class="search-icon" :size="18" />
+        <div class="search-bar" style="position: relative; margin-bottom: 20px">
+          <Search class="search-icon" :size="18" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted);" />
           <input
             ref="searchInput"
             type="text"
