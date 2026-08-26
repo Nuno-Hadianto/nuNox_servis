@@ -172,6 +172,49 @@ function registerMiscIpc(mainWindow) {
             throw error;
         }
     });
+    electron_1.ipcMain.handle('get-printers', async (event) => {
+        try {
+            if (mainWindow && mainWindow.webContents) {
+                const printers = await mainWindow.webContents.getPrintersAsync();
+                return printers;
+            }
+            return [];
+        }
+        catch (error) {
+            electron_log_1.default.error('Error getting printers:', error);
+            return [];
+        }
+    });
+    electron_1.ipcMain.handle('silent-print', async (event, { html, printerName, isThermal }) => {
+        try {
+            return new Promise((resolve) => {
+                const printWindow = new electron_1.BrowserWindow({
+                    show: false,
+                    webPreferences: { nodeIntegration: false }
+                });
+                // Load the HTML content
+                printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
+                printWindow.webContents.on('did-finish-load', () => {
+                    printWindow.webContents.print({
+                        silent: true,
+                        deviceName: printerName,
+                        printBackground: true,
+                        margins: { marginType: 'none' }
+                    }, (success, errorType) => {
+                        if (!success) {
+                            electron_log_1.default.error(`Print failed: ${errorType}`);
+                        }
+                        printWindow.close();
+                        resolve(success);
+                    });
+                });
+            });
+        }
+        catch (error) {
+            electron_log_1.default.error('Error silent printing:', error);
+            return false;
+        }
+    });
     electron_1.ipcMain.handle('open-external-url', async (event, url) => {
         try {
             await electron_1.shell.openExternal(url);

@@ -94,8 +94,10 @@ contextBridge.exposeInMainWorld('api', {
   openExternalUrl: (url: any) => invokeSafe('open-external-url', url),
   getLogoBase64: () => invokeSafe('get-logo-base64'),
   
-  // Print Preview
+  // Print & Preview
   printPreview: (options: any) => invokeSafe('print-preview', options),
+  getPrinters: () => invokeSafe('get-printers'),
+  silentPrint: (options: any) => invokeSafe('silent-print', options),
 
   // Users & Auth
   login: (username: string, password: string) => invokeSafe('login', username, password),

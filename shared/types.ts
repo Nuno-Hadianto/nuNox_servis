@@ -135,6 +135,7 @@ export interface Settings {
   auto_backup_path?: string;
   low_stock_threshold?: number;
   wa_template_status?: string;
+  default_printer?: string;
 }
 
 export interface Photo {

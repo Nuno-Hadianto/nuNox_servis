@@ -577,6 +577,49 @@ export const printHtml = async (
   landscape: boolean = false,
   isThermal: boolean = false
 ) => {
+  let useSilentPrint = false
+  let defaultPrinter = ''
+
+  if (window.api && window.api.getSettings) {
+    try {
+      const settings = await window.api.getSettings()
+      // Only do silent print for thermal by default, or all if preferred. Let's do it for thermal receipts.
+      if (settings && settings.default_printer && isThermal) {
+        useSilentPrint = true
+        defaultPrinter = settings.default_printer
+      }
+    } catch (e) {
+      console.error('Failed to get settings for silent print:', e)
+    }
+  }
+
+  // Inject styles into HTML for silent printing
+  let styleString = ''
+  if (isThermal) {
+    styleString = '<style>@media print { @page { size: 58mm auto; margin: 0; } body { margin: 0; padding: 0; } }</style>'
+  } else {
+    styleString = landscape
+      ? '<style>@media print { @page { size: A5 landscape; } }</style>'
+      : '<style>@media print { @page { size: A4 portrait; } }</style>'
+  }
+
+  const fullHtml = `<!DOCTYPE html><html><head>${styleString}</head><body>${html}</body></html>`
+
+  if (useSilentPrint && window.api && window.api.silentPrint) {
+    try {
+      // Send to hidden window for silent printing
+      await window.api.silentPrint({
+        html: fullHtml,
+        printerName: defaultPrinter,
+        isThermal
+      })
+      return
+    } catch (err) {
+      console.error('Silent print error:', err)
+      // fallback to preview on error
+    }
+  }
+
   const printArea = document.getElementById('print-area')
   if (printArea) {
     printArea.innerHTML = html

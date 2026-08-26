@@ -80,8 +80,10 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     exportPdf: (data) => invokeSafe('export-pdf', data),
     openExternalUrl: (url) => invokeSafe('open-external-url', url),
     getLogoBase64: () => invokeSafe('get-logo-base64'),
-    // Print Preview
+    // Print & Preview
     printPreview: (options) => invokeSafe('print-preview', options),
+    getPrinters: () => invokeSafe('get-printers'),
+    silentPrint: (options) => invokeSafe('silent-print', options),
     // Users & Auth
     login: (username, password) => invokeSafe('login', username, password),
     getUsers: () => invokeSafe('get-users'),
