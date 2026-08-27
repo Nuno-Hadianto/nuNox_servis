@@ -42,6 +42,17 @@
           <span>📥</span> Import Excel
         </button>
         <button
+          @click="exportExcel"
+          class="btn"
+          style="
+            background-color: #10b981;
+            color: white;
+            display: flex; align-items: center; gap: 8px; border-radius: 20px;
+          "
+        >
+          <FileSpreadsheet :size="18" /> Ekspor Excel
+        </button>
+        <button
           @click="openAddModal"
           class="btn btn-primary"
           style="display: flex; align-items: center; gap: 6px; border-radius: 20px"
@@ -268,7 +279,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, FileSpreadsheet } from 'lucide-vue-next'
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
@@ -428,6 +439,44 @@ const deletePart = async (id: number) => {
       const msg = error instanceof Error ? error.message : String(error)
       window.Swal.fire('Error', msg || 'Gagal menghapus.', 'error')
     }
+  }
+}
+
+const exportExcel = async () => {
+  try {
+    const result = await window.api.getParts(searchQuery.value)
+    const data = result as Part[] || []
+    
+    if (data.length === 0) {
+      return window.Swal.fire('Info', 'Tidak ada data sparepart untuk diekspor.', 'info')
+    }
+
+    const excelData = data.map((p) => ({
+      'Kode Barang': p.part_code || '-',
+      'Nama Sparepart': p.name,
+      'Kategori': p.category || '-',
+      'Stok': p.stock,
+      'Satuan': p.unit || 'Pcs',
+      'Harga Modal': p.buy_price,
+      'Harga Jual': p.sell_price,
+      'Catatan': p.notes || ''
+    }))
+
+    const exportResult = await window.api.exportExcel(excelData)
+    if (exportResult.success) {
+      window.Swal.fire({
+        icon: 'success',
+        title: 'Tersimpan',
+        text: 'Data sparepart berhasil diekspor.',
+        timer: 1500,
+        showConfirmButton: false
+      })
+    } else if (!exportResult.canceled) {
+      window.Swal.fire('Error', 'Gagal menyimpan file Excel: ' + exportResult.error, 'error')
+    }
+  } catch (error) {
+    console.error(error)
+    window.Swal.fire('Error', 'Terjadi kesalahan saat memproses ekspor Excel.', 'error')
   }
 }
 

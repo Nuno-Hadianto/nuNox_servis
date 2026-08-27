@@ -59,11 +59,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
 import { Toast } from './utils/toast'
+import type { Settings } from '../shared/types'
 import Sidebar from './components/Sidebar.vue'
 import Topbar from './components/Topbar.vue'
 import GlobalSearchModal from './components/GlobalSearchModal.vue'
@@ -139,7 +140,21 @@ onMounted(() => {
   window.addEventListener('keydown', handleGlobalKeydown)
 
   themeStore.initTheme()
+  loadGlobalSettings()
 })
+
+const loadGlobalSettings = async () => {
+  if (window.api && window.api.getSettings) {
+    try {
+      const settings = await window.api.getSettings() as Settings
+      if (settings && settings.primary_color) {
+        document.documentElement.style.setProperty('--primary', settings.primary_color)
+      }
+    } catch (e) {
+      console.error('Failed to load global settings', e)
+    }
+  }
+}
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleGlobalKeydown)

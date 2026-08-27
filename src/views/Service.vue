@@ -27,6 +27,17 @@
         />
       </div>
       <button
+        @click="exportExcel"
+        class="btn"
+        style="
+          background-color: #10b981;
+          color: white;
+          display: flex; align-items: center; gap: 8px;
+        "
+      >
+        <FileSpreadsheet :size="18" /> Ekspor Excel
+      </button>
+      <button
         @click="openAddModal"
         class="btn btn-primary"
         style="display: flex; align-items: center; gap: 8px"
@@ -251,11 +262,12 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus } from 'lucide-vue-next'
+import { Search, Plus, FileSpreadsheet } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { ServiceOrder, Customer, Device } from '../../shared/types'
 import { ServiceOrderSchema } from '../utils/validators'
+import { Toast } from '../utils/toast'
 
 const router = useRouter()
 const route = useRoute()
@@ -448,6 +460,41 @@ const handleKeydown = (e: KeyboardEvent) => {
     if (!isModalOpen.value) {
       openAddModal()
     }
+  }
+}
+
+const exportExcel = async () => {
+  try {
+    // Ambil data servis (maksimal 10.000 data untuk diekspor)
+    const result = await window.api.getServices(searchQuery.value, 1, 10000)
+    const data = result.data as ServiceOrder[] || []
+    
+    if (data.length === 0) {
+      return window.Swal.fire('Info', 'Tidak ada data servis untuk diekspor.', 'info')
+    }
+
+    const excelData = data.map((s) => ({
+      'No. Tiket': s.ticket_number,
+      'Tanggal Masuk': new Date(s.received_date + 'Z').toLocaleDateString('id-ID'),
+      'Pelanggan': s.customer_name || '-',
+      'Perangkat': `${s.brand || ''} ${s.model || ''}`.trim(),
+      'Status': s.service_status,
+      'Total Biaya': s.total_cost || 0,
+      'Teknisi': s.technician || '-'
+    }))
+
+    const exportResult = await window.api.exportExcel(excelData)
+    if (exportResult.success) {
+      Toast.fire({
+        icon: 'success',
+        title: 'Data servis berhasil disimpan'
+      })
+    } else if (!exportResult.canceled) {
+      window.Swal.fire('Error', 'Gagal menyimpan file Excel: ' + exportResult.error, 'error')
+    }
+  } catch (error) {
+    console.error(error)
+    window.Swal.fire('Error', 'Terjadi kesalahan saat memproses ekspor Excel.', 'error')
   }
 }
 

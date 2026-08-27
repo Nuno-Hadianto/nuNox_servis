@@ -105,6 +105,33 @@
               >Gunakan kode otomatis: {nama}, {tiket}, {status}</small
             >
           </div>
+          <div class="form-group">
+            <label style="font-weight: 500; font-size: 0.9rem">Tema Warna Utama (Primary Color)</label>
+            <div style="display: flex; gap: 15px; align-items: center; margin-top: 5px;">
+              <input
+                type="color"
+                v-model="form.primary_color"
+                style="
+                  width: 50px;
+                  height: 40px;
+                  padding: 0;
+                  border: 1px solid var(--border-color);
+                  border-radius: var(--radius-sm);
+                  cursor: pointer;
+                "
+              />
+              <span style="font-family: monospace; padding: 5px 10px; background: rgba(0,0,0,0.05); border-radius: 4px;">{{ form.primary_color }}</span>
+              <button
+                type="button"
+                @click="form.primary_color = '#6366f1'"
+                class="btn btn-secondary"
+                style="padding: 5px 10px; border-radius: 4px; font-size: 0.8rem;"
+              >Reset Default</button>
+            </div>
+            <small style="color: var(--text-muted); display: block; margin-top: 4px"
+              >Pilih warna identitas toko Anda. Membutuhkan <i>restart</i> aplikasi agar sempurna diterapkan.</small
+            >
+          </div>
           <div style="margin-top: 25px; text-align: right">
             <button
               type="submit"
@@ -352,7 +379,8 @@ const form = reactive<Settings>({
   receipt_footer: '',
   auto_backup_path: '',
   wa_template_status: '',
-  default_printer: ''
+  default_printer: '',
+  primary_color: '#6366f1'
 })
 
 const availablePrinters = ref<{ name: string; isDefault?: boolean }[]>([])
@@ -383,6 +411,7 @@ const loadSettings = async () => {
       form.low_stock_threshold =
         settings.low_stock_threshold !== undefined ? Number(settings.low_stock_threshold) : 3
       form.default_printer = settings.default_printer || ''
+      form.primary_color = settings.primary_color || '#6366f1'
     } catch (error) {
       console.error(error)
     }
@@ -400,9 +429,14 @@ const saveSettings = async () => {
       auto_backup_path: form.auto_backup_path,
       wa_template_status: form.wa_template_status,
       low_stock_threshold: form.low_stock_threshold,
-      default_printer: form.default_printer
+      default_printer: form.default_printer,
+      primary_color: form.primary_color
     }
     await window.api.updateSettings(data)
+    
+    // Apply theme immediately
+    document.documentElement.style.setProperty('--primary', form.primary_color);
+    
     window.Swal.fire({
       icon: 'success',
       title: 'Tersimpan',

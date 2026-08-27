@@ -136,6 +136,7 @@ export interface Settings {
   low_stock_threshold?: number;
   wa_template_status?: string;
   default_printer?: string;
+  primary_color?: string;
 }
 
 export interface Photo {

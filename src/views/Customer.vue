@@ -27,6 +27,17 @@
         />
       </div>
       <button
+        @click="exportExcel"
+        class="btn"
+        style="
+          background-color: #10b981;
+          color: white;
+          display: flex; align-items: center; gap: 8px;
+        "
+      >
+        <FileSpreadsheet :size="18" /> Ekspor Excel
+      </button>
+      <button
         @click="openAddModal"
         class="btn btn-primary"
         style="display: flex; align-items: center; gap: 8px"
@@ -210,10 +221,11 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, FileSpreadsheet } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted } from 'vue'
 import type { Customer } from '../../shared/types'
 import { CustomerSchema } from '../utils/validators'
+import { Toast } from '../utils/toast'
 
 const customers = ref<Customer[]>([])
 const searchQuery = ref<string>('')
@@ -339,6 +351,39 @@ const deleteCustomer = async (id: number) => {
       const msg = error instanceof Error ? error.message : String(error)
       window.Swal.fire('Error', msg || 'Gagal menghapus.', 'error')
     }
+  }
+}
+
+const exportExcel = async () => {
+  try {
+    // Ambil data pelanggan (maksimal 10.000 data untuk diekspor)
+    const result = await window.api.getCustomers(searchQuery.value, 1, 10000)
+    const data = result.data as Customer[] || []
+    
+    if (data.length === 0) {
+      return window.Swal.fire('Info', 'Tidak ada data pelanggan untuk diekspor.', 'info')
+    }
+
+    const excelData = data.map((c) => ({
+      'ID Pelanggan': c.id,
+      'Nama': c.name,
+      'No. HP/WhatsApp': c.phone || '',
+      'Alamat Lengkap': c.address || '',
+      'Catatan': c.notes || ''
+    }))
+
+    const exportResult = await window.api.exportExcel(excelData)
+    if (exportResult.success) {
+      Toast.fire({
+        icon: 'success',
+        title: 'Data pelanggan berhasil disimpan'
+      })
+    } else if (!exportResult.canceled) {
+      window.Swal.fire('Error', 'Gagal menyimpan file Excel: ' + exportResult.error, 'error')
+    }
+  } catch (error) {
+    console.error(error)
+    window.Swal.fire('Error', 'Terjadi kesalahan saat memproses ekspor Excel.', 'error')
   }
 }
 
