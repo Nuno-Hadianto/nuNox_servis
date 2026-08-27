@@ -64,7 +64,7 @@ declare global {
       ) => Promise<number>
       updateServiceDetails: (id: number, data: Partial<ServiceOrder>) => Promise<number>
       deleteService: (id: number) => Promise<number>
-      checkWarranty: (deviceId: number) => Promise<{ status: string; days_left?: number; message?: string }>
+      checkWarranty: (deviceId: number) => Promise<{ status: string; days_left?: number; message?: string; warranty_end_date?: string; ticket_number?: string }>
 
       // Photos
       uploadPhoto: (
@@ -83,7 +83,8 @@ declare global {
       updatePart: (id: number, data: Partial<Part>) => Promise<number>
       updatePartStock: (id: number, change: number) => Promise<number>
       deletePart: (id: number) => Promise<number>
-      importPartsExcel: () => Promise<{ success: boolean; error?: string }>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      importPartsExcel: () => Promise<{ success: boolean; error?: string; canceled?: boolean; result?: any }>
       getLowStockParts: (threshold: number) => Promise<Part[]>
 
       // Service Items
@@ -123,6 +124,7 @@ declare global {
       openExternalUrl: (url: string) => Promise<boolean>
       getLogoBase64: () => Promise<string | null>
       printPreview: (options: Record<string, unknown>) => Promise<boolean>
+      getPrinters: () => Promise<{ name: string; isDefault?: boolean }[]>
 
       // Auth
       login: (u: string, p: string) => Promise<{ success: boolean; user?: User; error?: string }>
@@ -137,6 +139,7 @@ declare global {
       ) => Promise<{ success: boolean; result?: number; error?: string }>
       deleteUser: (id: number) => Promise<{ success: boolean; result?: number; error?: string }>
     }
-    Swal: unknown
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Swal: any
   }
 }

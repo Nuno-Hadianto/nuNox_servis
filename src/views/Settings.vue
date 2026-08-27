@@ -435,7 +435,7 @@ const saveSettings = async () => {
     await window.api.updateSettings(data)
     
     // Apply theme immediately
-    document.documentElement.style.setProperty('--primary', form.primary_color);
+    document.documentElement.style.setProperty('--primary', form.primary_color || '#6366f1');
     
     window.Swal.fire({
       icon: 'success',
