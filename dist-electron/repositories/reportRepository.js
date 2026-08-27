@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIncomeReport = getIncomeReport;
 exports.getCompletedServices = getCompletedServices;
 exports.getTopSpareparts = getTopSpareparts;
-// @ts-nocheck
+exports.getReportBreakdown = getReportBreakdown;
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
 const drizzle_orm_1 = require("drizzle-orm");
@@ -44,4 +44,30 @@ function getTopSpareparts(startDate, endDate) {
         .orderBy((0, drizzle_orm_1.sql) `total_sold DESC`)
         .limit(5)
         .all();
+}
+function getReportBreakdown(startDate, endDate) {
+    const data = db_1.default.drizzle.select({
+        item_type: drizzleSchema_1.serviceItems.item_type,
+        total_omset: (0, drizzle_orm_1.sql) `SUM(${drizzleSchema_1.serviceItems.total})`,
+        total_modal: (0, drizzle_orm_1.sql) `SUM(${drizzleSchema_1.serviceItems.cost_price})`
+    }).from(drizzleSchema_1.serviceItems)
+        .innerJoin(drizzleSchema_1.serviceOrders, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.service_order_id, drizzleSchema_1.serviceOrders.id))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.gte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${startDate})`), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${endDate})`)))
+        .groupBy(drizzleSchema_1.serviceItems.item_type)
+        .all();
+    // Default values if empty
+    const breakdown = {
+        jasa: { omset: 0, modal: 0 },
+        sparepart: { omset: 0, modal: 0 },
+        diskon: { omset: 0, modal: 0 },
+        lainnya: { omset: 0, modal: 0 }
+    };
+    data.forEach((row) => {
+        const type = row.item_type === 'Jasa' ? 'jasa' :
+            row.item_type === 'Sparepart' ? 'sparepart' :
+                row.item_type === 'Diskon' ? 'diskon' : 'lainnya';
+        breakdown[type].omset += (row.total_omset || 0);
+        breakdown[type].modal += (row.total_modal || 0);
+    });
+    return breakdown;
 }

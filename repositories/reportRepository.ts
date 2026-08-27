@@ -1,4 +1,3 @@
-// @ts-nocheck
 import db from '../database/db';
 import {  payments, serviceOrders, customers, devices, serviceItems, spareParts  } from '../database/drizzleSchema';
 import {  sql, and, gte, lte, eq, like  } from 'drizzle-orm';
@@ -53,9 +52,45 @@ function getTopSpareparts(startDate: string, endDate: string) {
       .all();
 }
 
+function getReportBreakdown(startDate: string, endDate: string) {
+    const data = db.drizzle.select({
+        item_type: serviceItems.item_type,
+        total_omset: sql`SUM(${serviceItems.total})`,
+        total_modal: sql`SUM(${serviceItems.cost_price})`
+    }).from(serviceItems)
+      .innerJoin(serviceOrders, eq(serviceItems.service_order_id, serviceOrders.id))
+      .where(and(
+          like(serviceOrders.service_status, '%Selesai%'),
+          gte(sql`date(${serviceOrders.completed_date}, 'localtime')`, sql`date(${startDate})`),
+          lte(sql`date(${serviceOrders.completed_date}, 'localtime')`, sql`date(${endDate})`)
+      ))
+      .groupBy(serviceItems.item_type)
+      .all();
+      
+    // Default values if empty
+    const breakdown = {
+        jasa: { omset: 0, modal: 0 },
+        sparepart: { omset: 0, modal: 0 },
+        diskon: { omset: 0, modal: 0 },
+        lainnya: { omset: 0, modal: 0 }
+    };
+    
+    data.forEach((row: { item_type: string | null; total_omset: number | null; total_modal: number | null; }) => {
+        const type = row.item_type === 'Jasa' ? 'jasa' :
+                     row.item_type === 'Sparepart' ? 'sparepart' :
+                     row.item_type === 'Diskon' ? 'diskon' : 'lainnya';
+        
+        breakdown[type].omset += (row.total_omset || 0);
+        breakdown[type].modal += (row.total_modal || 0);
+    });
+    
+    return breakdown;
+}
+
 export { 
     getIncomeReport,
     getCompletedServices,
-    getTopSpareparts
+    getTopSpareparts,
+    getReportBreakdown
  };
 

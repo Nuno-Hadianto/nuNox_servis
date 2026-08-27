@@ -1,8 +1,7 @@
-// @ts-nocheck
 import db from '../../database/db';
 export {};
 import type { IpcMainInvokeEvent } from 'electron';
-import type { Settings } from '../../shared/types';
+import type { Settings, Payment } from '../../shared/types';
 import {  app, ipcMain, dialog, shell, BrowserWindow, Notification  } from 'electron';
 import fs from 'fs';
 import path from 'path';
@@ -15,34 +14,35 @@ import * as settingsController from '../../controllers/settingsController';
 import * as reportController from '../../controllers/reportController';
 import log from 'electron-log';
 
-function registerMiscIpc(mainWindow: any) {
+function registerMiscIpc(mainWindow: BrowserWindow) {
   // Dashboard
   ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
   ipcMain.handle('get-alerts', () => dashboardController.getAlerts());
 
   // Native Notifications
-  ipcMain.handle('show-notification', (event: IpcMainInvokeEvent, { title, body }: any) => {
+  ipcMain.handle('show-notification', (_event: IpcMainInvokeEvent, { title, body }: { title: string, body: string }) => {
     new Notification({ title, body }).show();
     return true;
   });
 
   // Payments
-  ipcMain.handle('get-payments', (event: IpcMainInvokeEvent, serviceId: number) => paymentController.getPaymentsByServiceId(serviceId));
-  ipcMain.handle('add-payment', (event: IpcMainInvokeEvent, data: any) => paymentController.addPayment(data));
-  ipcMain.handle('delete-payment', (event: IpcMainInvokeEvent, id: number) => paymentController.deletePayment(id));
+  ipcMain.handle('get-payments', (_event: IpcMainInvokeEvent, serviceId: number) => paymentController.getPaymentsByServiceId(serviceId));
+  ipcMain.handle('add-payment', (_event: IpcMainInvokeEvent, data: Omit<Payment, 'id'>) => paymentController.addPayment(data));
+  ipcMain.handle('delete-payment', (_event: IpcMainInvokeEvent, id: number) => paymentController.deletePayment(id));
 
   // Settings
   ipcMain.handle('get-settings', () => settingsController.getSettings());
-  ipcMain.handle('update-settings', (event: IpcMainInvokeEvent, data: Settings) => settingsController.updateSettings(data));
+  ipcMain.handle('update-settings', (_event: IpcMainInvokeEvent, data: Settings) => settingsController.updateSettings(data));
 
   // Reports
-  ipcMain.handle('get-income-report', (event: IpcMainInvokeEvent, start: string, end: string) => reportController.getIncomeReport(start, end));
-  ipcMain.handle('get-completed-services', (event: IpcMainInvokeEvent, start: string, end: string) => reportController.getCompletedServices(start, end));
-  ipcMain.handle('get-top-spareparts', (event: IpcMainInvokeEvent, start: string, end: string) => reportController.getTopSpareparts(start, end));
+  ipcMain.handle('get-income-report', (_event: IpcMainInvokeEvent, start: string, end: string) => reportController.getIncomeReport(start, end));
+  ipcMain.handle('get-completed-services', (_event: IpcMainInvokeEvent, start: string, end: string) => reportController.getCompletedServices(start, end));
+  ipcMain.handle('get-top-spareparts', (_event: IpcMainInvokeEvent, start: string, end: string) => reportController.getTopSpareparts(start, end));
+  ipcMain.handle('get-report-breakdown', (_event: IpcMainInvokeEvent, start: string, end: string) => reportController.getReportBreakdown(start, end));
 
   // Backup & Restore
   ipcMain.handle('backup-database', async () => {
-    const dbPath = path.join(app.getPath('userData'), 'database', 'nunox_servis.db');
+    // const dbPath = path.join(app.getPath('userData'), 'database', 'nunox_servis.db');
     const defaultPath = `nuNox_servis_Backup_${new Date().toISOString().split('T')[0]}.db`;
     const { filePath } = await dialog.showSaveDialog({
       title: 'Backup Database',
@@ -89,7 +89,7 @@ function registerMiscIpc(mainWindow: any) {
   });
 
   // Export & Print
-  ipcMain.handle('export-excel', async (event: IpcMainInvokeEvent, data: any) => {
+  ipcMain.handle('export-excel', async (_event: IpcMainInvokeEvent, data: unknown[]) => {
     try {
       const { canceled, filePath } = await dialog.showSaveDialog({
         title: 'Simpan Laporan Excel',
@@ -108,13 +108,13 @@ function registerMiscIpc(mainWindow: any) {
 
       xlsx.writeFile(workbook, filePath);
       return { success: true, filePath };
-    } catch (error: any) {
+    } catch (error: unknown) {
       log.error('Error exporting excel:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: (error as Error).message };
     }
   });
 
-  ipcMain.handle('export-pdf', async (event: IpcMainInvokeEvent, { html, filename }: any) => {
+  ipcMain.handle('export-pdf', async (_event: IpcMainInvokeEvent, { html, filename }: { html: string, filename: string }) => {
     try {
       const { canceled, filePath } = await dialog.showSaveDialog({
         title: 'Simpan PDF',
@@ -133,16 +133,16 @@ function registerMiscIpc(mainWindow: any) {
       pdfWindow.close();
       
       return { success: true, filePath };
-    } catch (error: any) {
+    } catch (error: unknown) {
       log.error('Error generating PDF:', error);
-      return { success: false, error: error.message };
+      return { success: false, error: (error as Error).message };
     }
   });
 
-  ipcMain.handle('print-preview', async (event: IpcMainInvokeEvent, options: any = {}) => {
+  ipcMain.handle('print-preview', async (_event: IpcMainInvokeEvent, options: Record<string, unknown> = {}) => {
     try {
       const pdfPath = path.join(os.tmpdir(), `nunox_print_${Date.now()}.pdf`);
-      const pdfOptions: any = {
+      const pdfOptions: Record<string, unknown> = {
         printBackground: true,
         landscape: options.landscape || false,
         marginsType: 1
@@ -154,13 +154,13 @@ function registerMiscIpc(mainWindow: any) {
       fs.writeFileSync(pdfPath, pdfData);
       await shell.openPath(pdfPath);
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       log.error('Error generating print preview:', error);
       throw error;
     }
   });
 
-  ipcMain.handle('get-printers', async (event: IpcMainInvokeEvent) => {
+  ipcMain.handle('get-printers', async () => {
     try {
       if (mainWindow && mainWindow.webContents) {
         const printers = await mainWindow.webContents.getPrintersAsync();
@@ -173,7 +173,7 @@ function registerMiscIpc(mainWindow: any) {
     }
   });
 
-  ipcMain.handle('silent-print', async (event: IpcMainInvokeEvent, { html, printerName, isThermal }: any) => {
+  ipcMain.handle('silent-print', async (_event: IpcMainInvokeEvent, { html, printerName }: { html: string, printerName: string }) => {
     try {
       return new Promise((resolve) => {
         const printWindow = new BrowserWindow({ 
@@ -199,17 +199,17 @@ function registerMiscIpc(mainWindow: any) {
           });
         });
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       log.error('Error silent printing:', error);
       return false;
     }
   });
 
-  ipcMain.handle('open-external-url', async (event: IpcMainInvokeEvent, url: string) => {
+  ipcMain.handle('open-external-url', async (_event: IpcMainInvokeEvent, url: string) => {
     try {
       await shell.openExternal(url);
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       log.error('Failed to open external url:', error);
       return false;
     }
@@ -225,7 +225,7 @@ function registerMiscIpc(mainWindow: any) {
         return `data:${mimeType};base64,${bitmap.toString('base64')}`;
       }
       return null;
-    } catch (error: any) {
+    } catch (error: unknown) {
       log.error('Failed to read logo:', error);
       return null;
     }

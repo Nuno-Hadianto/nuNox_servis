@@ -69,7 +69,9 @@
             <th>Nama Sparepart</th>
             <th>Kategori</th>
             <th>Stok</th>
+            <th>Harga Modal</th>
             <th>Harga Jual</th>
+            <th>Margin/Pcs</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -95,7 +97,14 @@
               </span>
               <span v-else> {{ p.stock }} {{ p.unit || '' }} </span>
             </td>
+            <td>{{ formatCurrency(p.buy_price) }}</td>
             <td>{{ formatCurrency(p.sell_price) }}</td>
+            <td :style="{ color: p.sell_price > p.buy_price ? '#10b981' : (p.sell_price < p.buy_price ? '#ef4444' : 'inherit'), fontWeight: 'bold' }">
+              {{ formatCurrency((p.sell_price || 0) - (p.buy_price || 0)) }}
+              <span v-if="p.buy_price > 0" style="font-size: 0.8em; opacity: 0.8">
+                ({{ Math.round(((p.sell_price - p.buy_price) / p.buy_price) * 100) }}%)
+              </span>
+            </td>
             <td>
               <button
                 class="btn btn-secondary btn-sm"
@@ -329,6 +338,14 @@ import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
 
 const route = useRoute()
+interface PartLog {
+  id: number;
+  created_at: string;
+  reason: string;
+  reference_id?: string;
+  change_amount: number;
+  new_stock: number;
+}
 const parts = ref<Part[]>([])
 const searchQuery = ref<string>((route.query.search as string) || '')
 
@@ -421,7 +438,7 @@ const openAddModal = () => {
 // History Logic
 const isHistoryModalOpen = ref(false)
 const selectedPartName = ref('')
-const partLogs = ref<any[]>([])
+const partLogs = ref<PartLog[]>([])
 
 const openHistory = async (p: Part) => {
   selectedPartName.value = p.name
@@ -429,7 +446,7 @@ const openHistory = async (p: Part) => {
   isHistoryModalOpen.value = true
   try {
     const logs = await window.api.getPartLogs(p.id)
-    partLogs.value = logs
+    partLogs.value = logs as PartLog[]
   } catch (error) {
     console.error(error)
     window.Swal.fire('Error', 'Gagal memuat histori stok.', 'error')

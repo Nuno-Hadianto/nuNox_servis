@@ -1,11 +1,11 @@
 import type { User, Customer, Device, ServiceOrder, Part, ServiceItem, Payment, Settings } from '../shared/types';
 import {  contextBridge, ipcRenderer  } from 'electron';
 
-const invokeSafe = async (channel: any, ...args: any[]) => {
+const invokeSafe = async (channel: string, ...args: unknown[]) => {
   try {
     return await ipcRenderer.invoke(channel, ...args);
-  } catch (error: any) {
-    if (error && error.message) {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message) {
       error.message = error.message.replace(/Error invoking remote method '.*?':\s*(Error:\s*)?/, '');
     }
     throw error;
@@ -79,9 +79,10 @@ contextBridge.exposeInMainWorld('api', {
   getIncomeReport: (start: string, end: string) => invokeSafe('get-income-report', start, end),
   getCompletedServices: (start: string, end: string) => invokeSafe('get-completed-services', start, end),
   getTopSpareparts: (start: string, end: string) => invokeSafe('get-top-spareparts', start, end),
+  getReportBreakdown: (start: string, end: string) => invokeSafe('get-report-breakdown', start, end),
 
   // Sales (POS)
-  createSale: (saleData: any, items: any[]) => invokeSafe('create-sale', saleData, items),
+  createSale: (saleData: unknown, items: unknown[]) => invokeSafe('create-sale', saleData, items),
   getSales: (startDate?: string, endDate?: string) => invokeSafe('get-sales', startDate, endDate),
   getSaleItems: (saleId: number | string) => invokeSafe('get-sale-items', saleId),
 
@@ -91,16 +92,16 @@ contextBridge.exposeInMainWorld('api', {
   selectDirectory: () => invokeSafe('select-directory'),
 
   // Export
-  exportExcel: (data: any) => invokeSafe('export-excel', data),
-  exportPdf: (data: any) => invokeSafe('export-pdf', data),
-  openExternalUrl: (url: any) => invokeSafe('open-external-url', url),
+  exportExcel: (data: unknown) => invokeSafe('export-excel', data),
+  exportPdf: (data: unknown) => invokeSafe('export-pdf', data),
+  openExternalUrl: (url: string) => invokeSafe('open-external-url', url),
   getLogoBase64: () => invokeSafe('get-logo-base64'),
   showNotification: (title: string, body: string) => invokeSafe('show-notification', { title, body }),
   
   // Print & Preview
-  printPreview: (options: any) => invokeSafe('print-preview', options),
+  printPreview: (options: Record<string, unknown>) => invokeSafe('print-preview', options),
   getPrinters: () => invokeSafe('get-printers'),
-  silentPrint: (options: any) => invokeSafe('silent-print', options),
+  silentPrint: (options: Record<string, unknown>) => invokeSafe('silent-print', options),
 
   // Users & Auth
   login: (username: string, password: string) => invokeSafe('login', username, password),

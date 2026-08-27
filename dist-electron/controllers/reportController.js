@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIncomeReport = getIncomeReport;
 exports.getCompletedServices = getCompletedServices;
 exports.getTopSpareparts = getTopSpareparts;
+exports.getReportBreakdown = getReportBreakdown;
 const reportRepository = __importStar(require("../repositories/reportRepository"));
 function getIncomeReport(startDate, endDate) {
     return reportRepository.getIncomeReport(startDate, endDate);
@@ -45,4 +46,7 @@ function getCompletedServices(startDate, endDate) {
 }
 function getTopSpareparts(startDate, endDate) {
     return reportRepository.getTopSpareparts(startDate, endDate);
+}
+function getReportBreakdown(startDate, endDate) {
+    return reportRepository.getReportBreakdown(startDate, endDate);
 }

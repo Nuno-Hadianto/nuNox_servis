@@ -125,6 +125,54 @@
       </StatCard>
     </div>
 
+    <!-- Breakdown Section -->
+    <h3 style="margin-bottom: 15px; color: var(--text-primary);">Rincian Pendapatan & Margin</h3>
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+      "
+    >
+      <StatCard
+        title="Omset Jasa Servis"
+        :value="formatCurrency(breakdownData?.jasa?.omset)"
+        variant="primary"
+        :center="true"
+        :borderTop="true"
+      >
+        <template #icon-small><Wallet :size="16" /></template>
+      </StatCard>
+      <StatCard
+        title="Omset Sparepart"
+        :value="formatCurrency(breakdownData?.sparepart?.omset)"
+        variant="primary"
+        :center="true"
+        :borderTop="true"
+      >
+        <template #icon-small><Wallet :size="16" /></template>
+      </StatCard>
+      <StatCard
+        title="Modal Sparepart (HPP)"
+        :value="formatCurrency(breakdownData?.sparepart?.modal)"
+        variant="danger"
+        :center="true"
+        :borderTop="true"
+      >
+        <template #icon-small><TrendingDown :size="16" /></template>
+      </StatCard>
+      <StatCard
+        title="Margin Sparepart (Laba)"
+        :value="formatCurrency((breakdownData?.sparepart?.omset || 0) - (breakdownData?.sparepart?.modal || 0))"
+        variant="success"
+        :center="true"
+        :borderTop="true"
+      >
+        <template #icon-small><TrendingUp :size="16" /></template>
+      </StatCard>
+    </div>
+
     <div class="table-container">
       <table class="data-table">
         <thead>
@@ -184,6 +232,7 @@ const services = ref<ServiceOrder[]>([])
 const totalOmset = ref<number>(0)
 const totalModal = ref<number>(0)
 const netProfit = ref<number>(0)
+const breakdownData = ref<Record<string, Record<string, number>> | null>(null)
 
 const formatCurrency = (val: number | string | undefined | null) =>
   new Intl.NumberFormat('id-ID', {
@@ -206,7 +255,7 @@ const generateReport = async () => {
       const data = (await window.api.getCompletedServices(
         startDate.value,
         endDate.value
-      )) as (ServiceOrder & { total_modal?: number })[]
+      )) as unknown as (ServiceOrder & { total_modal?: number })[]
       services.value = data
 
       let omset = 0
@@ -219,6 +268,11 @@ const generateReport = async () => {
       totalOmset.value = omset
       totalModal.value = modal
       netProfit.value = omset - modal
+      
+      if (window.api.getReportBreakdown) {
+          const bd = await window.api.getReportBreakdown(startDate.value, endDate.value)
+          breakdownData.value = bd
+      }
     } catch (error) {
       console.error(error)
     }
@@ -231,7 +285,7 @@ const exportExcel = async () => {
     const data = (await window.api.getCompletedServices(
       startDate.value,
       endDate.value
-    )) as ServiceOrder[]
+    )) as unknown as ServiceOrder[]
     if (data.length === 0)
       return window.Swal.fire(
         'Info',
@@ -274,9 +328,9 @@ const exportPdf = async () => {
   }
   try {
     const { settings, logoBase64 } = await getCommonData()
-    let topParts = []
+    let topParts: { part_name: string; total_sold: number; }[] = []
     if (window.api && window.api.getTopSpareparts) {
-      topParts = await window.api.getTopSpareparts(startDate.value, endDate.value)
+      topParts = (await window.api.getTopSpareparts(startDate.value, endDate.value)) as { part_name: string; total_sold: number; }[]
     }
 
     const html = generateReportHtml(

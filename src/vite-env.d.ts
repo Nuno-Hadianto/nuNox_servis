@@ -105,9 +105,15 @@ declare global {
       updateSettings: (data: Settings) => Promise<number>
 
       // Reports
-      getIncomeReport: (start: string, end: string) => Promise<Record<string, unknown>[]>
+      getIncomeReport: (start: string, end: string) => Promise<{ total_income: number; transaction_count: number }>
       getCompletedServices: (start: string, end: string) => Promise<Record<string, unknown>[]>
       getTopSpareparts: (start: string, end: string) => Promise<Record<string, unknown>[]>
+      getReportBreakdown: (start: string, end: string) => Promise<{
+        jasa: { omset: number; modal: number };
+        sparepart: { omset: number; modal: number };
+        diskon: { omset: number; modal: number };
+        lainnya: { omset: number; modal: number };
+      }>
 
       // Sales
       createSale: (

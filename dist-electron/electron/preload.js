@@ -6,7 +6,7 @@ const invokeSafe = async (channel, ...args) => {
         return await electron_1.ipcRenderer.invoke(channel, ...args);
     }
     catch (error) {
-        if (error && error.message) {
+        if (error instanceof Error && error.message) {
             error.message = error.message.replace(/Error invoking remote method '.*?':\s*(Error:\s*)?/, '');
         }
         throw error;
@@ -69,6 +69,7 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getIncomeReport: (start, end) => invokeSafe('get-income-report', start, end),
     getCompletedServices: (start, end) => invokeSafe('get-completed-services', start, end),
     getTopSpareparts: (start, end) => invokeSafe('get-top-spareparts', start, end),
+    getReportBreakdown: (start, end) => invokeSafe('get-report-breakdown', start, end),
     // Sales (POS)
     createSale: (saleData, items) => invokeSafe('create-sale', saleData, items),
     getSales: (startDate, endDate) => invokeSafe('get-sales', startDate, endDate),

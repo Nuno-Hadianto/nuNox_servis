@@ -37,7 +37,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerMiscIpc = registerMiscIpc;
-// @ts-nocheck
 const db_1 = __importDefault(require("../../database/db"));
 const electron_1 = require("electron");
 const fs_1 = __importDefault(require("fs"));
@@ -54,24 +53,25 @@ function registerMiscIpc(mainWindow) {
     electron_1.ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
     electron_1.ipcMain.handle('get-alerts', () => dashboardController.getAlerts());
     // Native Notifications
-    electron_1.ipcMain.handle('show-notification', (event, { title, body }) => {
+    electron_1.ipcMain.handle('show-notification', (_event, { title, body }) => {
         new electron_1.Notification({ title, body }).show();
         return true;
     });
     // Payments
-    electron_1.ipcMain.handle('get-payments', (event, serviceId) => paymentController.getPaymentsByServiceId(serviceId));
-    electron_1.ipcMain.handle('add-payment', (event, data) => paymentController.addPayment(data));
-    electron_1.ipcMain.handle('delete-payment', (event, id) => paymentController.deletePayment(id));
+    electron_1.ipcMain.handle('get-payments', (_event, serviceId) => paymentController.getPaymentsByServiceId(serviceId));
+    electron_1.ipcMain.handle('add-payment', (_event, data) => paymentController.addPayment(data));
+    electron_1.ipcMain.handle('delete-payment', (_event, id) => paymentController.deletePayment(id));
     // Settings
     electron_1.ipcMain.handle('get-settings', () => settingsController.getSettings());
-    electron_1.ipcMain.handle('update-settings', (event, data) => settingsController.updateSettings(data));
+    electron_1.ipcMain.handle('update-settings', (_event, data) => settingsController.updateSettings(data));
     // Reports
-    electron_1.ipcMain.handle('get-income-report', (event, start, end) => reportController.getIncomeReport(start, end));
-    electron_1.ipcMain.handle('get-completed-services', (event, start, end) => reportController.getCompletedServices(start, end));
-    electron_1.ipcMain.handle('get-top-spareparts', (event, start, end) => reportController.getTopSpareparts(start, end));
+    electron_1.ipcMain.handle('get-income-report', (_event, start, end) => reportController.getIncomeReport(start, end));
+    electron_1.ipcMain.handle('get-completed-services', (_event, start, end) => reportController.getCompletedServices(start, end));
+    electron_1.ipcMain.handle('get-top-spareparts', (_event, start, end) => reportController.getTopSpareparts(start, end));
+    electron_1.ipcMain.handle('get-report-breakdown', (_event, start, end) => reportController.getReportBreakdown(start, end));
     // Backup & Restore
     electron_1.ipcMain.handle('backup-database', async () => {
-        const dbPath = path_1.default.join(electron_1.app.getPath('userData'), 'database', 'nunox_servis.db');
+        // const dbPath = path.join(app.getPath('userData'), 'database', 'nunox_servis.db');
         const defaultPath = `nuNox_servis_Backup_${new Date().toISOString().split('T')[0]}.db`;
         const { filePath } = await electron_1.dialog.showSaveDialog({
             title: 'Backup Database',
@@ -113,7 +113,7 @@ function registerMiscIpc(mainWindow) {
         return false;
     });
     // Export & Print
-    electron_1.ipcMain.handle('export-excel', async (event, data) => {
+    electron_1.ipcMain.handle('export-excel', async (_event, data) => {
         try {
             const { canceled, filePath } = await electron_1.dialog.showSaveDialog({
                 title: 'Simpan Laporan Excel',
@@ -135,7 +135,7 @@ function registerMiscIpc(mainWindow) {
             return { success: false, error: error.message };
         }
     });
-    electron_1.ipcMain.handle('export-pdf', async (event, { html, filename }) => {
+    electron_1.ipcMain.handle('export-pdf', async (_event, { html, filename }) => {
         try {
             const { canceled, filePath } = await electron_1.dialog.showSaveDialog({
                 title: 'Simpan PDF',
@@ -157,7 +157,7 @@ function registerMiscIpc(mainWindow) {
             return { success: false, error: error.message };
         }
     });
-    electron_1.ipcMain.handle('print-preview', async (event, options = {}) => {
+    electron_1.ipcMain.handle('print-preview', async (_event, options = {}) => {
         try {
             const pdfPath = path_1.default.join(os_1.default.tmpdir(), `nunox_print_${Date.now()}.pdf`);
             const pdfOptions = {
@@ -178,7 +178,7 @@ function registerMiscIpc(mainWindow) {
             throw error;
         }
     });
-    electron_1.ipcMain.handle('get-printers', async (event) => {
+    electron_1.ipcMain.handle('get-printers', async () => {
         try {
             if (mainWindow && mainWindow.webContents) {
                 const printers = await mainWindow.webContents.getPrintersAsync();
@@ -191,7 +191,7 @@ function registerMiscIpc(mainWindow) {
             return [];
         }
     });
-    electron_1.ipcMain.handle('silent-print', async (event, { html, printerName, isThermal }) => {
+    electron_1.ipcMain.handle('silent-print', async (_event, { html, printerName }) => {
         try {
             return new Promise((resolve) => {
                 const printWindow = new electron_1.BrowserWindow({
@@ -221,7 +221,7 @@ function registerMiscIpc(mainWindow) {
             return false;
         }
     });
-    electron_1.ipcMain.handle('open-external-url', async (event, url) => {
+    electron_1.ipcMain.handle('open-external-url', async (_event, url) => {
         try {
             await electron_1.shell.openExternal(url);
             return true;

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Payment } from '../shared/types';
 import db from '../database/db';
 import {  payments, serviceOrders  } from '../database/drizzleSchema';
@@ -66,7 +65,7 @@ function updateServicePaymentStatus(serviceOrderId: number | string) {
         .run();
 }
 
-function addPayment(data: Payment) {
+function addPayment(data: Omit<Payment, 'id'>) {
     const { service_order_id, amount, payment_method, notes } = data;
     const payment_number = generatePaymentNumber();
     
