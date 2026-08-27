@@ -58,7 +58,7 @@ function createWindow() {
     mainWindow?.show();
   });
   
-  const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production';
+  const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test';
   if (isDev) {
     // Memuat Vite Dev Server
     mainWindow.loadURL('http://localhost:5173');
