@@ -133,6 +133,5 @@ declare global {
       deleteUser: (id: number) => Promise<{ success: boolean; result?: number; error?: string }>
     }
     Swal: any
-    Chart: any
   }
 }
