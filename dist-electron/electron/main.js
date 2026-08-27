@@ -64,6 +64,7 @@ const partIpc_1 = require("./ipc/partIpc");
 const userIpc_1 = require("./ipc/userIpc");
 const miscIpc_1 = require("./ipc/miscIpc");
 const saleIpc_1 = __importDefault(require("./ipc/saleIpc"));
+const userController = __importStar(require("../controllers/userController"));
 let mainWindow = null;
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
@@ -86,7 +87,7 @@ function createWindow() {
         mainWindow?.maximize();
         mainWindow?.show();
     });
-    const isDev = !electron_1.app.isPackaged && process.env.NODE_ENV !== 'production';
+    const isDev = !electron_1.app.isPackaged && process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test';
     if (isDev) {
         // Memuat Vite Dev Server
         mainWindow.loadURL('http://localhost:5173');
@@ -94,7 +95,7 @@ function createWindow() {
     }
     else {
         // Memuat file hasil build Vite
-        mainWindow.loadFile(path_1.default.join(__dirname, '..', 'dist_frontend', 'index.html'));
+        mainWindow.loadFile(path_1.default.join(__dirname, '..', '..', 'dist_frontend', 'index.html'));
     }
     // Register IPC handlers
     (0, customerIpc_1.registerCustomerIpc)();
@@ -112,11 +113,17 @@ function createWindow() {
 electron_1.app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
 electron_1.app.commandLine.appendSwitch('disable-http-cache');
 electron_1.app.whenReady().then(() => {
+    console.log('App is ready');
     // Database Migration
     try {
+        console.log('Running migrations...');
         (0, migrate_1.default)();
+        console.log('Migrations done');
+        // Initialize default admin user after migrations
+        userController.init();
     }
     catch (error) {
+        console.error('Database migration error:', error);
         electron_log_1.default.error('Database migration error:', error);
         electron_1.dialog.showErrorBox("Database Error", "Gagal memperbarui database. Aplikasi tidak dapat dilanjutkan.");
         electron_1.app.quit();
@@ -127,7 +134,9 @@ electron_1.app.whenReady().then(() => {
     if (!fs_1.default.existsSync(photosDir)) {
         fs_1.default.mkdirSync(photosDir, { recursive: true });
     }
+    console.log('Creating window...');
     createWindow();
+    console.log('Window created');
     // Check for updates
     electron_updater_1.autoUpdater.checkForUpdatesAndNotify();
     electron_1.app.on('activate', () => {

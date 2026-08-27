@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { User } from '../shared/types';
 import * as userRepository from '../repositories/userRepository';
 import bcrypt from 'bcryptjs';
@@ -14,8 +13,7 @@ function init() {
     }
 }
 
-// Panggil inisialisasi saat modul dimuat
-init();
+// Panggil inisialisasi secara manual setelah migrasi (export init)
 
 function login(username: string, password: string) {
     const user = userRepository.getUserByUsername(username);
@@ -40,7 +38,8 @@ function login(username: string, password: string) {
     }
     
     // Remove password from user object before returning
-    const { password: _, ...safeUser } = user;
+    const safeUser = { ...user };
+    Reflect.deleteProperty(safeUser, 'password');
     return safeUser;
 }
 
@@ -59,6 +58,10 @@ function addUser(data: User) {
     const existing = userRepository.checkUsernameExists(username);
     if (existing) {
         throw new Error("Username sudah digunakan!");
+    }
+
+    if (!password) {
+        throw new Error("Password wajib diisi!");
     }
 
     const hash = bcrypt.hashSync(password, 10);
@@ -102,6 +105,7 @@ export {
     getUserById,
     addUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    init
  };
 

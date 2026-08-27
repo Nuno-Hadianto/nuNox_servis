@@ -42,6 +42,7 @@ exports.getUserById = getUserById;
 exports.addUser = addUser;
 exports.updateUser = updateUser;
 exports.deleteUser = deleteUser;
+exports.init = init;
 const userRepository = __importStar(require("../repositories/userRepository"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 // Inisialisasi: Cek apakah ada user, jika tidak buat default admin
@@ -53,8 +54,7 @@ function init() {
         userRepository.createDefaultAdmin(hash);
     }
 }
-// Panggil inisialisasi saat modul dimuat
-init();
+// Panggil inisialisasi secara manual setelah migrasi (export init)
 function login(username, password) {
     const user = userRepository.getUserByUsername(username);
     if (!user) {
@@ -76,7 +76,8 @@ function login(username, password) {
         userRepository.updateUserWithPassword(user.id, user.username, hash, user.role);
     }
     // Remove password from user object before returning
-    const { password: _, ...safeUser } = user;
+    const safeUser = { ...user };
+    Reflect.deleteProperty(safeUser, 'password');
     return safeUser;
 }
 function getUsers() {
@@ -91,6 +92,9 @@ function addUser(data) {
     const existing = userRepository.checkUsernameExists(username);
     if (existing) {
         throw new Error("Username sudah digunakan!");
+    }
+    if (!password) {
+        throw new Error("Password wajib diisi!");
     }
     const hash = bcryptjs_1.default.hashSync(password, 10);
     return userRepository.addUser(username, hash, role);

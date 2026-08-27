@@ -8,6 +8,11 @@ test('App starts and shows login screen', async () => {
     return app.isPackaged;
   });
   
+  electronApp.on('window', async (page) => {
+    page.on('console', msg => console.log('Browser:', msg.text()));
+    page.on('pageerror', err => console.log('Browser Error:', err));
+  });
+
   const window = await electronApp.firstWindow();
   await window.waitForLoadState('domcontentloaded');
   

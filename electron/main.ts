@@ -32,6 +32,7 @@ import {  registerPartIpc  } from './ipc/partIpc';
 import {  registerUserIpc  } from './ipc/userIpc';
 import {  registerMiscIpc  } from './ipc/miscIpc';
 import registerSaleIpc from './ipc/saleIpc';
+import * as userController from '../controllers/userController';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -65,7 +66,7 @@ function createWindow() {
     // mainWindow.webContents.openDevTools(); // Optional: buka devtools otomatis
   } else {
     // Memuat file hasil build Vite
-    mainWindow.loadFile(path.join(__dirname, '..', 'dist_frontend', 'index.html'));
+    mainWindow.loadFile(path.join(__dirname, '..', '..', 'dist_frontend', 'index.html'));
   }
 
   // Register IPC handlers
@@ -87,11 +88,17 @@ app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
 app.commandLine.appendSwitch('disable-http-cache');
 
 app.whenReady().then(() => {
+  console.log('App is ready');
   // Database Migration
   try {
-
+    console.log('Running migrations...');
     runMigrations();
+    console.log('Migrations done');
+    
+    // Initialize default admin user after migrations
+    userController.init();
   } catch (error) {
+    console.error('Database migration error:', error);
     log.error('Database migration error:', error);
     dialog.showErrorBox("Database Error", "Gagal memperbarui database. Aplikasi tidak dapat dilanjutkan.");
     app.quit();
@@ -105,7 +112,9 @@ app.whenReady().then(() => {
     fs.mkdirSync(photosDir, { recursive: true });
   }
 
+  console.log('Creating window...');
   createWindow();
+  console.log('Window created');
 
   // Check for updates
   autoUpdater.checkForUpdatesAndNotify();

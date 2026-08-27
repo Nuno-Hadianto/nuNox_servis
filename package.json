@@ -41,6 +41,7 @@
     },
     "files": [
       "dist-electron/**/*",
+      "dist_frontend/**/*",
       "public/**/*",
       "database/migrations/**/*"
     ]
