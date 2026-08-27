@@ -42,15 +42,11 @@
         </li>
       </ul>
       <div class="sidebar-footer">
-        <div class="user-info-row">
+        <div class="user-info-row" style="justify-content: center;">
           <div>
             Login sebagai:
             <strong class="user-name">{{ currentUser ? currentUser.username : '-' }}</strong>
           </div>
-          <button @click="toggleTheme" class="btn btn-secondary theme-toggle-btn">
-            <Moon v-if="!isDark" style="width: 16px; height: 16px;" />
-            <Sun v-else style="width: 16px; height: 16px;" />
-          </button>
         </div>
         <button @click="handleLogout" class="btn btn-danger logout-btn">
           <LogOut style="width: 18px; height: 18px;" /> Logout
@@ -71,9 +67,7 @@ import {
   UserCog,
   Settings,
   LogOut,
-  ShoppingCart,
-  Sun,
-  Moon
+  ShoppingCart
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -84,12 +78,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const { currentUser } = storeToRefs(authStore)
 
-const themeStore = useThemeStore()
-const { isDark } = storeToRefs(themeStore)
 
-const toggleTheme = () => {
-  themeStore.toggleTheme()
-}
 
 const handleLogout = () => {
   authStore.logout()
@@ -121,8 +110,8 @@ const handleLogout = () => {
   gap: 5px;
 }
 .sidebar-logo {
-  max-height: 140px;
-  width: 100%;
+  max-height: 80px;
+  width: auto;
   object-fit: contain;
 }
 .sidebar-brand {
@@ -150,15 +139,7 @@ const handleLogout = () => {
 .user-name {
   color: var(--text-primary);
 }
-.theme-toggle-btn {
-  padding: 6px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
+
 .logout-btn {
   width: 100%;
   display: flex;

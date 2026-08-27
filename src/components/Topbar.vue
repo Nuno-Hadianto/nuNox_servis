@@ -20,13 +20,19 @@
       >
         <Clock style="width: 16px; height: 16px;" /> {{ currentDateTime }}
       </div>
+      <button @click="toggleTheme" class="btn btn-secondary" style="padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); color: var(--text-primary); cursor: pointer;">
+        <Moon v-if="!isDark" style="width: 18px; height: 18px;" />
+        <Sun v-else style="width: 18px; height: 18px;" />
+      </button>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Clock } from 'lucide-vue-next'
+import { Clock, Sun, Moon } from 'lucide-vue-next'
+import { useThemeStore } from '../stores/theme'
+import { storeToRefs } from 'pinia'
 
 defineProps<{
   title?: string
@@ -35,6 +41,13 @@ defineProps<{
 
 const currentDateTime = ref<string>('')
 let timer: ReturnType<typeof setInterval> | null = null
+
+const themeStore = useThemeStore()
+const { isDark } = storeToRefs(themeStore)
+
+const toggleTheme = () => {
+  themeStore.toggleTheme()
+}
 
 const updateDateTime = () => {
   const now = new Date()

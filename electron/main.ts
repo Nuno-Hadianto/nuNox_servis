@@ -42,7 +42,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: 'nuNox_servis - NUNOX_SERVIS',
-    icon: path.join(__dirname, '..', 'public', 'img', 'logo.png'),
+    icon: path.join(__dirname, '..', '..', 'public', 'img', 'icon.png'),
     autoHideMenuBar: true,
     show: false,
     backgroundColor: '#0f172a',

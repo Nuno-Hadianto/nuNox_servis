@@ -409,6 +409,11 @@ a {
   border-bottom: 1px solid var(--glass-border);
 }
 
+.data-table th:last-child,
+.data-table td:last-child {
+  text-align: center;
+}
+
 .data-table th {
   font-weight: 700;
   font-size: 0.85rem;
@@ -424,6 +429,13 @@ a {
 
 .data-table tbody tr:hover {
   background: rgba(255, 255, 255, 0.04);
+}
+
+.data-table td .btn {
+  margin-right: 8px;
+}
+.data-table td .btn:last-child {
+  margin-right: 0;
 }
 
 /* Forms */

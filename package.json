@@ -32,7 +32,7 @@
   "build": {
     "appId": "com.nunox_servis.app",
     "productName": "nuNox_servis",
-    "icon": "public/img/logo.png",
+    "icon": "public/img/icon.png",
     "directories": {
       "output": "dist"
     },
