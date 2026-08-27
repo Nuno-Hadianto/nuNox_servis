@@ -1,5 +1,3 @@
-// @ts-nocheck
-import { Settings } from '../shared/types';
 import db from '../database/db';
 import {  settings  } from '../database/drizzleSchema';
 import {  sql  } from 'drizzle-orm';

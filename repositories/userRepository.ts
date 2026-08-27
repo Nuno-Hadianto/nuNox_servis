@@ -1,5 +1,3 @@
-// @ts-nocheck
-import { User } from '../shared/types';
 import db from '../database/db';
 import {  users  } from '../database/drizzleSchema';
 import {  eq, ne, and, desc, sql  } from 'drizzle-orm';

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Customer } from '../shared/types';
 import db from '../database/db';
 import {  customers, serviceOrders  } from '../database/drizzleSchema';

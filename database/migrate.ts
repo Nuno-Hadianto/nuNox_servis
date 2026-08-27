@@ -1,4 +1,3 @@
-// @ts-nocheck
 export {};
 import db from './db';
 import {  app  } from 'electron';
