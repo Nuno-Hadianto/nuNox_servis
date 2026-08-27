@@ -15,7 +15,7 @@ const props = defineProps<{
 }>()
 
 const chartCanvas = ref<HTMLCanvasElement | null>(null)
-let chartInstance: any = null
+let chartInstance: Chart | null = null
 
 const themeStore = useThemeStore()
 const { isDark } = storeToRefs(themeStore)

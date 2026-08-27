@@ -77,7 +77,7 @@ const { isLoggedIn } = storeToRefs(authStore)
 const themeStore = useThemeStore()
 
 let barcodeBuffer = ''
-let barcodeTimeout: any = null
+let barcodeTimeout: ReturnType<typeof setTimeout> | null = null
 
 const handleGlobalKeydown = async (e: KeyboardEvent) => {
   // Abaikan jika mengetik di input, textarea, select
@@ -160,8 +160,9 @@ const handleLogin = async () => {
     } else {
       window.Swal.fire('Error', res.error || 'Login gagal', 'error')
     }
-  } catch (error: any) {
-    window.Swal.fire('Error', error.message || 'Login gagal', 'error')
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Login gagal', 'error')
   }
 }
 

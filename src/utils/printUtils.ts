@@ -1,8 +1,10 @@
+import type { Settings, ServiceOrder, ServiceItem, Payment, Sale, SaleItem } from '../../shared/types'
+
 export const generateNotaHtml = (
-  settings: any,
-  service: any,
-  logoBase64: any,
-  qrBase64: any = null
+  settings: Partial<Settings> | null,
+  service: Partial<ServiceOrder> | null,
+  logoBase64: string | null,
+  qrBase64: string | null = null
 ) => {
   settings = settings || {}
   return `
@@ -77,14 +79,14 @@ export const generateNotaHtml = (
 }
 
 export const generateInvoiceHtml = (
-  settings: any,
-  service: any,
-  items: any,
-  payments: any,
-  logoBase64: any
+  settings: Partial<Settings> | null,
+  service: Partial<ServiceOrder>,
+  items: Partial<ServiceItem>[] | null,
+  payments: Partial<Payment>[] | null,
+  logoBase64: string | null
 ) => {
   settings = settings || {}
-  const formatRp = (val: any) =>
+  const formatRp = (val: number | string | undefined | null) =>
     new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
@@ -93,7 +95,7 @@ export const generateInvoiceHtml = (
 
   let itemsHtml = ''
   if (items && items.length > 0) {
-    items.forEach((i: any) => {
+    items.forEach((i: Partial<ServiceItem> & { part_name?: string }) => {
       let desc = i.description
       if (i.item_type === 'Sparepart') desc = i.part_name || desc
       itemsHtml += `
@@ -112,7 +114,7 @@ export const generateInvoiceHtml = (
 
   let totalPaid = 0
   if (payments && payments.length > 0) {
-    totalPaid = payments.reduce((acc: any, p: any) => acc + p.amount, 0)
+    totalPaid = payments.reduce((acc: number, p: Partial<Payment>) => acc + (p.amount || 0), 0)
   }
   const remaining = (service.total_cost || 0) - totalPaid
 
@@ -210,7 +212,7 @@ export const generateInvoiceHtml = (
     `
 }
 
-export const generateBlankNotaHtml = (settings: any, logoBase64: any) => {
+export const generateBlankNotaHtml = (settings: Partial<Settings> | null, logoBase64: string | null) => {
   settings = settings || {}
   return `
         <div class="print-nota nota-wrapper">
@@ -283,15 +285,15 @@ export const generateBlankNotaHtml = (settings: any, logoBase64: any) => {
 }
 
 export const generateSaleReceiptHtml = (
-  settings: any,
-  sale: any,
-  items: any,
-  logoBase64: any,
+  settings: Partial<Settings> | null,
+  sale: Partial<Sale>,
+  items: Partial<SaleItem>[],
+  logoBase64: string | null,
   cashGiven?: number,
   changeAmount?: number
 ) => {
   settings = settings || {}
-  const formatRp = (val: any) =>
+  const formatRp = (val: number | string | undefined | null) =>
     new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
@@ -300,7 +302,7 @@ export const generateSaleReceiptHtml = (
 
   let itemsHtml = ''
   if (items && items.length > 0) {
-    items.forEach((i: any) => {
+    items.forEach((i: Partial<SaleItem>) => {
       itemsHtml += `
                 <div>${i.part_name || i.spare_part_id || 'Item'}</div>
                 <div class="thm-row thm-text-sm" style="margin-bottom: 2px;">
@@ -386,7 +388,7 @@ export const generateSaleReceiptHtml = (
     `
 }
 
-export const generateBlankReceiptHtml = (settings: any, logoBase64: any) => {
+export const generateBlankReceiptHtml = (settings: Partial<Settings> | null, logoBase64: string | null) => {
   settings = settings || {}
   return `
         <div class="print-receipt rcpt-wrapper">
@@ -450,18 +452,18 @@ export const generateBlankReceiptHtml = (settings: any, logoBase64: any) => {
 }
 
 export const generateReportHtml = (
-  settings: any,
-  services: any,
-  startDate: any,
-  endDate: any,
-  totalOmset: any,
-  totalModal: any,
-  netProfit: any,
-  logoBase64: any,
-  topParts: any = []
+  settings: Partial<Settings> | null,
+  services: Partial<ServiceOrder>[],
+  startDate: string,
+  endDate: string,
+  totalOmset: number,
+  totalModal: number,
+  netProfit: number,
+  logoBase64: string | null,
+  topParts: { part_name: string; total_sold: number }[] = []
 ) => {
   settings = settings || {}
-  const formatRp = (val: any) =>
+  const formatRp = (val: number | string | undefined | null) =>
     new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
@@ -470,7 +472,7 @@ export const generateReportHtml = (
 
   let rowsHtml = ''
   if (services && services.length > 0) {
-    services.forEach((s: any, idx: any) => {
+    services.forEach((s: Partial<ServiceOrder>, idx: number) => {
       rowsHtml += `
                 <tr>
                     <td class="rep-td-center">${idx + 1}</td>
@@ -494,7 +496,7 @@ export const generateReportHtml = (
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                     ${topParts
                       .map(
-                        (p: any, i: any) => `
+                        (p: { part_name: string; total_sold: number }, i: number) => `
                         <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 15px; flex: 1; min-width: 120px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                             <div style="font-size: 9pt; color: #64748b; font-weight: 600; margin-bottom: 4px;">Peringkat #${i + 1}</div>
                             <div style="font-size: 11pt; font-weight: bold; color: #0f172a; margin-bottom: 8px;">${p.part_name}</div>
@@ -640,7 +642,7 @@ export const printHtml = async (
 
     if (window.api && window.api.printPreview) {
       try {
-        const pdfOptions: any = { landscape: landscape && !isThermal }
+        const pdfOptions: Record<string, boolean | string> = { landscape: landscape && !isThermal }
         if (!isThermal) {
           pdfOptions.pageSize = landscape ? 'A5' : 'A4'
         }
@@ -665,10 +667,10 @@ export const exportHtmlToPdf = async (html: string, filename: string) => {
 }
 
 export const generateThermalNotaHtml = (
-  settings: any,
-  service: any,
-  logoBase64: any,
-  qrBase64: any = null
+  settings: Partial<Settings> | null,
+  service: Partial<ServiceOrder> | null,
+  logoBase64: string | null,
+  qrBase64: string | null = null
 ) => {
   settings = settings || {}
   return `

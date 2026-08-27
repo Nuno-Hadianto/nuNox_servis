@@ -287,8 +287,9 @@ const saveCustomer = async () => {
     // Validasi dengan Zod
     try {
       CustomerSchema.parse(form)
-    } catch (validationError: any) {
-      const errMsgs = validationError.issues.map((err: any) => err.message).join('<br/>')
+    } catch (validationError: unknown) {
+      const err = validationError as { issues?: { message: string }[] }
+      const errMsgs = err.issues?.map((e) => e.message).join('<br/>') || 'Validasi Gagal'
       window.Swal.fire({
         icon: 'error',
         title: 'Validasi Gagal',
@@ -311,9 +312,10 @@ const saveCustomer = async () => {
       timer: 1500,
       showConfirmButton: false
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal menyimpan data pelanggan.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal menyimpan data pelanggan.', 'error')
   }
 }
 
@@ -333,8 +335,9 @@ const deleteCustomer = async (id: number) => {
       await window.api.deleteCustomer(id)
       window.Swal.fire('Terhapus!', 'Pelanggan berhasil dihapus.', 'success')
       loadCustomers(currentPage.value)
-    } catch (error: any) {
-      window.Swal.fire('Error', error.message || 'Gagal menghapus.', 'error')
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error)
+      window.Swal.fire('Error', msg || 'Gagal menghapus.', 'error')
     }
   }
 }

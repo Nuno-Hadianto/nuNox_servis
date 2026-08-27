@@ -15,7 +15,7 @@ const props = defineProps<{
 }>()
 
 const chartCanvas = ref<HTMLCanvasElement | null>(null)
-let chartInstance: any = null
+let chartInstance: Chart | null = null
 
 const themeStore = useThemeStore()
 const { isDark } = storeToRefs(themeStore)
@@ -53,7 +53,7 @@ const renderChart = () => {
           grid: { color: getGridColor() },
           ticks: {
             color: getTextColor(),
-            callback: function (value: any) {
+            callback: function (value: number | string) {
               return 'Rp ' + Number(value).toLocaleString('id-ID')
             }
           }

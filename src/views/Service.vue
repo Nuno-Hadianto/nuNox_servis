@@ -407,8 +407,9 @@ const saveService = async () => {
         estimated_cost: form.estimated_cost ? Number(form.estimated_cost) : 0
       }
       ServiceOrderSchema.parse(payload)
-    } catch (validationError: any) {
-      const errMsgs = validationError.issues.map((err: any) => err.message).join('<br/>')
+    } catch (validationError: unknown) {
+      const err = validationError as { issues?: { message: string }[] }
+      const errMsgs = err.issues?.map((e) => e.message).join('<br/>') || 'Validasi Gagal'
       window.Swal.fire({
         icon: 'error',
         title: 'Validasi Gagal',
@@ -434,9 +435,10 @@ const saveService = async () => {
       timer: 1500,
       showConfirmButton: false
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal membuat tiket servis.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal membuat tiket servis.', 'error')
   }
 }
 

@@ -81,13 +81,13 @@ export const SaleItemSchema = z.object({
   total: z.number().min(0, 'Total tidak boleh negatif.')
 })
 
-export const validateData = (schema: z.ZodSchema<any>, data: any) => {
+export const validateData = <T>(schema: z.ZodSchema<T>, data: unknown): T => {
   try {
     return schema.parse(data)
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       // Flatten error messages to a single readable string
-      const errMessages = (error as any).issues.map((err: any) => err.message).join(' | ')
+      const errMessages = error.issues.map((err) => err.message).join(' | ')
       throw new Error(`Validasi Gagal: ${errMessages}`)
     }
     throw error

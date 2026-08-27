@@ -152,3 +152,24 @@ export interface TodoItem {
   type: string; // e.g., 'deadline_today', 'overdue', 'waiting_part'
   description: string;
 }
+
+export interface Sale {
+  id?: number;
+  sale_number?: string;
+  customer_id?: number | null;
+  total_amount: number;
+  payment_method: string;
+  sale_date?: string;
+  notes?: string;
+  customer_name?: string;
+}
+
+export interface SaleItem {
+  id?: number;
+  sale_id?: number;
+  spare_part_id: number;
+  quantity: number;
+  price: number;
+  subtotal: number;
+  part_name?: string;
+}

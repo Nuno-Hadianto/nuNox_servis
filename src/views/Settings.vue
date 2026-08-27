@@ -355,7 +355,7 @@ const form = reactive<Settings>({
   default_printer: ''
 })
 
-const availablePrinters = ref<any[]>([])
+const availablePrinters = ref<{ name: string; isDefault?: boolean }[]>([])
 
 const loadPrinters = async () => {
   if (window.api && window.api.getPrinters) {
@@ -410,9 +410,10 @@ const saveSettings = async () => {
       timer: 1500,
       showConfirmButton: false
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal menyimpan pengaturan.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal menyimpan pengaturan.', 'error')
   }
 }
 
@@ -422,9 +423,10 @@ const backupData = async () => {
     if (success) {
       window.Swal.fire('Berhasil', 'Backup database berhasil!', 'success')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal backup database.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal backup database.', 'error')
   }
 }
 
@@ -434,7 +436,7 @@ const selectBackupDir = async () => {
     if (path) {
       form.auto_backup_path = path
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error(e)
   }
 }
@@ -460,9 +462,10 @@ const restoreData = async () => {
           timer: 2500
         })
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      window.Swal.fire('Error', error.message || 'Gagal restore database.', 'error')
+      const msg = error instanceof Error ? error.message : String(error)
+      window.Swal.fire('Error', msg || 'Gagal restore database.', 'error')
     }
   }
 }

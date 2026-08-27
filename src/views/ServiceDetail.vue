@@ -41,87 +41,12 @@
     </div>
   </div>
 
-  <!-- WhatsApp Preview Modal -->
-  <div
-    v-if="isWaModalOpen"
-    class="modal-overlay"
-    style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    "
-  >
-    <div
-      class="modal-content"
-      style="
-        background: var(--bg-color);
-        padding: 30px;
-        border-radius: var(--radius-lg);
-        width: 100%;
-        max-width: 500px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      "
-    >
-      <h2 style="margin-bottom: 20px; color: var(--primary-color)">📱 Pratinjau Pesan WhatsApp</h2>
-
-      <div class="form-group" style="margin-bottom: 20px">
-        <label
-          style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-color)"
-          >Isi Pesan</label
-        >
-        <textarea
-          v-model="waMessage"
-          rows="8"
-          style="
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            font-family: inherit;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            resize: vertical;
-          "
-        ></textarea>
-        <small style="color: #64748b; margin-top: 5px; display: block"
-          >Anda bisa mengedit pesan ini sebelum mengirimnya.</small
-        >
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 10px">
-        <button
-          @click="isWaModalOpen = false"
-          class="btn btn-secondary"
-          style="padding: 10px 20px; border-radius: 8px"
-        >
-          Batal
-        </button>
-        <button
-          @click="confirmSendWa"
-          class="btn"
-          style="
-            background-color: #25d366;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-          "
-        >
-          Buka di WhatsApp
-        </button>
-      </div>
-    </div>
-  </div>
+  <ServiceWaModal
+    :is-open="isWaModalOpen"
+    :initial-message="waMessage"
+    @close="isWaModalOpen = false"
+    @send="confirmSendWa"
+  />
 </template>
 
 <script setup lang="ts">
@@ -153,6 +78,7 @@ import ServiceHistory from '../components/ServiceDetail/ServiceHistory.vue'
 import ServicePhotos from '../components/ServiceDetail/ServicePhotos.vue'
 import ServiceItems from '../components/ServiceDetail/ServiceItems.vue'
 import ServicePayments from '../components/ServiceDetail/ServicePayments.vue'
+import ServiceWaModal from '../components/ServiceDetail/ServiceWaModal.vue'
 
 const route = useRoute()
 const service = ref<ServiceOrder | null>(null)
@@ -266,8 +192,9 @@ const handlePhotoUpload = async (e: Event, type: string) => {
     } else {
       window.Swal.fire('Error', 'Gagal mengunggah foto.', 'error')
     }
-  } catch (error: any) {
-    window.Swal.fire('Error', error.message || 'Terjadi kesalahan.', 'error')
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Terjadi kesalahan.', 'error')
   }
   target.value = '' // reset input
 }
@@ -285,7 +212,7 @@ const deletePhoto = async (id: number) => {
   }
 }
 
-const saveUpdate = async (updateForm: any) => {
+const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken: string; technician_notes: string; status: string }) => {
   if (!service.value) return
   try {
     const data = {
@@ -328,12 +255,13 @@ const saveUpdate = async (updateForm: any) => {
     })
     await loadServiceDetail()
     await loadHistory()
-  } catch (error: any) {
-    window.Swal.fire('Error', error.message || 'Gagal menyimpan.', 'error')
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal menyimpan.', 'error')
   }
 }
 
-const addItem = async (itemForm: any) => {
+const addItem = async (itemForm: { desc: string; type: string; partId?: string | number; qty: number; price: number }) => {
   if (!service.value) return
   let desc = itemForm.desc
   let partId = null
@@ -357,8 +285,9 @@ const addItem = async (itemForm: any) => {
 
   try {
     ServiceItemSchema.parse(data)
-  } catch (validationError: any) {
-    const errMsgs = validationError.issues.map((err: any) => err.message).join('<br/>')
+  } catch (validationError: unknown) {
+    const err = validationError as { issues: { message: string }[] }
+    const errMsgs = err.issues?.map((e) => e.message).join('<br/>') || 'Validasi Gagal'
     return window.Swal.fire({ icon: 'error', title: 'Validasi Gagal', html: errMsgs })
   }
 
@@ -373,8 +302,9 @@ const addItem = async (itemForm: any) => {
     await loadItems()
     await loadServiceDetail()
     if (itemForm.type === 'Sparepart') await loadParts()
-  } catch (error: any) {
-    window.Swal.fire('Error', error.message || 'Gagal menambah item.', 'error')
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal menambah item.', 'error')
   }
 }
 
@@ -393,7 +323,7 @@ const deleteItem = async (itemId: number) => {
   }
 }
 
-const addPayment = async (paymentForm: any) => {
+const addPayment = async (paymentForm: { amount: number; method: string }) => {
   if (!service.value) return
   if (paymentForm.amount <= 0) return window.Swal.fire('Info', 'Nominal harus lebih dari 0', 'info')
   if (paymentForm.amount > remainingBill.value) {
@@ -416,17 +346,19 @@ const addPayment = async (paymentForm: any) => {
 
   try {
     PaymentSchema.parse(data)
-  } catch (validationError: any) {
-    const errMsgs = validationError.issues.map((err: any) => err.message).join('<br/>')
+  } catch (validationError: unknown) {
+    const err = validationError as { issues: { message: string }[] }
+    const errMsgs = err.issues?.map((e) => e.message).join('<br/>') || 'Validasi Gagal'
     return window.Swal.fire({ icon: 'error', title: 'Validasi Gagal', html: errMsgs })
   }
 
   try {
-    await window.api.addPayment(data as any)
+    await window.api.addPayment(data as Payment)
     await loadPayments()
     await loadServiceDetail()
-  } catch (error: any) {
-    window.Swal.fire('Error', error.message || 'Gagal memproses pembayaran.', 'error')
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal memproses pembayaran.', 'error')
   }
 }
 
@@ -474,12 +406,12 @@ Terima kasih telah mempercayakan perbaikan kepada kami.`
   isWaModalOpen.value = true
 }
 
-const confirmSendWa = () => {
+const confirmSendWa = (finalMessage: string) => {
   if (!service.value) return
   const phone = service.value.customer_phone || ''
   const targetPhone = phone.replace(/^0/, '62')
 
-  const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(waMessage.value)}`
+  const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(finalMessage)}`
   if (window.api && window.api.openExternalUrl) {
     window.api.openExternalUrl(url)
   } else {
@@ -513,9 +445,10 @@ const exportPdfInvoice = async () => {
     } else if (result && !result.canceled) {
       window.Swal.fire('Error', 'Gagal menyimpan PDF: ' + (result.error || ''), 'error')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Terjadi kesalahan saat memproses PDF.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Terjadi kesalahan saat memproses PDF.', 'error')
   }
 }
 
@@ -531,9 +464,10 @@ const printNota = async () => {
     }
     const html = generateNotaHtml(settings, service.value, logoBase64, qrBase64)
     await printHtml(html, true) // landscape for nota
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal mencetak tanda terima.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal mencetak tanda terima.', 'error')
   }
 }
 
@@ -549,9 +483,10 @@ const printThermal = async () => {
     }
     const html = generateThermalNotaHtml(settings, service.value, logoBase64, qrBase64)
     await printHtml(html, false, true) // portrait for thermal, isThermal = true
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal mencetak struk thermal.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal mencetak struk thermal.', 'error')
   }
 }
 
@@ -567,9 +502,10 @@ const printReceipt = async () => {
       logoBase64
     )
     await printHtml(html, false) // portrait for invoice
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal mencetak invoice.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal mencetak invoice.', 'error')
   }
 }
 

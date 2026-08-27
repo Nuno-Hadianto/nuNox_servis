@@ -263,9 +263,10 @@ const saveUser = async () => {
         window.Swal.fire('Error', res.error || 'Gagal menyimpan.', 'error')
       }
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal menyimpan data.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal menyimpan data.', 'error')
   }
 }
 

@@ -387,9 +387,10 @@ const saveDevice = async () => {
       timer: 1500,
       showConfirmButton: false
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal menyimpan perangkat.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal menyimpan perangkat.', 'error')
   }
 }
 
@@ -409,8 +410,9 @@ const deleteDevice = async (id: number) => {
       await window.api.deleteDevice(id)
       window.Swal.fire('Terhapus!', 'Perangkat berhasil dihapus.', 'success')
       loadDevices(currentPage.value)
-    } catch (error: any) {
-      window.Swal.fire('Error', error.message || 'Gagal menghapus.', 'error')
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error)
+      window.Swal.fire('Error', msg || 'Gagal menghapus.', 'error')
     }
   }
 }

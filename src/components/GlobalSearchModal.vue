@@ -50,9 +50,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted, nextTick, computed } from 'vue'
+import { ref, watch, onMounted, onUnmounted, nextTick, computed, type Component } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, Wrench, Users, Package, Settings, Monitor, FileText, ShoppingCart } from 'lucide-vue-next'
+import type { ServiceOrder, Customer, Part } from '../../shared/types'
 
 const props = defineProps<{
   isOpen: boolean
@@ -84,7 +85,7 @@ type SearchResultItem = {
   title: string
   subtitle?: string
   route: string
-  icon: any
+  icon: Component
 }
 
 const rawResults = ref<SearchResultItem[]>([])
@@ -155,7 +156,7 @@ const performSearch = async () => {
 
       // Mapping Services
       if (servicesRes && servicesRes.data) {
-        servicesRes.data.forEach((s: any) => {
+        servicesRes.data.forEach((s: ServiceOrder) => {
           results.push({
             id: s.id,
             type: 'service',
@@ -169,7 +170,7 @@ const performSearch = async () => {
 
       // Mapping Customers
       if (customersRes && customersRes.data) {
-        customersRes.data.forEach((c: any) => {
+        customersRes.data.forEach((c: Customer) => {
           results.push({
             id: c.id,
             type: 'customer',
@@ -183,7 +184,7 @@ const performSearch = async () => {
 
       // Mapping Parts
       if (Array.isArray(partsRes)) {
-        partsRes.slice(0, 5).forEach((p: any) => {
+        partsRes.slice(0, 5).forEach((p: Part) => {
           results.push({
             id: p.id,
             type: 'part',

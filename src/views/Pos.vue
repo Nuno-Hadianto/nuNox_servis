@@ -299,7 +299,7 @@ const loadParts = async () => {
   }
 }
 
-let timeoutId: any = null
+let timeoutId: ReturnType<typeof setTimeout> | null = null
 const handleSearch = () => {
   if (timeoutId) clearTimeout(timeoutId)
   timeoutId = setTimeout(() => {
@@ -363,7 +363,7 @@ const processSale = async () => {
         showCancelButton: true,
         confirmButtonText: 'Ya, Cetak Struk',
         cancelButtonText: 'Tidak'
-      }).then(async (result: any) => {
+      }).then(async (result: { isConfirmed: boolean }) => {
         if (result.isConfirmed) {
           try {
             const saleId = res.saleId!
@@ -394,8 +394,9 @@ const processSale = async () => {
     } else {
       window.Swal.fire('Error', res.error, 'error')
     }
-  } catch (error: any) {
-    window.Swal.fire('Error', error.message, 'error')
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg, 'error')
   }
 }
 </script>

@@ -401,9 +401,10 @@ const savePart = async () => {
       timer: 1500,
       showConfirmButton: false
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', error.message || 'Gagal menyimpan data.', 'error')
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg || 'Gagal menyimpan data.', 'error')
   }
 }
 
@@ -423,8 +424,9 @@ const deletePart = async (id: number) => {
       await window.api.deletePart(id)
       window.Swal.fire('Terhapus!', 'Sparepart berhasil dihapus.', 'success')
       loadParts()
-    } catch (error: any) {
-      window.Swal.fire('Error', error.message || 'Gagal menghapus.', 'error')
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error)
+      window.Swal.fire('Error', msg || 'Gagal menghapus.', 'error')
     }
   }
 }
