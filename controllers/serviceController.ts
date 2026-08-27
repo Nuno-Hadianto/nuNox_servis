@@ -2,8 +2,8 @@ import { ServiceOrder } from '../shared/types';
 import * as serviceRepository from '../repositories/serviceRepository';
 import {  ServiceOrderSchema, validateData  } from '../src/utils/validators';
 
-function getServices(searchQuery: string = '', page: number = 1, limit: number = 50) {
-    return serviceRepository.getServices(searchQuery, page, limit);
+function getServices(searchQuery: string = '', page: number = 1, limit: number = 50, technicianFilter?: string) {
+    return serviceRepository.getServices(searchQuery, page, limit, technicianFilter);
 }
 
 function getServiceById(id: number | string) {
@@ -22,7 +22,7 @@ function addService(data: ServiceOrder) {
     // Make sure we only validate the keys that matter for creation, or partial validation
     // because estimated_cost might be missing on creation.
     // wait, Zod schema has default(0) for estimated_cost.
-    const validData = validateData(ServiceOrderSchema, data) as any;
+    const validData = validateData(ServiceOrderSchema, data) as ServiceOrder;
     return serviceRepository.addService(validData);
 }
 
@@ -32,7 +32,7 @@ function updateServiceStatus(id: number, status: string, notes: string, warranty
 
 function updateServiceDetails(id: number | string, data: ServiceOrder) {
     // For update details, some fields might not be present (like customer_id), so we should use partial validation
-    const validData = validateData(ServiceOrderSchema.partial(), data) as any;
+    const validData = validateData(ServiceOrderSchema.partial(), data) as ServiceOrder;
     return serviceRepository.updateServiceDetails(id, validData);
 }
 

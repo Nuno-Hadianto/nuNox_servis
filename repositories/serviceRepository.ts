@@ -1,8 +1,7 @@
-// @ts-nocheck
 import { ServiceOrder } from '../shared/types';
 import db from '../database/db';
 import {  serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts, servicePhotos, partLogs  } from '../database/drizzleSchema';
-import {  eq, like, or, asc, desc, sql, and, gte, isNotNull  } from 'drizzle-orm';
+import {  eq, like, or, asc, desc, sql, and, gte, isNotNull, SQL  } from 'drizzle-orm';
 
 function generateTicketNumber() {
     const year = new Date().getFullYear();
@@ -24,10 +23,10 @@ function generateTicketNumber() {
     return `${prefix}${nextNum.toString().padStart(4, '0')}`;
 }
 
-function getServices(searchQuery: string = '', page: number = 1, limit: number = 50) {
+function getServices(searchQuery: string = '', page: number = 1, limit: number = 50, technicianFilter?: string) {
     const offset = (page - 1) * limit;
     
-    let baseQuery = db.drizzle.select({
+    const baseQuery = db.drizzle.select({
         id: serviceOrders.id,
         ticket_number: serviceOrders.ticket_number,
         customer_id: serviceOrders.customer_id,
@@ -54,20 +53,33 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .innerJoin(devices, eq(serviceOrders.device_id, devices.id));
 
-    let countQuery = db.drizzle.select({ count: sql`count(*)` })
+    const countQuery = db.drizzle.select({ count: sql`count(*)` })
         .from(serviceOrders)
         .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
         .innerJoin(devices, eq(serviceOrders.device_id, devices.id));
 
     let data, total;
+    let condition: SQL | undefined = undefined;
+    
     if (searchQuery) {
         const qStr = `%${searchQuery}%`;
-        const condition = or(
+        condition = or(
             like(serviceOrders.ticket_number, qStr),
             like(customers.name, qStr),
             like(devices.brand, qStr)
         );
-        
+    }
+    
+    if (technicianFilter) {
+        const techCondition = eq(serviceOrders.technician, technicianFilter);
+        if (condition) {
+            condition = and(condition, techCondition);
+        } else {
+            condition = techCondition;
+        }
+    }
+
+    if (condition) {
         data = baseQuery.where(condition).orderBy(desc(serviceOrders.id)).limit(limit).offset(offset).all();
         const t = countQuery.where(condition).get();
         total = t?.count || 0;

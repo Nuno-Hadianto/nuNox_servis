@@ -26,7 +26,7 @@ declare global {
     api: {
       appReady: () => void
       getDashboardStats: () => Promise<DashboardStats>
-      getAlerts: () => Promise<any[]>
+      getAlerts: () => Promise<unknown[]>
 
       // Customers
       getCustomers: (
@@ -51,7 +51,8 @@ declare global {
       getServices: (
         searchQuery: string,
         page: number,
-        limit: number
+        limit: number,
+        technicianFilter?: string
       ) => Promise<{ data: ServiceOrder[]; total: number; page: number }>
       getService: (id: number) => Promise<ServiceOrder>
       getServiceByTicket: (ticket: string) => Promise<ServiceOrder>
@@ -87,7 +88,7 @@ declare global {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       importPartsExcel: () => Promise<{ success: boolean; error?: string; canceled?: boolean; result?: any }>
       getLowStockParts: (threshold: number) => Promise<Part[]>
-      getPartLogs: (id: number) => Promise<any[]>
+      getPartLogs: (id: number) => Promise<unknown[]>
 
       // Service Items
       getServiceItems: (serviceId: number) => Promise<ServiceItem[]>

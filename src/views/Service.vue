@@ -268,6 +268,9 @@ import { useRouter, useRoute } from 'vue-router'
 import type { ServiceOrder, Customer, Device } from '../../shared/types'
 import { ServiceOrderSchema } from '../utils/validators'
 import { Toast } from '../utils/toast'
+import { useAuthStore } from '../stores/auth'
+
+const authStore = useAuthStore()
 
 const router = useRouter()
 const route = useRoute()
@@ -335,7 +338,8 @@ const isWarrantyActive = (dateStr?: string) => {
 const loadServices = async (page: number = 1) => {
   if (window.api && window.api.getServices) {
     try {
-      const result = await window.api.getServices(searchQuery.value, page, itemsPerPage)
+      const technicianFilter = authStore.currentUser?.role === 'teknisi' ? authStore.currentUser.username : undefined
+      const result = await window.api.getServices(searchQuery.value, page, itemsPerPage, technicianFilter)
       services.value = (result.data as ServiceOrder[]) || []
       totalItems.value = result.total || 0
       currentPage.value = result.page || 1
@@ -367,7 +371,7 @@ const onDeviceChange = async () => {
     try {
       const warranty = await window.api.checkWarranty(Number(form.device_id))
       if (warranty) {
-        const dateStr = new Date(warranty.warranty_end_date).toLocaleDateString('id-ID')
+        const dateStr = new Date(warranty.warranty_end_date as string).toLocaleDateString('id-ID')
         window.Swal.fire({
           icon: 'warning',
           title: 'Perhatian!',
@@ -466,7 +470,8 @@ const handleKeydown = (e: KeyboardEvent) => {
 const exportExcel = async () => {
   try {
     // Ambil data servis (maksimal 10.000 data untuk diekspor)
-    const result = await window.api.getServices(searchQuery.value, 1, 10000)
+    const technicianFilter = authStore.currentUser?.role === 'teknisi' ? authStore.currentUser.username : undefined
+    const result = await window.api.getServices(searchQuery.value, 1, 10000, technicianFilter)
     const data = result.data as ServiceOrder[] || []
     
     if (data.length === 0) {

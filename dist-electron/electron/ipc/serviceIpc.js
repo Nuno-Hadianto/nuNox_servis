@@ -37,7 +37,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerServiceIpc = registerServiceIpc;
-// @ts-nocheck
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const electron_1 = require("electron");
@@ -47,7 +46,7 @@ const serviceItemController = __importStar(require("../../controllers/serviceIte
 const electron_log_1 = __importDefault(require("electron-log"));
 const validators_1 = require("../../src/utils/validators");
 function registerServiceIpc() {
-    electron_2.ipcMain.handle('get-services', (event, searchQuery, page, limit) => serviceController.getServices(searchQuery, page, limit));
+    electron_2.ipcMain.handle('get-services', (event, searchQuery, page, limit, technicianFilter) => serviceController.getServices(searchQuery, page, limit, technicianFilter));
     electron_2.ipcMain.handle('get-service', (event, id) => serviceController.getServiceById(id));
     electron_2.ipcMain.handle('get-service-by-ticket', (event, ticketNumber) => serviceController.getServiceByTicketNumber(ticketNumber));
     electron_2.ipcMain.handle('get-service-history', (event, id) => serviceController.getServiceStatusHistory(id));
@@ -82,7 +81,7 @@ function registerServiceIpc() {
         }
         catch (e) {
             electron_log_1.default.error('Error in upload-photo:', e);
-            return { success: false, error: e.message };
+            return { success: false, error: e instanceof Error ? e.message : String(e) };
         }
     });
     electron_2.ipcMain.handle('get-photos', (event, serviceId) => serviceController.getPhotos(serviceId));

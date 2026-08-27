@@ -48,8 +48,8 @@ exports.getPhotoById = getPhotoById;
 exports.checkWarranty = checkWarranty;
 const serviceRepository = __importStar(require("../repositories/serviceRepository"));
 const validators_1 = require("../src/utils/validators");
-function getServices(searchQuery = '', page = 1, limit = 50) {
-    return serviceRepository.getServices(searchQuery, page, limit);
+function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter) {
+    return serviceRepository.getServices(searchQuery, page, limit, technicianFilter);
 }
 function getServiceById(id) {
     return serviceRepository.getServiceById(id);
