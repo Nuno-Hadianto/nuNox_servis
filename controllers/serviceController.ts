@@ -22,7 +22,7 @@ function addService(data: ServiceOrder) {
     // Make sure we only validate the keys that matter for creation, or partial validation
     // because estimated_cost might be missing on creation.
     // wait, Zod schema has default(0) for estimated_cost.
-    const validData = validateData(ServiceOrderSchema, data);
+    const validData = validateData(ServiceOrderSchema, data) as any;
     return serviceRepository.addService(validData);
 }
 
@@ -32,7 +32,7 @@ function updateServiceStatus(id: number, status: string, notes: string, warranty
 
 function updateServiceDetails(id: number | string, data: ServiceOrder) {
     // For update details, some fields might not be present (like customer_id), so we should use partial validation
-    const validData = validateData(ServiceOrderSchema.partial(), data);
+    const validData = validateData(ServiceOrderSchema.partial(), data) as any;
     return serviceRepository.updateServiceDetails(id, validData);
 }
 

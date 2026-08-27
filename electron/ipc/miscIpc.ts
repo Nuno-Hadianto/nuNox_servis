@@ -18,6 +18,7 @@ import log from 'electron-log';
 function registerMiscIpc(mainWindow: any) {
   // Dashboard
   ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
+  ipcMain.handle('get-alerts', () => dashboardController.getAlerts());
 
   // Native Notifications
   ipcMain.handle('show-notification', (event: IpcMainInvokeEvent, { title, body }: any) => {

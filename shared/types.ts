@@ -1,6 +1,6 @@
 
 export interface User {
-  id?: number;
+  id: number;
   username: string;
   password?: string;
   role: string;
@@ -126,7 +126,7 @@ export interface Payment {
 }
 
 export interface Settings {
-  id?: number;
+  id: number;
   business_name: string;
   phone: string;
   whatsapp?: string;
@@ -155,7 +155,7 @@ export interface TodoItem {
 }
 
 export interface Sale {
-  id?: number;
+  id: number;
   sale_number?: string;
   customer_id?: number | null;
   total_amount: number;
@@ -166,11 +166,21 @@ export interface Sale {
 }
 
 export interface SaleItem {
-  id?: number;
-  sale_id?: number;
+  id: number;
+  sale_id: number;
   spare_part_id: number;
   quantity: number;
   price: number;
   subtotal: number;
   part_name?: string;
+}
+
+export interface PartLog {
+  id: number;
+  spare_part_id: number;
+  change_amount: number;
+  new_stock: number;
+  reason: string;
+  reference_id?: string;
+  created_at?: string;
 }

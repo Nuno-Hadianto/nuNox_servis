@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { ServiceOrder } from '../shared/types';
 import db from '../database/db';
-import {  serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts, servicePhotos  } from '../database/drizzleSchema';
+import {  serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts, servicePhotos, partLogs  } from '../database/drizzleSchema';
 import {  eq, like, or, asc, desc, sql, and, gte, isNotNull  } from 'drizzle-orm';
 
 function generateTicketNumber() {
@@ -212,6 +212,18 @@ function deleteService(id: number | string) {
             db.drizzle.update(spareParts).set({
                 stock: sql`stock + ${item.quantity}`
             }).where(eq(spareParts.id, item.spare_part_id)).run();
+            
+            const updatedPart = db.drizzle.select({ stock: spareParts.stock }).from(spareParts).where(eq(spareParts.id, item.spare_part_id)).get();
+            if (updatedPart) {
+                const service = db.drizzle.select({ ticket_number: serviceOrders.ticket_number }).from(serviceOrders).where(eq(serviceOrders.id, Number(id))).get();
+                db.drizzle.insert(partLogs).values({
+                    spare_part_id: item.spare_part_id,
+                    change_amount: item.quantity,
+                    new_stock: updatedPart.stock,
+                    reason: 'Pembatalan Servis',
+                    reference_id: service ? service.ticket_number : ''
+                }).run();
+            }
         }
         
         db.drizzle.delete(serviceOrders).where(eq(serviceOrders.id, Number(id))).run();

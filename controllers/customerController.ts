@@ -11,12 +11,12 @@ function getCustomerById(id: number | string) {
 }
 
 function addCustomer(data: Customer) {
-    const validData = validateData(CustomerSchema, data);
+    const validData = validateData(CustomerSchema, data) as any;
     return customerRepository.addCustomer(validData);
 }
 
 function updateCustomer(id: number | string, data: Customer) {
-    const validData = validateData(CustomerSchema, data);
+    const validData = validateData(CustomerSchema, data) as any;
     return customerRepository.updateCustomer(id, validData);
 }
 

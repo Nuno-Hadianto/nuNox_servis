@@ -74,7 +74,7 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l,u=e((()
                     </td>
                     <td class="inv-td-amount">${a(e.subtotal||e.total)}</td>
                 </tr>
-            `}):o=`<tr><td colspan="2" class="inv-empty">Belum ada rincian biaya.</td></tr>`;let s=0;r&&r.length>0&&(s=r.reduce((e,t)=>e+t.amount,0));let c=(t.total_cost||0)-s;return`
+            `}):o=`<tr><td colspan="2" class="inv-empty">Belum ada rincian biaya.</td></tr>`;let s=0;r&&r.length>0&&(s=r.reduce((e,t)=>e+(t.amount||0),0));let c=(t.total_cost||0)-s;return`
         <div class="print-invoice invoice-box">
             <!-- Header Section -->
             <div class="inv-header">

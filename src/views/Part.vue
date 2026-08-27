@@ -1,5 +1,5 @@
 <template>
-  <div class="view-section">
+  <div class="view-section" style="position: relative;">
     <div
       class="action-bar"
       style="
@@ -97,6 +97,13 @@
             </td>
             <td>{{ formatCurrency(p.sell_price) }}</td>
             <td>
+              <button
+                class="btn btn-secondary btn-sm"
+                @click="openHistory(p)"
+                style="display: inline-flex; align-items: center; gap: 6px; background: var(--surface-light);"
+              >
+                <History :size="14" /> Histori
+              </button>
               <button
                 class="btn btn-secondary btn-sm"
                 @click="editPart(p)"
@@ -275,11 +282,48 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal Histori Stok -->
+    <div v-if="isHistoryModalOpen" class="modal show">
+      <div class="modal-content" style="max-width: 650px;">
+        <div class="modal-header">
+          <h2>Histori Stok: {{ selectedPartName }}</h2>
+          <span class="close-modal" @click="isHistoryModalOpen = false">&times;</span>
+        </div>
+        <div class="modal-body">
+          <div v-if="partLogs.length === 0" style="text-align: center; padding: 20px; color: var(--text-secondary);">
+            Belum ada riwayat pergerakan stok untuk barang ini.
+          </div>
+          <table v-else class="data-table" style="font-size: 0.9em;">
+            <thead>
+              <tr>
+                <th>Waktu</th>
+                <th>Alasan</th>
+                <th>Referensi</th>
+                <th>Perubahan</th>
+                <th>Stok Akhir</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="log in partLogs" :key="log.id">
+                <td>{{ log.created_at ? new Date(log.created_at).toLocaleString('id-ID') : '-' }}</td>
+                <td>{{ log.reason }}</td>
+                <td>{{ log.reference_id || '-' }}</td>
+                <td :style="{ color: log.change_amount > 0 ? '#10b981' : '#ef4444', fontWeight: 'bold' }">
+                  {{ log.change_amount > 0 ? '+' : '' }}{{ log.change_amount }}
+                </td>
+                <td>{{ log.new_stock }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, FileSpreadsheet } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, FileSpreadsheet, History } from 'lucide-vue-next'
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
@@ -372,6 +416,24 @@ const openAddModal = () => {
   form.unit = 'Pcs'
   form.notes = ''
   isModalOpen.value = true
+}
+
+// History Logic
+const isHistoryModalOpen = ref(false)
+const selectedPartName = ref('')
+const partLogs = ref<any[]>([])
+
+const openHistory = async (p: Part) => {
+  selectedPartName.value = p.name
+  partLogs.value = []
+  isHistoryModalOpen.value = true
+  try {
+    const logs = await window.api.getPartLogs(p.id)
+    partLogs.value = logs
+  } catch (error) {
+    console.error(error)
+    window.Swal.fire('Error', 'Gagal memuat histori stok.', 'error')
+  }
 }
 
 const editPart = async (p: Part) => {

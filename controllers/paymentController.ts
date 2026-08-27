@@ -7,7 +7,7 @@ function getPaymentsByServiceId(serviceOrderId) {
 }
 
 function addPayment(data: Payment) {
-    const validData = validateData(PaymentSchema, data);
+    const validData = validateData(PaymentSchema, data) as any;
     return paymentRepository.addPayment(validData);
 }
 

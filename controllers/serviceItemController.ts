@@ -7,7 +7,7 @@ function getServiceItems(serviceOrderId) {
 }
 
 function addServiceItem(data: ServiceItem) {
-    const validData = validateData(ServiceItemSchema, data);
+    const validData = validateData(ServiceItemSchema, data) as any;
     return serviceItemRepository.addServiceItem(validData);
 }
 

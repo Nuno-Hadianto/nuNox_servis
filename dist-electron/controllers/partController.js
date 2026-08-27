@@ -41,6 +41,7 @@ exports.updatePartStock = updatePartStock;
 exports.deletePart = deletePart;
 exports.importParts = importParts;
 exports.getLowStockParts = getLowStockParts;
+exports.getPartLogs = getPartLogs;
 const partRepository = __importStar(require("../repositories/partRepository"));
 const validators_1 = require("../src/utils/validators");
 function getParts(searchQuery = '') {
@@ -57,8 +58,11 @@ function updatePart(id, data) {
     const validData = (0, validators_1.validateData)(validators_1.SparepartSchema, data);
     return partRepository.updatePart(id, validData);
 }
-function updatePartStock(id, change) {
-    return partRepository.updatePartStock(id, change);
+function updatePartStock(id, change, reason, ref_id) {
+    return partRepository.updatePartStock(id, change, reason, ref_id);
+}
+function getPartLogs(partId) {
+    return partRepository.getPartLogs(partId);
 }
 function deletePart(id) {
     const hasServiceItems = partRepository.checkPartHasServiceItems(id);

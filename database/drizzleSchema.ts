@@ -78,6 +78,16 @@ export const spareParts = sqliteTable('spare_parts', {
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
 });
 
+export const partLogs = sqliteTable('part_logs', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  spare_part_id: integer('spare_part_id').notNull().references(() => spareParts.id, { onDelete: 'cascade' }),
+  change_amount: integer('change_amount').notNull(),
+  new_stock: integer('new_stock').notNull(),
+  reason: text('reason').notNull(),
+  reference_id: text('reference_id'),
+  created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`)
+});
+
 export const serviceItems = sqliteTable('service_items', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   service_order_id: integer('service_order_id').notNull().references(() => serviceOrders.id, { onDelete: 'cascade' }),

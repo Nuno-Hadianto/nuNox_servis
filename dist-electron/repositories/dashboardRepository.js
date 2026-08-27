@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDashboardStats = getDashboardStats;
-// @ts-nocheck
+exports.getAlerts = getAlerts;
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
 const drizzle_orm_1 = require("drizzle-orm");
@@ -73,7 +73,7 @@ function getDashboardStats() {
             threshold = Number(row.value);
         }
     }
-    catch (e) {
+    catch (_e) {
         // ignore
     }
     // Peringatan Stok Menipis
@@ -168,4 +168,30 @@ function getDashboardStats() {
         abandonedServices,
         todoItems
     };
+}
+function getAlerts() {
+    // 1. Menunggu Sparepart > 7 hari
+    const waitingQuery = db_1.default.drizzle.select({
+        id: drizzleSchema_1.serviceOrders.id,
+        ticket_number: drizzleSchema_1.serviceOrders.ticket_number,
+        customer_name: drizzleSchema_1.customers.name,
+        service_status: drizzleSchema_1.serviceOrders.service_status,
+        days_pending: (0, drizzle_orm_1.sql) `CAST(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.created_at}, 'localtime') AS INTEGER)`
+    }).from(drizzleSchema_1.serviceOrders)
+        .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, 'Menunggu Sparepart'), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')) > 7`)).all();
+    // 2. Selesai (Belum Diambil) > 14 hari
+    const completedNotPickedQuery = db_1.default.drizzle.select({
+        id: drizzleSchema_1.serviceOrders.id,
+        ticket_number: drizzleSchema_1.serviceOrders.ticket_number,
+        customer_name: drizzleSchema_1.customers.name,
+        service_status: drizzleSchema_1.serviceOrders.service_status,
+        days_pending: (0, drizzle_orm_1.sql) `CAST(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime') AS INTEGER)`
+    }).from(drizzleSchema_1.serviceOrders)
+        .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, 'Selesai (Belum Diambil)'), (0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceOrders.completed_date), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')) > 14`)).all();
+    return [
+        ...waitingQuery,
+        ...completedNotPickedQuery
+    ];
 }

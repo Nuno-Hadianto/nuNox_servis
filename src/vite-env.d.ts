@@ -26,6 +26,7 @@ declare global {
     api: {
       appReady: () => void
       getDashboardStats: () => Promise<DashboardStats>
+      getAlerts: () => Promise<any[]>
 
       // Customers
       getCustomers: (
@@ -81,11 +82,12 @@ declare global {
       getPart: (id: number) => Promise<Part>
       addPart: (data: Omit<Part, 'id'>) => Promise<number>
       updatePart: (id: number, data: Partial<Part>) => Promise<number>
-      updatePartStock: (id: number, change: number) => Promise<number>
+      updatePartStock: (id: number, change: number, reason?: string, ref_id?: string) => Promise<number>
       deletePart: (id: number) => Promise<number>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       importPartsExcel: () => Promise<{ success: boolean; error?: string; canceled?: boolean; result?: any }>
       getLowStockParts: (threshold: number) => Promise<Part[]>
+      getPartLogs: (id: number) => Promise<any[]>
 
       // Service Items
       getServiceItems: (serviceId: number) => Promise<ServiceItem[]>

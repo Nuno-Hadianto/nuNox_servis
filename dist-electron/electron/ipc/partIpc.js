@@ -53,9 +53,10 @@ function registerPartIpc(mainWindow) {
         const validData = (0, validators_1.validateData)(validators_1.SparepartSchema.partial(), data);
         return partController.updatePart(id, validData);
     });
-    electron_1.ipcMain.handle('update-part-stock', (event, id, change) => partController.updatePartStock(id, change));
+    electron_1.ipcMain.handle('update-part-stock', (event, id, change, reason, ref_id) => partController.updatePartStock(id, change, reason, ref_id));
     electron_1.ipcMain.handle('delete-part', (event, id) => partController.deletePart(id));
     electron_1.ipcMain.handle('get-low-stock-parts', (event, threshold) => partController.getLowStockParts(threshold));
+    electron_1.ipcMain.handle('get-part-logs', (event, id) => partController.getPartLogs(id));
     electron_1.ipcMain.handle('import-parts-excel', async () => {
         try {
             const { canceled, filePaths } = await electron_1.dialog.showOpenDialog(mainWindow, {
@@ -77,7 +78,7 @@ function registerPartIpc(mainWindow) {
         }
         catch (error) {
             electron_log_1.default.error('Error importing excel:', error);
-            return { success: false, error: error.message };
+            return { success: false, error: error instanceof Error ? error.message : String(error) };
         }
     });
 }

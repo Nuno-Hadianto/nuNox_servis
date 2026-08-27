@@ -1,7 +1,7 @@
 // @ts-nocheck
 export {};
 import db from '../database/db';
-import {  sales, saleItems, spareParts  } from '../database/drizzleSchema';
+import {  sales, saleItems, spareParts, partLogs  } from '../database/drizzleSchema';
 import {  eq, gte, lte, and, desc, sql  } from 'drizzle-orm';
 
 function createSale(saleData: { invoice_number: string, customer_name?: string, total_amount: number, payment_method: string }, items: { spare_part_id: number, quantity: number, price: number, total: number }[]) {
@@ -30,6 +30,17 @@ function createSale(saleData: { invoice_number: string, customer_name?: string, 
                 stock: sql`stock - ${item.quantity}`,
                 updated_at: sql`CURRENT_TIMESTAMP`
             }).where(eq(spareParts.id, item.spare_part_id)).run();
+
+            const updatedPart = db.drizzle.select({ stock: spareParts.stock }).from(spareParts).where(eq(spareParts.id, item.spare_part_id)).get();
+            if (updatedPart) {
+                db.drizzle.insert(partLogs).values({
+                    spare_part_id: item.spare_part_id,
+                    change_amount: -item.quantity,
+                    new_stock: updatedPart.stock,
+                    reason: 'Penjualan POS',
+                    reference_id: saleData.invoice_number
+                }).run();
+            }
         }
 
         return saleId;

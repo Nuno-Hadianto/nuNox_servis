@@ -15,6 +15,7 @@ const invokeSafe = async (channel, ...args) => {
 electron_1.contextBridge.exposeInMainWorld('api', {
     appReady: () => electron_1.ipcRenderer.send('app-ready'),
     getDashboardStats: () => invokeSafe('get-dashboard-stats'),
+    getAlerts: () => invokeSafe('get-alerts'),
     // Customers
     getCustomers: (searchQuery, page, limit) => invokeSafe('get-customers', searchQuery, page, limit),
     getCustomer: (id) => invokeSafe('get-customer', id),
@@ -48,10 +49,11 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getPart: (id) => invokeSafe('get-part', id),
     addPart: (data) => invokeSafe('add-part', data),
     updatePart: (id, data) => invokeSafe('update-part', id, data),
-    updatePartStock: (id, change) => invokeSafe('update-part-stock', id, change),
+    updatePartStock: (id, change, reason, ref_id) => invokeSafe('update-part-stock', id, change, reason, ref_id),
     deletePart: (id) => invokeSafe('delete-part', id),
     importPartsExcel: () => invokeSafe('import-parts-excel'),
     getLowStockParts: (threshold) => invokeSafe('get-low-stock-parts', threshold),
+    getPartLogs: (id) => invokeSafe('get-part-logs', id),
     // Service Items
     getServiceItems: (serviceId) => invokeSafe('get-service-items', serviceId),
     addServiceItem: (data) => invokeSafe('add-service-item', data),

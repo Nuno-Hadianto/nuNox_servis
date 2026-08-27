@@ -4,6 +4,11 @@ function getDashboardStats() {
     return dashboardRepository.getDashboardStats();
 }
 
+function getAlerts() {
+    return dashboardRepository.getAlerts();
+}
+
 export { 
-    getDashboardStats
+    getDashboardStats,
+    getAlerts
  };

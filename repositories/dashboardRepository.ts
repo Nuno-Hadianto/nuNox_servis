@@ -1,4 +1,4 @@
-// @ts-nocheck
+
 import db from '../database/db';
 import {  serviceOrders, payments, serviceItems, spareParts, settings, customers  } from '../database/drizzleSchema';
 import {  eq, notLike, like, notInArray, lte, asc, sql, and, isNotNull  } from 'drizzle-orm';
@@ -80,7 +80,7 @@ function getDashboardStats() {
         if (row && row.value !== undefined && row.value !== null) {
             threshold = Number(row.value);
         }
-    } catch (e) {
+    } catch (_e) {
         // ignore
     }
 
@@ -203,7 +203,43 @@ function getDashboardStats() {
     };
 }
 
-export { 
-    getDashboardStats
- };
+function getAlerts() {
+    // 1. Menunggu Sparepart > 7 hari
+    const waitingQuery = db.drizzle.select({
+        id: serviceOrders.id,
+        ticket_number: serviceOrders.ticket_number,
+        customer_name: customers.name,
+        service_status: serviceOrders.service_status,
+        days_pending: sql`CAST(julianday('now', 'localtime') - julianday(${serviceOrders.created_at}, 'localtime') AS INTEGER)`
+    }).from(serviceOrders)
+      .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
+      .where(and(
+          eq(serviceOrders.service_status, 'Menunggu Sparepart'),
+          sql`(julianday('now', 'localtime') - julianday(${serviceOrders.created_at}, 'localtime')) > 7`
+      )).all();
+    
+    // 2. Selesai (Belum Diambil) > 14 hari
+    const completedNotPickedQuery = db.drizzle.select({
+        id: serviceOrders.id,
+        ticket_number: serviceOrders.ticket_number,
+        customer_name: customers.name,
+        service_status: serviceOrders.service_status,
+        days_pending: sql`CAST(julianday('now', 'localtime') - julianday(${serviceOrders.completed_date}, 'localtime') AS INTEGER)`
+    }).from(serviceOrders)
+      .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
+      .where(and(
+          eq(serviceOrders.service_status, 'Selesai (Belum Diambil)'),
+          isNotNull(serviceOrders.completed_date),
+          sql`(julianday('now', 'localtime') - julianday(${serviceOrders.completed_date}, 'localtime')) > 14`
+      )).all();
 
+    return [
+        ...waitingQuery,
+        ...completedNotPickedQuery
+    ];
+}
+
+export { 
+    getDashboardStats,
+    getAlerts
+ };

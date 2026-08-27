@@ -15,12 +15,12 @@ function getDevicesByCustomerId(customerId) {
 }
 
 function addDevice(data: Device) {
-    const validData = validateData(DeviceSchema, data);
+    const validData = validateData(DeviceSchema, data) as any;
     return deviceRepository.addDevice(validData);
 }
 
 function updateDevice(id: number | string, data: Device) {
-    const validData = validateData(DeviceSchema, data);
+    const validData = validateData(DeviceSchema, data) as any;
     return deviceRepository.updateDevice(id, validData);
 }
 

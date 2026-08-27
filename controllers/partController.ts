@@ -10,18 +10,22 @@ function getPartById(id: number | string) {
     return partRepository.getPartById(id);
 }
 
-function addPart(data: Part) {
+function addPart(data: Omit<Part, 'id'>) {
     const validData = validateData(SparepartSchema, data);
-    return partRepository.addPart(validData);
+    return partRepository.addPart(validData as Omit<Part, 'id'>);
 }
 
-function updatePart(id: number | string, data: Part) {
+function updatePart(id: number | string, data: Omit<Part, 'id'>) {
     const validData = validateData(SparepartSchema, data);
-    return partRepository.updatePart(id, validData);
+    return partRepository.updatePart(id, validData as Omit<Part, 'id'>);
 }
 
-function updatePartStock(id: number | string, change: number) {
-    return partRepository.updatePartStock(id, change);
+function updatePartStock(id: number | string, change: number, reason?: string, ref_id?: string) {
+    return partRepository.updatePartStock(id, change, reason, ref_id);
+}
+
+function getPartLogs(partId: number | string) {
+    return partRepository.getPartLogs(partId);
 }
 
 function deletePart(id: number | string) {
@@ -48,5 +52,6 @@ export {
     updatePartStock,
     deletePart,
     importParts,
-    getLowStockParts
+    getLowStockParts,
+    getPartLogs
  };

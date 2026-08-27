@@ -18,7 +18,7 @@ function registerUserIpc() {
   ipcMain.handle('get-user', (event: IpcMainInvokeEvent, id: number) => userController.getUserById(id));
   ipcMain.handle('add-user', (event: IpcMainInvokeEvent, data: Omit<User, 'id'>) => {
     try {
-      const validData = validateData(UserSchema, data);
+      const validData = validateData(UserSchema, data) as any;
       return { success: true, id: userController.addUser(validData) };
     }
     catch (err: any) { 
@@ -28,7 +28,7 @@ function registerUserIpc() {
   });
   ipcMain.handle('update-user', (event: IpcMainInvokeEvent, id: number, data: Partial<User>) => {
     try {
-      const validData = validateData(UserSchema.partial(), data);
+      const validData = validateData(UserSchema.partial(), data) as any;
       return { success: true, result: userController.updateUser(id, validData) };
     }
     catch (err: any) { 

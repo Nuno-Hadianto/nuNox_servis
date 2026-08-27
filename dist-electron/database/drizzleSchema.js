@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.servicePhotos = exports.settings = exports.saleItems = exports.sales = exports.receipts = exports.payments = exports.serviceItems = exports.spareParts = exports.serviceStatusHistory = exports.serviceOrders = exports.devices = exports.customers = exports.users = void 0;
+exports.servicePhotos = exports.settings = exports.saleItems = exports.sales = exports.receipts = exports.payments = exports.serviceItems = exports.partLogs = exports.spareParts = exports.serviceStatusHistory = exports.serviceOrders = exports.devices = exports.customers = exports.users = void 0;
 const sqlite_core_1 = require("drizzle-orm/sqlite-core");
 const drizzle_orm_1 = require("drizzle-orm");
 exports.users = (0, sqlite_core_1.sqliteTable)('users', {
@@ -73,6 +73,15 @@ exports.spareParts = (0, sqlite_core_1.sqliteTable)('spare_parts', {
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
+});
+exports.partLogs = (0, sqlite_core_1.sqliteTable)('part_logs', {
+    id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
+    spare_part_id: (0, sqlite_core_1.integer)('spare_part_id').notNull().references(() => exports.spareParts.id, { onDelete: 'cascade' }),
+    change_amount: (0, sqlite_core_1.integer)('change_amount').notNull(),
+    new_stock: (0, sqlite_core_1.integer)('new_stock').notNull(),
+    reason: (0, sqlite_core_1.text)('reason').notNull(),
+    reference_id: (0, sqlite_core_1.text)('reference_id'),
+    created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
 });
 exports.serviceItems = (0, sqlite_core_1.sqliteTable)('service_items', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),

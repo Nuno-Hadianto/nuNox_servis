@@ -186,7 +186,7 @@ const handlePhotoUpload = async (e: Event, type: string) => {
   const buffer = await file.arrayBuffer()
 
   try {
-    const result = await window.api.uploadPhoto(service.value!.id, type, buffer, file.name)
+    const result = await window.api.uploadPhoto(service.value!.id as number, type, buffer, file.name)
     if (result.success) {
       await loadPhotos()
     } else {
@@ -220,7 +220,7 @@ const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken:
       actions_taken: updateForm.actions_taken,
       technician_notes: updateForm.technician_notes
     }
-    await window.api.updateServiceDetails(service.value.id, data)
+    await window.api.updateServiceDetails(service.value.id as number, data)
 
     if (updateForm.status !== service.value.service_status) {
       let warrantyDays = 0
@@ -239,7 +239,7 @@ const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken:
         }
       }
       await window.api.updateServiceStatus(
-        service.value.id,
+        service.value.id as number,
         updateForm.status,
         updateForm.actions_taken || 'Status diupdate',
         warrantyDays

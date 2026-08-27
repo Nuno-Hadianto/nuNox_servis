@@ -33,6 +33,16 @@ function createSale(saleData, items) {
                 stock: (0, drizzle_orm_1.sql) `stock - ${item.quantity}`,
                 updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
             }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, item.spare_part_id)).run();
+            const updatedPart = db_1.default.drizzle.select({ stock: drizzleSchema_1.spareParts.stock }).from(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, item.spare_part_id)).get();
+            if (updatedPart) {
+                db_1.default.drizzle.insert(drizzleSchema_1.partLogs).values({
+                    spare_part_id: item.spare_part_id,
+                    change_amount: -item.quantity,
+                    new_stock: updatedPart.stock,
+                    reason: 'Penjualan POS',
+                    reference_id: saleData.invoice_number
+                }).run();
+            }
         }
         return saleId;
     })();

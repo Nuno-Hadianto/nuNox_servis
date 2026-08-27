@@ -34,7 +34,11 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDashboardStats = getDashboardStats;
+exports.getAlerts = getAlerts;
 const dashboardRepository = __importStar(require("../repositories/dashboardRepository"));
 function getDashboardStats() {
     return dashboardRepository.getDashboardStats();
+}
+function getAlerts() {
+    return dashboardRepository.getAlerts();
 }

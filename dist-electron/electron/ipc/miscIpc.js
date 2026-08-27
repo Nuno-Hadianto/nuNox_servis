@@ -52,6 +52,7 @@ const electron_log_1 = __importDefault(require("electron-log"));
 function registerMiscIpc(mainWindow) {
     // Dashboard
     electron_1.ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
+    electron_1.ipcMain.handle('get-alerts', () => dashboardController.getAlerts());
     // Native Notifications
     electron_1.ipcMain.handle('show-notification', (event, { title, body }) => {
         new electron_1.Notification({ title, body }).show();
