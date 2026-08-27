@@ -50,13 +50,15 @@
         </router-view>
       </div>
     </main>
+
+    <GlobalSearchModal v-model:isOpen="isGlobalSearchOpen" />
   </div>
 
   <div id="print-area"></div>
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from './stores/auth'
@@ -64,8 +66,9 @@ import { useThemeStore } from './stores/theme'
 import { Toast } from './utils/toast'
 import Sidebar from './components/Sidebar.vue'
 import Topbar from './components/Topbar.vue'
+import GlobalSearchModal from './components/GlobalSearchModal.vue'
 
-
+const isGlobalSearchOpen = ref(false)
 const router = useRouter()
 const route = useRoute()
 

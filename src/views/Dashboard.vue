@@ -117,7 +117,6 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 
 const sendWaDashboard = (srv: AbandonedService) => {
   if (!srv.customer_phone) {
-    // @ts-expect-error Swal type not fully defined
     if (window.Swal) window.Swal.fire('Info', 'Pelanggan tidak memiliki nomor telepon', 'info')
     return
   }
@@ -136,9 +135,7 @@ Mohon konfirmasinya. Terima kasih.`
   }
 
   const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`
-  // @ts-expect-error Window.api is custom
   if (window.api && window.api.openExternalUrl) {
-    // @ts-expect-error Window.api is custom
     window.api.openExternalUrl(url)
   } else {
     window.open(url, '_blank')
