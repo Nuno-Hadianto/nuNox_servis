@@ -3,7 +3,7 @@ import db from '../../database/db';
 export {};
 import type { IpcMainInvokeEvent } from 'electron';
 import type { Settings } from '../../shared/types';
-import {  app, ipcMain, dialog, shell, BrowserWindow  } from 'electron';
+import {  app, ipcMain, dialog, shell, BrowserWindow, Notification  } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
@@ -18,6 +18,12 @@ import log from 'electron-log';
 function registerMiscIpc(mainWindow: any) {
   // Dashboard
   ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
+
+  // Native Notifications
+  ipcMain.handle('show-notification', (event: IpcMainInvokeEvent, { title, body }: any) => {
+    new Notification({ title, body }).show();
+    return true;
+  });
 
   // Payments
   ipcMain.handle('get-payments', (event: IpcMainInvokeEvent, serviceId: number) => paymentController.getPaymentsByServiceId(serviceId));

@@ -93,6 +93,7 @@ contextBridge.exposeInMainWorld('api', {
   exportPdf: (data: any) => invokeSafe('export-pdf', data),
   openExternalUrl: (url: any) => invokeSafe('open-external-url', url),
   getLogoBase64: () => invokeSafe('get-logo-base64'),
+  showNotification: (title: string, body: string) => invokeSafe('show-notification', { title, body }),
   
   // Print & Preview
   printPreview: (options: any) => invokeSafe('print-preview', options),

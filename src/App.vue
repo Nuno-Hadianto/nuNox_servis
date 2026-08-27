@@ -43,10 +43,9 @@
       <Topbar :title="pageTitle" />
 
       <div class="content-area">
-        <!-- Router View render halaman yang aktif -->
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
-            <component :is="Component" />
+            <component :is="Component" :key="route.fullPath" />
           </transition>
         </router-view>
       </div>

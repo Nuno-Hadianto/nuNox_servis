@@ -52,6 +52,11 @@ const electron_log_1 = __importDefault(require("electron-log"));
 function registerMiscIpc(mainWindow) {
     // Dashboard
     electron_1.ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
+    // Native Notifications
+    electron_1.ipcMain.handle('show-notification', (event, { title, body }) => {
+        new electron_1.Notification({ title, body }).show();
+        return true;
+    });
     // Payments
     electron_1.ipcMain.handle('get-payments', (event, serviceId) => paymentController.getPaymentsByServiceId(serviceId));
     electron_1.ipcMain.handle('add-payment', (event, data) => paymentController.addPayment(data));
