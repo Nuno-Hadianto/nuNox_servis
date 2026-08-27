@@ -91,7 +91,7 @@
       <button
         class="btn btn-secondary btn-sm"
         :disabled="currentPage === 1"
-        @click="loadDevices(currentPage - 1)"
+        @click="loadDevices()"
         style="border-radius: 20px; padding: 6px 16px"
       >
         &larr; Sebelumnya
@@ -110,7 +110,7 @@
       <button
         class="btn btn-secondary btn-sm"
         :disabled="currentPage >= totalPages"
-        @click="loadDevices(currentPage + 1)"
+        @click="loadDevices()"
         style="border-radius: 20px; padding: 6px 16px"
       >
         Selanjutnya &rarr;
@@ -282,19 +282,20 @@ let searchTimeout: ReturnType<typeof setTimeout> | null = null
 const debounceSearch = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    loadDevices(1)
+    loadDevices()
   }, 300)
 }
 
-const loadDevices = async (page: number = 1) => {
+const loadDevices = async () => {
   if (window.api && window.api.getDevices) {
     try {
-      const result = await window.api.getDevices(searchQuery.value, page, itemsPerPage)
+      const result = (await window.api.getDevices(searchQuery.value)) as Device[] | { data: Device[]; total: number; page: number }
       // Adjust based on how getDevices actually returns. Assuming it returns { data, total, page } like Customer
       if (Array.isArray(result)) {
-        devices.value = result as Device[]
+        devices.value = result
+        totalItems.value = result.length // Or don't use pagination
       } else {
-        devices.value = (result.data as Device[]) || []
+        devices.value = result.data || []
         totalItems.value = result.total || 0
         currentPage.value = result.page || 1
       }
@@ -374,12 +375,12 @@ const editDevice = async (d: Device) => {
 const saveDevice = async () => {
   try {
     if (formId.value) {
-      await window.api.updateDevice(formId.value, { ...form })
+      await window.api.updateDevice(formId.value, { ...form, customer_id: Number(form.customer_id) })
     } else {
-      await window.api.addDevice({ ...form })
+      await window.api.addDevice({ ...form, customer_id: Number(form.customer_id) })
     }
     isModalOpen.value = false
-    loadDevices(currentPage.value)
+    loadDevices()
     window.Swal.fire({
       icon: 'success',
       title: 'Tersimpan!',
@@ -409,7 +410,7 @@ const deleteDevice = async (id: number) => {
     try {
       await window.api.deleteDevice(id)
       window.Swal.fire('Terhapus!', 'Perangkat berhasil dihapus.', 'success')
-      loadDevices(currentPage.value)
+      loadDevices()
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)
       window.Swal.fire('Error', msg || 'Gagal menghapus.', 'error')

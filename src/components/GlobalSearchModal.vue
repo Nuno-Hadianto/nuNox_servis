@@ -161,7 +161,7 @@ const performSearch = async () => {
             id: s.id,
             type: 'service',
             title: `Tiket #${s.ticket_number}`,
-            subtitle: `${s.customer_name} - ${s.device_type} ${s.device_brand} (${s.service_status})`,
+            subtitle: `${s.customer_name} - ${s.device_type} ${s.brand} (${s.service_status})`,
             route: `/services/${s.id}`,
             icon: Wrench
           })
@@ -189,7 +189,7 @@ const performSearch = async () => {
             id: p.id,
             type: 'part',
             title: p.name,
-            subtitle: `Stok: ${p.stock} | Harga: Rp ${parseInt(p.sell_price).toLocaleString('id-ID')}`,
+            subtitle: `Stok: ${p.stock} | Harga: Rp ${Number(p.sell_price).toLocaleString('id-ID')}`,
             route: `/parts?search=${encodeURIComponent(p.name)}`,
             icon: Package
           })

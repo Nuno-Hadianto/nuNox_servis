@@ -68,7 +68,7 @@ watch(() => props.data, () => {
 }, { deep: true })
 
 watch(isDark, () => {
-  if (chartInstance) {
+  if (chartInstance && chartInstance.options && chartInstance.options.plugins && chartInstance.options.plugins.legend && chartInstance.options.plugins.legend.labels) {
     chartInstance.options.plugins.legend.labels.color = getTextColor()
     chartInstance.update()
   }

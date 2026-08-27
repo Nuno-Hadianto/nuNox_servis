@@ -121,7 +121,7 @@ const updateDateTime = () => {
 
 const router = useRouter()
 
-const alerts = ref<any[]>([])
+const alerts = ref<Array<{id: number, ticket_number: string, customer_name: string, service_status: string, days_pending: number}>>([])
 const isNotificationOpen = ref(false)
 const notificationRef = ref<HTMLElement | null>(null)
 let alertTimer: ReturnType<typeof setInterval> | null = null
@@ -138,7 +138,7 @@ const goToService = (ticket: string) => {
 const loadAlerts = async () => {
   if (window.api && window.api.getAlerts) {
     try {
-      alerts.value = await window.api.getAlerts()
+      alerts.value = (await window.api.getAlerts()) as Array<{id: number, ticket_number: string, customer_name: string, service_status: string, days_pending: number}>
     } catch (e) {
       console.error('Failed to load alerts', e)
     }

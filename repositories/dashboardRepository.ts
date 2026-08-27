@@ -2,7 +2,10 @@
 import db from '../database/db';
 import {  serviceOrders, payments, serviceItems, spareParts, settings, customers  } from '../database/drizzleSchema';
 import {  eq, notLike, like, notInArray, lte, asc, sql, and, isNotNull  } from 'drizzle-orm';
-export {};
+export {};
+
+
+
 
 function getDashboardStats() {
     const d = new Date();
@@ -80,7 +83,7 @@ function getDashboardStats() {
         if (row && row.value !== undefined && row.value !== null) {
             threshold = Number(row.value);
         }
-    } catch (_e) {
+    } catch {
         // ignore
     }
 

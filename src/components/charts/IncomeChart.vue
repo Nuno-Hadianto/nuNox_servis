@@ -72,10 +72,16 @@ watch(() => props.data, () => {
 }, { deep: true })
 
 watch(isDark, () => {
-  if (chartInstance) {
-    chartInstance.options.scales.x.ticks.color = getTextColor()
-    chartInstance.options.scales.y.ticks.color = getTextColor()
-    chartInstance.options.scales.y.grid.color = getGridColor()
+  if (chartInstance && chartInstance.options && chartInstance.options.scales) {
+    if (chartInstance.options.scales.x && chartInstance.options.scales.x.ticks) {
+      chartInstance.options.scales.x.ticks.color = getTextColor()
+    }
+    if (chartInstance.options.scales.y && chartInstance.options.scales.y.ticks) {
+      chartInstance.options.scales.y.ticks.color = getTextColor()
+    }
+    if (chartInstance.options.scales.y && chartInstance.options.scales.y.grid) {
+      chartInstance.options.scales.y.grid.color = getGridColor()
+    }
     chartInstance.update()
   }
 })

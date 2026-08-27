@@ -73,7 +73,7 @@ function getDashboardStats() {
             threshold = Number(row.value);
         }
     }
-    catch (_e) {
+    catch {
         // ignore
     }
     // Peringatan Stok Menipis

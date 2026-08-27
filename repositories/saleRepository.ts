@@ -1,4 +1,3 @@
-// @ts-nocheck
 export {};
 import db from '../database/db';
 import {  sales, saleItems, spareParts, partLogs  } from '../database/drizzleSchema';

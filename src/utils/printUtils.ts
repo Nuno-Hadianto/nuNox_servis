@@ -91,7 +91,7 @@ export const generateInvoiceHtml = (
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0
-    }).format(val || 0)
+    }).format(Number(val || 0))
 
   let itemsHtml = ''
   if (items && items.length > 0) {
@@ -104,7 +104,7 @@ export const generateInvoiceHtml = (
                         <div class="inv-item-title">${desc}</div>
                         <div class="inv-item-sub">${i.item_type} &bull; Qty: ${i.quantity} &bull; ${formatRp(i.price)}/item</div>
                     </td>
-                    <td class="inv-td-amount">${formatRp(i.subtotal || i.total)}</td>
+                    <td class="inv-td-amount">${formatRp(i.total)}</td>
                 </tr>
             `
     })
@@ -298,7 +298,7 @@ export const generateSaleReceiptHtml = (
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0
-    }).format(val || 0)
+    }).format(Number(val || 0))
 
   let itemsHtml = ''
   if (items && items.length > 0) {
@@ -306,8 +306,8 @@ export const generateSaleReceiptHtml = (
       itemsHtml += `
                 <div>${i.part_name || i.spare_part_id || 'Item'}</div>
                 <div class="thm-row thm-text-sm" style="margin-bottom: 2px;">
-                    <span class="thm-val">${i.quantity} x ${formatRp(i.price)}</span>
-                    <span class="thm-val">${formatRp(i.total || i.quantity * i.price)}</span>
+                    <span class="thm-val">${i.quantity || 0} x ${formatRp(i.price || 0)}</span>
+                    <span class="thm-val">${formatRp(i.total || (i.quantity || 0) * (i.price || 0))}</span>
                 </div>
             `
     })
@@ -468,7 +468,7 @@ export const generateReportHtml = (
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0
-    }).format(val || 0)
+    }).format(Number(val || 0))
 
   let rowsHtml = ''
   if (services && services.length > 0) {

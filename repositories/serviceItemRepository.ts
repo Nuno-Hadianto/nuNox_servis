@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ServiceItem } from '../shared/types';
 import db from '../database/db';
 import * as paymentRepository from './paymentRepository';

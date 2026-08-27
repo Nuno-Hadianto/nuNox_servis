@@ -94,6 +94,9 @@ export interface ServiceOrder {
   actions_taken?: string;
   technician_notes?: string;
   warranty_end_date?: string;
+  created_at?: string;
+  customer_address?: string;
+  accessories?: string;
 }
 
 export interface ServiceHistory {
@@ -112,7 +115,7 @@ export interface ServiceItem {
   description: string;
   quantity: number;
   price: number;
-  subtotal: number;
+  total: number;
 }
 
 export interface Payment {
@@ -126,7 +129,7 @@ export interface Payment {
 }
 
 export interface Settings {
-  id: number;
+  id?: number;
   business_name: string;
   phone: string;
   whatsapp?: string;
@@ -155,14 +158,16 @@ export interface TodoItem {
 }
 
 export interface Sale {
-  id: number;
+  id?: number;
+  invoice_number?: string;
   sale_number?: string;
   customer_id?: number | null;
+  customer_name?: string;
   total_amount: number;
   payment_method: string;
   sale_date?: string;
+  created_at?: string;
   notes?: string;
-  customer_name?: string;
 }
 
 export interface SaleItem {
@@ -171,7 +176,7 @@ export interface SaleItem {
   spare_part_id: number;
   quantity: number;
   price: number;
-  subtotal: number;
+  total: number;
   part_name?: string;
 }
 

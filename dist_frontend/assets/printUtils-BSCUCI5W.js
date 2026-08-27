@@ -66,13 +66,13 @@ import{nt as e}from"./vue.runtime.esm-bundler-DqC1numL.js";var t,n,r,i,a,o,s,c,l
                 </div>
             </div>
         </div>
-    `),n=(e,t,n,r,i)=>{e||={};let a=e=>new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,minimumFractionDigits:0}).format(e||0),o=``;n&&n.length>0?n.forEach(e=>{let t=e.description;e.item_type===`Sparepart`&&(t=e.part_name||t),o+=`
+    `),n=(e,t,n,r,i)=>{e||={};let a=e=>new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,minimumFractionDigits:0}).format(Number(e||0)),o=``;n&&n.length>0?n.forEach(e=>{let t=e.description;e.item_type===`Sparepart`&&(t=e.part_name||t),o+=`
                 <tr class="inv-tr">
                     <td class="inv-td-desc">
                         <div class="inv-item-title">${t}</div>
                         <div class="inv-item-sub">${e.item_type} &bull; Qty: ${e.quantity} &bull; ${a(e.price)}/item</div>
                     </td>
-                    <td class="inv-td-amount">${a(e.subtotal||e.total)}</td>
+                    <td class="inv-td-amount">${a(e.total)}</td>
                 </tr>
             `}):o=`<tr><td colspan="2" class="inv-empty">Belum ada rincian biaya.</td></tr>`;let s=0;r&&r.length>0&&(s=r.reduce((e,t)=>e+(t.amount||0),0));let c=(t.total_cost||0)-s;return`
         <div class="print-invoice invoice-box">
@@ -228,11 +228,11 @@ import{nt as e}from"./vue.runtime.esm-bundler-DqC1numL.js";var t,n,r,i,a,o,s,c,l
                 ${e.receipt_footer||`Bawa nota ini saat pengambilan barang.`}
             </div>
         </div>
-    `),i=(e,t,n,r,i,a)=>{e||={};let o=e=>new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,minimumFractionDigits:0}).format(e||0),s=``;n&&n.length>0&&n.forEach(e=>{s+=`
+    `),i=(e,t,n,r,i,a)=>{e||={};let o=e=>new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,minimumFractionDigits:0}).format(Number(e||0)),s=``;n&&n.length>0&&n.forEach(e=>{s+=`
                 <div>${e.part_name||e.spare_part_id||`Item`}</div>
                 <div class="thm-row thm-text-sm" style="margin-bottom: 2px;">
-                    <span class="thm-val">${e.quantity} x ${o(e.price)}</span>
-                    <span class="thm-val">${o(e.total||e.quantity*e.price)}</span>
+                    <span class="thm-val">${e.quantity||0} x ${o(e.price||0)}</span>
+                    <span class="thm-val">${o(e.total||(e.quantity||0)*(e.price||0))}</span>
                 </div>
             `});let c=`
             <div class="thm-row thm-bold" style="font-size: 11pt;">
@@ -354,7 +354,7 @@ import{nt as e}from"./vue.runtime.esm-bundler-DqC1numL.js";var t,n,r,i,a,o,s,c,l
                 <p style="margin: 0;">${e.receipt_footer||`Terima kasih atas kepercayaannya menggunakan jasa kami.`}</p>
             </div>
         </div>
-    `),o=(e,t,n,r,i,a,o,s,c=[])=>{e||={};let l=e=>new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,minimumFractionDigits:0}).format(e||0),u=``;t&&t.length>0?t.forEach((e,t)=>{u+=`
+    `),o=(e,t,n,r,i,a,o,s,c=[])=>{e||={};let l=e=>new Intl.NumberFormat(`id-ID`,{style:`currency`,currency:`IDR`,minimumFractionDigits:0}).format(Number(e||0)),u=``;t&&t.length>0?t.forEach((e,t)=>{u+=`
                 <tr>
                     <td class="rep-td-center">${t+1}</td>
                     <td class="rep-td">${e.ticket_number}</td>

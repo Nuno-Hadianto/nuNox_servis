@@ -293,7 +293,7 @@ const addItem = async (itemForm: { desc: string; type: string; partId?: string |
 
   const finalData = {
     ...data,
-    subtotal: data.quantity * data.price
+    total: data.quantity * data.price
   }
 
   try {
