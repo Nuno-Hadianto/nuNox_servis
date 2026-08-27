@@ -53,22 +53,16 @@
       <div class="dashboard-column">
         <div class="card chart-container">
           <h2>Tren Pendapatan (6 Bulan)</h2>
-          <div class="chart-wrapper-main">
-            <canvas id="income-chart"></canvas>
-          </div>
+          <IncomeChart v-if="stats.chartData" :data="stats.chartData" />
         </div>
         <div class="chart-grid-2">
           <div class="card chart-container">
             <h2 class="chart-title">Distribusi Status Servis</h2>
-            <div class="chart-wrapper-sub">
-              <canvas id="status-chart"></canvas>
-            </div>
+            <StatusChart v-if="stats.serviceStatusChart" :data="stats.serviceStatusChart" />
           </div>
           <div class="card chart-container">
             <h2 class="chart-title">Top 5 Sparepart</h2>
-            <div class="chart-wrapper-sub">
-              <canvas id="top-parts-chart"></canvas>
-            </div>
+            <TopPartsChart v-if="stats.topPartsChart" :data="stats.topPartsChart" />
           </div>
         </div>
       </div>
@@ -87,17 +81,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Wrench, Hourglass, CheckCircle, Wallet, TrendingUp } from 'lucide-vue-next'
-import { Chart, registerables } from 'chart.js'
 import StatCard from '../components/StatCard.vue'
 import TodoWidget from '../components/dashboard/TodoWidget.vue'
 import AbandonedWidget from '../components/dashboard/AbandonedWidget.vue'
 import LowStockWidget from '../components/dashboard/LowStockWidget.vue'
+import IncomeChart from '../components/charts/IncomeChart.vue'
+import StatusChart from '../components/charts/StatusChart.vue'
+import TopPartsChart from '../components/charts/TopPartsChart.vue'
 import type { DashboardStats, AbandonedService } from '../../shared/types'
-import { useThemeStore } from '../stores/theme'
-import { storeToRefs } from 'pinia'
 
 const isLoading = ref(true)
 
@@ -115,17 +109,7 @@ const stats = ref<DashboardStats>({
   todoItems: []
 })
 
-const themeStore = useThemeStore()
-const { isDark } = storeToRefs(themeStore)
-
 const waTemplate = ref<string>('')
-
-let chartInstance: any = null
-let statusChartInstance: any = null
-let topPartsChartInstance: any = null
-
-const getTextColor = () => isDark.value ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'
-const getGridColor = () => isDark.value ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'
 
 const formatCurrency = (amount: number | string | undefined | null) => {
   return 'Rp ' + parseInt(String(amount || 0)).toLocaleString('id-ID')
@@ -167,9 +151,6 @@ const loadDashboard = async () => {
     try {
       const data = await window.api.getDashboardStats()
       stats.value = data
-      renderChart(data.chartData)
-      if (data.serviceStatusChart) renderStatusChart(data.serviceStatusChart)
-      if (data.topPartsChart) renderTopPartsChart(data.topPartsChart)
 
       const settings = await window.api.getSettings()
       if (settings && settings.wa_template_status) {
@@ -185,159 +166,8 @@ const loadDashboard = async () => {
   }
 }
 
-const renderChart = (chartData: { labels: string[]; values: number[] }) => {
-  if (chartInstance) {
-    chartInstance.destroy()
-  }
-
-  const ctx = document.getElementById('income-chart') as HTMLCanvasElement
-  if (!ctx) return
-
-  chartInstance = new window.Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: chartData.labels,
-      datasets: [
-        {
-          label: 'Pendapatan',
-          data: chartData.values,
-          backgroundColor: 'rgba(99, 102, 241, 0.8)',
-          borderColor: 'rgba(99, 102, 241, 1)',
-          borderWidth: 1,
-          borderRadius: 6
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          grid: { color: getGridColor() },
-          ticks: {
-            color: getTextColor(),
-            callback: function (value: number | string) {
-              return 'Rp ' + value.toLocaleString('id-ID')
-            }
-          }
-        },
-        x: {
-          grid: { display: false },
-          ticks: { color: getTextColor() }
-        }
-      }
-    }
-  })
-}
-
-const renderStatusChart = (chartData: { labels: string[]; values: number[] }) => {
-  if (statusChartInstance) statusChartInstance.destroy()
-  const ctx = document.getElementById('status-chart') as HTMLCanvasElement
-  if (!ctx) return
-
-  statusChartInstance = new window.Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: chartData.labels,
-      datasets: [
-        {
-          data: chartData.values,
-          backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'],
-          borderWidth: 0,
-          hoverOffset: 4
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { 
-          position: 'bottom', 
-          labels: { 
-            color: getTextColor(),
-            padding: 15,
-            usePointStyle: true,
-            font: { size: 10 },
-            boxWidth: 8
-          } 
-        }
-      },
-      layout: {
-        padding: { top: 10, bottom: 30, left: 10, right: 10 }
-      },
-      cutout: '70%'
-    }
-  })
-}
-
-const renderTopPartsChart = (chartData: { labels: string[]; values: number[] }) => {
-  if (topPartsChartInstance) topPartsChartInstance.destroy()
-  const ctx = document.getElementById('top-parts-chart') as HTMLCanvasElement
-  if (!ctx) return
-
-  topPartsChartInstance = new window.Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: chartData.labels,
-      datasets: [
-        {
-          label: 'Terjual',
-          data: chartData.values,
-          backgroundColor: 'rgba(16, 185, 129, 0.8)',
-          borderRadius: 4
-        }
-      ]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        x: {
-          beginAtZero: true,
-          grid: { color: getGridColor() },
-          ticks: { color: getTextColor(), precision: 0 }
-        },
-        y: {
-          grid: { display: false },
-          ticks: { color: getTextColor() }
-        }
-      }
-    }
-  })
-}
-
 onMounted(() => {
   loadDashboard()
-})
-
-watch(isDark, () => {
-  if (chartInstance) {
-    chartInstance.options.scales.x.ticks.color = getTextColor()
-    chartInstance.options.scales.y.ticks.color = getTextColor()
-    chartInstance.options.scales.y.grid.color = getGridColor()
-    chartInstance.update()
-  }
-  
-  if (statusChartInstance) {
-    statusChartInstance.options.plugins.legend.labels.color = getTextColor()
-    statusChartInstance.update()
-  }
-
-  if (topPartsChartInstance) {
-    topPartsChartInstance.options.scales.x.ticks.color = getTextColor()
-    topPartsChartInstance.options.scales.x.grid.color = getGridColor()
-    topPartsChartInstance.options.scales.y.ticks.color = getTextColor()
-    topPartsChartInstance.update()
-  }
 })
 </script>
 
@@ -350,11 +180,6 @@ watch(isDark, () => {
   flex-direction: column;
   gap: 25px;
 }
-.chart-wrapper-main {
-  position: relative;
-  height: 250px;
-  width: 100%;
-}
 .chart-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -363,11 +188,6 @@ watch(isDark, () => {
 .chart-title {
   font-size: 1.1rem;
   text-align: center;
-}
-.chart-wrapper-sub {
-  position: relative;
-  height: 260px;
-  width: 100%;
 }
 .text-success {
   color: #10b981;
