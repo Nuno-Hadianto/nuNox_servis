@@ -1,0 +1,35 @@
+   59:10  error    'ref' is defined but never used                    @typescript-eslint/no-unused-vars
+   67:15  error    'User' is defined but never used                   @typescript-eslint/no-unused-vars
+   73:21  error    'currentUser' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  165:7   error    'handleLogout' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  29:17  error  'Sun' is defined but never used                   @typescript-eslint/no-unused-vars
+  29:22  error  'Moon' is defined but never used                  @typescript-eslint/no-unused-vars
+  38:9   error  'isDark' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  56:7   error  'toggleTheme' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   9:10  error    'Chart' is defined but never used         @typescript-eslint/no-unused-vars
+   9:10  error    'Chart' is defined but never used         @typescript-eslint/no-unused-vars
+   9:10  error    'Chart' is defined but never used         @typescript-eslint/no-unused-vars
+  214:46  error    'onUnmounted' is defined but never used   @typescript-eslint/no-unused-vars
+   85:10  error  'useRouter' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+  120:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  139:3   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  141:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+   842:3   error    'ArrowLeft' is defined but never used        @typescript-eslint/no-unused-vars
+   843:3   error    'Edit' is defined but never used             @typescript-eslint/no-unused-vars
+   844:3   error    'Save' is defined but never used             @typescript-eslint/no-unused-vars
+   845:3   error    'Printer' is defined but never used          @typescript-eslint/no-unused-vars
+   846:3   error    'Smartphone' is defined but never used       @typescript-eslint/no-unused-vars
+   847:3   error    'Calendar' is defined but never used         @typescript-eslint/no-unused-vars
+   848:3   error    'FileText' is defined but never used         @typescript-eslint/no-unused-vars
+   849:3   error    'Wrench' is defined but never used           @typescript-eslint/no-unused-vars
+   850:3   error    'CheckCircle' is defined but never used      @typescript-eslint/no-unused-vars
+   851:3   error    'CreditCard' is defined but never used       @typescript-eslint/no-unused-vars
+   852:3   error    'Camera' is defined but never used           @typescript-eslint/no-unused-vars
+   854:3   error    'PlusCircle' is defined but never used       @typescript-eslint/no-unused-vars
+   855:3   error    'Paperclip' is defined but never used        @typescript-eslint/no-unused-vars
+   877:7   error    'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   87:68  error    Parsing error: invalid-first-character-of-tag-name  vue/no-parsing-error
+   11:3   error    'Receipt' is defined but never used                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   16:36  error    The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+   16:40  error    The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+✖ 147 problems (34 errors, 113 warnings)

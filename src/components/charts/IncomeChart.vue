@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue'
-import { Chart } from 'chart.js'
 import { useThemeStore } from '../../stores/theme'
 import { storeToRefs } from 'pinia'
 

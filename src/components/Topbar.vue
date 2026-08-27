@@ -26,16 +26,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Clock, Sun, Moon } from 'lucide-vue-next'
-import { useThemeStore } from '../stores/theme'
-import { storeToRefs } from 'pinia'
+import { Clock } from 'lucide-vue-next'
 
 defineProps<{
   title?: string
 }>()
 
-const themeStore = useThemeStore()
-const { isDark } = storeToRefs(themeStore)
 
 const currentDateTime = ref<string>('')
 let timer: ReturnType<typeof setInterval> | null = null
@@ -53,9 +49,7 @@ const updateDateTime = () => {
     now.toLocaleTimeString('id-ID')
 }
 
-const toggleTheme = () => {
-  themeStore.toggleTheme()
-}
+
 
 onMounted(() => {
   updateDateTime()

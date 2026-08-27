@@ -211,7 +211,7 @@
 
 <script setup lang="ts">
 import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import type { Customer } from '../../shared/types'
 import { CustomerSchema } from '../utils/validators'
 

@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from './stores/auth'
@@ -64,13 +64,13 @@ import { useThemeStore } from './stores/theme'
 import { Toast } from './utils/toast'
 import Sidebar from './components/Sidebar.vue'
 import Topbar from './components/Topbar.vue'
-import type { User } from '../shared/types'
+
 
 const router = useRouter()
 const route = useRoute()
 
 const authStore = useAuthStore()
-const { isLoggedIn, currentUser } = storeToRefs(authStore)
+const { isLoggedIn } = storeToRefs(authStore)
 const themeStore = useThemeStore()
 
 let barcodeBuffer = ''
@@ -162,12 +162,7 @@ const handleLogin = async () => {
   }
 }
 
-const handleLogout = () => {
-  authStore.logout()
-  loginForm.username = ''
-  loginForm.password = ''
-  router.push('/')
-}
+
 </script>
 
 <style>

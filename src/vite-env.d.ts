@@ -7,13 +7,12 @@ import type {
   Part,
   ServiceItem,
   Payment,
-  Settings,
-  Receipt
+  Settings
 } from '../shared/types'
 
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'
-  const component: DefineComponent<{}, {}, any>
+  const component: DefineComponent<Record<string, unknown>, Record<string, unknown>, any>
   export default component
 }
 

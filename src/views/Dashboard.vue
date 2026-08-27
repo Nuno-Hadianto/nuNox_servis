@@ -82,7 +82,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+
 import { Wrench, Hourglass, CheckCircle, Wallet, TrendingUp } from 'lucide-vue-next'
 import StatCard from '../components/StatCard.vue'
 import TodoWidget from '../components/dashboard/TodoWidget.vue'
@@ -117,7 +117,7 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 
 const sendWaDashboard = (srv: AbandonedService) => {
   if (!srv.customer_phone) {
-    // @ts-ignore
+    // @ts-expect-error Swal type not fully defined
     if (window.Swal) window.Swal.fire('Info', 'Pelanggan tidak memiliki nomor telepon', 'info')
     return
   }
@@ -136,9 +136,9 @@ Mohon konfirmasinya. Terima kasih.`
   }
 
   const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`
-  // @ts-ignore
+  // @ts-expect-error Window.api is custom
   if (window.api && window.api.openExternalUrl) {
-    // @ts-ignore
+    // @ts-expect-error Window.api is custom
     window.api.openExternalUrl(url)
   } else {
     window.open(url, '_blank')

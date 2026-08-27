@@ -837,23 +837,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import {
-  ArrowLeft,
-  Edit,
-  Save,
-  Printer,
-  Smartphone,
-  Calendar,
-  FileText,
-  Wrench,
-  CheckCircle,
-  CreditCard,
-  Camera,
-  Trash2,
-  PlusCircle,
-  Paperclip
-} from 'lucide-vue-next'
+import { useRoute } from 'vue-router'
+import { Trash2 } from 'lucide-vue-next'
 import QRCode from 'qrcode'
 import type {
   ServiceOrder,
@@ -874,7 +859,6 @@ import {
 } from '../utils/printUtils.js'
 
 const route = useRoute()
-const router = useRouter()
 const service = ref<ServiceOrder | null>(null)
 
 const history = ref<ServiceHistory[]>([])
