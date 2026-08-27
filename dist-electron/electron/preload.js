@@ -94,5 +94,15 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getUser: (id) => invokeSafe('get-user', id),
     addUser: (data) => invokeSafe('add-user', data),
     updateUser: (id, data) => invokeSafe('update-user', id, data),
-    deleteUser: (id) => invokeSafe('delete-user', id)
+    deleteUser: (id) => invokeSafe('delete-user', id),
+    // Updater
+    checkForUpdates: () => invokeSafe('check-for-updates'),
+    installUpdate: () => invokeSafe('install-update'),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onUpdaterEvent: (callback) => {
+        electron_1.ipcRenderer.on('updater-event', callback);
+    },
+    removeUpdaterEvents: () => {
+        electron_1.ipcRenderer.removeAllListeners('updater-event');
+    }
 });

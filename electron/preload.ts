@@ -109,5 +109,16 @@ contextBridge.exposeInMainWorld('api', {
   getUser: (id: number) => invokeSafe('get-user', id),
   addUser: (data: Omit<User, 'id'>) => invokeSafe('add-user', data),
   updateUser: (id: number, data: Partial<User>) => invokeSafe('update-user', id, data),
-  deleteUser: (id: number) => invokeSafe('delete-user', id)
+  deleteUser: (id: number) => invokeSafe('delete-user', id),
+
+  // Updater
+  checkForUpdates: () => invokeSafe('check-for-updates'),
+  installUpdate: () => invokeSafe('install-update'),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onUpdaterEvent: (callback: (event: unknown, data: any) => void) => {
+    ipcRenderer.on('updater-event', callback);
+  },
+  removeUpdaterEvents: () => {
+    ipcRenderer.removeAllListeners('updater-event');
+  }
 });

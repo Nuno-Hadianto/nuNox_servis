@@ -1,19 +1,19 @@
-// @ts-nocheck
+
 import runMigrations from '../database/migrate';
 import fs from 'fs';
 import * as settingsRepo from '../repositories/settingsRepository';
 import AdmZip from 'adm-zip';
 export {};
-import {  app, BrowserWindow, ipcMain, dialog, shell  } from 'electron';
+import {  app, BrowserWindow, ipcMain, dialog  } from 'electron';
 import path from 'path';
 import db from '../database/db';
 import log from 'electron-log';
 import {  autoUpdater  } from 'electron-updater';
 
 // Setup logging
-(log.transports.file as any).level = 'info';
+(log.transports.file as { level: string }).level = 'info';
 autoUpdater.logger = log;
-((autoUpdater.logger as any).transports.file as any).level = 'info';
+((autoUpdater.logger as unknown as { transports: { file: { level: string } } }).transports.file).level = 'info';
 log.info('App starting...');
 
 process.on('uncaughtException', (error) => {
@@ -33,7 +33,7 @@ import {  registerUserIpc  } from './ipc/userIpc';
 import {  registerMiscIpc  } from './ipc/miscIpc';
 import registerSaleIpc from './ipc/saleIpc';
 
-let mainWindow: any;
+let mainWindow: BrowserWindow | null = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -54,8 +54,8 @@ function createWindow() {
   });
 
   ipcMain.once('app-ready', () => {
-    mainWindow.maximize();
-    mainWindow.show();
+    mainWindow?.maximize();
+    mainWindow?.show();
   });
   
   const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production';
@@ -91,7 +91,8 @@ app.whenReady().then(() => {
   try {
 
     runMigrations();
-  } catch (err) {
+  } catch (error) {
+    log.error('Database migration error:', error);
     dialog.showErrorBox("Database Error", "Gagal memperbarui database. Aplikasi tidak dapat dilanjutkan.");
     app.quit();
     return;
@@ -121,24 +122,58 @@ app.whenReady().then(() => {
   }, 7200000);
 });
 
-autoUpdater.on('update-available', () => {
-  log.info('Update available.');
+// IPC for Manual Updates
+ipcMain.handle('check-for-updates', async () => {
+  try {
+    return await autoUpdater.checkForUpdates();
+  } catch (error) {
+    log.error('Manual update check error:', error);
+    throw error;
+  }
 });
-autoUpdater.on('update-downloaded', () => {
+
+ipcMain.handle('install-update', () => {
+  autoUpdater.quitAndInstall();
+});
+
+// Update Events to Frontend
+autoUpdater.on('checking-for-update', () => {
+  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'checking' });
+});
+
+autoUpdater.on('update-available', (info) => {
+  log.info('Update available:', info);
+  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'update-available', info });
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  log.info('Update not available:', info);
+  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'update-not-available', info });
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'download-progress', progress: progressObj });
+});
+
+autoUpdater.on('update-downloaded', (info) => {
   log.info('Update downloaded. Prompting user to install.');
+  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'update-downloaded', info });
+  
   dialog.showMessageBox({
     type: 'info',
-    title: 'Update Ready',
-    message: 'Sebuah pembaruan telah diunduh. Aplikasi akan direstart untuk memasang pembaruan.',
+    title: 'Pembaruan Siap',
+    message: 'Sebuah pembaruan telah selesai diunduh. Restart aplikasi sekarang untuk memasang?',
     buttons: ['Restart Sekarang', 'Nanti']
-  }).then((result: any) => {
+  }).then((result: Electron.MessageBoxReturnValue) => {
     if (result.response === 0) {
       autoUpdater.quitAndInstall();
     }
   });
 });
-autoUpdater.on('error', (err: any) => {
+
+autoUpdater.on('error', (err: Error) => {
   log.error('Error in auto-updater. ' + err);
+  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'error', error: err.message || err });
 });
 
 async function performAutoBackup(type: 'cron' | 'daily' = 'daily') {

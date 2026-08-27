@@ -363,13 +363,72 @@
             </p>
           </div>
         </div>
+
+        <!-- Pembaruan Aplikasi -->
+        <div class="card" style="padding: 25px">
+          <h2
+            style="
+              font-size: 1.2rem;
+              margin-bottom: 20px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+            "
+          >
+            🔄 Pembaruan Aplikasi
+          </h2>
+          <div
+            style="
+              background: rgba(245, 158, 11, 0.05);
+              border: 1px solid rgba(245, 158, 11, 0.2);
+              border-radius: var(--radius-md);
+              padding: 20px;
+              margin-bottom: 10px;
+            "
+          >
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+              <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0;">
+                Periksa ketersediaan versi terbaru aplikasi. Pastikan komputer terhubung ke internet.
+              </p>
+              
+              <div v-if="updateStatus" style="font-weight: bold; color: var(--primary-color); font-size: 0.95rem;">
+                Status: {{ updateStatus }}
+              </div>
+              
+              <div v-if="updateProgress > 0 && updateProgress < 100" style="width: 100%; background: #e2e8f0; border-radius: 10px; overflow: hidden; height: 10px;">
+                <div :style="{ width: updateProgress + '%', background: 'var(--primary-color)', height: '100%', transition: 'width 0.3s' }"></div>
+              </div>
+              
+              <button
+                v-if="!updateReady"
+                @click="checkForUpdates"
+                class="btn btn-primary"
+                :disabled="isCheckingUpdate"
+                style="border-radius: 20px; padding: 10px 20px; justify-content: center; display: flex; align-items: center; gap: 8px;"
+              >
+                <span v-if="isCheckingUpdate">⏳ Sedang Mengecek...</span>
+                <span v-else>🔍 Cek Pembaruan Manual</span>
+              </button>
+              
+              <button
+                v-if="updateReady"
+                @click="installUpdate"
+                class="btn"
+                style="background: #10b981; color: white; border: none; border-radius: 20px; padding: 10px 20px; justify-content: center; display: flex; align-items: center; gap: 8px;"
+              >
+                🚀 Restart & Install Sekarang
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import type { Settings } from '../../shared/types'
 
 const form = reactive<Settings>({
@@ -504,8 +563,67 @@ const restoreData = async () => {
   }
 }
 
+const isCheckingUpdate = ref(false)
+const updateStatus = ref('')
+const updateProgress = ref(0)
+const updateReady = ref(false)
+
+const checkForUpdates = async () => {
+  if (window.api && window.api.checkForUpdates) {
+    isCheckingUpdate.value = true
+    updateStatus.value = 'Mengecek ketersediaan pembaruan...'
+    updateProgress.value = 0
+    try {
+      await window.api.checkForUpdates()
+    } catch (error: unknown) {
+      isCheckingUpdate.value = false
+      updateStatus.value = 'Gagal mengecek pembaruan.'
+      console.error(error)
+    }
+  }
+}
+
+const installUpdate = () => {
+  if (window.api && window.api.installUpdate) {
+    window.api.installUpdate()
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleUpdaterEvent = (_event: unknown, data: any) => {
+  if (data.type === 'checking') {
+    isCheckingUpdate.value = true
+    updateStatus.value = 'Mengecek ketersediaan pembaruan...'
+  } else if (data.type === 'update-available') {
+    updateStatus.value = `Pembaruan tersedia (v${data.info?.version || 'baru'}). Mulai mengunduh...`
+  } else if (data.type === 'update-not-available') {
+    isCheckingUpdate.value = false
+    updateStatus.value = 'Aplikasi sudah dalam versi terbaru.'
+  } else if (data.type === 'download-progress') {
+    updateProgress.value = data.progress?.percent || 0
+    updateStatus.value = `Mengunduh... ${Math.round(data.progress?.percent || 0)}%`
+  } else if (data.type === 'update-downloaded') {
+    isCheckingUpdate.value = false
+    updateProgress.value = 100
+    updateReady.value = true
+    updateStatus.value = 'Pembaruan siap dipasang.'
+  } else if (data.type === 'error') {
+    isCheckingUpdate.value = false
+    updateStatus.value = 'Terjadi kesalahan saat memperbarui.'
+  }
+}
+
 onMounted(() => {
   loadSettings()
   loadPrinters()
+  if (window.api && window.api.onUpdaterEvent) {
+    window.api.onUpdaterEvent(handleUpdaterEvent)
+  }
+})
+
+onUnmounted(() => {
+  if (window.api && window.api.removeUpdaterEvents) {
+    window.api.removeUpdaterEvents()
+  }
 })
 </script>

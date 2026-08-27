@@ -36,7 +36,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// @ts-nocheck
 const migrate_1 = __importDefault(require("../database/migrate"));
 const fs_1 = __importDefault(require("fs"));
 const settingsRepo = __importStar(require("../repositories/settingsRepository"));
@@ -49,7 +48,7 @@ const electron_updater_1 = require("electron-updater");
 // Setup logging
 electron_log_1.default.transports.file.level = 'info';
 electron_updater_1.autoUpdater.logger = electron_log_1.default;
-electron_updater_1.autoUpdater.logger.transports.file.level = 'info';
+(electron_updater_1.autoUpdater.logger.transports.file).level = 'info';
 electron_log_1.default.info('App starting...');
 process.on('uncaughtException', (error) => {
     electron_log_1.default.error('Uncaught Exception:', error);
@@ -65,7 +64,7 @@ const partIpc_1 = require("./ipc/partIpc");
 const userIpc_1 = require("./ipc/userIpc");
 const miscIpc_1 = require("./ipc/miscIpc");
 const saleIpc_1 = __importDefault(require("./ipc/saleIpc"));
-let mainWindow;
+let mainWindow = null;
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
         width: 1200,
@@ -84,8 +83,8 @@ function createWindow() {
         }
     });
     electron_1.ipcMain.once('app-ready', () => {
-        mainWindow.maximize();
-        mainWindow.show();
+        mainWindow?.maximize();
+        mainWindow?.show();
     });
     const isDev = !electron_1.app.isPackaged && process.env.NODE_ENV !== 'production';
     if (isDev) {
@@ -117,7 +116,8 @@ electron_1.app.whenReady().then(() => {
     try {
         (0, migrate_1.default)();
     }
-    catch (err) {
+    catch (error) {
+        electron_log_1.default.error('Database migration error:', error);
         electron_1.dialog.showErrorBox("Database Error", "Gagal memperbarui database. Aplikasi tidak dapat dilanjutkan.");
         electron_1.app.quit();
         return;
@@ -140,15 +140,46 @@ electron_1.app.whenReady().then(() => {
         performAutoBackup('cron');
     }, 7200000);
 });
-electron_updater_1.autoUpdater.on('update-available', () => {
-    electron_log_1.default.info('Update available.');
+// IPC for Manual Updates
+electron_1.ipcMain.handle('check-for-updates', async () => {
+    try {
+        return await electron_updater_1.autoUpdater.checkForUpdates();
+    }
+    catch (error) {
+        electron_log_1.default.error('Manual update check error:', error);
+        throw error;
+    }
 });
-electron_updater_1.autoUpdater.on('update-downloaded', () => {
+electron_1.ipcMain.handle('install-update', () => {
+    electron_updater_1.autoUpdater.quitAndInstall();
+});
+// Update Events to Frontend
+electron_updater_1.autoUpdater.on('checking-for-update', () => {
+    if (mainWindow)
+        mainWindow.webContents.send('updater-event', { type: 'checking' });
+});
+electron_updater_1.autoUpdater.on('update-available', (info) => {
+    electron_log_1.default.info('Update available:', info);
+    if (mainWindow)
+        mainWindow.webContents.send('updater-event', { type: 'update-available', info });
+});
+electron_updater_1.autoUpdater.on('update-not-available', (info) => {
+    electron_log_1.default.info('Update not available:', info);
+    if (mainWindow)
+        mainWindow.webContents.send('updater-event', { type: 'update-not-available', info });
+});
+electron_updater_1.autoUpdater.on('download-progress', (progressObj) => {
+    if (mainWindow)
+        mainWindow.webContents.send('updater-event', { type: 'download-progress', progress: progressObj });
+});
+electron_updater_1.autoUpdater.on('update-downloaded', (info) => {
     electron_log_1.default.info('Update downloaded. Prompting user to install.');
+    if (mainWindow)
+        mainWindow.webContents.send('updater-event', { type: 'update-downloaded', info });
     electron_1.dialog.showMessageBox({
         type: 'info',
-        title: 'Update Ready',
-        message: 'Sebuah pembaruan telah diunduh. Aplikasi akan direstart untuk memasang pembaruan.',
+        title: 'Pembaruan Siap',
+        message: 'Sebuah pembaruan telah selesai diunduh. Restart aplikasi sekarang untuk memasang?',
         buttons: ['Restart Sekarang', 'Nanti']
     }).then((result) => {
         if (result.response === 0) {
@@ -158,6 +189,8 @@ electron_updater_1.autoUpdater.on('update-downloaded', () => {
 });
 electron_updater_1.autoUpdater.on('error', (err) => {
     electron_log_1.default.error('Error in auto-updater. ' + err);
+    if (mainWindow)
+        mainWindow.webContents.send('updater-event', { type: 'error', error: err.message || err });
 });
 async function performAutoBackup(type = 'daily') {
     try {

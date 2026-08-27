@@ -148,6 +148,13 @@ declare global {
         data: Partial<User>
       ) => Promise<{ success: boolean; result?: number; error?: string }>
       deleteUser: (id: number) => Promise<{ success: boolean; result?: number; error?: string }>
+
+      // Updater
+      checkForUpdates: () => Promise<unknown>
+      installUpdate: () => void
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onUpdaterEvent: (callback: (event: unknown, data: any) => void) => void
+      removeUpdaterEvents: () => void
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Swal: any
