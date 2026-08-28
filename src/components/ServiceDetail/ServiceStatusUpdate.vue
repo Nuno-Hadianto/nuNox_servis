@@ -33,7 +33,10 @@
         </select>
       </div>
       <div class="form-group" style="margin: 0">
-        <label style="font-size: 0.85rem">Hasil Diagnosis / Tindakan Dilakukan</label>
+        <label style="font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+          Hasil Diagnosis / Tindakan Dilakukan
+          <button type="button" @click="askAiForDiagnosis" class="btn" style="padding: 2px 8px; font-size: 0.75rem; background: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;" title="Minta AI memberikan saran diagnosis dan tindakan">✨ Analisis AI</button>
+        </label>
         <div style="display: flex; gap: 10px">
           <textarea
             v-model="form.diagnosis_result"
@@ -102,6 +105,40 @@ const form = reactive({
   actions_taken: '',
   technician_notes: ''
 })
+
+const askAiForDiagnosis = async () => {
+  if (!props.service.customer_complaint) {
+    return window.Swal.fire('Info', 'Tidak ada catatan keluhan pelanggan pada servis ini.', 'info')
+  }
+  
+  const deviceStr = `${props.service.device_type} ${props.service.brand} ${props.service.model}`
+  const prompt = `Anda adalah teknisi servis elektronik. Pelanggan membawa "${deviceStr}" dengan keluhan: "${props.service.customer_complaint}".
+Berikan rekomendasi singkat mengenai "Hasil Diagnosis" dan "Tindakan Perbaikan" yang harus dilakukan. Jawab dalam 2 paragraf singkat tanpa format khusus.`
+
+  window.Swal.fire({
+    title: '✨ Analisis AI...',
+    text: 'Meminta diagnosis ke Google Gemini...',
+    allowOutsideClick: false,
+    didOpen: () => { window.Swal.showLoading() }
+  })
+  
+  try {
+    const res = await window.api.askAi(prompt)
+    if (res.success && res.result) {
+      window.Swal.fire({
+        title: '✨ Saran Diagnosis AI',
+        text: res.result,
+        icon: 'info',
+        confirmButtonText: 'Tutup'
+      })
+    } else {
+      window.Swal.fire('Error AI', res.error || 'Terjadi kesalahan.', 'error')
+    }
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg, 'error')
+  }
+}
 
 // Initialize form when service data changes
 watch(

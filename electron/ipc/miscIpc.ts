@@ -14,6 +14,8 @@ import * as settingsController from '../../controllers/settingsController';
 import * as reportController from '../../controllers/reportController';
 import log from 'electron-log';
 import { testGoogleDriveConnection } from '../utils/gdriveBackup';
+import { askGemini } from '../utils/geminiAi';
+import * as settingsRepo from '../../repositories/settingsRepository';
 
 function registerMiscIpc(mainWindow: BrowserWindow) {
   // Dashboard
@@ -91,6 +93,16 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
 
   ipcMain.handle('test-gdrive', async (_event: IpcMainInvokeEvent, creds: string, folderId: string) => {
     return testGoogleDriveConnection(creds, folderId);
+  });
+
+  // AI Assistant
+  ipcMain.handle('ask-ai', async (_event: IpcMainInvokeEvent, prompt: string) => {
+    const settings = settingsRepo.getSettings();
+    const apiKey = settings.gemini_api_key;
+    if (!apiKey) {
+      return { success: false, error: 'API Key Gemini belum diatur di Pengaturan.' };
+    }
+    return askGemini(prompt, String(apiKey));
   });
 
   // Export & Print

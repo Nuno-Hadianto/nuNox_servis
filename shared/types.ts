@@ -143,6 +143,7 @@ export interface Settings {
   gdrive_enabled?: boolean | string;
   gdrive_folder_id?: string;
   gdrive_credentials?: string;
+  gemini_api_key?: string;
 }
 
 export interface Photo {

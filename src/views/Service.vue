@@ -217,7 +217,10 @@
                 />
               </div>
               <div class="form-group" style="flex: 1">
-                <label>Estimasi Biaya Awal (Opsional)</label>
+                <label style="display: flex; justify-content: space-between; align-items: center;">
+                  Estimasi Biaya Awal (Opsional)
+                  <button type="button" @click="askAiForEstimate" class="btn" style="padding: 2px 8px; font-size: 0.75rem; background: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;" title="Tanya AI untuk estimasi biaya berdasarkan keluhan">✨ Prediksi AI</button>
+                </label>
                 <input
                   type="number"
                   v-model="form.estimated_cost"
@@ -409,6 +412,42 @@ const openAddModal = async () => {
 
   await loadCustomersDropdown()
   isModalOpen.value = true
+}
+
+const askAiForEstimate = async () => {
+  if (!form.device_id || !form.customer_complaint) {
+    return window.Swal.fire('Info', 'Harap isi Perangkat dan Keluhan terlebih dahulu agar AI bisa menganalisis.', 'info')
+  }
+  
+  const device = customerDevices.value.find(d => d.id === Number(form.device_id))
+  const deviceStr = device ? `${device.device_type} ${device.brand} ${device.model}` : 'Perangkat'
+  
+  const prompt = `Anda adalah asisten teknisi handal di Indonesia. Pelanggan membawa perangkat "${deviceStr}" dengan keluhan: "${form.customer_complaint}". 
+Tolong berikan jawaban sangat singkat (maksimal 3 kalimat) mengenai kemungkinan kerusakan, tindakan servis, dan estimasi biaya (berupa rentang Rupiah). Jangan gunakan format markdown (seperti * atau #), cukup teks biasa.`
+  
+  window.Swal.fire({
+    title: '✨ Menghubungi AI...',
+    text: 'Meminta prediksi ke Google Gemini...',
+    allowOutsideClick: false,
+    didOpen: () => { window.Swal.showLoading() }
+  })
+  
+  try {
+    const res = await window.api.askAi(prompt)
+    if (res.success && res.result) {
+      window.Swal.fire({
+        title: '✨ Prediksi AI',
+        text: res.result,
+        icon: 'info',
+        confirmButtonText: 'Tutup'
+      })
+    } else {
+      window.Swal.fire('Error AI', res.error || 'Terjadi kesalahan.', 'error')
+    }
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg, 'error')
+  }
 }
 
 const saveService = async () => {

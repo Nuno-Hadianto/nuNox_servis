@@ -301,6 +301,21 @@
               </button>
             </div>
 
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+              <h4 style="margin: 0 0 10px 0; font-size: 1rem; color: var(--primary-color);">✨ Asisten AI (Gemini)</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Dapatkan bantuan AI untuk memprediksi kerusakan dan estimasi biaya. Masukkan API Key dari Google AI Studio.</p>
+              <div class="form-group">
+                <label style="font-weight: 500; font-size: 0.85rem">Gemini API Key</label>
+                <input
+                  type="password"
+                  v-model="form.gemini_api_key"
+                  class="form-control"
+                  placeholder="Ketik API Key Anda di sini..."
+                  style="padding: 8px; font-size: 0.85rem; width: 100%; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px;"
+                />
+              </div>
+            </div>
+
             <div style="margin-top: 15px; text-align: right">
               <button
                 @click="saveSettings"
@@ -461,7 +476,8 @@ const form = reactive<Settings>({
   primary_color: '#6366f1',
   gdrive_enabled: false,
   gdrive_folder_id: '',
-  gdrive_credentials: ''
+  gdrive_credentials: '',
+  gemini_api_key: ''
 })
 
 const gdriveEnabledComputed = computed({
@@ -560,6 +576,7 @@ const loadSettings = async () => {
       form.gdrive_enabled = settings.gdrive_enabled === 'true' || settings.gdrive_enabled === true
       form.gdrive_folder_id = settings.gdrive_folder_id || ''
       form.gdrive_credentials = settings.gdrive_credentials || ''
+      form.gemini_api_key = settings.gemini_api_key || ''
     } catch (error) {
       console.error(error)
     }
@@ -581,7 +598,8 @@ const saveSettings = async () => {
       primary_color: form.primary_color,
       gdrive_enabled: String(form.gdrive_enabled),
       gdrive_folder_id: form.gdrive_folder_id,
-      gdrive_credentials: form.gdrive_credentials
+      gdrive_credentials: form.gdrive_credentials,
+      gemini_api_key: form.gemini_api_key
     }
     await window.api.updateSettings(data)
     

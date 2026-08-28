@@ -49,6 +49,8 @@ const settingsController = __importStar(require("../../controllers/settingsContr
 const reportController = __importStar(require("../../controllers/reportController"));
 const electron_log_1 = __importDefault(require("electron-log"));
 const gdriveBackup_1 = require("../utils/gdriveBackup");
+const geminiAi_1 = require("../utils/geminiAi");
+const settingsRepo = __importStar(require("../../repositories/settingsRepository"));
 function registerMiscIpc(mainWindow) {
     // Dashboard
     electron_1.ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
@@ -115,6 +117,15 @@ function registerMiscIpc(mainWindow) {
     });
     electron_1.ipcMain.handle('test-gdrive', async (_event, creds, folderId) => {
         return (0, gdriveBackup_1.testGoogleDriveConnection)(creds, folderId);
+    });
+    // AI Assistant
+    electron_1.ipcMain.handle('ask-ai', async (_event, prompt) => {
+        const settings = settingsRepo.getSettings();
+        const apiKey = settings.gemini_api_key;
+        if (!apiKey) {
+            return { success: false, error: 'API Key Gemini belum diatur di Pengaturan.' };
+        }
+        return (0, geminiAi_1.askGemini)(prompt, String(apiKey));
     });
     // Export & Print
     electron_1.ipcMain.handle('export-excel', async (_event, data) => {
