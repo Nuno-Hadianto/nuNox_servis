@@ -512,13 +512,15 @@ const printReceipt = async () => {
 }
 
 onMounted(async () => {
-  await loadServiceDetail()
-  await loadHistory()
-  await loadItems()
-  await loadPayments()
-  await loadParts()
-  await loadPhotos()
-  await loadSettings()
+  await Promise.all([
+    loadServiceDetail(),
+    loadHistory(),
+    loadItems(),
+    loadPayments(),
+    loadParts(),
+    loadPhotos(),
+    loadSettings()
+  ])
 
   window.addEventListener('keydown', handleKeydown)
 })

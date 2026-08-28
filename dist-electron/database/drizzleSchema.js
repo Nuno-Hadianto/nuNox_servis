@@ -18,7 +18,9 @@ exports.customers = (0, sqlite_core_1.sqliteTable)('customers', {
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
+}, (table) => ({
+    nameIdx: (0, sqlite_core_1.index)('idx_customer_name').on(table.name)
+}));
 exports.devices = (0, sqlite_core_1.sqliteTable)('devices', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
     customer_id: (0, sqlite_core_1.integer)('customer_id').notNull().references(() => exports.customers.id, { onDelete: 'cascade' }),
@@ -32,7 +34,9 @@ exports.devices = (0, sqlite_core_1.sqliteTable)('devices', {
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
+}, (table) => ({
+    customerIdIdx: (0, sqlite_core_1.index)('idx_device_customer_id').on(table.customer_id)
+}));
 exports.serviceOrders = (0, sqlite_core_1.sqliteTable)('service_orders', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
     ticket_number: (0, sqlite_core_1.text)('ticket_number').notNull().unique(),
@@ -53,7 +57,11 @@ exports.serviceOrders = (0, sqlite_core_1.sqliteTable)('service_orders', {
     warranty_end_date: (0, sqlite_core_1.text)('warranty_end_date'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
+}, (table) => ({
+    ticketNumberIdx: (0, sqlite_core_1.index)('idx_so_ticket_number').on(table.ticket_number),
+    customerIdIdx: (0, sqlite_core_1.index)('idx_so_customer_id').on(table.customer_id),
+    deviceIdIdx: (0, sqlite_core_1.index)('idx_so_device_id').on(table.device_id)
+}));
 exports.serviceStatusHistory = (0, sqlite_core_1.sqliteTable)('service_status_history', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
     service_order_id: (0, sqlite_core_1.integer)('service_order_id').notNull().references(() => exports.serviceOrders.id, { onDelete: 'cascade' }),
@@ -73,7 +81,9 @@ exports.spareParts = (0, sqlite_core_1.sqliteTable)('spare_parts', {
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
+}, (table) => ({
+    partCodeIdx: (0, sqlite_core_1.index)('idx_sparepart_code').on(table.part_code)
+}));
 exports.partLogs = (0, sqlite_core_1.sqliteTable)('part_logs', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
     spare_part_id: (0, sqlite_core_1.integer)('spare_part_id').notNull().references(() => exports.spareParts.id, { onDelete: 'cascade' }),

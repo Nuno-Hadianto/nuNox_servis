@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, real, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
@@ -17,7 +17,9 @@ export const customers = sqliteTable('customers', {
   notes: text('notes'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
-});
+}, (table) => ({
+  nameIdx: index('idx_customer_name').on(table.name)
+}));
 
 export const devices = sqliteTable('devices', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -32,7 +34,9 @@ export const devices = sqliteTable('devices', {
   notes: text('notes'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
-});
+}, (table) => ({
+  customerIdIdx: index('idx_device_customer_id').on(table.customer_id)
+}));
 
 export const serviceOrders = sqliteTable('service_orders', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -54,7 +58,11 @@ export const serviceOrders = sqliteTable('service_orders', {
   warranty_end_date: text('warranty_end_date'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
-});
+}, (table) => ({
+  ticketNumberIdx: index('idx_so_ticket_number').on(table.ticket_number),
+  customerIdIdx: index('idx_so_customer_id').on(table.customer_id),
+  deviceIdIdx: index('idx_so_device_id').on(table.device_id)
+}));
 
 export const serviceStatusHistory = sqliteTable('service_status_history', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -76,7 +84,9 @@ export const spareParts = sqliteTable('spare_parts', {
   notes: text('notes'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
-});
+}, (table) => ({
+  partCodeIdx: index('idx_sparepart_code').on(table.part_code)
+}));
 
 export const partLogs = sqliteTable('part_logs', {
   id: integer('id').primaryKey({ autoIncrement: true }),
