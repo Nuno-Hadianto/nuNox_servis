@@ -72,8 +72,13 @@ function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter) {
     let data, total;
     let condition = undefined;
     if (searchQuery) {
-        const qStr = `%${searchQuery}%`;
-        condition = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.ticket_number, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, qStr));
+        if (searchQuery === 'Sedang Dikerjakan') {
+            condition = (0, drizzle_orm_1.and)((0, drizzle_orm_1.notLike)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, ['Batal', 'Dibatalkan']));
+        }
+        else {
+            const qStr = `%${searchQuery}%`;
+            condition = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.ticket_number, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, qStr));
+        }
     }
     if (technicianFilter) {
         const techCondition = (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.technician, technicianFilter);

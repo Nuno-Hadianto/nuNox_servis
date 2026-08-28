@@ -16,7 +16,7 @@
         :value="stats.inProgress"
         variant="warning"
         clickable
-        @click="$router.push('/services?search=Proses')"
+        @click="$router.push('/services?search=Sedang Dikerjakan')"
       >
         <template #icon><Hourglass :size="28" :stroke-width="2" /></template>
       </StatCard>

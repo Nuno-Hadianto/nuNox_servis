@@ -1,7 +1,7 @@
 import { ServiceOrder } from '../shared/types';
 import db from '../database/db';
 import {  serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts, servicePhotos, partLogs  } from '../database/drizzleSchema';
-import {  eq, like, or, asc, desc, sql, and, gte, isNotNull, SQL  } from 'drizzle-orm';
+import {  eq, like, notLike, notInArray, or, asc, desc, sql, and, gte, isNotNull, SQL  } from 'drizzle-orm';
 
 function generateTicketNumber() {
     const year = new Date().getFullYear();
@@ -62,12 +62,20 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
     let condition: SQL | undefined = undefined;
     
     if (searchQuery) {
-        const qStr = `%${searchQuery}%`;
-        condition = or(
-            like(serviceOrders.ticket_number, qStr),
-            like(customers.name, qStr),
-            like(devices.brand, qStr)
-        );
+        if (searchQuery === 'Sedang Dikerjakan') {
+            condition = and(
+                notLike(serviceOrders.service_status, '%Selesai%'),
+                notInArray(serviceOrders.service_status, ['Batal', 'Dibatalkan'])
+            );
+        } else {
+            const qStr = `%${searchQuery}%`;
+            condition = or(
+                like(serviceOrders.ticket_number, qStr),
+                like(customers.name, qStr),
+                like(devices.brand, qStr),
+                like(serviceOrders.service_status, qStr)
+            );
+        }
     }
     
     if (technicianFilter) {
