@@ -21,12 +21,7 @@
             <input
               type="text"
               v-model="form.business_name"
-              style="
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-sm);
-                padding: 10px;
-                width: 100%;
-              "
+              class="form-control"
             />
           </div>
           <div class="form-group">
@@ -34,12 +29,7 @@
             <input
               type="text"
               v-model="form.phone"
-              style="
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-sm);
-                padding: 10px;
-                width: 100%;
-              "
+              class="form-control"
             />
           </div>
           <div class="form-group">
@@ -47,13 +37,8 @@
             <textarea
               v-model="form.address"
               rows="3"
-              style="
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-sm);
-                padding: 10px;
-                width: 100%;
-                resize: vertical;
-              "
+              class="form-control"
+              style="resize: vertical;"
             ></textarea>
           </div>
           <div class="form-group">
@@ -61,13 +46,8 @@
             <textarea
               v-model="form.receipt_footer"
               rows="2"
-              style="
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-sm);
-                padding: 10px;
-                width: 100%;
-                resize: vertical;
-              "
+              class="form-control"
+              style="resize: vertical;"
             ></textarea>
           </div>
           <div class="form-group">
@@ -76,12 +56,7 @@
               type="number"
               v-model="form.low_stock_threshold"
               min="0"
-              style="
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-sm);
-                padding: 10px;
-                width: 100%;
-              "
+              class="form-control"
             />
             <small style="color: var(--text-muted); display: block; margin-top: 4px">
               Munculkan peringatan di Dasbor jika stok sparepart &lt;= angka ini.
@@ -92,18 +67,20 @@
             <textarea
               v-model="form.wa_template_status"
               rows="3"
-              style="
-                border: 1px solid var(--border-color);
-                border-radius: var(--radius-sm);
-                padding: 10px;
-                width: 100%;
-                resize: vertical;
-              "
+              class="form-control"
+              style="resize: vertical;"
               placeholder="Halo Kak {nama}, tiket {tiket} status: {status}"
             ></textarea>
             <small style="color: var(--text-muted); display: block; margin-top: 4px">
               Gunakan kode otomatis: {nama}, {tiket}, {status}
             </small>
+            <!-- WhatsApp Preview Box -->
+            <div style="margin-top: 10px; background: rgba(37, 211, 102, 0.1); border-left: 3px solid #25D366; padding: 10px 15px; border-radius: 4px;">
+              <div style="font-size: 0.8rem; font-weight: 600; color: #25D366; margin-bottom: 4px;">👁️ Pratinjau Pesan:</div>
+              <div style="font-size: 0.9rem; color: var(--text-primary); white-space: pre-wrap; line-height: 1.4;">
+                {{ waPreviewText }}
+              </div>
+            </div>
           </div>
           <div class="form-group">
             <label style="font-weight: 500; font-size: 0.9rem">Tema Warna Utama (Primary Color)</label>
@@ -111,14 +88,8 @@
               <input
                 type="color"
                 v-model="form.primary_color"
-                style="
-                  width: 50px;
-                  height: 40px;
-                  padding: 0;
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  cursor: pointer;
-                "
+                class="form-control"
+                style="width: 50px; height: 40px; padding: 0; cursor: pointer;"
               />
               <span style="font-family: monospace; padding: 5px 10px; background: rgba(0,0,0,0.05); border-radius: 4px;">{{ form.primary_color }}</span>
               <button
@@ -128,9 +99,18 @@
                 style="padding: 5px 10px; border-radius: 4px; font-size: 0.8rem;"
               >Reset Default</button>
             </div>
-            <small style="color: var(--text-muted); display: block; margin-top: 4px"
-              >Pilih warna identitas toko Anda. Membutuhkan <i>restart</i> aplikasi agar sempurna diterapkan.</small
-            >
+            <!-- Preset Colors -->
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+              <button type="button" class="color-swatch" style="background: #6366f1;" @click="form.primary_color = '#6366f1'" title="Indigo"></button>
+              <button type="button" class="color-swatch" style="background: #10b981;" @click="form.primary_color = '#10b981'" title="Emerald"></button>
+              <button type="button" class="color-swatch" style="background: #f43f5e;" @click="form.primary_color = '#f43f5e'" title="Rose"></button>
+              <button type="button" class="color-swatch" style="background: #f59e0b;" @click="form.primary_color = '#f59e0b'" title="Amber"></button>
+              <button type="button" class="color-swatch" style="background: #3b82f6;" @click="form.primary_color = '#3b82f6'" title="Blue"></button>
+              <button type="button" class="color-swatch" style="background: #8b5cf6;" @click="form.primary_color = '#8b5cf6'" title="Purple"></button>
+            </div>
+            <small style="color: var(--text-muted); display: block; margin-top: 6px">
+              Pilih warna identitas toko Anda. Membutuhkan <i>restart</i> aplikasi agar sempurna diterapkan.
+            </small>
           </div>
           <div style="margin-top: 25px; text-align: right">
             <button
@@ -428,7 +408,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import type { Settings } from '../../shared/types'
 
 const form = reactive<Settings>({
@@ -440,6 +420,15 @@ const form = reactive<Settings>({
   wa_template_status: '',
   default_printer: '',
   primary_color: '#6366f1'
+})
+
+const waPreviewText = computed(() => {
+  if (!form.wa_template_status) return 'Silakan isi template...'
+  let text = form.wa_template_status
+  text = text.replace(/{nama}/g, 'Budi')
+  text = text.replace(/{tiket}/g, 'NSV-001')
+  text = text.replace(/{status}/g, 'Selesai')
+  return text
 })
 
 const availablePrinters = ref<{ name: string; isDefault?: boolean }[]>([])
@@ -627,3 +616,19 @@ onUnmounted(() => {
   }
 })
 </script>
+
+<style scoped>
+.color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 0;
+}
+.color-swatch:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+}
+</style>
