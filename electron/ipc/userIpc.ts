@@ -9,38 +9,38 @@ import {  validateData, UserSchema  } from '../../src/utils/validators';
 function registerUserIpc() {
   ipcMain.handle('login', (event: IpcMainInvokeEvent, username: string, password: string) => {
     try { return { success: true, user: userController.login(username, password) }; }
-    catch (err: any) { 
+    catch (err: unknown) { 
       log.error('Error in login:', err);
-      return { success: false, error: err.message }; 
+      return { success: false, error: (err as Error).message }; 
     }
   });
   ipcMain.handle('get-users', () => userController.getUsers());
   ipcMain.handle('get-user', (event: IpcMainInvokeEvent, id: number) => userController.getUserById(id));
   ipcMain.handle('add-user', (event: IpcMainInvokeEvent, data: Omit<User, 'id'>) => {
     try {
-      const validData = validateData(UserSchema, data) as any;
-      return { success: true, id: userController.addUser(validData) };
+      const validData = validateData(UserSchema, data) as Omit<User, 'id'>;
+      return { success: true, id: userController.addUser(validData as User) };
     }
-    catch (err: any) { 
+    catch (err: unknown) { 
       log.error('Error in add-user:', err);
-      return { success: false, error: err.message }; 
+      return { success: false, error: (err as Error).message }; 
     }
   });
   ipcMain.handle('update-user', (event: IpcMainInvokeEvent, id: number, data: Partial<User>) => {
     try {
-      const validData = validateData(UserSchema.partial(), data) as any;
-      return { success: true, result: userController.updateUser(id, validData) };
+      const validData = validateData(UserSchema.partial(), data) as Partial<User>;
+      return { success: true, result: userController.updateUser(id, validData as User) };
     }
-    catch (err: any) { 
+    catch (err: unknown) { 
       log.error('Error in update-user:', err);
-      return { success: false, error: err.message }; 
+      return { success: false, error: (err as Error).message }; 
     }
   });
   ipcMain.handle('delete-user', (event: IpcMainInvokeEvent, id: number) => {
     try { return { success: true, result: userController.deleteUser(id) }; }
-    catch (err: any) { 
+    catch (err: unknown) { 
       log.error('Error in delete-user:', err);
-      return { success: false, error: err.message }; 
+      return { success: false, error: (err as Error).message }; 
     }
   });
 }

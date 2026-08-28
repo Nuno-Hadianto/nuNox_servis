@@ -1,8 +1,9 @@
 export {};
+import type { Sale, SaleItem } from '../shared/types';
 import * as saleRepository from '../repositories/saleRepository';
 import * as partRepository from '../repositories/partRepository';
 
-function createSale(saleData: any, items: any[]) {
+function createSale(saleData: Omit<Sale, 'id'>, items: Omit<SaleItem, 'id'>[]) {
     // Basic validation
     if (!items || items.length === 0) {
         throw new Error("Keranjang belanja kosong");
@@ -33,7 +34,8 @@ function createSale(saleData: any, items: any[]) {
         saleData.total_amount = total;
     }
 
-    return saleRepository.createSale(saleData, items);
+    type RepositorySaleData = { invoice_number: string; customer_name?: string; total_amount: number; payment_method: string; };
+    return saleRepository.createSale(saleData as unknown as RepositorySaleData, items as unknown as SaleItem[]);
 }
 
 function getSales(startDate?: string, endDate?: string) {

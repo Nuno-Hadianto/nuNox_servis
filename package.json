@@ -5,7 +5,7 @@
   "main": "dist-electron/electron/main.js",
   "scripts": {
     "test": "set NODE_ENV=test&& jest",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run build:all && set NODE_ENV=test&& playwright test",
     "start": "electron dist-electron/electron/main.js",
     "dev": "electron-reload dist-electron/electron/main.js",
     "dev:electron:watch": "tsc -p tsconfig.electron.json -w",

@@ -38,16 +38,16 @@ const electron_1 = require("electron");
 const deviceController = __importStar(require("../../controllers/deviceController"));
 const validators_1 = require("../../src/utils/validators");
 function registerDeviceIpc() {
-    electron_1.ipcMain.handle('get-devices', (event, searchQuery) => deviceController.getDevices(searchQuery));
-    electron_1.ipcMain.handle('get-device', (event, id) => deviceController.getDeviceById(id));
-    electron_1.ipcMain.handle('get-devices-by-customer', (event, customerId) => deviceController.getDevicesByCustomerId(customerId));
-    electron_1.ipcMain.handle('add-device', (event, data) => {
+    electron_1.ipcMain.handle('get-devices', (_event, searchQuery) => deviceController.getDevices(searchQuery));
+    electron_1.ipcMain.handle('get-device', (_event, id) => deviceController.getDeviceById(id));
+    electron_1.ipcMain.handle('get-devices-by-customer', (_event, customerId) => deviceController.getDevicesByCustomerId(customerId));
+    electron_1.ipcMain.handle('add-device', (_event, data) => {
         const validData = (0, validators_1.validateData)(validators_1.DeviceSchema, data);
         return deviceController.addDevice(validData);
     });
-    electron_1.ipcMain.handle('update-device', (event, id, data) => {
+    electron_1.ipcMain.handle('update-device', (_event, id, data) => {
         const validData = (0, validators_1.validateData)(validators_1.DeviceSchema.partial(), data);
         return deviceController.updateDevice(id, validData);
     });
-    electron_1.ipcMain.handle('delete-device', (event, id) => deviceController.deleteDevice(id));
+    electron_1.ipcMain.handle('delete-device', (_event, id) => deviceController.deleteDevice(id));
 }

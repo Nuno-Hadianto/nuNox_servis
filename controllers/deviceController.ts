@@ -10,17 +10,17 @@ function getDeviceById(id: number | string) {
     return deviceRepository.getDeviceById(id);
 }
 
-function getDevicesByCustomerId(customerId) {
+function getDevicesByCustomerId(customerId: number | string) {
     return deviceRepository.getDevicesByCustomerId(customerId);
 }
 
 function addDevice(data: Device) {
-    const validData = validateData(DeviceSchema, data) as any;
+    const validData = validateData(DeviceSchema, data) as Device;
     return deviceRepository.addDevice(validData);
 }
 
 function updateDevice(id: number | string, data: Device) {
-    const validData = validateData(DeviceSchema, data) as any;
+    const validData = validateData(DeviceSchema, data) as Device;
     return deviceRepository.updateDevice(id, validData);
 }
 

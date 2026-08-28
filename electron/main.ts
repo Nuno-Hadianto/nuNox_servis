@@ -76,7 +76,7 @@ function createWindow() {
   registerPartIpc(mainWindow);
   registerUserIpc();
   registerMiscIpc(mainWindow);
-  registerSaleIpc(mainWindow);
+  registerSaleIpc();
 
   mainWindow.on('closed', () => {
     mainWindow = null;

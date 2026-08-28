@@ -45,8 +45,6 @@ function registerCustomerIpc() {
         return customerController.addCustomer(validData);
     });
     electron_1.ipcMain.handle('update-customer', (event, id, data) => {
-        // For partial updates, we might want a Partial schema, but since the form usually sends everything, we'll validate.
-        // However, since it's Partial<Customer>, we can use CustomerSchema.partial()
         const validData = (0, validators_1.validateData)(validators_1.CustomerSchema.partial(), data);
         return customerController.updateCustomer(id, validData);
     });

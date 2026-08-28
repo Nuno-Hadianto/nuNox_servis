@@ -104,7 +104,7 @@ function createWindow() {
     (0, partIpc_1.registerPartIpc)(mainWindow);
     (0, userIpc_1.registerUserIpc)();
     (0, miscIpc_1.registerMiscIpc)(mainWindow);
-    (0, saleIpc_1.default)(mainWindow);
+    (0, saleIpc_1.default)();
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
