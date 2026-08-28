@@ -77,6 +77,7 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     // Backup & Restore
     backupDatabase: () => invokeSafe('backup-database'),
     restoreDatabase: () => invokeSafe('restore-database'),
+    testGdrive: (creds, folderId) => invokeSafe('test-gdrive', creds, folderId),
     selectDirectory: () => invokeSafe('select-directory'),
     // Export
     exportExcel: (data) => invokeSafe('export-excel', data),

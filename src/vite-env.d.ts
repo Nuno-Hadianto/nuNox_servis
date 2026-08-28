@@ -127,6 +127,7 @@ declare global {
       // Backup & Utilities
       backupDatabase: () => Promise<boolean>
       restoreDatabase: () => Promise<boolean>
+      testGdrive: (creds: string, folderId: string) => Promise<{ success: boolean; error?: string }>
       selectDirectory: () => Promise<string | null>
       exportExcel: (data: Record<string, unknown>[]) => Promise<{ success: boolean; filePath?: string; canceled?: boolean; error?: string }>
       exportPdf: (data: { html: string; filename: string }) => Promise<{ success: boolean; filePath?: string; canceled?: boolean; error?: string }>

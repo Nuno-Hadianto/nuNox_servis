@@ -262,6 +262,45 @@
                 Pilih Folder
               </button>
             </div>
+            
+            <div class="form-group" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+              <label style="font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" v-model="gdriveEnabledComputed" style="width: 18px; height: 18px;" /> Aktifkan Backup Otomatis ke Google Drive
+              </label>
+            </div>
+
+            <div v-if="gdriveEnabledComputed" style="margin-top: 15px; background: rgba(255, 255, 255, 0.7); padding: 15px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">
+              <div class="form-group" style="margin-bottom: 15px;">
+                <label style="font-weight: 500; font-size: 0.85rem">Google Drive Folder ID</label>
+                <input
+                  type="text"
+                  v-model="form.gdrive_folder_id"
+                  class="form-control"
+                  placeholder="Contoh: 1BxiMVs0XRYgME... (Ambil dari URL Google Drive)"
+                  style="padding: 8px; font-size: 0.85rem; width: 100%; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px;"
+                />
+              </div>
+              <div class="form-group">
+                <label style="font-weight: 500; font-size: 0.85rem">Service Account Credentials (.json)</label>
+                <input
+                  type="file"
+                  accept=".json"
+                  @change="handleGdriveCredsUpload"
+                  class="form-control"
+                  style="padding: 6px; font-size: 0.85rem; width: 100%; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px; background: white;"
+                />
+                <small style="color: var(--text-muted); display: block; margin-top: 6px" v-if="form.gdrive_credentials">
+                  ✅ Kredensial Service Account sudah tersimpan. (Pilih file lagi untuk menimpa)
+                </small>
+                <small style="color: #ef4444; display: block; margin-top: 6px" v-else>
+                  ⚠️ Kredensial belum diatur. Silakan unggah file credentials.json.
+                </small>
+              </div>
+              <button type="button" @click="testGdrive" class="btn btn-secondary" style="margin-top: 15px; font-size: 0.85rem; padding: 6px 12px; background: white; border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer;">
+                🔄 Uji Koneksi Google Drive
+              </button>
+            </div>
+
             <div style="margin-top: 15px; text-align: right">
               <button
                 @click="saveSettings"
@@ -419,8 +458,66 @@ const form = reactive<Settings>({
   auto_backup_path: '',
   wa_template_status: '',
   default_printer: '',
-  primary_color: '#6366f1'
+  primary_color: '#6366f1',
+  gdrive_enabled: false,
+  gdrive_folder_id: '',
+  gdrive_credentials: ''
 })
+
+const gdriveEnabledComputed = computed({
+  get: () => form.gdrive_enabled === 'true' || form.gdrive_enabled === true,
+  set: (val) => {
+    form.gdrive_enabled = val ? 'true' : 'false';
+  }
+})
+
+const handleGdriveCredsUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files.length > 0) {
+    const file = target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target && e.target.result) {
+        try {
+          // Validate if it's a valid JSON
+          JSON.parse(e.target.result as string);
+          form.gdrive_credentials = e.target.result as string;
+          window.Swal.fire('Berhasil', 'File kredensial valid dan siap disimpan.', 'success');
+        } catch {
+          window.Swal.fire('Error', 'File yang diunggah bukan JSON yang valid.', 'error');
+        }
+      }
+    };
+    reader.readAsText(file);
+  }
+}
+
+const testGdrive = async () => {
+  if (!form.gdrive_credentials) {
+    return window.Swal.fire('Peringatan', 'Kredensial belum diunggah.', 'warning');
+  }
+  
+  window.Swal.fire({
+    title: 'Menguji Koneksi...',
+    text: 'Mohon tunggu, mencoba terhubung ke Google Drive.',
+    allowOutsideClick: false,
+    didOpen: () => {
+      window.Swal.showLoading()
+    }
+  });
+
+  try {
+    const result = await window.api.testGdrive(form.gdrive_credentials, form.gdrive_folder_id || '');
+    if (result.success) {
+      window.Swal.fire('Koneksi Berhasil!', 'Service account dapat terhubung ke Google Drive dengan baik.', 'success');
+    } else {
+      window.Swal.fire('Koneksi Gagal', result.error || 'Unknown error', 'error');
+    }
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+    window.Swal.fire('Error', msg, 'error');
+  }
+}
 
 const waPreviewText = computed(() => {
   if (!form.wa_template_status) return 'Silakan isi template...'
@@ -460,6 +557,9 @@ const loadSettings = async () => {
         settings.low_stock_threshold !== undefined ? Number(settings.low_stock_threshold) : 3
       form.default_printer = settings.default_printer || ''
       form.primary_color = settings.primary_color || '#6366f1'
+      form.gdrive_enabled = settings.gdrive_enabled === 'true' || settings.gdrive_enabled === true
+      form.gdrive_folder_id = settings.gdrive_folder_id || ''
+      form.gdrive_credentials = settings.gdrive_credentials || ''
     } catch (error) {
       console.error(error)
     }
@@ -478,7 +578,10 @@ const saveSettings = async () => {
       wa_template_status: form.wa_template_status,
       low_stock_threshold: form.low_stock_threshold,
       default_printer: form.default_printer,
-      primary_color: form.primary_color
+      primary_color: form.primary_color,
+      gdrive_enabled: String(form.gdrive_enabled),
+      gdrive_folder_id: form.gdrive_folder_id,
+      gdrive_credentials: form.gdrive_credentials
     }
     await window.api.updateSettings(data)
     

@@ -48,6 +48,7 @@ const paymentController = __importStar(require("../../controllers/paymentControl
 const settingsController = __importStar(require("../../controllers/settingsController"));
 const reportController = __importStar(require("../../controllers/reportController"));
 const electron_log_1 = __importDefault(require("electron-log"));
+const gdriveBackup_1 = require("../utils/gdriveBackup");
 function registerMiscIpc(mainWindow) {
     // Dashboard
     electron_1.ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
@@ -111,6 +112,9 @@ function registerMiscIpc(mainWindow) {
             return true;
         }
         return false;
+    });
+    electron_1.ipcMain.handle('test-gdrive', async (_event, creds, folderId) => {
+        return (0, gdriveBackup_1.testGoogleDriveConnection)(creds, folderId);
     });
     // Export & Print
     electron_1.ipcMain.handle('export-excel', async (_event, data) => {

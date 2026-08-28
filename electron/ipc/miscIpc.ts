@@ -13,6 +13,7 @@ import * as paymentController from '../../controllers/paymentController';
 import * as settingsController from '../../controllers/settingsController';
 import * as reportController from '../../controllers/reportController';
 import log from 'electron-log';
+import { testGoogleDriveConnection } from '../utils/gdriveBackup';
 
 function registerMiscIpc(mainWindow: BrowserWindow) {
   // Dashboard
@@ -86,6 +87,10 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
       return true;
     }
     return false;
+  });
+
+  ipcMain.handle('test-gdrive', async (_event: IpcMainInvokeEvent, creds: string, folderId: string) => {
+    return testGoogleDriveConnection(creds, folderId);
   });
 
   // Export & Print
