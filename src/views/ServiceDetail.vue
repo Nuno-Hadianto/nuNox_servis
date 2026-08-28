@@ -1,52 +1,54 @@
 <template>
-  <div class="view-section" v-if="service">
-    <ServiceActionBar
-      @back="$router.push('/services')"
-      @send-wa="sendWhatsApp"
-      @export-pdf="exportPdfInvoice"
-      @print-thermal="printThermal"
-      @print-nota="printNota"
-      @print-receipt="printReceipt"
-    />
+  <div>
+    <div class="view-section" v-if="service">
+      <ServiceActionBar
+        @back="$router.push('/services')"
+        @send-wa="sendWhatsApp"
+        @export-pdf="exportPdfInvoice"
+        @print-thermal="printThermal"
+        @print-nota="printNota"
+        @print-receipt="printReceipt"
+      />
 
-    <div class="dashboard-grid">
-      <div class="card" style="padding: 25px">
-        <ServiceInfo :service="service" />
-        <ServiceStatusUpdate :service="service" @save="saveUpdate" />
-        <ServiceHistory :history="history" />
-        <ServicePhotos
-          :photos="photos"
-          @upload="handlePhotoUpload"
-          @delete="deletePhoto"
-        />
-      </div>
+      <div class="dashboard-grid">
+        <div class="card" style="padding: 25px">
+          <ServiceInfo :service="service" />
+          <ServiceStatusUpdate :service="service" @save="saveUpdate" />
+          <ServiceHistory :history="history" />
+          <ServicePhotos
+            :photos="photos"
+            @upload="handlePhotoUpload"
+            @delete="deletePhoto"
+          />
+        </div>
 
-      <div>
-        <ServiceItems
-          :items="items"
-          :parts="parts"
-          :total-cost="service.total_cost"
-          @add="addItem"
-          @delete="deleteItem"
-        />
-        <ServicePayments
-          :payments="payments"
-          :payment-status="service.payment_status"
-          :total-paid="totalPaid"
-          :remaining-bill="remainingBill"
-          @add="addPayment"
-          @delete="deletePayment"
-        />
+        <div>
+          <ServiceItems
+            :items="items"
+            :parts="parts"
+            :total-cost="service.total_cost"
+            @add="addItem"
+            @delete="deleteItem"
+          />
+          <ServicePayments
+            :payments="payments"
+            :payment-status="service.payment_status"
+            :total-paid="totalPaid"
+            :remaining-bill="remainingBill"
+            @add="addPayment"
+            @delete="deletePayment"
+          />
+        </div>
       </div>
     </div>
-  </div>
 
-  <ServiceWaModal
-    :is-open="isWaModalOpen"
-    :initial-message="waMessage"
-    @close="isWaModalOpen = false"
-    @send="confirmSendWa"
-  />
+    <ServiceWaModal
+      :is-open="isWaModalOpen"
+      :initial-message="waMessage"
+      @close="isWaModalOpen = false"
+      @send="confirmSendWa"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
