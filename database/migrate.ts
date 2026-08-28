@@ -33,15 +33,14 @@ function seedDefaultSettings() {
 function runMigrations() {
   try {
     let migrationsFolder;
-    if (app) {
-      if (app.isPackaged) {
-        migrationsFolder = path.join(process.resourcesPath, 'app.asar', 'database', 'migrations');
-      } else {
-        migrationsFolder = path.join(__dirname, '..', '..', 'database', 'migrations');
-      }
+    if (app && app.isPackaged) {
+      migrationsFolder = path.join(process.resourcesPath, 'app.asar', 'database', 'migrations');
     } else {
-       // fallback for test
-       migrationsFolder = path.join(__dirname, '..', '..', 'database', 'migrations');
+      if (__dirname.includes('dist-electron')) {
+        migrationsFolder = path.join(__dirname, '..', '..', 'database', 'migrations');
+      } else {
+        migrationsFolder = path.join(__dirname, 'migrations');
+      }
     }
 
     log.info(`Running migrations from ${migrationsFolder}...`);

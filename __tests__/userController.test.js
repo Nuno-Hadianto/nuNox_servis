@@ -1,4 +1,4 @@
-const db = require('../database/db');
+const db = require('../database/db').default;
 const userController = require('../controllers/userController');
 
 describe('User Controller Integration Tests', () => {

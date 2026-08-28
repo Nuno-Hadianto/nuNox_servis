@@ -1,7 +1,6 @@
-const db = require('../database/db');
-const schema = require('../database/schema');
+const db = require('../database/db').default;
+const runMigrations = require('../database/migrate').default;
 
 if (process.env.NODE_ENV === 'test') {
-    db.exec(schema.createTables);
-    db.exec(schema.insertDefaultSettings);
+    runMigrations();
 }

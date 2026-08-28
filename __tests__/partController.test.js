@@ -1,4 +1,4 @@
-const db = require('../database/db');
+const db = require('../database/db').default;
 const partController = require('../controllers/partController');
 
 describe('partController (White-box testing)', () => {

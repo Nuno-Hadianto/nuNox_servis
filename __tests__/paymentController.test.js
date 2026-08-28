@@ -1,4 +1,4 @@
-const db = require('../database/db');
+const db = require('../database/db').default;
 const paymentController = require('../controllers/paymentController');
 const serviceController = require('../controllers/serviceController');
 const customerController = require('../controllers/customerController');

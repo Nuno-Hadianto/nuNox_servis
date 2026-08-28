@@ -36,17 +36,16 @@ function seedDefaultSettings() {
 function runMigrations() {
     try {
         let migrationsFolder;
-        if (electron_1.app) {
-            if (electron_1.app.isPackaged) {
-                migrationsFolder = path_1.default.join(process.resourcesPath, 'app.asar', 'database', 'migrations');
-            }
-            else {
-                migrationsFolder = path_1.default.join(__dirname, '..', '..', 'database', 'migrations');
-            }
+        if (electron_1.app && electron_1.app.isPackaged) {
+            migrationsFolder = path_1.default.join(process.resourcesPath, 'app.asar', 'database', 'migrations');
         }
         else {
-            // fallback for test
-            migrationsFolder = path_1.default.join(__dirname, '..', '..', 'database', 'migrations');
+            if (__dirname.includes('dist-electron')) {
+                migrationsFolder = path_1.default.join(__dirname, '..', '..', 'database', 'migrations');
+            }
+            else {
+                migrationsFolder = path_1.default.join(__dirname, 'migrations');
+            }
         }
         electron_log_1.default.info(`Running migrations from ${migrationsFolder}...`);
         (0, migrator_1.migrate)(db_1.default.drizzle, { migrationsFolder });

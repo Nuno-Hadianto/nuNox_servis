@@ -1,4 +1,4 @@
-const db = require('../database/db');
+const db = require('../database/db').default;
 const customerController = require('../controllers/customerController');
 const deviceController = require('../controllers/deviceController');
 const serviceController = require('../controllers/serviceController');
