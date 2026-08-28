@@ -101,9 +101,9 @@
               "
               placeholder="Halo Kak {nama}, tiket {tiket} status: {status}"
             ></textarea>
-            <small style="color: var(--text-muted); display: block; margin-top: 4px"
-              >Gunakan kode otomatis: {nama}, {tiket}, {status}</small
-            >
+            <small style="color: var(--text-muted); display: block; margin-top: 4px">
+              Gunakan kode otomatis: {nama}, {tiket}, {status}
+            </small>
           </div>
           <div class="form-group">
             <label style="font-weight: 500; font-size: 0.9rem">Tema Warna Utama (Primary Color)</label>

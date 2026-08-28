@@ -40,7 +40,7 @@ const electron_1 = require("electron");
 const saleController = __importStar(require("../../controllers/saleController"));
 const electron_log_1 = __importDefault(require("electron-log"));
 const validators_1 = require("../../src/utils/validators");
-function registerSaleIpc(mainWindow) {
+function registerSaleIpc() {
     electron_1.ipcMain.handle('create-sale', (event, saleData, items) => {
         try {
             const validSaleData = (0, validators_1.validateData)(validators_1.SaleSchema, saleData);
@@ -50,7 +50,7 @@ function registerSaleIpc(mainWindow) {
         }
         catch (error) {
             electron_log_1.default.error('Error in createSale:', error);
-            return { success: false, error: error.message };
+            return { success: false, error: error instanceof Error ? error.message : String(error) };
         }
     });
     electron_1.ipcMain.handle('get-sales', (event, startDate, endDate) => {

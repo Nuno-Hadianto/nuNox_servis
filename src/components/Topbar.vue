@@ -4,20 +4,7 @@
       <h1>{{ title }}</h1>
     </div>
     <div class="topbar-actions" style="display: flex; align-items: center; gap: 15px">
-      <div
-        class="badge"
-        style="
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid var(--glass-border);
-          color: var(--text-primary);
-          font-weight: 500;
-          font-size: 0.9rem;
-          padding: 8px 16px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        "
-      >
+      <div class="badge datetime-badge">
         <Clock style="width: 16px; height: 16px;" /> {{ currentDateTime }}
       </div>
       
@@ -25,13 +12,12 @@
       <div style="position: relative;" ref="notificationRef">
         <button 
           @click="toggleNotifications" 
-          class="btn btn-secondary" 
-          style="position: relative; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); color: var(--text-primary); cursor: pointer;"
+          class="topbar-icon-btn" 
         >
           <Bell style="width: 18px; height: 18px;" />
           <span 
             v-if="alerts.length > 0" 
-            style="position: absolute; top: -2px; right: -2px; background: #ef4444; color: white; font-size: 0.7rem; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"
+            class="badge-count"
           >
             {{ alerts.length }}
           </span>
@@ -75,7 +61,7 @@
         </div>
       </div>
 
-      <button @click="toggleTheme" class="btn btn-secondary" style="padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); color: var(--text-primary); cursor: pointer;">
+      <button @click="toggleTheme" class="topbar-icon-btn" title="Toggle Theme">
         <Moon v-if="!isDark" style="width: 18px; height: 18px;" />
         <Sun v-else style="width: 18px; height: 18px;" />
       </button>
@@ -167,3 +153,55 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 </script>
+
+<style scoped>
+.topbar-icon-btn {
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.topbar-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.badge-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.datetime-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 20px;
+}
+</style>
