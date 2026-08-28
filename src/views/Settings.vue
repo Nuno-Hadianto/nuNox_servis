@@ -83,9 +83,9 @@
                 width: 100%;
               "
             />
-            <small style="color: var(--text-muted); display: block; margin-top: 4px"
-              >Munculkan peringatan di Dasbor jika stok sparepart &lt;= angka ini.</small
-            >
+            <small style="color: var(--text-muted); display: block; margin-top: 4px">
+              Munculkan peringatan di Dasbor jika stok sparepart &lt;= angka ini.
+            </small>
           </div>
           <div class="form-group">
             <label style="font-weight: 500; font-size: 0.9rem">Template Pesan WhatsApp</label>
