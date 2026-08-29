@@ -75,6 +75,11 @@ function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter) {
         if (searchQuery === 'Sedang Dikerjakan') {
             condition = (0, drizzle_orm_1.and)((0, drizzle_orm_1.notLike)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, ['Batal', 'Dibatalkan']));
         }
+        else if (searchQuery === 'Hari Ini') {
+            const d = new Date();
+            const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            condition = (0, drizzle_orm_1.eq)((0, drizzle_orm_1.sql) `DATE(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')`, today);
+        }
         else {
             const qStr = `%${searchQuery}%`;
             condition = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.ticket_number, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, qStr));

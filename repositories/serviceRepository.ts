@@ -67,6 +67,10 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
                 notLike(serviceOrders.service_status, '%Selesai%'),
                 notInArray(serviceOrders.service_status, ['Batal', 'Dibatalkan'])
             );
+        } else if (searchQuery === 'Hari Ini') {
+            const d = new Date();
+            const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            condition = eq(sql`DATE(${serviceOrders.created_at}, 'localtime')`, today);
         } else {
             const qStr = `%${searchQuery}%`;
             condition = or(

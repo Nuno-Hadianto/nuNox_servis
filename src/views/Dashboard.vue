@@ -6,7 +6,7 @@
         :value="stats.todayServices"
         variant="primary"
         clickable
-        @click="$router.push('/services')"
+        @click="$router.push('/services?search=Hari Ini')"
       >
         <template #icon><Wrench :size="28" :stroke-width="2" /></template>
       </StatCard>
