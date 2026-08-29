@@ -409,7 +409,7 @@ export const generateReportHtml = (
     topPartsHtml = `
             <div style="margin-top: 30px; margin-bottom: 20px;">
                 <h3 style="font-size: 14pt; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px;">Peringkat 5 Sparepart Terlaris</h3>
-                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 15px; color: #64748b; text-align: center;">Belum ada data penjualan sparepart di periode ini.</div>
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 15px; color: #64748b; text-align: center;">Belum ada data penggunaan sparepart di periode ini.</div>
             </div>
         `
   }
