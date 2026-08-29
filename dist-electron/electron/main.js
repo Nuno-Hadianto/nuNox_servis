@@ -64,7 +64,6 @@ const serviceIpc_1 = require("./ipc/serviceIpc");
 const partIpc_1 = require("./ipc/partIpc");
 const userIpc_1 = require("./ipc/userIpc");
 const miscIpc_1 = require("./ipc/miscIpc");
-const saleIpc_1 = __importDefault(require("./ipc/saleIpc"));
 const userController = __importStar(require("../controllers/userController"));
 let mainWindow = null;
 function createWindow() {
@@ -105,7 +104,6 @@ function createWindow() {
     (0, partIpc_1.registerPartIpc)(mainWindow);
     (0, userIpc_1.registerUserIpc)();
     (0, miscIpc_1.registerMiscIpc)(mainWindow);
-    (0, saleIpc_1.default)();
     mainWindow.on('closed', () => {
         mainWindow = null;
     });

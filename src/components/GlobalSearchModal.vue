@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted, nextTick, computed, type Component } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, Wrench, Users, Package, Settings, Monitor, FileText, ShoppingCart } from 'lucide-vue-next'
+import { Search, Wrench, Users, Package, Settings, Monitor, FileText } from 'lucide-vue-next'
 import type { ServiceOrder, Customer, Part } from '../../shared/types'
 
 const props = defineProps<{
@@ -72,7 +72,7 @@ const selectedItemIndex = ref(0)
 const staticMenus = [
   { type: 'menu', title: 'Dasbor', route: '/', icon: Monitor, keywords: ['dasbor', 'home', 'beranda', 'awal'] },
   { type: 'menu', title: 'Servis / Tiket', route: '/services', icon: Wrench, keywords: ['servis', 'service', 'tiket', 'perbaikan'] },
-  { type: 'menu', title: 'Kasir / POS', route: '/pos', icon: ShoppingCart, keywords: ['kasir', 'pos', 'jual', 'penjualan'] },
+
   { type: 'menu', title: 'Data Pelanggan', route: '/customers', icon: Users, keywords: ['pelanggan', 'customer', 'klien', 'orang'] },
   { type: 'menu', title: 'Inventaris / Sparepart', route: '/parts', icon: Package, keywords: ['stok', 'inventaris', 'sparepart', 'part', 'barang'] },
   { type: 'menu', title: 'Laporan', route: '/reports', icon: FileText, keywords: ['laporan', 'report', 'keuangan'] },

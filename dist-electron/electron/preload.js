@@ -70,10 +70,6 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getCompletedServices: (start, end) => invokeSafe('get-completed-services', start, end),
     getTopSpareparts: (start, end) => invokeSafe('get-top-spareparts', start, end),
     getReportBreakdown: (start, end) => invokeSafe('get-report-breakdown', start, end),
-    // Sales (POS)
-    createSale: (saleData, items) => invokeSafe('create-sale', saleData, items),
-    getSales: (startDate, endDate) => invokeSafe('get-sales', startDate, endDate),
-    getSaleItems: (saleId) => invokeSafe('get-sale-items', saleId),
     // Backup & Restore
     backupDatabase: () => invokeSafe('backup-database'),
     restoreDatabase: () => invokeSafe('restore-database'),

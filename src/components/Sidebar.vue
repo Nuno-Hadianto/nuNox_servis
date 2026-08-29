@@ -10,9 +10,7 @@
           <router-link to="/"> <LayoutDashboard class="menu-icon" /> Dashboard </router-link>
         </li>
         <li class="nav-header">OPERASIONAL</li>
-        <li v-if="currentUser?.role !== 'teknisi'" :class="{ active: $route.name === 'POS' }">
-          <router-link to="/pos"><ShoppingCart class="menu-icon" /> Kasir (POS)</router-link>
-        </li>
+
         <li :class="{ active: $route.name === 'Customers' }">
           <router-link to="/customers"><Users class="menu-icon" /> Pelanggan</router-link>
         </li>
@@ -66,8 +64,7 @@ import {
   BarChart3,
   UserCog,
   Settings,
-  LogOut,
-  ShoppingCart
+  LogOut
 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'

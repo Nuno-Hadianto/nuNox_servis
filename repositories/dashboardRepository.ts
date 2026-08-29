@@ -145,8 +145,6 @@ function getDashboardStats() {
     // Top 5 Spare Parts (Bar Chart) - Complex union all
     const topPartsData = db.prepare(`
         SELECT sp.name, SUM(total_qty) as qty FROM (
-            SELECT spare_part_id, quantity as total_qty FROM sale_items
-            UNION ALL
             SELECT spare_part_id, quantity as total_qty FROM service_items WHERE item_type = 'Sparepart'
         ) items
         JOIN spare_parts sp ON sp.id = items.spare_part_id

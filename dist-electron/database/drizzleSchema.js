@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.servicePhotos = exports.settings = exports.saleItems = exports.sales = exports.receipts = exports.payments = exports.serviceItems = exports.partLogs = exports.spareParts = exports.serviceStatusHistory = exports.serviceOrders = exports.devices = exports.customers = exports.users = void 0;
+exports.servicePhotos = exports.settings = exports.receipts = exports.payments = exports.serviceItems = exports.partLogs = exports.spareParts = exports.serviceStatusHistory = exports.serviceOrders = exports.devices = exports.customers = exports.users = void 0;
 const sqlite_core_1 = require("drizzle-orm/sqlite-core");
 const drizzle_orm_1 = require("drizzle-orm");
 exports.users = (0, sqlite_core_1.sqliteTable)('users', {
@@ -123,22 +123,6 @@ exports.receipts = (0, sqlite_core_1.sqliteTable)('receipts', {
     total_amount: (0, sqlite_core_1.real)('total_amount').notNull(),
     pdf_path: (0, sqlite_core_1.text)('pdf_path'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
-exports.sales = (0, sqlite_core_1.sqliteTable)('sales', {
-    id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
-    invoice_number: (0, sqlite_core_1.text)('invoice_number').notNull().unique(),
-    customer_name: (0, sqlite_core_1.text)('customer_name'),
-    total_amount: (0, sqlite_core_1.real)('total_amount').notNull().default(0),
-    payment_method: (0, sqlite_core_1.text)('payment_method').default('Tunai'),
-    created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
-exports.saleItems = (0, sqlite_core_1.sqliteTable)('sale_items', {
-    id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
-    sale_id: (0, sqlite_core_1.integer)('sale_id').notNull().references(() => exports.sales.id, { onDelete: 'cascade' }),
-    spare_part_id: (0, sqlite_core_1.integer)('spare_part_id').notNull().references(() => exports.spareParts.id),
-    quantity: (0, sqlite_core_1.integer)('quantity').default(1),
-    price: (0, sqlite_core_1.real)('price').notNull(),
-    total: (0, sqlite_core_1.real)('total').notNull()
 });
 exports.settings = (0, sqlite_core_1.sqliteTable)('settings', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),

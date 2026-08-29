@@ -132,23 +132,6 @@ export const receipts = sqliteTable('receipts', {
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`)
 });
 
-export const sales = sqliteTable('sales', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  invoice_number: text('invoice_number').notNull().unique(),
-  customer_name: text('customer_name'),
-  total_amount: real('total_amount').notNull().default(0),
-  payment_method: text('payment_method').default('Tunai'),
-  created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`)
-});
-
-export const saleItems = sqliteTable('sale_items', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  sale_id: integer('sale_id').notNull().references(() => sales.id, { onDelete: 'cascade' }),
-  spare_part_id: integer('spare_part_id').notNull().references(() => spareParts.id),
-  quantity: integer('quantity').default(1),
-  price: real('price').notNull(),
-  total: real('total').notNull()
-});
 
 export const settings = sqliteTable('settings', {
   id: integer('id').primaryKey({ autoIncrement: true }),

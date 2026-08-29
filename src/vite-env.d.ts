@@ -10,9 +10,7 @@ import type {
   Settings,
   DashboardStats,
   ServiceHistory,
-  Photo,
-  Sale,
-  SaleItem
+  Photo
 } from '../shared/types'
 
 declare module '*.vue' {
@@ -115,14 +113,6 @@ declare global {
         lainnya: { omset: number; modal: number };
       }>
 
-      // Sales
-      createSale: (
-        saleData: Sale,
-        items: SaleItem[]
-      ) => Promise<{ success: boolean; saleId?: number; error?: string }>
-      getSales: (startDate?: string, endDate?: string) => Promise<Sale[]>
-      getSale: (saleId: number | string) => Promise<Sale>
-      getSaleItems: (saleId: number | string) => Promise<SaleItem[]>
 
       // Backup & Utilities
       backupDatabase: () => Promise<boolean>

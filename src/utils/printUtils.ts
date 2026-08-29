@@ -1,4 +1,4 @@
-import type { Settings, ServiceOrder, ServiceItem, Payment, Sale, SaleItem } from '../../shared/types'
+import type { Settings, ServiceOrder, ServiceItem, Payment } from '../../shared/types'
 
 export const generateNotaHtml = (
   settings: Partial<Settings> | null,
@@ -284,109 +284,6 @@ export const generateBlankNotaHtml = (settings: Partial<Settings> | null, logoBa
     `
 }
 
-export const generateSaleReceiptHtml = (
-  settings: Partial<Settings> | null,
-  sale: Partial<Sale>,
-  items: Partial<SaleItem>[],
-  logoBase64: string | null,
-  cashGiven?: number,
-  changeAmount?: number
-) => {
-  settings = settings || {}
-  const formatRp = (val: number | string | undefined | null) =>
-    new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(Number(val || 0))
-
-  let itemsHtml = ''
-  if (items && items.length > 0) {
-    items.forEach((i: Partial<SaleItem>) => {
-      itemsHtml += `
-                <div>${i.part_name || i.spare_part_id || 'Item'}</div>
-                <div class="thm-row thm-text-sm" style="margin-bottom: 2px;">
-                    <span class="thm-val">${i.quantity || 0} x ${formatRp(i.price || 0)}</span>
-                    <span class="thm-val">${formatRp(i.total || (i.quantity || 0) * (i.price || 0))}</span>
-                </div>
-            `
-    })
-  }
-
-  let paymentHtml = `
-            <div class="thm-row thm-bold" style="font-size: 11pt;">
-                <span class="thm-label">TOTAL:</span>
-                <span class="thm-val">${formatRp(sale.total_amount)}</span>
-            </div>
-            <div class="thm-row" style="margin-top: 5px;">
-                <span class="thm-label">Pembayaran:</span>
-                <span class="thm-val">${sale.payment_method}</span>
-            </div>
-    `
-
-  if (sale.payment_method === 'Tunai' && cashGiven !== undefined && changeAmount !== undefined) {
-    paymentHtml += `
-            <div class="thm-row">
-                <span class="thm-label">Tunai:</span>
-                <span class="thm-val">${formatRp(cashGiven)}</span>
-            </div>
-            <div class="thm-row">
-                <span class="thm-label">Kembali:</span>
-                <span class="thm-val">${formatRp(changeAmount)}</span>
-            </div>
-        `
-  }
-
-  return `
-        <div class="print-thermal">
-            <!-- Header -->
-            <div class="thm-center">
-                ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="thm-logo" />` : ''}
-                <div class="thm-bold thm-biz-name">${settings.business_name || 'NUNOX SERVIS'}</div>
-                <div class="thm-biz-sub">${settings.address || ''}</div>
-                <div class="thm-biz-sub">WA: ${settings.whatsapp || settings.phone || ''}</div>
-            </div>
-            
-            <div class="thm-dashed"></div>
-            
-            <div class="thm-center thm-bold thm-title">STRUK PEMBELIAN</div>
-            
-            <div class="thm-row">
-                <span class="thm-label">No:</span>
-                <span class="thm-val thm-bold">${sale ? sale.invoice_number : '-'}</span>
-            </div>
-            <div class="thm-row">
-                <span class="thm-label">Tgl:</span>
-                <span class="thm-val">${sale ? new Date(sale.created_at + 'Z').toLocaleString('id-ID') : '-'}</span>
-            </div>
-            ${
-              sale && sale.customer_name
-                ? `
-            <div class="thm-row">
-                <span class="thm-label">Plg:</span>
-                <span class="thm-val">${sale.customer_name}</span>
-            </div>
-            `
-                : ''
-            }
-            
-            <div class="thm-dashed"></div>
-            
-            ${itemsHtml}
-            
-            <div class="thm-dashed"></div>
-            
-            ${paymentHtml}
-            
-            <div class="thm-dashed"></div>
-            
-            <div class="thm-center thm-footer">
-                ${settings.receipt_footer || 'Terima kasih atas kunjungannya.'}
-            </div>
-            <div class="thm-gap"></div>
-        </div>
-    `
-}
 
 export const generateBlankReceiptHtml = (settings: Partial<Settings> | null, logoBase64: string | null) => {
   settings = settings || {}

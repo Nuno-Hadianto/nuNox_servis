@@ -66,20 +66,6 @@ export const UserSchema = z.object({
   role: z.enum(['admin', 'kasir', 'teknisi']).default('kasir')
 })
 
-export const SaleSchema = z.object({
-  invoice_number: z.string().min(1, 'Nomor invoice wajib diisi.'),
-  customer_name: z.string().optional().nullable(),
-  total_amount: z.number().min(0, 'Total harus lebih besar atau sama dengan 0.'),
-  payment_method: z.string().default('Tunai')
-})
-
-export const SaleItemSchema = z.object({
-  sale_id: z.number().int('ID Penjualan tidak valid.'),
-  spare_part_id: z.number().int('ID Sparepart tidak valid.'),
-  quantity: z.number().int('Kuantitas harus bilangan bulat.').min(1, 'Kuantitas minimal 1.'),
-  price: z.number().min(0, 'Harga tidak boleh negatif.'),
-  total: z.number().min(0, 'Total tidak boleh negatif.')
-})
 
 export const validateData = <T>(schema: z.ZodSchema<T>, data: unknown): T => {
   try {

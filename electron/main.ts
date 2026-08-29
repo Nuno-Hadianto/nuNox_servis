@@ -32,7 +32,7 @@ import {  registerServiceIpc  } from './ipc/serviceIpc';
 import {  registerPartIpc  } from './ipc/partIpc';
 import {  registerUserIpc  } from './ipc/userIpc';
 import {  registerMiscIpc  } from './ipc/miscIpc';
-import registerSaleIpc from './ipc/saleIpc';
+
 import * as userController from '../controllers/userController';
 
 let mainWindow: BrowserWindow | null = null;
@@ -77,7 +77,7 @@ function createWindow() {
   registerPartIpc(mainWindow);
   registerUserIpc();
   registerMiscIpc(mainWindow);
-  registerSaleIpc();
+
 
   mainWindow.on('closed', () => {
     mainWindow = null;

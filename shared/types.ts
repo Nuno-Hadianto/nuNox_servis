@@ -161,28 +161,6 @@ export interface TodoItem {
   description: string;
 }
 
-export interface Sale {
-  id?: number;
-  invoice_number?: string;
-  sale_number?: string;
-  customer_id?: number | null;
-  customer_name?: string;
-  total_amount: number;
-  payment_method: string;
-  sale_date?: string;
-  created_at?: string;
-  notes?: string;
-}
-
-export interface SaleItem {
-  id: number;
-  sale_id: number;
-  spare_part_id: number;
-  quantity: number;
-  price: number;
-  total: number;
-  part_name?: string;
-}
 
 export interface PartLog {
   id: number;

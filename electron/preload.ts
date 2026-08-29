@@ -81,10 +81,6 @@ contextBridge.exposeInMainWorld('api', {
   getTopSpareparts: (start: string, end: string) => invokeSafe('get-top-spareparts', start, end),
   getReportBreakdown: (start: string, end: string) => invokeSafe('get-report-breakdown', start, end),
 
-  // Sales (POS)
-  createSale: (saleData: unknown, items: unknown[]) => invokeSafe('create-sale', saleData, items),
-  getSales: (startDate?: string, endDate?: string) => invokeSafe('get-sales', startDate, endDate),
-  getSaleItems: (saleId: number | string) => invokeSafe('get-sale-items', saleId),
 
   // Backup & Restore
   backupDatabase: () => invokeSafe('backup-database'),
