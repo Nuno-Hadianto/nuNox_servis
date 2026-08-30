@@ -34,7 +34,7 @@ const renderChart = () => {
       labels: props.data.labels,
       datasets: [
         {
-          label: 'Terjual',
+          label: 'Terpakai',
           data: props.data.values,
           backgroundColor: 'rgba(16, 185, 129, 0.8)',
           borderRadius: 4

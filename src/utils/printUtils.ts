@@ -397,7 +397,7 @@ export const generateReportHtml = (
                         <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 15px; flex: 1; min-width: 120px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                             <div style="font-size: 9pt; color: #64748b; font-weight: 600; margin-bottom: 4px;">Peringkat #${i + 1}</div>
                             <div style="font-size: 11pt; font-weight: bold; color: #0f172a; margin-bottom: 8px;">${p.part_name}</div>
-                            <div style="font-size: 10pt; color: #10b981; font-weight: bold;">Terjual: ${p.total_sold} unit</div>
+                            <div style="font-size: 10pt; color: #10b981; font-weight: bold;">Terpakai: ${p.total_sold} unit</div>
                         </div>
                     `
                       )
