@@ -43,6 +43,7 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const os_1 = __importDefault(require("os"));
 const xlsx_1 = __importDefault(require("xlsx"));
+const url_1 = __importDefault(require("url"));
 const dashboardController = __importStar(require("../../controllers/dashboardController"));
 const paymentController = __importStar(require("../../controllers/paymentController"));
 const settingsController = __importStar(require("../../controllers/settingsController"));
@@ -160,11 +161,19 @@ function registerMiscIpc(mainWindow) {
             if (canceled || !filePath)
                 return { success: false, canceled: true };
             const pdfWindow = new electron_1.BrowserWindow({ show: false, webPreferences: { nodeIntegration: false } });
-            await pdfWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
+            const tmpHtmlPath = path_1.default.join(os_1.default.tmpdir(), `print_${Date.now()}.html`);
+            fs_1.default.writeFileSync(tmpHtmlPath, html, 'utf-8');
+            await pdfWindow.loadURL(url_1.default.pathToFileURL(tmpHtmlPath).href);
             await new Promise(resolve => setTimeout(resolve, 500));
             const pdfData = await pdfWindow.webContents.printToPDF({ printBackground: true, pageSize: 'A4' });
             fs_1.default.writeFileSync(filePath, pdfData);
             pdfWindow.close();
+            try {
+                fs_1.default.unlinkSync(tmpHtmlPath);
+            }
+            catch {
+                // ignore
+            }
             return { success: true, filePath };
         }
         catch (error) {

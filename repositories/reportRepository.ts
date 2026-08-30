@@ -47,7 +47,7 @@ function getTopSpareparts(startDate: string, endDate: string) {
           lte(sql`date(${serviceOrders.completed_date}, 'localtime')`, sql`date(${endDate})`)
       ))
       .groupBy(spareParts.id)
-      .orderBy(sql`total_sold DESC`)
+      .orderBy(sql`SUM(${serviceItems.quantity}) DESC`)
       .limit(5)
       .all();
 }

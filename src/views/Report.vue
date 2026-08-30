@@ -372,9 +372,10 @@ const exportPdf = async () => {
     } else if (result && !result.canceled) {
       window.Swal.fire('Error', 'Gagal menyimpan laporan PDF: ' + (result.error || ''), 'error')
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(error)
-    window.Swal.fire('Error', 'Terjadi kesalahan saat memproses PDF.', 'error')
+    const err = error as Error
+    window.Swal.fire('Error', `Terjadi kesalahan saat memproses PDF: ${err?.message || String(error)}`, 'error')
   }
 }
 

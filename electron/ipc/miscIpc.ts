@@ -7,6 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import xlsx from 'xlsx';
+import url from 'url';
 
 import * as dashboardController from '../../controllers/dashboardController';
 import * as paymentController from '../../controllers/paymentController';
@@ -142,12 +143,20 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
       if (canceled || !filePath) return { success: false, canceled: true };
 
       const pdfWindow = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: false } });
-      await pdfWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
+      const tmpHtmlPath = path.join(os.tmpdir(), `print_${Date.now()}.html`);
+      fs.writeFileSync(tmpHtmlPath, html, 'utf-8');
+      
+      await pdfWindow.loadURL(url.pathToFileURL(tmpHtmlPath).href);
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const pdfData = await pdfWindow.webContents.printToPDF({ printBackground: true, pageSize: 'A4' });
       fs.writeFileSync(filePath, pdfData);
       pdfWindow.close();
+      try {
+        fs.unlinkSync(tmpHtmlPath);
+      } catch {
+        // ignore
+      }
       
       return { success: true, filePath };
     } catch (error: unknown) {

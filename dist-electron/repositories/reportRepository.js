@@ -41,7 +41,7 @@ function getTopSpareparts(startDate, endDate) {
         .innerJoin(drizzleSchema_1.spareParts, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.spare_part_id, drizzleSchema_1.spareParts.id))
         .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.gte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${startDate})`), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${endDate})`)))
         .groupBy(drizzleSchema_1.spareParts.id)
-        .orderBy((0, drizzle_orm_1.sql) `total_sold DESC`)
+        .orderBy((0, drizzle_orm_1.sql) `SUM(${drizzleSchema_1.serviceItems.quantity}) DESC`)
         .limit(5)
         .all();
 }
