@@ -434,7 +434,7 @@
 
 /* === KWITANSI (RECEIPT) === */
 .rcpt-wrapper {
-  padding: 20px;
+  padding: 10px;
   border: 1px solid #000;
   border-radius: 12px;
 }
@@ -442,8 +442,8 @@
   display: flex;
   justify-content: space-between;
   border-bottom: 2px solid #000;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
 }
 .rcpt-biz-name {
   font-size: 1.4rem;
@@ -455,21 +455,21 @@
 }
 .rcpt-title {
   font-size: 1.8rem;
-  margin: 0 0 5px 0;
+  margin: 0;
   letter-spacing: 2px;
 }
 .rcpt-no {
   font-size: 0.9rem;
 }
 .rcpt-body {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 .rcpt-table {
   width: 100%;
   border-collapse: collapse;
 }
 .rcpt-table td {
-  padding: 10px 0;
+  padding: 5px 0;
   font-size: 1rem;
 }
 .rcpt-label {
@@ -517,7 +517,7 @@
   width: 250px;
 }
 .rcpt-date {
-  margin: 0 0 60px 0;
+  margin: 0 0 35px 0;
 }
 .rcpt-sig-line {
   border-bottom: 1px solid #000;
@@ -528,7 +528,7 @@
   font-weight: bold;
 }
 .rcpt-thanks {
-  margin-top: 20px;
+  margin-top: 10px;
   text-align: center;
   font-size: 0.8rem;
   font-style: italic;
