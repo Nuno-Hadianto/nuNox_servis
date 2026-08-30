@@ -285,7 +285,7 @@ const exportExcel = async () => {
     const data = (await window.api.getCompletedServices(
       startDate.value,
       endDate.value
-    )) as unknown as ServiceOrder[]
+    )) as unknown as (ServiceOrder & { total_modal?: number })[]
     if (data.length === 0)
       return window.Swal.fire(
         'Info',
@@ -293,13 +293,30 @@ const exportExcel = async () => {
         'info'
       )
 
-    const excelData = data.map((s) => ({
+    const excelData: Record<string, string | number>[] = data.map((s) => ({
       'No Tiket': s.ticket_number,
       'Tanggal Selesai': new Date(s.completed_date + 'Z').toLocaleDateString('id-ID'),
-      Pelanggan: s.customer_name,
+      Pelanggan: s.customer_name || '',
       Perangkat: `${s.brand || ''} ${s.model || ''}`.trim(),
-      'Total Biaya': s.total_cost
+      'Total Omset': s.total_cost || 0,
+      'Modal (HPP)': s.total_modal || 0,
+      'Laba Bersih': (s.total_cost || 0) - (s.total_modal || 0)
     }))
+
+    // Add summary row
+    const sumOmset = data.reduce((acc, s) => acc + (s.total_cost || 0), 0)
+    const sumModal = data.reduce((acc, s) => acc + (s.total_modal || 0), 0)
+    const sumLaba = sumOmset - sumModal
+
+    excelData.push({
+      'No Tiket': 'TOTAL',
+      'Tanggal Selesai': '',
+      Pelanggan: '',
+      Perangkat: '',
+      'Total Omset': sumOmset,
+      'Modal (HPP)': sumModal,
+      'Laba Bersih': sumLaba
+    })
 
     const result = await window.api.exportExcel(excelData)
     if (result.success) {

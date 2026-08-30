@@ -117,7 +117,7 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
       if (canceled || !filePath) return { success: false, canceled: true };
 
       const worksheet = xlsx.utils.json_to_sheet(data);
-      const colWidths = [{ wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 15 }];
+      const colWidths = [{ wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
       worksheet['!cols'] = colWidths;
 
       const workbook = xlsx.utils.book_new();

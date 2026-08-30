@@ -138,7 +138,7 @@ function registerMiscIpc(mainWindow) {
             if (canceled || !filePath)
                 return { success: false, canceled: true };
             const worksheet = xlsx_1.default.utils.json_to_sheet(data);
-            const colWidths = [{ wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 15 }];
+            const colWidths = [{ wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
             worksheet['!cols'] = colWidths;
             const workbook = xlsx_1.default.utils.book_new();
             xlsx_1.default.utils.book_append_sheet(workbook, worksheet, 'Laporan');
