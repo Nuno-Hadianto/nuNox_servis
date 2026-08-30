@@ -34,7 +34,8 @@
         "
       >
         <option value="Jasa">Jasa</option>
-        <option value="Sparepart">Sparepart</option>
+        <option value="Sparepart">Sparepart (Gudang)</option>
+        <option value="Part Luar">Part Luar (Non-Stok)</option>
         <option value="Biaya lainnya">Lainnya</option>
         <option value="Diskon">Diskon</option>
       </select>
@@ -83,11 +84,23 @@
         "
       />
       <input
+        v-if="form.type === 'Part Luar'"
+        type="number"
+        v-model.number="form.costPrice"
+        placeholder="Harga Beli (Modal)"
+        style="
+          width: 140px;
+          padding: 8px;
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-sm);
+        "
+      />
+      <input
         type="number"
         v-model.number="form.price"
-        placeholder="Harga"
+        :placeholder="form.type === 'Part Luar' ? 'Harga Jual' : 'Harga'"
         style="
-          width: 110px;
+          width: 130px;
           padding: 8px;
           border: 1px solid var(--border-color);
           border-radius: var(--radius-sm);
@@ -193,6 +206,7 @@ const form = reactive({
   partId: '' as string | number,
   desc: '',
   qty: 1,
+  costPrice: 0,
   price: 0
 })
 
@@ -207,6 +221,7 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 const onItemTypeChange = () => {
   form.desc = ''
   form.partId = ''
+  form.costPrice = 0
   form.price = 0
 }
 
@@ -223,6 +238,7 @@ const addItem = () => {
   // reset form after emit
   form.desc = ''
   form.partId = ''
+  form.costPrice = 0
   form.price = 0
   form.qty = 1
 }

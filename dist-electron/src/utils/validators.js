@@ -42,13 +42,14 @@ exports.ServiceOrderSchema = zod_1.z.object({
 });
 exports.ServiceItemSchema = zod_1.z.object({
     service_order_id: zod_1.z.number().int('ID Servis tidak valid.'),
-    item_type: zod_1.z.enum(['Jasa', 'Sparepart', 'Biaya lainnya', 'Diskon'], {
+    item_type: zod_1.z.enum(['Jasa', 'Sparepart', 'Biaya lainnya', 'Diskon', 'Part Luar'], {
         message: 'Jenis item tidak valid.'
     }),
     spare_part_id: zod_1.z.number().int().optional().nullable(),
     description: zod_1.z.string().min(1, 'Deskripsi wajib diisi.'),
     quantity: zod_1.z.number().int('Kuantitas harus berupa bilangan bulat.').min(1, 'Kuantitas minimal 1.'),
-    price: zod_1.z.number().min(0, 'Harga tidak boleh negatif.')
+    price: zod_1.z.number().min(0, 'Harga tidak boleh negatif.'),
+    cost_price: zod_1.z.number().min(0, 'Harga beli (modal) tidak boleh negatif.').optional()
 });
 exports.PaymentSchema = zod_1.z.object({
     service_order_id: zod_1.z.number().int('ID Servis tidak valid.'),

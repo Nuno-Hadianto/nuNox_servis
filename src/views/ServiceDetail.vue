@@ -263,7 +263,7 @@ const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken:
   }
 }
 
-const addItem = async (itemForm: { desc: string; type: string; partId?: string | number; qty: number; price: number }) => {
+const addItem = async (itemForm: { desc: string; type: string; partId?: string | number; qty: number; costPrice?: number; price: number }) => {
   if (!service.value) return
   let desc = itemForm.desc
   let partId = null
@@ -282,7 +282,8 @@ const addItem = async (itemForm: { desc: string; type: string; partId?: string |
     spare_part_id: partId ? Number(partId) : null,
     description: desc,
     quantity: Number(itemForm.qty),
-    price: Number(itemForm.price)
+    price: Number(itemForm.price),
+    cost_price: itemForm.costPrice ? Number(itemForm.costPrice) : 0
   }
 
   try {

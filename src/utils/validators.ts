@@ -44,13 +44,14 @@ export const ServiceOrderSchema = z.object({
 
 export const ServiceItemSchema = z.object({
   service_order_id: z.number().int('ID Servis tidak valid.'),
-  item_type: z.enum(['Jasa', 'Sparepart', 'Biaya lainnya', 'Diskon'] as const, {
+  item_type: z.enum(['Jasa', 'Sparepart', 'Biaya lainnya', 'Diskon', 'Part Luar'] as const, {
     message: 'Jenis item tidak valid.'
   }),
   spare_part_id: z.number().int().optional().nullable(),
   description: z.string().min(1, 'Deskripsi wajib diisi.'),
   quantity: z.number().int('Kuantitas harus berupa bilangan bulat.').min(1, 'Kuantitas minimal 1.'),
-  price: z.number().min(0, 'Harga tidak boleh negatif.')
+  price: z.number().min(0, 'Harga tidak boleh negatif.'),
+  cost_price: z.number().min(0, 'Harga beli (modal) tidak boleh negatif.').optional()
 })
 
 export const PaymentSchema = z.object({

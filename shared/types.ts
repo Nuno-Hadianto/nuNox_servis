@@ -115,6 +115,7 @@ export interface ServiceItem {
   description: string;
   quantity: number;
   price: number;
+  cost_price?: number;
   total: number;
 }
 

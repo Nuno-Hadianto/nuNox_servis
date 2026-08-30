@@ -68,7 +68,7 @@ function addServiceItem(data) {
     if (item_type === 'Diskon') {
         total = -Math.abs(total);
     }
-    let cost_price = 0;
+    let cost_price = data.cost_price || 0;
     if (item_type === 'Sparepart' && spare_part_id) {
         const part = db_1.default.drizzle.select({ stock: drizzleSchema_1.spareParts.stock, buy_price: drizzleSchema_1.spareParts.buy_price })
             .from(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, spare_part_id)).get();
