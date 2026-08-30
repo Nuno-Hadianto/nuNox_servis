@@ -73,9 +73,6 @@ function addServiceItem(data) {
         const part = db_1.default.drizzle.select({ stock: drizzleSchema_1.spareParts.stock, buy_price: drizzleSchema_1.spareParts.buy_price })
             .from(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, spare_part_id)).get();
         if (part) {
-            if (part.stock < quantity) {
-                throw new Error(`Stok sparepart tidak mencukupi (Tersisa: ${part.stock})`);
-            }
             cost_price = part.buy_price * quantity;
         }
     }

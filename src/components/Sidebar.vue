@@ -21,7 +21,7 @@
           <router-link to="/services"><Wrench class="menu-icon" /> Servis</router-link>
         </li>
         <li :class="{ active: $route.name === 'Parts' }">
-          <router-link to="/parts"><Package class="menu-icon" /> Sparepart</router-link>
+          <router-link to="/parts"><Package class="menu-icon" /> Katalog Harga</router-link>
         </li>
 
         <li v-if="currentUser?.role === 'admin'" class="nav-header">KEUANGAN</li>

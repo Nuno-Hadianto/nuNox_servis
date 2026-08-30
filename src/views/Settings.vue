@@ -50,18 +50,7 @@
               style="resize: vertical;"
             ></textarea>
           </div>
-          <div class="form-group">
-            <label style="font-weight: 500; font-size: 0.9rem">Batas Peringatan Stok Tipis</label>
-            <input
-              type="number"
-              v-model="form.low_stock_threshold"
-              min="0"
-              class="form-control"
-            />
-            <small style="color: var(--text-muted); display: block; margin-top: 4px">
-              Munculkan peringatan di Dasbor jika stok sparepart &lt;= angka ini.
-            </small>
-          </div>
+
           <div class="form-group">
             <label style="font-weight: 500; font-size: 0.9rem">Template Pesan WhatsApp</label>
             <textarea

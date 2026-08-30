@@ -74,7 +74,6 @@
           :isLoading="isLoading"
           @send-wa="sendWaDashboard"
         />
-        <LowStockWidget :items="stats.lowStockParts" :isLoading="isLoading" />
       </div>
     </div>
   </div>
@@ -87,7 +86,6 @@ import { Wrench, Hourglass, CheckCircle, Wallet, TrendingUp } from 'lucide-vue-n
 import StatCard from '../components/StatCard.vue'
 import TodoWidget from '../components/dashboard/TodoWidget.vue'
 import AbandonedWidget from '../components/dashboard/AbandonedWidget.vue'
-import LowStockWidget from '../components/dashboard/LowStockWidget.vue'
 import IncomeChart from '../components/charts/IncomeChart.vue'
 import StatusChart from '../components/charts/StatusChart.vue'
 import TopPartsChart from '../components/charts/TopPartsChart.vue'

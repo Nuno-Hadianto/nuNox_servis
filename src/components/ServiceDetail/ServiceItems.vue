@@ -53,8 +53,8 @@
         "
       >
         <option value="">-- Pilih Sparepart --</option>
-        <option v-for="p in parts" :key="p.id" :value="p.id" :disabled="p.stock <= 0">
-          {{ p.name }} (Stok: {{ p.stock }})
+        <option v-for="p in parts" :key="p.id" :value="p.id">
+          {{ p.name }}
         </option>
       </select>
 
@@ -148,7 +148,7 @@
           </div>
           <div style="display: flex; align-items: center; gap: 15px">
             <span style="font-weight: 700; color: var(--primary-color)">{{
-              formatCurrency(item.subtotal)
+              formatCurrency(item.total)
             }}</span>
             <button
               @click="$emit('delete', item.id)"

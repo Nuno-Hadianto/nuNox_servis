@@ -39,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/parts',
     name: 'Parts',
     component: () => import('../views/Part.vue'),
-    meta: { title: 'Daftar Sparepart', roles: ['admin', 'kasir', 'teknisi'] }
+    meta: { title: 'Katalog Harga Servis', roles: ['admin', 'kasir', 'teknisi'] }
   },
   {
     path: '/reports',

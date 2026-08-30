@@ -28,7 +28,7 @@
           type="text"
           v-model="searchQuery"
           @input="debounceSearch"
-          placeholder="Cari sparepart (Kode / Nama)..."
+          placeholder="Cari item di katalog (Kode / Nama)..."
           class="form-control"
           style="width: 100%; padding-left: 38px; border-radius: 20px"
         />
@@ -57,7 +57,7 @@
           class="btn btn-primary"
           style="display: flex; align-items: center; gap: 6px; border-radius: 20px"
         >
-          <Plus :size="18" /> Tambah Sparepart
+          <Plus :size="18" /> Tambah Item
         </button>
       </div>
     </div>
@@ -66,13 +66,12 @@
         <thead>
           <tr>
             <th>Kode</th>
-            <th>Nama Sparepart</th>
+            <th>Nama Item</th>
             <th>Kategori</th>
-            <th>Stok</th>
             <th>Harga Modal</th>
             <th>Harga Jual</th>
             <th>Margin/Pcs</th>
-            <th>Aksi</th>
+            <th style="text-align: center">Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -83,20 +82,6 @@
             <td>{{ p.part_code || '-' }}</td>
             <td>{{ p.name }}</td>
             <td>{{ p.category || '-' }}</td>
-            <td>
-              <span
-                v-if="p.stock <= 5"
-                class="badge"
-                style="
-                  background: rgba(239, 68, 68, 0.1);
-                  color: #ef4444;
-                  border: 1px solid rgba(239, 68, 68, 0.2);
-                "
-              >
-                ⚠️ {{ p.stock }} {{ p.unit || '' }}
-              </span>
-              <span v-else> {{ p.stock }} {{ p.unit || '' }} </span>
-            </td>
             <td>{{ formatCurrency(p.buy_price) }}</td>
             <td>{{ formatCurrency(p.sell_price) }}</td>
             <td :style="{ color: p.sell_price > p.buy_price ? '#10b981' : (p.sell_price < p.buy_price ? '#ef4444' : 'inherit'), fontWeight: 'bold' }">
@@ -106,27 +91,22 @@
               </span>
             </td>
             <td>
-              <button
-                class="btn btn-secondary btn-sm"
-                @click="openHistory(p)"
-                style="display: inline-flex; align-items: center; gap: 6px; background: var(--surface-light);"
-              >
-                <History :size="14" /> Histori
-              </button>
-              <button
-                class="btn btn-secondary btn-sm"
-                @click="editPart(p)"
-                style="display: inline-flex; align-items: center; gap: 6px"
-              >
-                <Edit :size="14" /> Edit
-              </button>
-              <button
-                class="btn btn-danger btn-sm"
-                @click="deletePart(p.id)"
-                style="display: inline-flex; align-items: center; gap: 6px"
-              >
-                <Trash2 :size="14" /> Hapus
-              </button>
+              <div style="display: flex; justify-content: center; gap: 8px;">
+                <button
+                  class="btn btn-secondary btn-sm"
+                  @click="editPart(p)"
+                  style="display: inline-flex; align-items: center; gap: 6px"
+                >
+                  <Edit :size="14" /> Edit
+                </button>
+                <button
+                  class="btn btn-danger btn-sm"
+                  @click="deletePart(p.id)"
+                  style="display: inline-flex; align-items: center; gap: 6px"
+                >
+                  <Trash2 :size="14" /> Hapus
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -173,12 +153,12 @@
               </div>
             </div>
             <div class="form-group">
-              <label>Nama Sparepart</label>
+              <label>Nama Item</label>
               <input
                 type="text"
                 v-model="form.name"
                 required
-                placeholder="Nama barang"
+                placeholder="Nama barang / jasa"
                 style="
                   border: 1px solid var(--border-color);
                   border-radius: var(--radius-sm);
@@ -189,22 +169,7 @@
             </div>
             <div style="display: flex; gap: 15px">
               <div class="form-group" style="flex: 1">
-                <label>Stok Awal</label>
-                <input
-                  type="number"
-                  v-model.number="form.stock"
-                  required
-                  min="0"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
-                />
-              </div>
-              <div class="form-group" style="flex: 1">
-                <label>Satuan</label>
+                <label>Satuan (Opsional)</label>
                 <input
                   type="text"
                   v-model="form.unit"
@@ -292,60 +257,16 @@
       </div>
     </div>
 
-    <!-- Modal Histori Stok -->
-    <div v-if="isHistoryModalOpen" class="modal show">
-      <div class="modal-content" style="max-width: 650px;">
-        <div class="modal-header">
-          <h2>Histori Stok: {{ selectedPartName }}</h2>
-          <span class="close-modal" @click="isHistoryModalOpen = false">&times;</span>
-        </div>
-        <div class="modal-body">
-          <div v-if="partLogs.length === 0" style="text-align: center; padding: 20px; color: var(--text-secondary);">
-            Belum ada riwayat pergerakan stok untuk barang ini.
-          </div>
-          <table v-else class="data-table" style="font-size: 0.9em;">
-            <thead>
-              <tr>
-                <th>Waktu</th>
-                <th>Alasan</th>
-                <th>Referensi</th>
-                <th>Perubahan</th>
-                <th>Stok Akhir</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="log in partLogs" :key="log.id">
-                <td>{{ log.created_at ? new Date(log.created_at).toLocaleString('id-ID') : '-' }}</td>
-                <td>{{ log.reason }}</td>
-                <td>{{ log.reference_id || '-' }}</td>
-                <td :style="{ color: log.change_amount > 0 ? '#10b981' : '#ef4444', fontWeight: 'bold' }">
-                  {{ log.change_amount > 0 ? '+' : '' }}{{ log.change_amount }}
-                </td>
-                <td>{{ log.new_stock }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, FileSpreadsheet, History } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, FileSpreadsheet } from 'lucide-vue-next'
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
 
 const route = useRoute()
-interface PartLog {
-  id: number;
-  created_at: string;
-  reason: string;
-  reference_id?: string;
-  change_amount: number;
-  new_stock: number;
-}
 const parts = ref<Part[]>([])
 const searchQuery = ref<string>((route.query.search as string) || '')
 
@@ -408,7 +329,7 @@ const importExcel = async () => {
 
 // Modal Form Logic
 const isModalOpen = ref<boolean>(false)
-const modalTitle = ref<string>('Tambah Sparepart')
+const modalTitle = ref<string>('Tambah Item')
 const formId = ref<number | null>(null)
 const form = reactive({
   part_code: '',
@@ -422,7 +343,7 @@ const form = reactive({
 })
 
 const openAddModal = () => {
-  modalTitle.value = 'Tambah Sparepart'
+  modalTitle.value = 'Tambah Item'
   formId.value = null
   form.part_code = ''
   form.name = ''
@@ -435,29 +356,13 @@ const openAddModal = () => {
   isModalOpen.value = true
 }
 
-// History Logic
-const isHistoryModalOpen = ref(false)
-const selectedPartName = ref('')
-const partLogs = ref<PartLog[]>([])
-
-const openHistory = async (p: Part) => {
-  selectedPartName.value = p.name
-  partLogs.value = []
-  isHistoryModalOpen.value = true
-  try {
-    const logs = await window.api.getPartLogs(p.id)
-    partLogs.value = logs as PartLog[]
-  } catch (error) {
-    console.error(error)
-    window.Swal.fire('Error', 'Gagal memuat histori stok.', 'error')
-  }
-}
+// History Logic removed
 
 const editPart = async (p: Part) => {
   try {
     const detail = (await window.api.getPart(p.id)) as Part
     if (detail) {
-      modalTitle.value = 'Edit Sparepart'
+      modalTitle.value = 'Edit Item'
       formId.value = detail.id || null
       form.part_code = detail.part_code || ''
       form.name = detail.name || ''
