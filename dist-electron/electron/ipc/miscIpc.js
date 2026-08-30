@@ -248,7 +248,7 @@ function registerMiscIpc(mainWindow) {
     });
     electron_1.ipcMain.handle('get-logo-base64', async () => {
         try {
-            const logoPath = path_1.default.join(__dirname, '..', '..', 'public', 'img', 'logo.png');
+            const logoPath = path_1.default.join(__dirname, '..', '..', '..', 'public', 'img', 'logo.png');
             if (fs_1.default.existsSync(logoPath)) {
                 const ext = path_1.default.extname(logoPath).toLowerCase();
                 const mimeType = ext === '.png' ? 'image/png' : (ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : 'image/png');

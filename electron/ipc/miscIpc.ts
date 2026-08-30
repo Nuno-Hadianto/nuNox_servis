@@ -234,7 +234,7 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
 
   ipcMain.handle('get-logo-base64', async () => {
     try {
-      const logoPath = path.join(__dirname, '..', '..', 'public', 'img', 'logo.png');
+      const logoPath = path.join(__dirname, '..', '..', '..', 'public', 'img', 'logo.png');
       if (fs.existsSync(logoPath)) {
         const ext = path.extname(logoPath).toLowerCase();
         const mimeType = ext === '.png' ? 'image/png' : (ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : 'image/png');
