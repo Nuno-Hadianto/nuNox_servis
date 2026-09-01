@@ -5,7 +5,10 @@
     </div>
     <div class="topbar-actions" style="display: flex; align-items: center; gap: 15px">
       <div class="badge datetime-badge">
-        <Clock style="width: 16px; height: 16px;" /> {{ currentDateTime }}
+        <Clock style="width: 16px; height: 16px; opacity: 0.7;" /> 
+        <span>{{ currentDate }}</span>
+        <span style="opacity: 0.4; margin: 0 2px;">|</span>
+        <span style="font-weight: 700; letter-spacing: 0.5px;">{{ currentTime }}</span>
       </div>
       
       <!-- Notifications -->
@@ -81,7 +84,8 @@ defineProps<{
 }>()
 
 
-const currentDateTime = ref<string>('')
+const currentDate = ref<string>('')
+const currentTime = ref<string>('')
 let timer: ReturnType<typeof setInterval> | null = null
 
 const themeStore = useThemeStore()
@@ -93,15 +97,17 @@ const toggleTheme = () => {
 
 const updateDateTime = () => {
   const now = new Date()
-  currentDateTime.value =
-    now.toLocaleDateString('id-ID', {
+  currentDate.value = now.toLocaleDateString('id-ID', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
-    }) +
-    ' ' +
-    now.toLocaleTimeString('id-ID')
+    })
+  currentTime.value = now.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  }).replace(/\./g, ':') // Replace dot with colon for standard time format
 }
 
 
