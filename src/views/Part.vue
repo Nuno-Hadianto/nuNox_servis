@@ -242,7 +242,7 @@
             >
               <button
                 type="button"
-                class="btn btn-secondary close-modal"
+                class="btn btn-cancel"
                 @click="isModalOpen = false"
                 style="padding: 8px 20px"
               >

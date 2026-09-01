@@ -142,11 +142,7 @@
                 v-model="form.name"
                 required
                 placeholder="Contoh: Budi Santoso"
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                "
+                class="form-control"
               />
             </div>
             <div class="form-group">
@@ -155,11 +151,7 @@
                 type="text"
                 v-model="form.phone"
                 placeholder="Contoh: 08123456789"
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                "
+                class="form-control"
               />
             </div>
             <div class="form-group">
@@ -168,12 +160,8 @@
                 v-model="form.address"
                 rows="3"
                 placeholder="Alamat lengkap"
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  resize: vertical;
-                "
+                class="form-control"
+                style="resize: vertical;"
               ></textarea>
             </div>
             <div class="form-group">
@@ -182,12 +170,8 @@
                 v-model="form.notes"
                 rows="2"
                 placeholder="Catatan internal..."
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  resize: vertical;
-                "
+                class="form-control"
+                style="resize: vertical;"
               ></textarea>
             </div>
             <div
@@ -203,7 +187,7 @@
             >
               <button
                 type="button"
-                class="btn btn-secondary close-modal"
+                class="btn btn-cancel"
                 @click="isModalOpen = false"
                 style="padding: 8px 20px"
               >
