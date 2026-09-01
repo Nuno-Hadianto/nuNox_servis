@@ -263,23 +263,16 @@ const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken:
   }
 }
 
-const addItem = async (itemForm: { desc: string; type: string; partId?: string | number; qty: number; costPrice?: number; price: number }) => {
+const addItem = async (itemForm: { desc: string; type: string; qty: number; costPrice?: number; price: number }) => {
   if (!service.value) return
-  let desc = itemForm.desc
-  let partId = null
+  const desc = itemForm.desc
 
-  if (itemForm.type === 'Sparepart') {
-    partId = itemForm.partId
-    if (!partId) return window.Swal.fire('Info', 'Pilih sparepart!', 'info')
-    desc = 'Sparepart ID: ' + partId
-  } else {
-    if (!desc) return window.Swal.fire('Info', 'Keterangan wajib diisi!', 'info')
-  }
+  if (!desc) return window.Swal.fire('Info', 'Keterangan wajib diisi!', 'info')
 
   const data = {
     service_order_id: service.value.id,
     item_type: itemForm.type,
-    spare_part_id: partId ? Number(partId) : null,
+    spare_part_id: null,
     description: desc,
     quantity: Number(itemForm.qty),
     price: Number(itemForm.price),

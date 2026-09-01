@@ -439,7 +439,6 @@ const exportExcel = async () => {
       'Kode Barang': p.part_code || '-',
       'Nama Sparepart': p.name,
       'Kategori': p.category || '-',
-      'Stok': p.stock,
       'Satuan': p.unit || 'Pcs',
       'Harga Modal': p.buy_price,
       'Harga Jual': p.sell_price,

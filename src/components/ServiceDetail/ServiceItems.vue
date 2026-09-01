@@ -34,32 +34,12 @@
         "
       >
         <option value="Jasa">Jasa</option>
-        <option value="Sparepart">Sparepart (Gudang)</option>
-        <option value="Part Luar">Part Luar (Non-Stok)</option>
+        <option value="Sparepart">Sparepart</option>
         <option value="Biaya lainnya">Lainnya</option>
         <option value="Diskon">Diskon</option>
       </select>
 
-      <select
-        v-if="form.type === 'Sparepart'"
-        v-model="form.partId"
-        @change="onPartChange"
-        style="
-          padding: 8px;
-          border: 1px solid var(--border-color);
-          border-radius: var(--radius-sm);
-          background: white;
-          flex: 1;
-        "
-      >
-        <option value="">-- Pilih Sparepart --</option>
-        <option v-for="p in parts" :key="p.id" :value="p.id">
-          {{ p.name }}
-        </option>
-      </select>
-
       <input
-        v-else
         type="text"
         v-model="form.desc"
         placeholder="Keterangan"
@@ -84,7 +64,7 @@
         "
       />
       <input
-        v-if="form.type === 'Part Luar'"
+        v-if="form.type === 'Sparepart'"
         type="number"
         v-model.number="form.costPrice"
         placeholder="Harga Beli (Modal)"
@@ -98,7 +78,7 @@
       <input
         type="number"
         v-model.number="form.price"
-        :placeholder="form.type === 'Part Luar' ? 'Harga Jual' : 'Harga'"
+        :placeholder="form.type === 'Sparepart' ? 'Harga Jual' : 'Harga'"
         style="
           width: 130px;
           padding: 8px;
@@ -193,7 +173,7 @@ import { reactive } from 'vue'
 import { Trash2 } from 'lucide-vue-next'
 import type { ServiceItem, Part } from '../../../shared/types'
 
-const props = defineProps<{
+defineProps<{
   items: ServiceItem[]
   parts: Part[]
   totalCost: number
@@ -203,7 +183,6 @@ const emit = defineEmits(['add', 'delete'])
 
 const form = reactive({
   type: 'Jasa',
-  partId: '' as string | number,
   desc: '',
   qty: 1,
   costPrice: 0,
@@ -220,24 +199,15 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 
 const onItemTypeChange = () => {
   form.desc = ''
-  form.partId = ''
   form.costPrice = 0
   form.price = 0
 }
 
-const onPartChange = () => {
-  const part = props.parts.find((p) => p.id === form.partId)
-  if (part) {
-    form.price = part.sell_price
-  }
-}
-
-const addItem = () => {
+const addItem = async () => {
   emit('add', { ...form })
   
   // reset form after emit
   form.desc = ''
-  form.partId = ''
   form.costPrice = 0
   form.price = 0
   form.qty = 1

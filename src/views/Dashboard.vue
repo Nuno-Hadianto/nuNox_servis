@@ -60,10 +60,6 @@
             <h2 class="chart-title">Distribusi Status Servis</h2>
             <StatusChart v-if="stats.serviceStatusChart" :data="stats.serviceStatusChart" />
           </div>
-          <div class="card chart-container">
-            <h2 class="chart-title">Top 5 Sparepart</h2>
-            <TopPartsChart v-if="stats.topPartsChart" :data="stats.topPartsChart" />
-          </div>
         </div>
       </div>
 
@@ -88,7 +84,6 @@ import TodoWidget from '../components/dashboard/TodoWidget.vue'
 import AbandonedWidget from '../components/dashboard/AbandonedWidget.vue'
 import IncomeChart from '../components/charts/IncomeChart.vue'
 import StatusChart from '../components/charts/StatusChart.vue'
-import TopPartsChart from '../components/charts/TopPartsChart.vue'
 import type { DashboardStats, AbandonedService } from '../../shared/types'
 
 const isLoading = ref(true)

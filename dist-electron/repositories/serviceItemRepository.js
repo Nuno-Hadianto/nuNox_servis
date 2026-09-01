@@ -87,23 +87,6 @@ function addServiceItem(data) {
             cost_price,
             total
         }).run();
-        // Update stock if it's a spare part
-        if (item_type === 'Sparepart' && spare_part_id) {
-            db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
-                stock: (0, drizzle_orm_1.sql) `stock - ${quantity}`
-            }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, spare_part_id)).run();
-            const updatedPart = db_1.default.drizzle.select({ stock: drizzleSchema_1.spareParts.stock }).from(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, spare_part_id)).get();
-            if (updatedPart) {
-                const service = db_1.default.drizzle.select({ ticket_number: drizzleSchema_1.serviceOrders.ticket_number }).from(drizzleSchema_1.serviceOrders).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, service_order_id)).get();
-                db_1.default.drizzle.insert(drizzleSchema_1.partLogs).values({
-                    spare_part_id: spare_part_id,
-                    change_amount: -quantity,
-                    new_stock: updatedPart.stock,
-                    reason: 'Dipakai Servis',
-                    reference_id: service ? service.ticket_number : ''
-                }).run();
-            }
-        }
         // Recalculate total cost in service_orders
         recalculateServiceTotal(service_order_id);
         return info.lastInsertRowid;
@@ -115,23 +98,6 @@ function deleteServiceItem(id) {
         return false;
     return db_1.default.transaction(() => {
         db_1.default.drizzle.delete(drizzleSchema_1.serviceItems).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.id, Number(id))).run();
-        // Return stock if it was a spare part
-        if (item.item_type === 'Sparepart' && item.spare_part_id) {
-            db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
-                stock: (0, drizzle_orm_1.sql) `stock + ${item.quantity}`
-            }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, item.spare_part_id)).run();
-            const updatedPart = db_1.default.drizzle.select({ stock: drizzleSchema_1.spareParts.stock }).from(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, item.spare_part_id)).get();
-            if (updatedPart) {
-                const service = db_1.default.drizzle.select({ ticket_number: drizzleSchema_1.serviceOrders.ticket_number }).from(drizzleSchema_1.serviceOrders).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, item.service_order_id)).get();
-                db_1.default.drizzle.insert(drizzleSchema_1.partLogs).values({
-                    spare_part_id: item.spare_part_id,
-                    change_amount: item.quantity,
-                    new_stock: updatedPart.stock,
-                    reason: 'Pembatalan Item Servis',
-                    reference_id: service ? service.ticket_number : ''
-                }).run();
-            }
-        }
         recalculateServiceTotal(item.service_order_id);
         return true;
     })();
