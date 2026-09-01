@@ -31,20 +31,7 @@
       >
         💬 Kirim WA
       </button>
-      <button
-        @click="$emit('export-pdf')"
-        class="btn"
-        style="
-          background-color: #ef4444;
-          color: white;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          border-radius: 20px;
-        "
-      >
-        📄 Unduh PDF
-      </button>
+
 
       <button
         @click="$emit('print-nota')"
@@ -68,7 +55,6 @@
 defineEmits([
   'back',
   'send-wa',
-  'export-pdf',
   'print-nota',
   'print-receipt'
 ])

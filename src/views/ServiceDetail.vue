@@ -4,7 +4,6 @@
       <ServiceActionBar
         @back="$router.push('/services')"
         @send-wa="sendWhatsApp"
-        @export-pdf="exportPdfInvoice"
         @print-nota="printNota"
         @print-receipt="printReceipt"
       />
@@ -67,8 +66,7 @@ import { ServiceItemSchema, PaymentSchema } from '../utils/validators'
 import {
   generateInvoiceHtml,
   generateNotaHtml,
-  printHtml,
-  exportHtmlToPdf
+  printHtml
 } from '../utils/printUtils.js'
 
 import ServiceActionBar from '../components/ServiceDetail/ServiceActionBar.vue'
@@ -412,38 +410,6 @@ const confirmSendWa = (finalMessage: string) => {
     window.open(url, '_blank')
   }
   isWaModalOpen.value = false
-}
-
-const exportPdfInvoice = async () => {
-  if (!service.value) return
-  try {
-    const { settings, logoBase64 } = await getCommonData()
-    const html = generateInvoiceHtml(
-      settings,
-      service.value,
-      items.value,
-      payments.value,
-      logoBase64
-    )
-    const filename = `Invoice_${service.value.ticket_number}_${(service.value.customer_name || '').replace(/\s+/g, '_')}.pdf`
-
-    const result = await exportHtmlToPdf(html, filename)
-    if (result && result.success) {
-      window.Swal.fire({
-        icon: 'success',
-        title: 'Berhasil',
-        text: 'PDF berhasil disimpan!',
-        timer: 1500,
-        showConfirmButton: false
-      })
-    } else if (result && !result.canceled) {
-      window.Swal.fire('Error', 'Gagal menyimpan PDF: ' + (result.error || ''), 'error')
-    }
-  } catch (error: unknown) {
-    console.error(error)
-    const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Terjadi kesalahan saat memproses PDF.', 'error')
-  }
 }
 
 const printNota = async () => {
