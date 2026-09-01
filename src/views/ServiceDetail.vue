@@ -5,7 +5,6 @@
         @back="$router.push('/services')"
         @send-wa="sendWhatsApp"
         @export-pdf="exportPdfInvoice"
-        @print-thermal="printThermal"
         @print-nota="printNota"
         @print-receipt="printReceipt"
       />
@@ -68,7 +67,6 @@ import { ServiceItemSchema, PaymentSchema } from '../utils/validators'
 import {
   generateInvoiceHtml,
   generateNotaHtml,
-  generateThermalNotaHtml,
   printHtml,
   exportHtmlToPdf
 } from '../utils/printUtils.js'
@@ -467,24 +465,6 @@ const printNota = async () => {
   }
 }
 
-const printThermal = async () => {
-  if (!service.value) return
-  try {
-    const { settings, logoBase64 } = await getCommonData()
-    let qrBase64 = null
-    try {
-      qrBase64 = await QRCode.toDataURL(service.value.ticket_number)
-    } catch (e) {
-      console.error('QR Code Error:', e)
-    }
-    const html = generateThermalNotaHtml(settings, service.value, logoBase64, qrBase64)
-    await printHtml(html, false, true) // portrait for thermal, isThermal = true
-  } catch (error: unknown) {
-    console.error(error)
-    const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal mencetak struk thermal.', 'error')
-  }
-}
 
 const printReceipt = async () => {
   if (!service.value) return

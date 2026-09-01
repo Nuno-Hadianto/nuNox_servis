@@ -45,22 +45,7 @@
       >
         📄 Unduh PDF
       </button>
-      <button
-        @click="$emit('print-thermal')"
-        class="btn"
-        style="
-          background-color: #f59e0b;
-          color: white;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          border-radius: 20px;
-          font-weight: bold;
-          box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
-        "
-      >
-        🖨️ Cetak Struk (Termal)
-      </button>
+
       <button
         @click="$emit('print-nota')"
         class="btn btn-secondary"
@@ -84,7 +69,6 @@ defineEmits([
   'back',
   'send-wa',
   'export-pdf',
-  'print-thermal',
   'print-nota',
   'print-receipt'
 ])
