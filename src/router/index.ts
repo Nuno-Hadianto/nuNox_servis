@@ -48,12 +48,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: 'Laporan Keuangan', roles: ['admin'] }
   },
 
-  {
-    path: '/users',
-    name: 'Users',
-    component: () => import('../views/User.vue'),
-    meta: { title: 'Manajemen Karyawan', roles: ['admin'] }
-  },
+
   {
     path: '/settings',
     name: 'Settings',

@@ -141,6 +141,16 @@ onMounted(() => {
 
   themeStore.initTheme()
   loadGlobalSettings()
+
+  // Auto Login Bypass (Solo Mode)
+  if (!authStore.isLoggedIn) {
+    window.api.login('admin', 'admin123').then(res => {
+      if (res.success && res.user) {
+        authStore.login(res.user)
+        router.push('/')
+      }
+    }).catch(err => console.error('Auto-login failed', err))
+  }
 })
 
 const loadGlobalSettings = async () => {

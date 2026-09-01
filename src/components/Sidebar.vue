@@ -30,9 +30,7 @@
         </li>
 
         <li v-if="currentUser?.role === 'admin'" class="nav-header">SISTEM</li>
-        <li v-if="currentUser?.role === 'admin'" :class="{ active: $route.name === 'Users' }">
-          <router-link to="/users"><UserCog class="menu-icon" /> Karyawan</router-link>
-        </li>
+
         <li v-if="currentUser?.role === 'admin'" :class="{ active: $route.name === 'Settings' }">
           <router-link to="/settings"
             ><Settings class="menu-icon" /> Pengaturan & Backup</router-link
@@ -40,15 +38,7 @@
         </li>
       </ul>
       <div class="sidebar-footer">
-        <div class="user-info-row" style="justify-content: center;">
-          <div>
-            Login sebagai:
-            <strong class="user-name">{{ currentUser ? currentUser.username : '-' }}</strong>
-          </div>
-        </div>
-        <button @click="handleLogout" class="btn btn-danger logout-btn">
-          <LogOut style="width: 18px; height: 18px;" /> Logout
-        </button>
+        <!-- User info and logout hidden for solo mode -->
       </div>
     </nav>
   </aside>
@@ -62,24 +52,17 @@ import {
   Wrench,
   Package,
   BarChart3,
-  UserCog,
-  Settings,
-  LogOut
+  Settings
 } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '../stores/auth'
 
-const router = useRouter()
 const authStore = useAuthStore()
 const { currentUser } = storeToRefs(authStore)
 
 
 
-const handleLogout = () => {
-  authStore.logout()
-  router.push('/')
-}
+
 </script>
 
 <style scoped>
