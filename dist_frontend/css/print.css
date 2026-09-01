@@ -1,0 +1,597 @@
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Sembunyikan UI aplikasi utama */
+  .app-container,
+  .login-screen,
+  .modal,
+  .global-search-modal {
+    display: none !important;
+  }
+
+  /* Tampilkan area cetak */
+  #print-area {
+    display: block !important;
+    width: 100% !important;
+    background: white !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hilangkan scrollbar saat mencetak */
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  @page {
+    margin: 5mm;
+  }
+}
+
+/* 
+  Kumpulan styling untuk Nota, Invoice, Kwitansi, dll. 
+  Bisa diaplikasikan di layar maupun saat dicetak.
+*/
+#print-area {
+  font-family: 'Inter', Arial, sans-serif;
+  color: #1e293b;
+  line-height: 1.4;
+  font-size: 11pt;
+}
+
+/* === TANDA TERIMA (NOTA) === */
+.nota-wrapper {
+  max-width: 100%;
+  padding: 5px 15px;
+  page-break-inside: avoid;
+}
+.nota-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid #333;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+.nota-header-left {
+  flex: 1;
+}
+.nota-logo {
+  max-height: 60px;
+  margin-bottom: 10px;
+}
+.nota-biz-name {
+  font-size: 14pt;
+  font-weight: 800;
+  margin: 0 0 5px 0;
+  color: #0f172a;
+}
+.nota-biz-addr, .nota-biz-phone {
+  font-size: 10pt;
+  color: #475569;
+}
+.nota-header-right {
+  text-align: right;
+  flex: 1;
+}
+.nota-title {
+  font-size: 16pt;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  letter-spacing: 2px;
+}
+.nota-no, .nota-date {
+  font-size: 10pt;
+  margin-bottom: 5px;
+}
+.nota-body {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.nota-col {
+  flex: 1;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+}
+.nota-col-red {
+  flex: 1;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #fef2f2;
+}
+.nota-col-title {
+  font-size: 11pt;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #cbd5e1;
+  padding-bottom: 5px;
+}
+.nota-col-title-red {
+  font-size: 11pt;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #fca5a5;
+  padding-bottom: 5px;
+  color: #b91c1c;
+}
+.nota-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10pt;
+}
+.nota-table td {
+  padding: 4px 0;
+  vertical-align: top;
+}
+.nota-label {
+  width: 70px;
+  color: #64748b;
+}
+.nota-complaint {
+  font-size: 10pt;
+  font-style: italic;
+}
+.nota-blank-notes {
+  border: 1px dashed #94a3b8;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+.nota-blank-notes-text {
+  color: #94a3b8;
+}
+.nota-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.nota-terms {
+  flex: 2;
+  font-size: 8pt;
+  color: #64748b;
+  padding-right: 20px;
+}
+.nota-terms h4 {
+  margin: 0 0 5px 0;
+}
+.nota-terms ol {
+  margin: 0;
+  padding-left: 15px;
+}
+.nota-sig-box {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.nota-sig-title {
+  font-size: 10pt;
+  margin-bottom: 25px;
+}
+.nota-sig-line {
+  font-weight: 700;
+  border-bottom: 1px solid #333;
+  display: inline-block;
+  padding: 0 10px 5px 10px;
+  min-width: 150px;
+}
+.nota-blank-footer {
+  text-align: center;
+  font-size: 8pt;
+  font-style: italic;
+  margin-top: 5px;
+  color: #64748b;
+}
+
+/* === INVOICE === */
+.invoice-box {
+  padding: 20px;
+}
+.inv-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 20px;
+  margin-bottom: 25px;
+}
+.inv-header-left {
+  flex: 1;
+}
+.inv-logo {
+  max-height: 60px;
+  margin-bottom: 10px;
+}
+.inv-logo-placeholder {
+  width: 50px;
+  height: 50px;
+  background: #6366f1;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.inv-biz-name {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 5px 0;
+}
+.inv-biz-addr, .inv-biz-phone {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+.inv-header-right {
+  text-align: right;
+  flex: 1;
+}
+.inv-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #4f46e5;
+  margin: 0 0 15px 0;
+  letter-spacing: 1px;
+}
+.inv-meta-box {
+  display: inline-block;
+  text-align: right;
+}
+.inv-meta-label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.inv-meta-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.inv-meta-label-mt {
+  margin-top: 10px;
+}
+.inv-meta-value-sm {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.inv-info-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+.inv-info-card {
+  flex: 1;
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.inv-info-title {
+  font-size: 0.8rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.inv-info-main {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.inv-info-sub {
+  font-size: 0.9rem;
+  color: #475569;
+}
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+.inv-th-left {
+  text-align: left;
+  padding: 12px 15px;
+  background: #4f46e5;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px 0 0 8px;
+}
+.inv-th-right {
+  text-align: right;
+  padding: 12px 15px;
+  background: #4f46e5;
+  color: white;
+  font-weight: 600;
+  border-radius: 0 8px 8px 0;
+  width: 200px;
+}
+.inv-tr {
+  border-bottom: 1px solid #e2e8f0;
+}
+.inv-td-desc {
+  padding: 15px;
+}
+.inv-item-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.inv-item-sub {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.inv-td-amount {
+  padding: 15px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 1rem;
+}
+.inv-empty {
+  text-align: center;
+  padding: 20px;
+  color: #94a3b8;
+  font-style: italic;
+}
+.inv-summary-row {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+.inv-notes-box {
+  flex: 3;
+}
+.inv-notes-title {
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 5px;
+}
+.inv-notes-content {
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.6;
+}
+.inv-totals-box {
+  flex: 2;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.inv-totals-table {
+  width: 100%;
+}
+.inv-totals-table td {
+  padding: 5px 0;
+}
+.inv-tot-label {
+  font-weight: 600;
+  color: #475569;
+}
+.inv-tot-val {
+  text-align: right;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.inv-tot-val-paid {
+  text-align: right;
+  font-weight: 600;
+  color: #10b981;
+}
+.inv-tot-hr {
+  border: none;
+  border-top: 1px solid #cbd5e1;
+  margin: 10px 0;
+}
+.inv-bal-label {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+.inv-bal-val {
+  text-align: right;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.inv-bal-unpaid {
+  color: #ef4444;
+}
+.inv-bal-paid {
+  color: #10b981;
+}
+.inv-signatures {
+  display: flex;
+  justify-content: flex-end;
+  gap: 50px;
+}
+.inv-sig-col {
+  text-align: center;
+  width: 150px;
+}
+
+/* === KWITANSI (RECEIPT) === */
+.rcpt-wrapper {
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 12px;
+}
+.rcpt-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid #000;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+.rcpt-biz-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 0;
+}
+.rcpt-biz-addr, .rcpt-biz-phone {
+  font-size: 0.9rem;
+}
+.rcpt-title {
+  font-size: 1.8rem;
+  margin: 0;
+  letter-spacing: 2px;
+}
+.rcpt-no {
+  font-size: 0.9rem;
+}
+.rcpt-body {
+  margin-bottom: 15px;
+}
+.rcpt-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.rcpt-table td {
+  padding: 5px 0;
+  font-size: 1rem;
+}
+.rcpt-label {
+  width: 160px;
+  font-weight: bold;
+}
+.rcpt-colon {
+  width: 20px;
+  text-align: center;
+}
+.rcpt-line {
+  border-bottom: 1px dashed #000;
+}
+.rcpt-amount-box {
+  background: #f1f5f9;
+  border: 1px solid #000;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+.rcpt-rp {
+  margin-right: 15px;
+}
+.rcpt-vtop {
+  vertical-align: top;
+  padding-top: 10px !important;
+}
+.rcpt-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.rcpt-bal-box {
+  border: 1px solid #000;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.rcpt-bal-label {
+  margin-right: 15px;
+}
+.rcpt-sig-box {
+  text-align: center;
+  width: 250px;
+}
+.rcpt-date {
+  margin: 0 0 35px 0;
+}
+.rcpt-sig-line {
+  border-bottom: 1px solid #000;
+  margin-bottom: 5px;
+}
+.rcpt-sig-title {
+  margin: 0;
+  font-weight: bold;
+}
+.rcpt-thanks {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* === THERMAL (58mm) === */
+.print-thermal {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #000;
+  max-width: 58mm;
+  margin: 0 auto;
+}
+.thm-center {
+  text-align: center;
+}
+.thm-logo {
+  max-width: 40mm;
+  margin-bottom: 5px;
+}
+.thm-bold {
+  font-weight: bold;
+}
+.thm-biz-name {
+  font-size: 14px;
+}
+.thm-biz-sub {
+  font-size: 11px;
+}
+.thm-dashed {
+  border-top: 1px dashed #000;
+  margin: 8px 0;
+}
+.thm-title {
+  font-size: 14px;
+  margin: 5px 0;
+}
+.thm-row {
+  display: flex;
+  justify-content: space-between;
+}
+.thm-label {
+  width: 30px;
+}
+.thm-val {
+  flex: 1;
+  text-align: right;
+}
+.thm-section-title {
+  margin-bottom: 3px;
+}
+.thm-text-sm {
+  font-size: 11px;
+}
+.thm-sig {
+  margin-top: 15px;
+}
+.thm-footer {
+  font-size: 10px;
+  margin-top: 15px;
+}
+.thm-gap {
+  height: 20px;
+}
+

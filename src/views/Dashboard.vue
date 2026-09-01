@@ -50,27 +50,27 @@
     </div>
 
     <div class="dashboard-grid">
-      <div class="dashboard-column">
-        <div class="card chart-container">
-          <h2>Tren Pendapatan (6 Bulan)</h2>
-          <IncomeChart v-if="stats.chartData" :data="stats.chartData" />
-        </div>
-        <div class="chart-grid-2">
-          <div class="card chart-container">
-            <h2 class="chart-title">Distribusi Status Servis</h2>
-            <StatusChart v-if="stats.serviceStatusChart" :data="stats.serviceStatusChart" />
-          </div>
-        </div>
+      <!-- Kiri Atas (2fr): Tren Pendapatan -->
+      <div class="card chart-container">
+        <h2>Tren Pendapatan (6 Bulan)</h2>
+        <IncomeChart v-if="stats.chartData" :data="stats.chartData" />
       </div>
 
-      <div class="dashboard-column">
-        <TodoWidget :items="stats.todoItems" :isLoading="isLoading" />
-        <AbandonedWidget
-          :items="stats.abandonedServices"
-          :isLoading="isLoading"
-          @send-wa="sendWaDashboard"
-        />
+      <!-- Kanan Atas (1fr): Distribusi Status -->
+      <div class="card chart-container">
+        <h2 class="chart-title">Distribusi Status Servis</h2>
+        <StatusChart v-if="stats.serviceStatusChart" :data="stats.serviceStatusChart" />
       </div>
+
+      <!-- Kiri Bawah (2fr): Todo Teknisi -->
+      <TodoWidget :items="stats.todoItems" :isLoading="isLoading" />
+
+      <!-- Kanan Bawah (1fr): Peringatan Follow-up -->
+      <AbandonedWidget
+        :items="stats.abandonedServices"
+        :isLoading="isLoading"
+        @send-wa="sendWaDashboard"
+      />
     </div>
   </div>
 </template>
@@ -165,16 +165,7 @@ onMounted(() => {
 .dashboard-page {
   padding-bottom: 20px;
 }
-.dashboard-column {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-.chart-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-}
+
 .chart-title {
   font-size: 1.1rem;
   text-align: center;
