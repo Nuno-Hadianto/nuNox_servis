@@ -76,7 +76,7 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     testGdrive: (creds, folderId) => invokeSafe('test-gdrive', creds, folderId),
     selectDirectory: () => invokeSafe('select-directory'),
     // Export
-    exportExcel: (data) => invokeSafe('export-excel', data),
+    exportExcel: (data, filename) => invokeSafe('export-excel', data, filename),
     exportPdf: (data) => invokeSafe('export-pdf', data),
     openExternalUrl: (url) => invokeSafe('open-external-url', url),
     getLogoBase64: () => invokeSafe('get-logo-base64'),

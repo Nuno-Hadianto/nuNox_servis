@@ -527,7 +527,7 @@ const exportExcel = async () => {
       'Teknisi': s.technician || '-'
     }))
 
-    const exportResult = await window.api.exportExcel(excelData)
+    const exportResult = await window.api.exportExcel(excelData, 'Data_Servis_nuNox.xlsx')
     if (exportResult.success) {
       Toast.fire({
         icon: 'success',

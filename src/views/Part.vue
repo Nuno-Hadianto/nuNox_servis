@@ -265,6 +265,7 @@ import { Search, Plus, Edit, Trash2, FileSpreadsheet } from 'lucide-vue-next'
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
+import { Toast } from '../utils/toast'
 
 const route = useRoute()
 const parts = ref<Part[]>([])
@@ -445,14 +446,11 @@ const exportExcel = async () => {
       'Catatan': p.notes || ''
     }))
 
-    const exportResult = await window.api.exportExcel(excelData)
+    const exportResult = await window.api.exportExcel(excelData, 'Katalog_Harga_nuNox.xlsx')
     if (exportResult.success) {
-      window.Swal.fire({
+      Toast.fire({
         icon: 'success',
-        title: 'Tersimpan',
-        text: 'Data sparepart berhasil diekspor.',
-        timer: 1500,
-        showConfirmButton: false
+        title: 'Data berhasil diekspor ke Excel'
       })
     } else if (!exportResult.canceled) {
       window.Swal.fire('Error', 'Gagal menyimpan file Excel: ' + exportResult.error, 'error')

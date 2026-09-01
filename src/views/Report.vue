@@ -318,7 +318,7 @@ const exportExcel = async () => {
       'Laba Bersih': sumLaba
     })
 
-    const result = await window.api.exportExcel(excelData)
+    const result = await window.api.exportExcel(excelData, 'Laporan_Keuangan_nuNox.xlsx')
     if (result.success) {
       Toast.fire({
         icon: 'success',

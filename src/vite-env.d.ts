@@ -120,7 +120,7 @@ declare global {
       testGdrive: (creds: string, folderId: string) => Promise<{ success: boolean; error?: string }>
       askAi: (prompt: string) => Promise<{ success: boolean; result?: string; error?: string }>
       selectDirectory: () => Promise<string | null>
-      exportExcel: (data: Record<string, unknown>[]) => Promise<{ success: boolean; filePath?: string; canceled?: boolean; error?: string }>
+      exportExcel: (data: Record<string, unknown>[], filename?: string) => Promise<{ success: boolean; filePath?: string; canceled?: boolean; error?: string }>
       exportPdf: (data: { html: string; filename: string }) => Promise<{ success: boolean; filePath?: string; canceled?: boolean; error?: string }>
       openExternalUrl: (url: string) => Promise<boolean>
       getLogoBase64: () => Promise<string | null>

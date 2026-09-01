@@ -105,11 +105,11 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
   });
 
   // Export & Print
-  ipcMain.handle('export-excel', async (_event: IpcMainInvokeEvent, data: unknown[]) => {
+  ipcMain.handle('export-excel', async (_event: IpcMainInvokeEvent, data: unknown[], filename?: string) => {
     try {
       const { canceled, filePath } = await dialog.showSaveDialog({
         title: 'Simpan Laporan Excel',
-        defaultPath: 'Laporan_nuNox_servis.xlsx',
+        defaultPath: filename || 'Laporan_nuNox_servis.xlsx',
         filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
       });
 

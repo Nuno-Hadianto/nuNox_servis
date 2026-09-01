@@ -356,7 +356,7 @@ const exportExcel = async () => {
       'Catatan': c.notes || ''
     }))
 
-    const exportResult = await window.api.exportExcel(excelData)
+    const exportResult = await window.api.exportExcel(excelData, 'Data_Pelanggan_nuNox.xlsx')
     if (exportResult.success) {
       Toast.fire({
         icon: 'success',

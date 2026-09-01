@@ -125,11 +125,11 @@ function registerMiscIpc(mainWindow) {
         return (0, geminiAi_1.askGemini)(prompt, String(apiKey));
     });
     // Export & Print
-    electron_1.ipcMain.handle('export-excel', async (_event, data) => {
+    electron_1.ipcMain.handle('export-excel', async (_event, data, filename) => {
         try {
             const { canceled, filePath } = await electron_1.dialog.showSaveDialog({
                 title: 'Simpan Laporan Excel',
-                defaultPath: 'Laporan_nuNox_servis.xlsx',
+                defaultPath: filename || 'Laporan_nuNox_servis.xlsx',
                 filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
             });
             if (canceled || !filePath)
