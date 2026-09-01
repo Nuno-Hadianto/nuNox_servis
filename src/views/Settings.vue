@@ -119,79 +119,7 @@
         </form>
       </div>
 
-      <!-- Printer Settings -->
-      <div class="card" style="flex: 1; min-width: 300px; padding: 25px">
-        <h2
-          style="
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--primary-color);
-          "
-        >
-          🖨️ Pengaturan Printer Kasir
-        </h2>
-        <div
-          style="
-            background: rgba(16, 185, 129, 0.05);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            margin-bottom: 15px;
-          "
-        >
-          <p
-            style="
-              color: var(--text-muted);
-              font-size: 0.9rem;
-              line-height: 1.5;
-              margin-bottom: 15px;
-            "
-          >
-            Pilih printer thermal standar untuk fitur <strong>Cetak Senyap (Silent Printing)</strong>.
-            Jika dipilih, struk kasir akan otomatis tercetak tanpa memunculkan dialog Windows.
-          </p>
-          <div class="form-group">
-            <label style="font-weight: 500; font-size: 0.9rem">Default Printer</label>
-            <div style="display: flex; gap: 10px;">
-              <select
-                v-model="form.default_printer"
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  width: 100%;
-                  background: #f9fafb;
-                "
-              >
-                <option value="">-- Nonaktif (Tampilkan Dialog Print) --</option>
-                <option v-for="printer in availablePrinters" :key="printer.name" :value="printer.name">
-                  {{ printer.name }} {{ printer.isDefault ? '(Default OS)' : '' }}
-                </option>
-              </select>
-              <button
-                @click="loadPrinters"
-                class="btn btn-secondary"
-                style="padding: 10px; border-radius: var(--radius-sm);"
-                title="Refresh Daftar Printer"
-              >
-                🔄
-              </button>
-            </div>
-          </div>
-          <div style="margin-top: 15px; text-align: right">
-            <button
-              @click="saveSettings"
-              class="btn btn-primary"
-              style="padding: 8px 16px; border-radius: 20px"
-            >
-              💾 Simpan Printer
-            </button>
-          </div>
-        </div>
-      </div>
+
 
       <!-- Backup & Restore -->
       <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px">
@@ -533,18 +461,7 @@ const waPreviewText = computed(() => {
   return text
 })
 
-const availablePrinters = ref<{ name: string; isDefault?: boolean }[]>([])
 
-const loadPrinters = async () => {
-  if (window.api && window.api.getPrinters) {
-    try {
-      const printers = await window.api.getPrinters()
-      availablePrinters.value = printers
-    } catch (error) {
-      console.error('Failed to load printers:', error)
-    }
-  }
-}
 
 const loadSettings = async () => {
   if (window.api && window.api.getSettings) {
@@ -714,7 +631,6 @@ const handleUpdaterEvent = (_event: unknown, data: any) => {
 
 onMounted(() => {
   loadSettings()
-  loadPrinters()
   if (window.api && window.api.onUpdaterEvent) {
     window.api.onUpdaterEvent(handleUpdaterEvent)
   }
