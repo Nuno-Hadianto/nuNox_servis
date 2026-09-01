@@ -141,9 +141,7 @@ export interface Settings {
   wa_template_status?: string;
   default_printer?: string;
   primary_color?: string;
-  gdrive_enabled?: boolean | string;
-  gdrive_folder_id?: string;
-  gdrive_credentials?: string;
+
   gemini_api_key?: string;
 }
 

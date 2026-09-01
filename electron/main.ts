@@ -9,7 +9,6 @@ import path from 'path';
 import db from '../database/db';
 import log from 'electron-log';
 import {  autoUpdater  } from 'electron-updater';
-import { uploadToGoogleDrive } from './utils/gdriveBackup';
 
 // Setup logging
 (log.transports.file as { level: string }).level = 'info';
@@ -240,19 +239,7 @@ async function performAutoBackup(type: 'cron' | 'daily' = 'daily') {
         fs.unlinkSync(backupPathDb);
         log.info(`Auto backup (${type}) saved to:`, backupPathZip);
 
-        if (settings.gdrive_enabled === 'true') {
-          const gdriveCreds = settings.gdrive_credentials;
-          const gdriveFolderId = settings.gdrive_folder_id;
-          if (gdriveCreds) {
-            log.info('Uploading backup to Google Drive...');
-            const uploadRes = await uploadToGoogleDrive(String(gdriveCreds), String(gdriveFolderId || ''), backupPathZip);
-            if (uploadRes.success) {
-              log.info('Google Drive Backup successful');
-            } else {
-              log.error('Google Drive Backup failed:', uploadRes.error);
-            }
-          }
-        }
+
       } catch (zipError) {
         log.error('Error zipping backup:', zipError);
         log.info('Fallback: Unzipped DB saved to:', backupPathDb);

@@ -45,7 +45,6 @@ const path_1 = __importDefault(require("path"));
 const db_1 = __importDefault(require("../database/db"));
 const electron_log_1 = __importDefault(require("electron-log"));
 const electron_updater_1 = require("electron-updater");
-const gdriveBackup_1 = require("./utils/gdriveBackup");
 // Setup logging
 electron_log_1.default.transports.file.level = 'info';
 electron_updater_1.autoUpdater.logger = electron_log_1.default;
@@ -238,20 +237,6 @@ async function performAutoBackup(type = 'daily') {
                 zip.writeZip(backupPathZip);
                 fs_1.default.unlinkSync(backupPathDb);
                 electron_log_1.default.info(`Auto backup (${type}) saved to:`, backupPathZip);
-                if (settings.gdrive_enabled === 'true') {
-                    const gdriveCreds = settings.gdrive_credentials;
-                    const gdriveFolderId = settings.gdrive_folder_id;
-                    if (gdriveCreds) {
-                        electron_log_1.default.info('Uploading backup to Google Drive...');
-                        const uploadRes = await (0, gdriveBackup_1.uploadToGoogleDrive)(String(gdriveCreds), String(gdriveFolderId || ''), backupPathZip);
-                        if (uploadRes.success) {
-                            electron_log_1.default.info('Google Drive Backup successful');
-                        }
-                        else {
-                            electron_log_1.default.error('Google Drive Backup failed:', uploadRes.error);
-                        }
-                    }
-                }
             }
             catch (zipError) {
                 electron_log_1.default.error('Error zipping backup:', zipError);

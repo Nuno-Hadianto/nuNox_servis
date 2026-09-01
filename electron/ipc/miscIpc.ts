@@ -14,7 +14,7 @@ import * as paymentController from '../../controllers/paymentController';
 import * as settingsController from '../../controllers/settingsController';
 import * as reportController from '../../controllers/reportController';
 import log from 'electron-log';
-import { testGoogleDriveConnection } from '../utils/gdriveBackup';
+
 import { askGemini } from '../utils/geminiAi';
 import * as settingsRepo from '../../repositories/settingsRepository';
 
@@ -92,9 +92,7 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
     return false;
   });
 
-  ipcMain.handle('test-gdrive', async (_event: IpcMainInvokeEvent, creds: string, folderId: string) => {
-    return testGoogleDriveConnection(creds, folderId);
-  });
+
 
   // AI Assistant
   ipcMain.handle('ask-ai', async (_event: IpcMainInvokeEvent, prompt: string) => {

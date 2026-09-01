@@ -49,7 +49,6 @@ const paymentController = __importStar(require("../../controllers/paymentControl
 const settingsController = __importStar(require("../../controllers/settingsController"));
 const reportController = __importStar(require("../../controllers/reportController"));
 const electron_log_1 = __importDefault(require("electron-log"));
-const gdriveBackup_1 = require("../utils/gdriveBackup");
 const geminiAi_1 = require("../utils/geminiAi");
 const settingsRepo = __importStar(require("../../repositories/settingsRepository"));
 function registerMiscIpc(mainWindow) {
@@ -115,9 +114,6 @@ function registerMiscIpc(mainWindow) {
             return true;
         }
         return false;
-    });
-    electron_1.ipcMain.handle('test-gdrive', async (_event, creds, folderId) => {
-        return (0, gdriveBackup_1.testGoogleDriveConnection)(creds, folderId);
     });
     // AI Assistant
     electron_1.ipcMain.handle('ask-ai', async (_event, prompt) => {
