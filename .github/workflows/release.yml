@@ -1,0 +1,31 @@
+name: Release nuNox_servis
+
+on:
+  push:
+    tags:
+      - 'v*' # Workflow berjalan setiap kali push tag yang berawalan "v" (contoh: v1.0.0, v1.0.1)
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    permissions:
+      contents: write # Dibutuhkan agar action bisa membuat Release
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build and Publish Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Token otomatis dari GitHub Actions
+        run: npm run build:all && npx electron-builder --win --publish always

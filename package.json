@@ -31,6 +31,11 @@
   },
   "build": {
     "appId": "com.nunox_servis.app",
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ],
     "productName": "nuNox_servis",
     "icon": "public/img/icon.png",
     "directories": {
