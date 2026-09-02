@@ -53,7 +53,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/settings',
     name: 'Settings',
     component: () => import('../views/Settings.vue'),
-    meta: { title: 'Pengaturan & Backup', roles: ['admin'] }
+    meta: { title: 'Pengaturan', roles: ['admin'] }
   }
 ]
 

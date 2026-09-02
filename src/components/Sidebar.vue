@@ -33,7 +33,7 @@
 
         <li v-if="currentUser?.role === 'admin'" :class="{ active: $route.name === 'Settings' }">
           <router-link to="/settings"
-            ><Settings class="menu-icon" /> Pengaturan & Backup</router-link
+            ><Settings class="menu-icon" /> Pengaturan</router-link
           >
         </li>
       </ul>

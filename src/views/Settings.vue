@@ -1,8 +1,8 @@
 <template>
   <div class="view-section">
-    <div style="display: flex; gap: 25px; flex-wrap: wrap">
+    <div style="display: flex; gap: 25px; flex-wrap: wrap; align-items: flex-start;">
       <!-- Pengaturan Identitas -->
-      <div class="card" style="flex: 1; min-width: 300px; padding: 25px">
+      <div class="card" style="flex: 1; min-width: 300px; padding: 25px; height: fit-content;">
         <h2
           style="
             font-size: 1.2rem;
@@ -182,20 +182,7 @@
             
 
 
-            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-              <h4 style="margin: 0 0 10px 0; font-size: 1rem; color: var(--primary-color);">✨ Asisten AI (Gemini)</h4>
-              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Dapatkan bantuan AI untuk memprediksi kerusakan dan estimasi biaya. Masukkan API Key dari Google AI Studio.</p>
-              <div class="form-group">
-                <label style="font-weight: 500; font-size: 0.85rem">Gemini API Key</label>
-                <input
-                  type="password"
-                  v-model="form.gemini_api_key"
-                  class="form-control"
-                  placeholder="Ketik API Key Anda di sini..."
-                  style="padding: 8px; font-size: 0.85rem; width: 100%; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px;"
-                />
-              </div>
-            </div>
+
 
             <div style="margin-top: 15px; text-align: right">
               <button
@@ -204,6 +191,53 @@
                 style="padding: 8px 16px; border-radius: 20px"
               >
                 💾 Simpan Pengaturan Backup
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Asisten AI -->
+        <div class="card" style="padding: 25px">
+          <h2
+            style="
+              font-size: 1.2rem;
+              margin-bottom: 20px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+            "
+          >
+            ✨ Asisten AI (Gemini)
+          </h2>
+          <div
+            style="
+              background: rgba(59, 130, 246, 0.05);
+              border: 1px solid rgba(59, 130, 246, 0.2);
+              border-radius: var(--radius-md);
+              padding: 20px;
+            "
+          >
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px;">
+              Dapatkan bantuan AI untuk memprediksi kerusakan dan estimasi biaya. Masukkan API Key dari Google AI Studio.
+            </p>
+            <div class="form-group" style="margin-bottom: 15px;">
+              <label style="font-weight: 500; font-size: 0.9rem">Gemini API Key</label>
+              <input
+                type="password"
+                v-model="form.gemini_api_key"
+                class="form-control"
+                placeholder="Ketik API Key Anda di sini..."
+                style="padding: 10px; font-size: 0.9rem; width: 100%; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px;"
+              />
+            </div>
+            <div style="text-align: right">
+              <button
+                @click="saveSettings"
+                class="btn btn-primary"
+                style="padding: 8px 16px; border-radius: 20px"
+              >
+                💾 Simpan API Key
               </button>
             </div>
           </div>
