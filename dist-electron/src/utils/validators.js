@@ -42,7 +42,7 @@ exports.ServiceOrderSchema = zod_1.z.object({
 });
 exports.ServiceItemSchema = zod_1.z.object({
     service_order_id: zod_1.z.number().int('ID Servis tidak valid.'),
-    item_type: zod_1.z.enum(['Jasa', 'Sparepart', 'Biaya lainnya', 'Diskon', 'Part Luar'], {
+    item_type: zod_1.z.enum(['Jasa', 'Sparepart', 'Biaya lainnya', 'Part Luar'], {
         message: 'Jenis item tidak valid.'
     }),
     spare_part_id: zod_1.z.number().int().optional().nullable(),

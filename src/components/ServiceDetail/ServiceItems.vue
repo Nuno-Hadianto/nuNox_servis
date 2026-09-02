@@ -38,7 +38,6 @@
         <option value="Jasa">Jasa</option>
         <option value="Sparepart">Sparepart</option>
         <option value="Biaya lainnya">Lainnya</option>
-        <option value="Diskon">Diskon</option>
       </select>
 
       <input
