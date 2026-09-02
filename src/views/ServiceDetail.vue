@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import QRCode from 'qrcode'
+
 import type {
   ServiceOrder,
   ServiceHistory as ServiceHistoryType,
@@ -416,13 +416,7 @@ const printNota = async () => {
   if (!service.value) return
   try {
     const { settings, logoBase64 } = await getCommonData()
-    let qrBase64 = null
-    try {
-      qrBase64 = await QRCode.toDataURL(service.value.ticket_number)
-    } catch (e) {
-      console.error('QR Code Error:', e)
-    }
-    const html = generateNotaHtml(settings, service.value, logoBase64, qrBase64)
+    const html = generateNotaHtml(settings, service.value, logoBase64)
     await printHtml(html, true) // landscape for nota
   } catch (error: unknown) {
     console.error(error)

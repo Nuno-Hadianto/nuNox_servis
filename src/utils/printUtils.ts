@@ -3,8 +3,7 @@ import type { Settings, ServiceOrder, ServiceItem, Payment } from '../../shared/
 export const generateNotaHtml = (
   settings: Partial<Settings> | null,
   service: Partial<ServiceOrder> | null,
-  logoBase64: string | null,
-  qrBase64: string | null = null
+  logoBase64: string | null
 ) => {
   settings = settings || {}
   return `
@@ -13,15 +12,16 @@ export const generateNotaHtml = (
             <div class="nota-header">
                 <div class="nota-header-left">
                     ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="nota-logo" />` : ''}
-                    <h2 class="nota-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
-                    <div class="nota-biz-addr">${settings.address || ''}</div>
-                    <div class="nota-biz-phone">📞 ${settings.whatsapp || settings.phone || ''}</div>
+                    <div class="nota-biz-info">
+                        <h2 class="nota-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
+                        <div class="nota-biz-addr">${settings.address || ''}</div>
+                        <div class="nota-biz-phone">📞 ${settings.whatsapp || settings.phone || ''}</div>
+                    </div>
                 </div>
                 <div class="nota-header-right">
                     <h1 class="nota-title">TANDA TERIMA</h1>
                     <div class="nota-no"><strong>No:</strong> ${service ? service.ticket_number : '..............................'}</div>
                     <div class="nota-date">Tanggal: ${service ? new Date(service.created_at + 'Z').toLocaleDateString('id-ID') : '..............................'}</div>
-                    ${qrBase64 ? `<img src="${qrBase64}" alt="QR Code" style="width: 80px; height: 80px; margin-top: 5px;" />` : ''}
                 </div>
             </div>
             
@@ -48,8 +48,8 @@ export const generateNotaHtml = (
                 </div>
                 
                 <!-- Keluhan -->
-                <div class="nota-col-red">
-                    <h4 class="nota-col-title-red">Keluhan / Kerusakan</h4>
+                <div class="nota-col">
+                    <h4 class="nota-col-title">Keluhan / Kerusakan</h4>
                     <div class="nota-complaint">${service ? service.customer_complaint : '.......................<br/>.......................<br/>.......................'}</div>
                 </div>
             </div>
@@ -128,9 +128,11 @@ export const generateInvoiceHtml = (
             <div class="inv-header">
                 <div class="inv-header-left">
                     ${logoHtml}
-                    <h2 class="inv-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
-                    <div class="inv-biz-addr">${settings.address || ''}</div>
-                    <div class="inv-biz-phone">${settings.whatsapp || settings.phone || ''}</div>
+                    <div class="inv-biz-info">
+                        <h2 class="inv-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
+                        <div class="inv-biz-addr">${settings.address || ''}</div>
+                        <div class="inv-biz-phone">${settings.whatsapp || settings.phone || ''}</div>
+                    </div>
                 </div>
                 <div class="inv-header-right">
                     <h1 class="inv-title">INVOICE</h1>
@@ -220,9 +222,11 @@ export const generateBlankNotaHtml = (settings: Partial<Settings> | null, logoBa
             <div class="nota-header">
                 <div class="nota-header-left">
                     ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="nota-logo" />` : ''}
-                    <h2 class="nota-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
-                    <div class="nota-biz-addr">${settings.address || ''}</div>
-                    <div class="nota-biz-phone">📞 ${settings.whatsapp || settings.phone || ''}</div>
+                    <div class="nota-biz-info">
+                        <h2 class="nota-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
+                        <div class="nota-biz-addr">${settings.address || ''}</div>
+                        <div class="nota-biz-phone">📞 ${settings.whatsapp || settings.phone || ''}</div>
+                    </div>
                 </div>
                 <div class="nota-header-right">
                     <h1 class="nota-title">TANDA TERIMA</h1>
@@ -254,8 +258,8 @@ export const generateBlankNotaHtml = (settings: Partial<Settings> | null, logoBa
                 </div>
                 
                 <!-- Keluhan -->
-                <div class="nota-col-red">
-                    <h4 class="nota-col-title-red">Keluhan / Kerusakan</h4>
+                <div class="nota-col">
+                    <h4 class="nota-col-title">Keluhan / Kerusakan</h4>
                     <div class="nota-complaint">.......................<br/>.......................<br/>.......................</div>
                 </div>
             </div>
@@ -290,11 +294,13 @@ export const generateBlankReceiptHtml = (settings: Partial<Settings> | null, log
   return `
         <div class="print-receipt rcpt-wrapper">
             <div class="rcpt-header">
-                <div>
+                <div class="nota-header-left">
                     ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="nota-logo" />` : ''}
-                    <h2 class="rcpt-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
-                    <div class="rcpt-biz-addr">${settings.address || ''}</div>
-                    <div class="rcpt-biz-phone">📞 Telp/WA: ${settings.whatsapp || settings.phone || ''}</div>
+                    <div class="nota-biz-info">
+                        <h2 class="rcpt-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
+                        <div class="rcpt-biz-addr">${settings.address || ''}</div>
+                        <div class="rcpt-biz-phone">📞 Telp/WA: ${settings.whatsapp || settings.phone || ''}</div>
+                    </div>
                 </div>
                 <div style="text-align: right;">
                     <h1 class="rcpt-title">KWITANSI</h1>
@@ -566,8 +572,7 @@ export const exportHtmlToPdf = async (html: string, filename: string) => {
 export const generateThermalNotaHtml = (
   settings: Partial<Settings> | null,
   service: Partial<ServiceOrder> | null,
-  logoBase64: string | null,
-  qrBase64: string | null = null
+  logoBase64: string | null
 ) => {
   settings = settings || {}
   return `
@@ -630,7 +635,6 @@ export const generateThermalNotaHtml = (
             <div class="thm-center thm-footer">
                 * Harap bawa struk ini saat mengambil barang.
             </div>
-            ${qrBase64 ? `<div class="thm-center" style="margin-top: 15px;"><img src="${qrBase64}" alt="QR" style="width: 100px; height: 100px;" /><div style="font-size: 8pt; margin-top: 5px;">Scan untuk detail</div></div>` : ''}
             <div class="thm-gap"></div> <!-- Extra space for tearing -->
         </div>
     `
