@@ -15,6 +15,8 @@
     <div
       style="
         display: flex;
+        flex-wrap: wrap;
+        align-items: center;
         gap: 10px;
         margin-bottom: 20px;
         background: var(--bg-color);
@@ -26,11 +28,11 @@
       <select
         v-model="form.type"
         @change="onItemTypeChange"
+        class="form-control"
         style="
-          padding: 8px;
-          border: 1px solid var(--border-color);
+          width: auto;
+          padding: 8px 12px;
           border-radius: var(--radius-sm);
-          background: white;
         "
       >
         <option value="Jasa">Jasa</option>
@@ -42,11 +44,12 @@
       <input
         type="text"
         v-model="form.desc"
+        class="form-control"
         placeholder="Keterangan"
         style="
           flex: 1;
-          padding: 8px;
-          border: 1px solid var(--border-color);
+          min-width: 120px;
+          padding: 8px 12px;
           border-radius: var(--radius-sm);
         "
       />
@@ -54,12 +57,12 @@
       <input
         type="number"
         v-model.number="form.qty"
+        class="form-control"
         placeholder="Qty"
         min="1"
         style="
-          width: 60px;
-          padding: 8px;
-          border: 1px solid var(--border-color);
+          width: 70px;
+          padding: 8px 12px;
           border-radius: var(--radius-sm);
         "
       />
@@ -67,22 +70,24 @@
         v-if="form.type === 'Sparepart'"
         type="number"
         v-model.number="form.costPrice"
+        class="form-control"
         placeholder="Harga Beli (Modal)"
         style="
-          width: 140px;
-          padding: 8px;
-          border: 1px solid var(--border-color);
+          flex: 1;
+          min-width: 130px;
+          padding: 8px 12px;
           border-radius: var(--radius-sm);
         "
       />
       <input
         type="number"
         v-model.number="form.price"
+        class="form-control"
         :placeholder="form.type === 'Sparepart' ? 'Harga Jual' : 'Harga'"
         style="
-          width: 130px;
-          padding: 8px;
-          border: 1px solid var(--border-color);
+          flex: 1;
+          min-width: 110px;
+          padding: 8px 12px;
           border-radius: var(--radius-sm);
         "
       />

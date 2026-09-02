@@ -16,12 +16,8 @@
         <label style="font-size: 0.85rem">Ubah Status</label>
         <select
           v-model="form.status"
-          style="
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 10px;
-            width: 100%;
-          "
+          class="form-control"
+          style="padding: 10px; border-radius: var(--radius-sm);"
         >
           <option value="Diterima">Diterima</option>
           <option value="Pengecekan">Pengecekan</option>
@@ -33,35 +29,31 @@
         </select>
       </div>
       <div class="form-group" style="margin: 0">
-        <label style="font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
-          Hasil Diagnosis / Tindakan Dilakukan
+        <label style="font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          Pemeriksaan & Perbaikan
           <button type="button" @click="askAiForDiagnosis" class="btn" style="padding: 2px 8px; font-size: 0.75rem; background: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;" title="Minta AI memberikan saran diagnosis dan tindakan">✨ Analisis AI</button>
         </label>
-        <div style="display: flex; gap: 10px">
-          <textarea
-            v-model="form.diagnosis_result"
-            rows="2"
-            placeholder="Hasil Pengecekan"
-            style="
-              flex: 1;
-              border: 1px solid var(--border-color);
-              border-radius: var(--radius-sm);
-              padding: 10px;
-              resize: vertical;
-            "
-          ></textarea>
-          <textarea
-            v-model="form.actions_taken"
-            rows="2"
-            placeholder="Tindakan"
-            style="
-              flex: 1;
-              border: 1px solid var(--border-color);
-              border-radius: var(--radius-sm);
-              padding: 10px;
-              resize: vertical;
-            "
-          ></textarea>
+        <div style="display: flex; gap: 15px; width: 100%;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 5px">
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">HASIL DIAGNOSIS</span>
+            <textarea
+              v-model="form.diagnosis_result"
+              rows="3"
+              class="form-control"
+              placeholder="Jelaskan kerusakan..."
+              style="padding: 10px; border-radius: var(--radius-sm); resize: vertical; width: 100%; box-sizing: border-box;"
+            ></textarea>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 5px">
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">TINDAKAN DILAKUKAN</span>
+            <textarea
+              v-model="form.actions_taken"
+              rows="3"
+              class="form-control"
+              placeholder="Jelaskan tindakan perbaikan..."
+              style="padding: 10px; border-radius: var(--radius-sm); resize: vertical; width: 100%; box-sizing: border-box;"
+            ></textarea>
+          </div>
         </div>
       </div>
       <div class="form-group" style="margin: 0">
@@ -69,13 +61,9 @@
         <textarea
           v-model="form.technician_notes"
           rows="2"
+          class="form-control"
           placeholder="Catatan ini tidak muncul di struk"
-          style="
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 10px;
-            resize: vertical;
-          "
+          style="padding: 10px; border-radius: var(--radius-sm); resize: vertical; width: 100%; box-sizing: border-box;"
         ></textarea>
       </div>
       <button
