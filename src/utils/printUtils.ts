@@ -14,14 +14,14 @@ export const generateNotaHtml = (
                     ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="nota-logo" />` : ''}
                     <div class="nota-biz-info">
                         <h2 class="nota-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
-                        <div class="nota-biz-addr">${settings.address || ''}</div>
+                        <div class="nota-biz-addr">📍 ${settings.address || ''}</div>
                         <div class="nota-biz-phone">📞 ${settings.whatsapp || settings.phone || ''}</div>
                     </div>
                 </div>
                 <div class="nota-header-right">
                     <h1 class="nota-title">TANDA TERIMA</h1>
-                    <div class="nota-no"><strong>No:</strong> ${service ? service.ticket_number : '..............................'}</div>
-                    <div class="nota-date">Tanggal: ${service ? new Date(service.created_at + 'Z').toLocaleDateString('id-ID') : '..............................'}</div>
+                    <div class="nota-no"><strong>No:</strong> ${service ? service.ticket_number : '...................................'}</div>
+                    <div class="nota-date">Tanggal: ${service ? new Date(service.created_at + 'Z').toLocaleDateString('id-ID') : '...................................'}</div>
                 </div>
             </div>
             
@@ -31,9 +31,9 @@ export const generateNotaHtml = (
                 <div class="nota-col">
                     <h4 class="nota-col-title">Data Pelanggan</h4>
                     <table class="nota-table">
-                        <tr><td class="nota-label">Nama</td><td>: <strong>${service ? service.customer_name : '.......................'}</strong></td></tr>
-                        <tr><td class="nota-label">No. HP</td><td>: ${service ? service.customer_phone || '-' : '.......................'}</td></tr>
-                        <tr><td class="nota-label">Alamat</td><td>: ${service ? service.customer_address || '-' : '.......................'}</td></tr>
+                        <tr><td class="nota-label">Nama</td><td>: <strong>${service ? service.customer_name : '............................'}</strong></td></tr>
+                        <tr><td class="nota-label">No. HP</td><td>: ${service ? service.customer_phone || '-' : '............................'}</td></tr>
+                        <tr><td class="nota-label">Alamat</td><td>: ${service ? service.customer_address || '-' : '............................'}</td></tr>
                     </table>
                 </div>
                 
@@ -41,16 +41,16 @@ export const generateNotaHtml = (
                 <div class="nota-col">
                     <h4 class="nota-col-title">Data Perangkat</h4>
                     <table class="nota-table">
-                        <tr><td class="nota-label">Jenis</td><td>: <strong>${service ? service.device_type : '.......................'}</strong></td></tr>
-                        <tr><td class="nota-label">Merk/Tipe</td><td>: ${service ? (service.brand || '') + ' ' + (service.model || '') : '.......................'}</td></tr>
-                        <tr><td class="nota-label">SN</td><td>: ${service ? service.serial_number || '-' : '.......................'}</td></tr>
+                        <tr><td class="nota-label">Jenis</td><td>: <strong>${service ? service.device_type : '............................'}</strong></td></tr>
+                        <tr><td class="nota-label">Merk/Tipe</td><td>: ${service ? (service.brand || '') + ' ' + (service.model || '') : '............................'}</td></tr>
+                        <tr><td class="nota-label">SN</td><td>: ${service ? service.serial_number || '-' : '............................'}</td></tr>
                     </table>
                 </div>
                 
                 <!-- Keluhan -->
                 <div class="nota-col">
                     <h4 class="nota-col-title">Keluhan / Kerusakan</h4>
-                    <div class="nota-complaint">${service ? service.customer_complaint : '.......................<br/>.......................<br/>.......................'}</div>
+                    <div class="nota-complaint">${service ? service.customer_complaint : '..................................................<br/>..................................................<br/>..................................................'}</div>
                 </div>
             </div>
             
@@ -71,7 +71,7 @@ export const generateNotaHtml = (
                 
                 <div class="nota-sig-box">
                     <div class="nota-sig-title">Pelanggan,</div>
-                    <div class="nota-sig-line">${service ? service.customer_name : '.......................'}</div>
+                    <div class="nota-sig-line">${service ? service.customer_name : '............................'}</div>
                 </div>
             </div>
         </div>
@@ -130,7 +130,7 @@ export const generateInvoiceHtml = (
                     ${logoHtml}
                     <div class="inv-biz-info">
                         <h2 class="inv-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
-                        <div class="inv-biz-addr">${settings.address || ''}</div>
+                        <div class="inv-biz-addr">📍 ${settings.address || ''}</div>
                         <div class="inv-biz-phone">${settings.whatsapp || settings.phone || ''}</div>
                     </div>
                 </div>
@@ -206,7 +206,7 @@ export const generateInvoiceHtml = (
                     <div class="nota-sig-line">${service.customer_name}</div>
                 </div>
                 <div class="inv-sig-col">
-                    <div class="nota-sig-title">Teknisi / Kasir</div>
+                    <div class="nota-sig-title">Hormat Kami</div>
                     <div class="nota-sig-line">${settings.business_name || 'NUNOX'}</div>
                 </div>
             </div>
@@ -224,14 +224,14 @@ export const generateBlankNotaHtml = (settings: Partial<Settings> | null, logoBa
                     ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="nota-logo" />` : ''}
                     <div class="nota-biz-info">
                         <h2 class="nota-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
-                        <div class="nota-biz-addr">${settings.address || ''}</div>
+                        <div class="nota-biz-addr">📍 ${settings.address || ''}</div>
                         <div class="nota-biz-phone">📞 ${settings.whatsapp || settings.phone || ''}</div>
                     </div>
                 </div>
                 <div class="nota-header-right">
                     <h1 class="nota-title">TANDA TERIMA</h1>
-                    <div class="nota-no"><strong>No:</strong> ..............................</div>
-                    <div class="nota-date">Tanggal: ..............................</div>
+                    <div class="nota-no"><strong>No:</strong> ...................................</div>
+                    <div class="nota-date">Tanggal: ...................................</div>
                 </div>
             </div>
             
@@ -241,9 +241,9 @@ export const generateBlankNotaHtml = (settings: Partial<Settings> | null, logoBa
                 <div class="nota-col">
                     <h4 class="nota-col-title">Data Pelanggan</h4>
                     <table class="nota-table">
-                        <tr><td class="nota-label">Nama</td><td>: <strong>.......................</strong></td></tr>
-                        <tr><td class="nota-label">No. HP</td><td>: .......................</td></tr>
-                        <tr><td class="nota-label">Alamat</td><td>: .......................</td></tr>
+                        <tr><td class="nota-label">Nama</td><td>: <strong>............................</strong></td></tr>
+                        <tr><td class="nota-label">No. HP</td><td>: ............................</td></tr>
+                        <tr><td class="nota-label">Alamat</td><td>: ............................</td></tr>
                     </table>
                 </div>
                 
@@ -251,16 +251,20 @@ export const generateBlankNotaHtml = (settings: Partial<Settings> | null, logoBa
                 <div class="nota-col">
                     <h4 class="nota-col-title">Data Perangkat</h4>
                     <table class="nota-table">
-                        <tr><td class="nota-label">Jenis</td><td>: <strong>.......................</strong></td></tr>
-                        <tr><td class="nota-label">Merk/Tipe</td><td>: .......................</td></tr>
-                        <tr><td class="nota-label">SN</td><td>: .......................</td></tr>
+                        <tr><td class="nota-label">Jenis</td><td>: <strong>............................</strong></td></tr>
+                        <tr><td class="nota-label">Merk/Tipe</td><td>: ............................</td></tr>
+                        <tr><td class="nota-label">SN</td><td>: ............................</td></tr>
                     </table>
                 </div>
                 
                 <!-- Keluhan -->
                 <div class="nota-col">
                     <h4 class="nota-col-title">Keluhan / Kerusakan</h4>
-                    <div class="nota-complaint">.......................<br/>.......................<br/>.......................</div>
+                    <table class="nota-table">
+                        <tr><td>..................................................</td></tr>
+                        <tr><td>..................................................</td></tr>
+                        <tr><td>..................................................</td></tr>
+                    </table>
                 </div>
             </div>
             
@@ -273,10 +277,10 @@ export const generateBlankNotaHtml = (settings: Partial<Settings> | null, logoBa
             <div class="nota-footer">
                 <div class="nota-sig-box">
                     <div class="nota-sig-title">Pelanggan</div>
-                    <div class="nota-sig-line">.........................</div>
+                    <div class="nota-sig-line">..............................</div>
                 </div>
                 <div class="nota-sig-box">
-                    <div class="nota-sig-title">Teknisi / Kasir</div>
+                    <div class="nota-sig-title">Hormat Kami</div>
                     <div class="nota-sig-line">${settings.business_name || 'NUNOX'}</div>
                 </div>
             </div>
@@ -298,13 +302,13 @@ export const generateBlankReceiptHtml = (settings: Partial<Settings> | null, log
                     ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="nota-logo" />` : ''}
                     <div class="nota-biz-info">
                         <h2 class="rcpt-biz-name">${settings.business_name || 'NUNOX SERVIS'}</h2>
-                        <div class="rcpt-biz-addr">${settings.address || ''}</div>
+                        <div class="rcpt-biz-addr">📍 ${settings.address || ''}</div>
                         <div class="rcpt-biz-phone">📞 Telp/WA: ${settings.whatsapp || settings.phone || ''}</div>
                     </div>
                 </div>
                 <div style="text-align: right;">
                     <h1 class="rcpt-title">KWITANSI</h1>
-                    <div class="rcpt-no"><strong>No:</strong> ....................................</div>
+                    <div class="rcpt-no"><strong>No:</strong> .........................................</div>
                 </div>
             </div>
             
@@ -338,10 +342,10 @@ export const generateBlankReceiptHtml = (settings: Partial<Settings> | null, log
             <div class="rcpt-footer">
                 <div class="rcpt-bal-box">
                     <span class="rcpt-bal-label">Sisa Tagihan</span>
-                    <span class="rcpt-bal-val">Rp .................................</span>
+                    <span class="rcpt-bal-val">Rp ......................................</span>
                 </div>
                 <div class="rcpt-sig-box">
-                    <p class="rcpt-date">................., ......................... ${new Date().getFullYear()}</p>
+                    <p class="rcpt-date">................., .............................. ${new Date().getFullYear()}</p>
                     <div class="rcpt-sig-line"></div>
                     <p class="rcpt-sig-title">Tanda Tangan Penerima</p>
                 </div>
@@ -581,7 +585,7 @@ export const generateThermalNotaHtml = (
             <div class="thm-center">
                 ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="thm-logo" />` : ''}
                 <div class="thm-bold thm-biz-name">${settings.business_name || 'NUNOX SERVIS'}</div>
-                <div class="thm-biz-sub">${settings.address || ''}</div>
+                <div class="thm-biz-sub">📍 ${settings.address || ''}</div>
                 <div class="thm-biz-sub">WA: ${settings.whatsapp || settings.phone || ''}</div>
             </div>
             
