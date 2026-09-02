@@ -62,14 +62,19 @@
         <StatusChart v-if="stats.serviceStatusChart" :data="stats.serviceStatusChart" />
       </div>
 
-      <!-- Kiri Bawah (2fr): Todo Teknisi -->
-      <TodoWidget :items="stats.todoItems" :isLoading="isLoading" />
+      <!-- Bawah: Todo Teknisi (Full Width) -->
+      <TodoWidget 
+        :items="stats.todoItems" 
+        :isLoading="isLoading" 
+        style="grid-column: 1 / -1;"
+      />
 
-      <!-- Kanan Bawah (1fr): Peringatan Follow-up -->
+      <!-- Paling Bawah: Peringatan Follow-up (Full Width) -->
       <AbandonedWidget
         :items="stats.abandonedServices"
         :isLoading="isLoading"
         @send-wa="sendWaDashboard"
+        style="grid-column: 1 / -1;"
       />
     </div>
   </div>

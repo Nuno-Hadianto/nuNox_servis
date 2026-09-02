@@ -48,17 +48,17 @@ const renderChart = () => {
           position: 'bottom', 
           labels: { 
             color: getTextColor(),
-            padding: 15,
+            padding: 20,
             usePointStyle: true,
-            font: { size: 10 },
-            boxWidth: 8
+            font: { size: 13, weight: '500' },
+            boxWidth: 10
           } 
         }
       },
       layout: {
-        padding: { top: 10, bottom: 30, left: 10, right: 10 }
+        padding: { top: 10, bottom: 10, left: 10, right: 10 }
       },
-      cutout: '70%'
+      cutout: '60%'
     }
   })
 }

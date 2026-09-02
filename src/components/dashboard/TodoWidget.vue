@@ -7,9 +7,10 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>No. Tiket</th>
-            <th>Keterangan</th>
-            <th>Status</th>
+            <th style="width: 20%;">No. Tiket</th>
+            <th style="width: 45%;">Keterangan</th>
+            <th style="width: 20%;">Status</th>
+            <th style="width: 15%;">Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -19,13 +20,14 @@
               <td><SkeletonLoader width="80px" height="20px" /></td>
               <td><SkeletonLoader width="150px" height="20px" /></td>
               <td><SkeletonLoader width="60px" height="20px" borderRadius="10px" /></td>
+              <td><SkeletonLoader width="50px" height="20px" borderRadius="12px" /></td>
             </tr>
           </template>
 
           <!-- Actual Data -->
           <template v-else>
             <tr v-if="!items || items.length === 0">
-              <td colspan="3" class="text-center empty-state">
+              <td colspan="4" class="text-center empty-state">
                 Tidak ada tugas mendesak hari ini.
               </td>
             </tr>
@@ -47,6 +49,11 @@
                 >
                 <span v-else class="badge badge-info">Menunggu</span>
               </td>
+              <td>
+                <button class="btn-action">
+                  <ArrowRight :size="14" :stroke-width="2.5" /> Buka
+                </button>
+              </td>
             </tr>
           </template>
         </tbody>
@@ -56,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { ClipboardList } from 'lucide-vue-next'
+import { ClipboardList, ArrowRight } from 'lucide-vue-next'
 import SkeletonLoader from '../SkeletonLoader.vue'
 import type { TodoItem } from '../../../shared/types'
 import { useRouter } from 'vue-router'
@@ -90,6 +97,30 @@ const $router = useRouter()
 .ticket-col {
   color: var(--primary);
   font-weight: bold;
+}
+.btn-action {
+  background: linear-gradient(135deg, var(--primary), #4f46e5);
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+  background: linear-gradient(135deg, #6b70f0, #4f46e5);
+}
+.btn-action:active {
+  transform: scale(0.95);
 }
 .text-center {
   text-align: center;

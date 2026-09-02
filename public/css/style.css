@@ -409,6 +409,10 @@ a {
     gap: 24px;
 }
 
+.dashboard-grid > * {
+    min-width: 0;
+}
+
 /* Tables */
 .table-container {
   width: 100%;
