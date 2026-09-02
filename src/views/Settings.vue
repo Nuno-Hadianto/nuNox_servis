@@ -323,7 +323,7 @@
                 style="border-radius: 20px; padding: 10px 20px; justify-content: center; display: flex; align-items: center; gap: 8px;"
               >
                 <span v-if="isCheckingUpdate">⏳ Sedang Mengecek...</span>
-                <span v-else>🔍 Cek Pembaruan Manual</span>
+                <span v-else>🔍 Cek Pembaruan</span>
               </button>
               
               <button

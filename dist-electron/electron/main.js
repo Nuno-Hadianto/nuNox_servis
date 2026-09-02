@@ -135,8 +135,8 @@ electron_1.app.whenReady().then(() => {
     console.log('Creating window...');
     createWindow();
     console.log('Window created');
-    // Check for updates
-    electron_updater_1.autoUpdater.checkForUpdatesAndNotify();
+    // Check for updates (Disabled auto-update per user request - manual only)
+    // autoUpdater.checkForUpdatesAndNotify();
     electron_1.app.on('activate', () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0) {
             createWindow();

@@ -116,8 +116,8 @@ app.whenReady().then(() => {
   createWindow();
   console.log('Window created');
 
-  // Check for updates
-  autoUpdater.checkForUpdatesAndNotify();
+  // Check for updates (Disabled auto-update per user request - manual only)
+  // autoUpdater.checkForUpdatesAndNotify();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
