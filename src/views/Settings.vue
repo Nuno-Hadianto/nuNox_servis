@@ -205,20 +205,22 @@
               margin-bottom: 15px;
             "
           >
-            <p
-              style="
-                color: var(--text-muted);
-                font-size: 0.9rem;
-                line-height: 1.5;
-                margin-bottom: 15px;
-              "
-            >
-              Pilih folder <strong>Google Drive</strong>, <strong>OneDrive</strong>, atau folder aman lainnya di komputer Anda. Aplikasi akan otomatis melakukan pencadangan setiap kali Anda menutup aplikasi.
-              <br><br>
-              <span style="font-size: 0.85rem; color: #64748b; background: rgba(0,0,0,0.03); padding: 4px 8px; border-radius: 4px;">
-                💡 <b>Info:</b> Jika belum ada folder yang dipilih, sistem akan mem-backup secara otomatis ke folder bawaan: <b>Documents\nuNox_servis_Backups</b>
-              </span>
-            </p>
+            <div style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px;">
+              Pilih lokasi folder untuk menyimpan cadangan data (seperti <strong>Google Drive</strong> atau <strong>OneDrive</strong>).
+              
+              <div style="margin-top: 10px; margin-bottom: 12px; color: var(--text-primary);">
+                <strong>Jadwal Backup Otomatis:</strong>
+                <ul style="margin-top: 4px; padding-left: 20px; margin-bottom: 0;">
+                  <li>Setiap <b>2 Jam</b> sekali (selagi aplikasi terbuka).</li>
+                  <li>Setiap kali Anda <b>menutup aplikasi</b>.</li>
+                </ul>
+              </div>
+
+              <div style="font-size: 0.85rem; color: #047857; background: rgba(16, 185, 129, 0.15); padding: 10px 12px; border-radius: 6px; border-left: 3px solid #10b981; margin-top: 15px; line-height: 1.4;">
+                💡 <b>Catatan:</b> Jika kolom di bawah dibiarkan kosong, sistem akan tetap bekerja dengan menyimpan file <i>backup</i> ke folder bawaan Windows Anda:<br>
+                <code style="background: rgba(255,255,255,0.6); padding: 2px 6px; border-radius: 4px; margin-top: 6px; display: inline-block; font-weight: 600; color: #065f46;">Documents\nuNox_servis_Backups</code>
+              </div>
+            </div>
             <div style="display: flex; gap: 10px; align-items: center">
               <input
                 type="text"
@@ -371,9 +373,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import type { Settings } from '../../shared/types'
-import pkg from '../../package.json'
 
-const appVersion = pkg.version
 const dbSize = ref<string>('0 KB')
 
 const form = reactive<Settings>({

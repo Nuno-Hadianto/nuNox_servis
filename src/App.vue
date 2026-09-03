@@ -77,9 +77,6 @@ const authStore = useAuthStore()
 const { isLoggedIn } = storeToRefs(authStore)
 const themeStore = useThemeStore()
 
-let barcodeBuffer = ''
-let barcodeTimeout: ReturnType<typeof setTimeout> | null = null
-
 const handleGlobalKeydown = async (e: KeyboardEvent) => {
   // Abaikan jika mengetik di input, textarea, select
   const target = e.target as HTMLElement
@@ -87,40 +84,10 @@ const handleGlobalKeydown = async (e: KeyboardEvent) => {
     return
   }
 
+  // Tutup modal saat tekan Escape
   if (e.key === 'Escape') {
     const closeBtn = document.querySelector('.modal.show .close-modal') as HTMLElement
     if (closeBtn) closeBtn.click()
-  }
-
-  if (e.key === 'Enter') {
-    if (barcodeBuffer.startsWith('NSV-')) {
-      // Valid barcode format
-      try {
-        if (window.api && window.api.getServiceByTicket) {
-          const svc = await window.api.getServiceByTicket(barcodeBuffer)
-          if (svc && svc.id) {
-            Toast.fire({ icon: 'success', title: 'Tiket ditemukan!' })
-            router.push('/services/' + svc.id)
-          } else {
-            Toast.fire({ icon: 'error', title: 'Tiket tidak ditemukan' })
-          }
-        }
-      } catch (err) {
-        console.error(err)
-      }
-    }
-    barcodeBuffer = ''
-    return
-  }
-
-  // Hanya tangkap karakter alphanumeric dan dash
-  if (/^[-a-zA-Z0-9]$/.test(e.key)) {
-    barcodeBuffer += e.key
-
-    if (barcodeTimeout) clearTimeout(barcodeTimeout)
-    barcodeTimeout = setTimeout(() => {
-      barcodeBuffer = ''
-    }, 50) // Scanner ngetik sangat cepat (< 50ms)
   }
 }
 
