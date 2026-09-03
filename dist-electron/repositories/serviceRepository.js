@@ -12,10 +12,6 @@ exports.addService = addService;
 exports.updateServiceStatus = updateServiceStatus;
 exports.updateServiceDetails = updateServiceDetails;
 exports.deleteService = deleteService;
-exports.addPhoto = addPhoto;
-exports.getPhotos = getPhotos;
-exports.getPhotoById = getPhotoById;
-exports.deletePhoto = deletePhoto;
 exports.checkWarranty = checkWarranty;
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
@@ -235,27 +231,6 @@ function deleteService(id) {
         db_1.default.drizzle.delete(drizzleSchema_1.serviceOrders).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, Number(id))).run();
         return true;
     })();
-}
-// Photos logic
-function addPhoto(serviceOrderId, photoType, filepath) {
-    const info = db_1.default.drizzle.insert(drizzleSchema_1.servicePhotos).values({
-        service_order_id: Number(serviceOrderId),
-        photo_type: photoType,
-        filepath: filepath
-    }).run();
-    return info.lastInsertRowid;
-}
-function getPhotos(serviceOrderId) {
-    return db_1.default.drizzle.select().from(drizzleSchema_1.servicePhotos)
-        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.servicePhotos.service_order_id, Number(serviceOrderId)))
-        .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.servicePhotos.id)).all();
-}
-function getPhotoById(id) {
-    return db_1.default.drizzle.select().from(drizzleSchema_1.servicePhotos).where((0, drizzle_orm_1.eq)(drizzleSchema_1.servicePhotos.id, Number(id))).get();
-}
-function deletePhoto(id) {
-    db_1.default.drizzle.delete(drizzleSchema_1.servicePhotos).where((0, drizzle_orm_1.eq)(drizzleSchema_1.servicePhotos.id, Number(id))).run();
-    return true;
 }
 // Warranty Logic
 function checkWarranty(deviceId) {

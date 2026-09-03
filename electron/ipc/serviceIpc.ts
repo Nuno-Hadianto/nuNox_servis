@@ -1,13 +1,8 @@
-
-import fs from 'fs';
-import path from 'path';
-import {  app  } from 'electron';
 import type { IpcMainInvokeEvent } from 'electron';
 import type { ServiceOrder, ServiceItem } from '../../shared/types';
 import {  ipcMain  } from 'electron';
 import * as serviceController from '../../controllers/serviceController';
 import * as serviceItemController from '../../controllers/serviceItemController';
-import log from 'electron-log';
 import {  validateData, ServiceOrderSchema, ServiceItemSchema  } from '../../src/utils/validators';
 
 function registerServiceIpc() {
@@ -37,40 +32,6 @@ function registerServiceIpc() {
   // Warranty
   ipcMain.handle('check-warranty', (event: IpcMainInvokeEvent, deviceId: number) => serviceController.checkWarranty(deviceId));
 
-  // Photos
-
-
-
-
-  ipcMain.handle('upload-photo', async (event: IpcMainInvokeEvent, serviceId: number, type: string, buffer: Buffer, fileName: string) => {
-    try {
-      const photosDir = path.join(app.getPath('userData'), 'photos');
-      const uniqueName = Date.now() + '_' + fileName;
-      const filepath = path.join(photosDir, uniqueName);
-      
-      fs.writeFileSync(filepath, Buffer.from(buffer));
-      
-      const id = serviceController.addPhoto(serviceId, type, filepath);
-      return { success: true, id, filepath };
-    } catch (e: unknown) {
-      log.error('Error in upload-photo:', e);
-      return { success: false, error: e instanceof Error ? e.message : String(e) };
-    }
-  });
-
-  ipcMain.handle('get-photos', (event: IpcMainInvokeEvent, serviceId: number) => serviceController.getPhotos(serviceId));
-
-  ipcMain.handle('delete-photo', (event: IpcMainInvokeEvent, id: number) => {
-    const photo = serviceController.getPhotoById(id);
-    if (photo && photo.filepath) {
-      try {
-        fs.unlinkSync(photo.filepath);
-      } catch (e) {
-        log.error("Failed to delete photo from disk:", e);
-      }
-    }
-    return serviceController.deletePhoto(id);
-  });
 }
 
 export {  registerServiceIpc  };

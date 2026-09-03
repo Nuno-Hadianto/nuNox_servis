@@ -13,11 +13,6 @@
           <ServiceInfo :service="service" />
           <ServiceStatusUpdate :service="service" @save="saveUpdate" />
           <ServiceHistory :history="history" />
-          <ServicePhotos
-            :photos="photos"
-            @upload="handlePhotoUpload"
-            @delete="deletePhoto"
-          />
         </div>
 
         <div>
@@ -59,8 +54,7 @@ import type {
   ServiceItem as ServiceItemType,
   Payment,
   Part,
-  Settings,
-  Photo
+  Settings
 } from '../../shared/types'
 import { ServiceItemSchema, PaymentSchema } from '../utils/validators'
 import {
@@ -73,7 +67,6 @@ import ServiceActionBar from '../components/ServiceDetail/ServiceActionBar.vue'
 import ServiceInfo from '../components/ServiceDetail/ServiceInfo.vue'
 import ServiceStatusUpdate from '../components/ServiceDetail/ServiceStatusUpdate.vue'
 import ServiceHistory from '../components/ServiceDetail/ServiceHistory.vue'
-import ServicePhotos from '../components/ServiceDetail/ServicePhotos.vue'
 import ServiceItems from '../components/ServiceDetail/ServiceItems.vue'
 import ServicePayments from '../components/ServiceDetail/ServicePayments.vue'
 import ServiceWaModal from '../components/ServiceDetail/ServiceWaModal.vue'
@@ -85,7 +78,6 @@ const history = ref<ServiceHistoryType[]>([])
 const items = ref<ServiceItemType[]>([])
 const payments = ref<Payment[]>([])
 const parts = ref<Part[]>([])
-const photos = ref<Photo[]>([])
 
 const isWaModalOpen = ref<boolean>(false)
 const waMessage = ref<string>('')
@@ -149,18 +141,6 @@ const loadParts = async () => {
   }
 }
 
-const loadPhotos = async () => {
-  const id = route.params.id as string
-  if (window.api && window.api.getPhotos) {
-    try {
-      const res = await window.api.getPhotos(Number(id))
-      photos.value = res as Photo[]
-    } catch (e) {
-      console.error(e)
-    }
-  }
-}
-
 const waTemplate = ref<string>('')
 const loadSettings = async () => {
   if (window.api && window.api.getSettings) {
@@ -172,41 +152,6 @@ const loadSettings = async () => {
     } catch (e) {
       console.error(e)
     }
-  }
-}
-
-const handlePhotoUpload = async (e: Event, type: string) => {
-  const target = e.target as HTMLInputElement
-  if (!target.files || target.files.length === 0) return
-  const file = target.files[0]
-
-  // Convert to ArrayBuffer
-  const buffer = await file.arrayBuffer()
-
-  try {
-    const result = await window.api.uploadPhoto(service.value!.id as number, type, buffer, file.name)
-    if (result.success) {
-      await loadPhotos()
-    } else {
-      window.Swal.fire('Error', 'Gagal mengunggah foto.', 'error')
-    }
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Terjadi kesalahan.', 'error')
-  }
-  target.value = '' // reset input
-}
-
-const deletePhoto = async (id: number) => {
-  const result = await window.Swal.fire({
-    title: 'Hapus foto ini?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Ya, Hapus'
-  })
-  if (result.isConfirmed) {
-    await window.api.deletePhoto(id)
-    await loadPhotos()
   }
 }
 
@@ -452,21 +397,10 @@ onMounted(async () => {
     loadItems(),
     loadPayments(),
     loadParts(),
-    loadPhotos(),
     loadSettings()
   ])
-
-  window.addEventListener('keydown', handleKeydown)
 })
 
-const handleKeydown = (e: KeyboardEvent) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-    e.preventDefault()
-    printReceipt()
-  }
-}
-
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown)
 })
 </script>

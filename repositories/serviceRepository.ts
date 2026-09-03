@@ -1,6 +1,6 @@
 import { ServiceOrder } from '../shared/types';
 import db from '../database/db';
-import {  serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts, servicePhotos, partLogs  } from '../database/drizzleSchema';
+import {  serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts, partLogs  } from '../database/drizzleSchema';
 import {  eq, like, notLike, notInArray, or, asc, desc, sql, and, gte, isNotNull, SQL  } from 'drizzle-orm';
 
 function generateTicketNumber() {
@@ -256,31 +256,6 @@ function deleteService(id: number | string) {
     })();
 }
 
-// Photos logic
-function addPhoto(serviceOrderId: number | string, photoType: string, filepath: string) {
-    const info = db.drizzle.insert(servicePhotos).values({
-        service_order_id: Number(serviceOrderId),
-        photo_type: photoType,
-        filepath: filepath
-    }).run();
-    return info.lastInsertRowid;
-}
-
-function getPhotos(serviceOrderId: number | string) {
-    return db.drizzle.select().from(servicePhotos)
-        .where(eq(servicePhotos.service_order_id, Number(serviceOrderId)))
-        .orderBy(asc(servicePhotos.id)).all();
-}
-
-function getPhotoById(id: number | string) {
-    return db.drizzle.select().from(servicePhotos).where(eq(servicePhotos.id, Number(id))).get();
-}
-
-function deletePhoto(id: number | string) {
-    db.drizzle.delete(servicePhotos).where(eq(servicePhotos.id, Number(id))).run();
-    return true;
-}
-
 // Warranty Logic
 function checkWarranty(deviceId: number | string) {
     return db.drizzle.select({ ticket_number: serviceOrders.ticket_number, warranty_end_date: serviceOrders.warranty_end_date })
@@ -305,10 +280,6 @@ export {
     updateServiceStatus,
     updateServiceDetails,
     deleteService,
-    addPhoto,
-    getPhotos,
-    getPhotoById,
-    deletePhoto,
     checkWarranty
  };
 

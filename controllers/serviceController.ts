@@ -40,23 +40,7 @@ function deleteService(id: number | string) {
     return serviceRepository.deleteService(id);
 }
 
-function addPhoto(serviceOrderId: number, photoType: string, filepath: string) {
-    return serviceRepository.addPhoto(serviceOrderId, photoType, filepath);
-}
 
-function getPhotos(serviceOrderId: number) {
-    return serviceRepository.getPhotos(serviceOrderId);
-}
-
-function deletePhoto(id: number) {
-    // maybe we should delete the file from disk here too, or in IPC handler. 
-    // IPC handler will call deletePhoto from disk.
-    return serviceRepository.deletePhoto(id);
-}
-
-function getPhotoById(id: number) {
-    return serviceRepository.getPhotoById(id);
-}
 
 function checkWarranty(deviceId: number) {
     return serviceRepository.checkWarranty(deviceId);
@@ -71,9 +55,5 @@ export {
     updateServiceStatus,
     updateServiceDetails,
     deleteService,
-    addPhoto,
-    getPhotos,
-    deletePhoto,
-    getPhotoById,
     checkWarranty
  };

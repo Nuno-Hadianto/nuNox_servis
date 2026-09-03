@@ -45,11 +45,6 @@ contextBridge.exposeInMainWorld('api', {
   // Warranty
   checkWarranty: (deviceId: number) => invokeSafe('check-warranty', deviceId),
 
-  // Photos
-  uploadPhoto: (serviceId: number, type: string, buffer: ArrayBuffer, fileName: string) => invokeSafe('upload-photo', serviceId, type, buffer, fileName),
-  getPhotos: (serviceId: number) => invokeSafe('get-photos', serviceId),
-  deletePhoto: (id: number) => invokeSafe('delete-photo', id),
-
   // Parts
   getParts: (searchQuery: string) => invokeSafe('get-parts', searchQuery),
   getPart: (id: number) => invokeSafe('get-part', id),

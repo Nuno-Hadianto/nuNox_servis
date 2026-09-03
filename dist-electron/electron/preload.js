@@ -40,10 +40,6 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     deleteService: (id) => invokeSafe('delete-service', id),
     // Warranty
     checkWarranty: (deviceId) => invokeSafe('check-warranty', deviceId),
-    // Photos
-    uploadPhoto: (serviceId, type, buffer, fileName) => invokeSafe('upload-photo', serviceId, type, buffer, fileName),
-    getPhotos: (serviceId) => invokeSafe('get-photos', serviceId),
-    deletePhoto: (id) => invokeSafe('delete-photo', id),
     // Parts
     getParts: (searchQuery) => invokeSafe('get-parts', searchQuery),
     getPart: (id) => invokeSafe('get-part', id),

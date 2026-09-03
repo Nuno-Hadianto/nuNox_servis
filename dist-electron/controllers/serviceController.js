@@ -41,10 +41,6 @@ exports.addService = addService;
 exports.updateServiceStatus = updateServiceStatus;
 exports.updateServiceDetails = updateServiceDetails;
 exports.deleteService = deleteService;
-exports.addPhoto = addPhoto;
-exports.getPhotos = getPhotos;
-exports.deletePhoto = deletePhoto;
-exports.getPhotoById = getPhotoById;
 exports.checkWarranty = checkWarranty;
 const serviceRepository = __importStar(require("../repositories/serviceRepository"));
 const validators_1 = require("../src/utils/validators");
@@ -77,20 +73,6 @@ function updateServiceDetails(id, data) {
 }
 function deleteService(id) {
     return serviceRepository.deleteService(id);
-}
-function addPhoto(serviceOrderId, photoType, filepath) {
-    return serviceRepository.addPhoto(serviceOrderId, photoType, filepath);
-}
-function getPhotos(serviceOrderId) {
-    return serviceRepository.getPhotos(serviceOrderId);
-}
-function deletePhoto(id) {
-    // maybe we should delete the file from disk here too, or in IPC handler. 
-    // IPC handler will call deletePhoto from disk.
-    return serviceRepository.deletePhoto(id);
-}
-function getPhotoById(id) {
-    return serviceRepository.getPhotoById(id);
 }
 function checkWarranty(deviceId) {
     return serviceRepository.checkWarranty(deviceId);
