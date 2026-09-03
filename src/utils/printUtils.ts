@@ -317,24 +317,26 @@ export const generateBlankReceiptHtml = (settings: Partial<Settings> | null, log
                     <tr>
                         <td class="rcpt-label">Telah terima dari</td>
                         <td class="rcpt-colon">:</td>
-                        <td class="rcpt-line"></td>
+                        <td class="rcpt-line">&nbsp;</td>
                     </tr>
                     <tr>
                         <td class="rcpt-label">Uang Sejumlah</td>
                         <td class="rcpt-colon">:</td>
-                        <td class="rcpt-amount-box">
-                            <span class="rcpt-rp">Rp</span>
+                        <td style="padding-top: 10px; padding-bottom: 10px;">
+                            <div class="rcpt-amount-box">
+                                <span class="rcpt-rp">Rp</span>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="rcpt-label rcpt-vtop">Untuk Pembayaran</td>
                         <td class="rcpt-colon rcpt-vtop">:</td>
-                        <td class="rcpt-line rcpt-vtop"></td>
+                        <td class="rcpt-line rcpt-vtop">&nbsp;</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
-                        <td class="rcpt-line"></td>
+                        <td class="rcpt-line">&nbsp;</td>
                     </tr>
                 </table>
             </div>
