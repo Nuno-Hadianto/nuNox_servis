@@ -418,21 +418,10 @@ const deleteDevice = async (id: number) => {
   }
 }
 
-const handleKeydown = (e: KeyboardEvent) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-    e.preventDefault()
-    if (!isModalOpen.value) {
-      openAddModal()
-    }
-  }
-}
-
 onMounted(() => {
   loadDevices()
-  window.addEventListener('keydown', handleKeydown)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown)
 })
 </script>
