@@ -15,9 +15,6 @@ import * as settingsController from '../../controllers/settingsController';
 import * as reportController from '../../controllers/reportController';
 import log from 'electron-log';
 
-import { askGemini } from '../utils/geminiAi';
-import * as settingsRepo from '../../repositories/settingsRepository';
-
 function registerMiscIpc(mainWindow: BrowserWindow) {
   // Dashboard
   ipcMain.handle('get-dashboard-stats', () => dashboardController.getDashboardStats());
@@ -93,16 +90,6 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
   });
 
 
-
-  // AI Assistant
-  ipcMain.handle('ask-ai', async (_event: IpcMainInvokeEvent, prompt: string) => {
-    const settings = settingsRepo.getSettings();
-    const apiKey = settings.gemini_api_key;
-    if (!apiKey) {
-      return { success: false, error: 'API Key Gemini belum diatur di Pengaturan.' };
-    }
-    return askGemini(prompt, String(apiKey));
-  });
 
   // Export & Print
   ipcMain.handle('export-excel', async (_event: IpcMainInvokeEvent, data: unknown[], filename?: string) => {

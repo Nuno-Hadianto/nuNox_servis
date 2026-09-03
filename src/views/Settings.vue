@@ -185,53 +185,6 @@
       <!-- Kolom Kanan -->
       <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px">
         
-        <!-- Asisten AI -->
-        <div class="card" style="padding: 25px; height: fit-content;">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
-            ✨ Asisten AI (Gemini)
-          </h2>
-          <div
-            style="
-              background: rgba(59, 130, 246, 0.05);
-              border: 1px solid rgba(59, 130, 246, 0.2);
-              border-radius: var(--radius-md);
-              padding: 20px;
-            "
-          >
-            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px;">
-              Dapatkan bantuan AI untuk memprediksi kerusakan dan estimasi biaya. Masukkan API Key dari Google AI Studio.
-            </p>
-            <div class="form-group" style="margin-bottom: 15px;">
-              <label style="font-weight: 500; font-size: 0.9rem">Gemini API Key</label>
-              <input
-                type="password"
-                v-model="form.gemini_api_key"
-                class="form-control"
-                placeholder="Ketik API Key Anda di sini..."
-                style="padding: 10px; font-size: 0.9rem; width: 100%; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px;"
-              />
-            </div>
-            <div style="text-align: right">
-              <button
-                @click="saveSettings"
-                class="btn btn-primary"
-                style="padding: 8px 16px; border-radius: 20px"
-              >
-                💾 Simpan API Key
-              </button>
-            </div>
-          </div>
-        </div>
-
         <div class="card" style="padding: 25px">
           <h2
             style="
@@ -459,8 +412,7 @@ const form = reactive<Settings>({
   auto_backup_path: '',
   wa_template_status: '',
   default_printer: '',
-  primary_color: '#6366f1',
-  gemini_api_key: ''
+  primary_color: '#6366f1'
 })
 
 
@@ -492,7 +444,6 @@ const loadSettings = async () => {
         settings.low_stock_threshold !== undefined ? Number(settings.low_stock_threshold) : 3
       form.default_printer = settings.default_printer || ''
       form.primary_color = settings.primary_color || '#6366f1'
-      form.gemini_api_key = settings.gemini_api_key || ''
     } catch (error) {
       console.error(error)
     }
@@ -511,8 +462,7 @@ const saveSettings = async () => {
       wa_template_status: form.wa_template_status,
       low_stock_threshold: form.low_stock_threshold,
       default_printer: form.default_printer,
-      primary_color: form.primary_color,
-      gemini_api_key: form.gemini_api_key
+      primary_color: form.primary_color
     }
     await window.api.updateSettings(data)
     

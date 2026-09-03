@@ -141,8 +141,6 @@ export interface Settings {
   wa_template_status?: string;
   default_printer?: string;
   primary_color?: string;
-
-  gemini_api_key?: string;
 }
 
 export interface Photo {
