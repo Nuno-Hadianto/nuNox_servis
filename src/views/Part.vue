@@ -34,17 +34,7 @@
         />
       </div>
       <div style="display: flex; gap: 10px; flex-wrap: wrap">
-        <button
-          @click="exportExcel"
-          class="btn"
-          style="
-            background-color: #10b981;
-            color: white;
-            display: flex; align-items: center; gap: 8px; border-radius: 20px;
-          "
-        >
-          <FileSpreadsheet :size="18" /> Ekspor Excel
-        </button>
+
         <button
           @click="openAddModal"
           class="btn btn-primary"
@@ -254,11 +244,11 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, FileSpreadsheet } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
-import { Toast } from '../utils/toast'
+
 
 const route = useRoute()
 const parts = ref<Part[]>([])
@@ -400,39 +390,7 @@ const deletePart = async (id: number) => {
   }
 }
 
-const exportExcel = async () => {
-  try {
-    const result = await window.api.getParts(searchQuery.value)
-    const data = result as Part[] || []
-    
-    if (data.length === 0) {
-      return window.Swal.fire('Info', 'Tidak ada data sparepart untuk diekspor.', 'info')
-    }
 
-    const excelData = data.map((p) => ({
-      'Kode Barang': p.part_code || '-',
-      'Nama Sparepart': p.name,
-      'Kategori': p.category || '-',
-      'Satuan': p.unit || 'Pcs',
-      'Harga Modal': p.buy_price,
-      'Harga Jual': p.sell_price,
-      'Catatan': p.notes || ''
-    }))
-
-    const exportResult = await window.api.exportExcel(excelData, 'Katalog_Harga_nuNox.xlsx')
-    if (exportResult.success) {
-      Toast.fire({
-        icon: 'success',
-        title: 'Data berhasil diekspor ke Excel'
-      })
-    } else if (!exportResult.canceled) {
-      window.Swal.fire('Error', 'Gagal menyimpan file Excel: ' + exportResult.error, 'error')
-    }
-  } catch (error) {
-    console.error(error)
-    window.Swal.fire('Error', 'Terjadi kesalahan saat memproses ekspor Excel.', 'error')
-  }
-}
 
 const handleKeydown = (e: KeyboardEvent) => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'n') {

@@ -48,20 +48,7 @@
         <button @click="printBlankReceipt" class="btn btn-secondary" style="border-radius: 20px">
           Kwitansi Kosong
         </button>
-        <button
-          @click="exportExcel"
-          class="btn"
-          style="
-            background-color: #10b981;
-            color: white;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-          "
-        >
-          <FileSpreadsheet :size="18" /> Unduh Excel
-        </button>
+
         <button
           @click="exportPdf"
           class="btn"
@@ -206,7 +193,6 @@
 <script setup lang="ts">
 import {
   Calendar,
-  FileSpreadsheet,
   Printer,
   Wallet,
   TrendingDown,
@@ -279,59 +265,7 @@ const generateReport = async () => {
   }
 }
 
-const exportExcel = async () => {
-  if (!startDate.value || !endDate.value) return
-  try {
-    const data = (await window.api.getCompletedServices(
-      startDate.value,
-      endDate.value
-    )) as unknown as (ServiceOrder & { total_modal?: number })[]
-    if (data.length === 0)
-      return window.Swal.fire(
-        'Info',
-        'Tidak ada data untuk diekspor pada tanggal tersebut.',
-        'info'
-      )
 
-    const excelData: Record<string, string | number>[] = data.map((s) => ({
-      'No Tiket': s.ticket_number,
-      'Tanggal Selesai': new Date(s.completed_date + 'Z').toLocaleDateString('id-ID'),
-      Pelanggan: s.customer_name || '',
-      Perangkat: `${s.brand || ''} ${s.model || ''}`.trim(),
-      'Total Omset': s.total_cost || 0,
-      'Modal (HPP)': s.total_modal || 0,
-      'Laba Bersih': (s.total_cost || 0) - (s.total_modal || 0)
-    }))
-
-    // Add summary row
-    const sumOmset = data.reduce((acc, s) => acc + (s.total_cost || 0), 0)
-    const sumModal = data.reduce((acc, s) => acc + (s.total_modal || 0), 0)
-    const sumLaba = sumOmset - sumModal
-
-    excelData.push({
-      'No Tiket': 'TOTAL',
-      'Tanggal Selesai': '',
-      Pelanggan: '',
-      Perangkat: '',
-      'Total Omset': sumOmset,
-      'Modal (HPP)': sumModal,
-      'Laba Bersih': sumLaba
-    })
-
-    const result = await window.api.exportExcel(excelData, 'Laporan_Keuangan_nuNox.xlsx')
-    if (result.success) {
-      Toast.fire({
-        icon: 'success',
-        title: 'Laporan berhasil disimpan'
-      })
-    } else if (!result.canceled) {
-      window.Swal.fire('Error', 'Gagal menyimpan file Excel: ' + result.error, 'error')
-    }
-  } catch (error) {
-    console.error(error)
-    window.Swal.fire('Error', 'Terjadi kesalahan saat membuat Excel.', 'error')
-  }
-}
 
 const getCommonData = async () => {
   const settings = (await window.api.getSettings()) as Settings
