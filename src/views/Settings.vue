@@ -1,128 +1,237 @@
 <template>
   <div class="view-section">
     <div style="display: flex; gap: 25px; flex-wrap: wrap; align-items: flex-start;">
-      <!-- Pengaturan Identitas -->
-      <div class="card" style="flex: 1; min-width: 300px; padding: 25px; height: fit-content;">
-        <h2
-          style="
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--primary-color);
-          "
-        >
-          🏢 Pengaturan Identitas Toko
-        </h2>
-        <form @submit.prevent="saveSettings">
-          <div class="form-group">
-            <label style="font-weight: 500; font-size: 0.9rem">Nama Usaha / Toko</label>
-            <input
-              type="text"
-              v-model="form.business_name"
-              class="form-control"
-            />
-          </div>
-          <div class="form-group">
-            <label style="font-weight: 500; font-size: 0.9rem">No. Telp / WhatsApp</label>
-            <input
-              type="text"
-              v-model="form.phone"
-              class="form-control"
-            />
-          </div>
-          <div class="form-group">
-            <label style="font-weight: 500; font-size: 0.9rem">Alamat Lengkap</label>
-            <textarea
-              v-model="form.address"
-              rows="3"
-              class="form-control"
-              style="resize: vertical;"
-            ></textarea>
-          </div>
-          <div class="form-group">
-            <label style="font-weight: 500; font-size: 0.9rem">Catatan Bawah Kwitansi</label>
-            <textarea
-              v-model="form.receipt_footer"
-              rows="2"
-              class="form-control"
-              style="resize: vertical;"
-            ></textarea>
-          </div>
+      <!-- Kolom Kiri -->
+      <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px">
+        <!-- Pengaturan Identitas -->
+        <div class="card" style="padding: 25px; height: fit-content;">
+          <h2
+            style="
+              font-size: 1.2rem;
+              margin-bottom: 20px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+            "
+          >
+            🏢 Pengaturan Identitas Toko
+          </h2>
+          <form @submit.prevent="saveSettings">
+            <div class="form-group">
+              <label style="font-weight: 500; font-size: 0.9rem">Nama Usaha / Toko</label>
+              <input
+                type="text"
+                v-model="form.business_name"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label style="font-weight: 500; font-size: 0.9rem">No. Telp / WhatsApp</label>
+              <input
+                type="text"
+                v-model="form.phone"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label style="font-weight: 500; font-size: 0.9rem">Alamat Lengkap</label>
+              <textarea
+                v-model="form.address"
+                rows="3"
+                class="form-control"
+                style="resize: vertical;"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label style="font-weight: 500; font-size: 0.9rem">Catatan Bawah Kwitansi</label>
+              <textarea
+                v-model="form.receipt_footer"
+                rows="2"
+                class="form-control"
+                style="resize: vertical;"
+              ></textarea>
+            </div>
+            <div style="margin-top: 25px; text-align: right">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="
+                  padding: 10px 24px;
+                  border-radius: 20px;
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 6px;
+                "
+              >
+                💾 Simpan Identitas
+              </button>
+            </div>
+          </form>
+        </div>
 
-          <div class="form-group">
-            <label style="font-weight: 500; font-size: 0.9rem">Template Pesan WhatsApp</label>
-            <textarea
-              v-model="form.wa_template_status"
-              rows="3"
-              class="form-control"
-              style="resize: vertical;"
-              placeholder="Halo Kak {nama}, tiket {tiket} status: {status}"
-            ></textarea>
-            <small style="color: var(--text-muted); display: block; margin-top: 4px">
-              Gunakan kode otomatis: {nama}, {tiket}, {status}
-            </small>
-            <!-- WhatsApp Preview Box -->
-            <div style="margin-top: 10px; background: rgba(37, 211, 102, 0.1); border-left: 3px solid #25D366; padding: 10px 15px; border-radius: 4px;">
-              <div style="font-size: 0.8rem; font-weight: 600; color: #25D366; margin-bottom: 4px;">👁️ Pratinjau Pesan:</div>
-              <div style="font-size: 0.9rem; color: var(--text-primary); white-space: pre-wrap; line-height: 1.4;">
-                {{ waPreviewText }}
+        <!-- Template Pesan WhatsApp -->
+        <div class="card" style="padding: 25px; height: fit-content;">
+          <h2
+            style="
+              font-size: 1.2rem;
+              margin-bottom: 20px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+            "
+          >
+            💬 Template Pesan WhatsApp
+          </h2>
+          <form @submit.prevent="saveSettings">
+            <div class="form-group">
+              <textarea
+                v-model="form.wa_template_status"
+                rows="3"
+                class="form-control"
+                style="resize: vertical;"
+                placeholder="Halo Kak {nama}, tiket {tiket} status: {status}"
+              ></textarea>
+              <small style="color: var(--text-muted); display: block; margin-top: 4px">
+                Gunakan kode otomatis: {nama}, {tiket}, {status}
+              </small>
+              <!-- WhatsApp Preview Box -->
+              <div style="margin-top: 10px; background: rgba(37, 211, 102, 0.1); border-left: 3px solid #25D366; padding: 10px 15px; border-radius: 4px;">
+                <div style="font-size: 0.8rem; font-weight: 600; color: #25D366; margin-bottom: 4px;">👁️ Pratinjau Pesan:</div>
+                <div style="font-size: 0.9rem; color: var(--text-primary); white-space: pre-wrap; line-height: 1.4;">
+                  {{ waPreviewText }}
+                </div>
               </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label style="font-weight: 500; font-size: 0.9rem">Tema Warna Utama (Primary Color)</label>
-            <div style="display: flex; gap: 15px; align-items: center; margin-top: 5px;">
-              <input
-                type="color"
-                v-model="form.primary_color"
-                class="form-control"
-                style="width: 50px; height: 40px; padding: 0; cursor: pointer;"
-              />
-              <span style="font-family: monospace; padding: 5px 10px; background: rgba(0,0,0,0.05); border-radius: 4px;">{{ form.primary_color }}</span>
+            <div style="margin-top: 25px; text-align: right">
               <button
-                type="button"
-                @click="form.primary_color = '#6366f1'"
-                class="btn btn-secondary"
-                style="padding: 5px 10px; border-radius: 4px; font-size: 0.8rem;"
-              >Reset Default</button>
+                type="submit"
+                class="btn btn-primary"
+                style="
+                  padding: 10px 24px;
+                  border-radius: 20px;
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 6px;
+                "
+              >
+                💾 Simpan Template
+              </button>
             </div>
-            <!-- Preset Colors -->
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-              <button type="button" class="color-swatch" style="background: #6366f1;" @click="form.primary_color = '#6366f1'" title="Indigo"></button>
-              <button type="button" class="color-swatch" style="background: #10b981;" @click="form.primary_color = '#10b981'" title="Emerald"></button>
-              <button type="button" class="color-swatch" style="background: #f43f5e;" @click="form.primary_color = '#f43f5e'" title="Rose"></button>
-              <button type="button" class="color-swatch" style="background: #f59e0b;" @click="form.primary_color = '#f59e0b'" title="Amber"></button>
-              <button type="button" class="color-swatch" style="background: #3b82f6;" @click="form.primary_color = '#3b82f6'" title="Blue"></button>
-              <button type="button" class="color-swatch" style="background: #8b5cf6;" @click="form.primary_color = '#8b5cf6'" title="Purple"></button>
+          </form>
+        </div>
+
+        <!-- Tema Warna Utama -->
+        <div class="card" style="padding: 25px">
+          <h2
+            style="
+              font-size: 1.2rem;
+              margin-bottom: 20px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+            "
+          >
+            🎨 Pengaturan Tampilan
+          </h2>
+          <form @submit.prevent="saveSettings">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-weight: 500; font-size: 0.9rem">Tema Warna Utama (Primary Color)</label>
+              <div style="display: flex; gap: 15px; align-items: center; margin-top: 5px;">
+                <input
+                  type="color"
+                  v-model="form.primary_color"
+                  class="form-control"
+                  style="width: 50px; height: 40px; padding: 0; cursor: pointer;"
+                />
+                <span style="font-family: monospace; padding: 5px 10px; background: rgba(0,0,0,0.05); border-radius: 4px;">{{ form.primary_color }}</span>
+                <button
+                  type="button"
+                  @click="form.primary_color = '#6366f1'"
+                  class="btn btn-secondary"
+                  style="padding: 5px 10px; border-radius: 4px; font-size: 0.8rem;"
+                >Reset Default</button>
+              </div>
+              <!-- Preset Colors -->
+              <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="button" class="color-swatch" style="background: #6366f1;" @click="form.primary_color = '#6366f1'" title="Indigo"></button>
+                <button type="button" class="color-swatch" style="background: #10b981;" @click="form.primary_color = '#10b981'" title="Emerald"></button>
+                <button type="button" class="color-swatch" style="background: #f43f5e;" @click="form.primary_color = '#f43f5e'" title="Rose"></button>
+                <button type="button" class="color-swatch" style="background: #f59e0b;" @click="form.primary_color = '#f59e0b'" title="Amber"></button>
+                <button type="button" class="color-swatch" style="background: #3b82f6;" @click="form.primary_color = '#3b82f6'" title="Blue"></button>
+                <button type="button" class="color-swatch" style="background: #8b5cf6;" @click="form.primary_color = '#8b5cf6'" title="Purple"></button>
+              </div>
+              <small style="color: var(--text-muted); display: block; margin-top: 6px">
+                Pilih warna identitas toko Anda. Membutuhkan <i>restart</i> aplikasi agar sempurna diterapkan.
+              </small>
             </div>
-            <small style="color: var(--text-muted); display: block; margin-top: 6px">
-              Pilih warna identitas toko Anda. Membutuhkan <i>restart</i> aplikasi agar sempurna diterapkan.
-            </small>
-          </div>
-          <div style="margin-top: 25px; text-align: right">
-            <button
-              type="submit"
-              class="btn btn-primary"
-              style="
-                padding: 10px 24px;
-                border-radius: 20px;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-              "
-            >
-              💾 Simpan Pengaturan
-            </button>
-          </div>
-        </form>
+            <div style="margin-top: 20px; text-align: right">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="padding: 8px 16px; border-radius: 20px"
+              >
+                💾 Simpan Tampilan
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
 
 
-      <!-- Backup & Restore -->
+      <!-- Kolom Kanan -->
       <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px">
+        
+        <!-- Asisten AI -->
+        <div class="card" style="padding: 25px; height: fit-content;">
+          <h2
+            style="
+              font-size: 1.2rem;
+              margin-bottom: 20px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+            "
+          >
+            ✨ Asisten AI (Gemini)
+          </h2>
+          <div
+            style="
+              background: rgba(59, 130, 246, 0.05);
+              border: 1px solid rgba(59, 130, 246, 0.2);
+              border-radius: var(--radius-md);
+              padding: 20px;
+            "
+          >
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px;">
+              Dapatkan bantuan AI untuk memprediksi kerusakan dan estimasi biaya. Masukkan API Key dari Google AI Studio.
+            </p>
+            <div class="form-group" style="margin-bottom: 15px;">
+              <label style="font-weight: 500; font-size: 0.9rem">Gemini API Key</label>
+              <input
+                type="password"
+                v-model="form.gemini_api_key"
+                class="form-control"
+                placeholder="Ketik API Key Anda di sini..."
+                style="padding: 10px; font-size: 0.9rem; width: 100%; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px;"
+              />
+            </div>
+            <div style="text-align: right">
+              <button
+                @click="saveSettings"
+                class="btn btn-primary"
+                style="padding: 8px 16px; border-radius: 20px"
+              >
+                💾 Simpan API Key
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="card" style="padding: 25px">
           <h2
             style="
@@ -191,53 +300,6 @@
                 style="padding: 8px 16px; border-radius: 20px"
               >
                 💾 Simpan Pengaturan Backup
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Asisten AI -->
-        <div class="card" style="padding: 25px">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
-            ✨ Asisten AI (Gemini)
-          </h2>
-          <div
-            style="
-              background: rgba(59, 130, 246, 0.05);
-              border: 1px solid rgba(59, 130, 246, 0.2);
-              border-radius: var(--radius-md);
-              padding: 20px;
-            "
-          >
-            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px;">
-              Dapatkan bantuan AI untuk memprediksi kerusakan dan estimasi biaya. Masukkan API Key dari Google AI Studio.
-            </p>
-            <div class="form-group" style="margin-bottom: 15px;">
-              <label style="font-weight: 500; font-size: 0.9rem">Gemini API Key</label>
-              <input
-                type="password"
-                v-model="form.gemini_api_key"
-                class="form-control"
-                placeholder="Ketik API Key Anda di sini..."
-                style="padding: 10px; font-size: 0.9rem; width: 100%; margin-top: 5px; border: 1px solid var(--border-color); border-radius: 4px;"
-              />
-            </div>
-            <div style="text-align: right">
-              <button
-                @click="saveSettings"
-                class="btn btn-primary"
-                style="padding: 8px 16px; border-radius: 20px"
-              >
-                💾 Simpan API Key
               </button>
             </div>
           </div>
@@ -333,7 +395,7 @@
               border: 1px solid rgba(245, 158, 11, 0.2);
               border-radius: var(--radius-md);
               padding: 20px;
-              margin-bottom: 10px;
+              margin-bottom: 0px;
             "
           >
             <div style="display: flex; flex-direction: column; gap: 15px;">
@@ -368,6 +430,12 @@
               >
                 🚀 Restart & Install Sekarang
               </button>
+              
+              <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                <span style="background: rgba(245, 158, 11, 0.1); padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 0.95rem; color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); display: inline-flex; align-items: center; gap: 6px;">
+                  🏷️ Versi Saat Ini: v{{ appVersion }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -379,6 +447,9 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import type { Settings } from '../../shared/types'
+import pkg from '../../package.json'
+
+const appVersion = pkg.version
 
 const form = reactive<Settings>({
   business_name: '',
