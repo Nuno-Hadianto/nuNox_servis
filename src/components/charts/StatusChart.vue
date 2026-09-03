@@ -50,7 +50,7 @@ const renderChart = () => {
             color: getTextColor(),
             padding: 20,
             usePointStyle: true,
-            font: { size: 13, weight: '500' },
+            font: { size: 13, weight: 'bold' },
             boxWidth: 10
           } 
         }
