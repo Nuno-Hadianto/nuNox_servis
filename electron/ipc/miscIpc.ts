@@ -6,7 +6,7 @@ import {  app, ipcMain, dialog, shell, BrowserWindow, Notification  } from 'elec
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import xlsx from 'xlsx';
+
 import url from 'url';
 
 import * as dashboardController from '../../controllers/dashboardController';
@@ -106,30 +106,7 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
 
 
   // Export & Print
-  ipcMain.handle('export-excel', async (_event: IpcMainInvokeEvent, data: unknown[], filename?: string) => {
-    try {
-      const { canceled, filePath } = await dialog.showSaveDialog({
-        title: 'Simpan Laporan Excel',
-        defaultPath: filename || 'Laporan_nuNox_servis.xlsx',
-        filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
-      });
 
-      if (canceled || !filePath) return { success: false, canceled: true };
-
-      const worksheet = xlsx.utils.json_to_sheet(data);
-      const colWidths = [{ wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
-      worksheet['!cols'] = colWidths;
-
-      const workbook = xlsx.utils.book_new();
-      xlsx.utils.book_append_sheet(workbook, worksheet, 'Laporan');
-
-      xlsx.writeFile(workbook, filePath);
-      return { success: true, filePath };
-    } catch (error: unknown) {
-      log.error('Error exporting excel:', error);
-      return { success: false, error: (error as Error).message };
-    }
-  });
 
   ipcMain.handle('export-pdf', async (_event: IpcMainInvokeEvent, { html, filename }: { html: string, filename: string }) => {
     try {

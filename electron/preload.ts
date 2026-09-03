@@ -84,7 +84,6 @@ contextBridge.exposeInMainWorld('api', {
   selectDirectory: () => invokeSafe('select-directory'),
 
   // Export
-  exportExcel: (data: unknown, filename?: string) => invokeSafe('export-excel', data, filename),
   exportPdf: (data: unknown) => invokeSafe('export-pdf', data),
   openExternalUrl: (url: string) => invokeSafe('open-external-url', url),
   getLogoBase64: () => invokeSafe('get-logo-base64'),

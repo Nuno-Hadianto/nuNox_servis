@@ -44,11 +44,8 @@ const electron_1 = require("electron");
 const path_1 = __importDefault(require("path"));
 const db_1 = __importDefault(require("../database/db"));
 const electron_log_1 = __importDefault(require("electron-log"));
-const electron_updater_1 = require("electron-updater");
 // Setup logging
 electron_log_1.default.transports.file.level = 'info';
-electron_updater_1.autoUpdater.logger = electron_log_1.default;
-(electron_updater_1.autoUpdater.logger.transports.file).level = 'info';
 electron_log_1.default.info('App starting...');
 process.on('uncaughtException', (error) => {
     electron_log_1.default.error('Uncaught Exception:', error);
@@ -136,7 +133,6 @@ electron_1.app.whenReady().then(() => {
     createWindow();
     console.log('Window created');
     // Check for updates (Disabled auto-update per user request - manual only)
-    // autoUpdater.checkForUpdatesAndNotify();
     electron_1.app.on('activate', () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0) {
             createWindow();
@@ -146,58 +142,6 @@ electron_1.app.whenReady().then(() => {
     setInterval(() => {
         performAutoBackup('cron');
     }, 7200000);
-});
-// IPC for Manual Updates
-electron_1.ipcMain.handle('check-for-updates', async () => {
-    try {
-        return await electron_updater_1.autoUpdater.checkForUpdates();
-    }
-    catch (error) {
-        electron_log_1.default.error('Manual update check error:', error);
-        throw error;
-    }
-});
-electron_1.ipcMain.handle('install-update', () => {
-    electron_updater_1.autoUpdater.quitAndInstall();
-});
-// Update Events to Frontend
-electron_updater_1.autoUpdater.on('checking-for-update', () => {
-    if (mainWindow)
-        mainWindow.webContents.send('updater-event', { type: 'checking' });
-});
-electron_updater_1.autoUpdater.on('update-available', (info) => {
-    electron_log_1.default.info('Update available:', info);
-    if (mainWindow)
-        mainWindow.webContents.send('updater-event', { type: 'update-available', info });
-});
-electron_updater_1.autoUpdater.on('update-not-available', (info) => {
-    electron_log_1.default.info('Update not available:', info);
-    if (mainWindow)
-        mainWindow.webContents.send('updater-event', { type: 'update-not-available', info });
-});
-electron_updater_1.autoUpdater.on('download-progress', (progressObj) => {
-    if (mainWindow)
-        mainWindow.webContents.send('updater-event', { type: 'download-progress', progress: progressObj });
-});
-electron_updater_1.autoUpdater.on('update-downloaded', (info) => {
-    electron_log_1.default.info('Update downloaded. Prompting user to install.');
-    if (mainWindow)
-        mainWindow.webContents.send('updater-event', { type: 'update-downloaded', info });
-    electron_1.dialog.showMessageBox({
-        type: 'info',
-        title: 'Pembaruan Siap',
-        message: 'Sebuah pembaruan telah selesai diunduh. Restart aplikasi sekarang untuk memasang?',
-        buttons: ['Restart Sekarang', 'Nanti']
-    }).then((result) => {
-        if (result.response === 0) {
-            electron_updater_1.autoUpdater.quitAndInstall();
-        }
-    });
-});
-electron_updater_1.autoUpdater.on('error', (err) => {
-    electron_log_1.default.error('Error in auto-updater. ' + err);
-    if (mainWindow)
-        mainWindow.webContents.send('updater-event', { type: 'error', error: err.message || err });
 });
 async function performAutoBackup(type = 'daily') {
     try {

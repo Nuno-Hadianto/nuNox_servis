@@ -9,8 +9,7 @@ import type {
   Payment,
   Settings,
   DashboardStats,
-  ServiceHistory,
-  Photo
+  ServiceHistory
 } from '../shared/types'
 
 declare module '*.vue' {
@@ -66,15 +65,7 @@ declare global {
       deleteService: (id: number) => Promise<number>
       checkWarranty: (deviceId: number) => Promise<{ status: string; days_left?: number; message?: string; warranty_end_date?: string; ticket_number?: string }>
 
-      // Photos
-      uploadPhoto: (
-        serviceId: number,
-        type: string,
-        buffer: ArrayBuffer,
-        fileName: string
-      ) => Promise<{ success: boolean; id?: number; error?: string }>
-      getPhotos: (serviceId: number) => Promise<Photo[]>
-      deletePhoto: (id: number) => Promise<{ success: boolean; error?: string }>
+
 
       // Parts
       getParts: (searchQuery: string) => Promise<Part[]>
@@ -83,8 +74,7 @@ declare global {
       updatePart: (id: number, data: Partial<Part>) => Promise<number>
       updatePartStock: (id: number, change: number, reason?: string, ref_id?: string) => Promise<number>
       deletePart: (id: number) => Promise<number>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      importPartsExcel: () => Promise<{ success: boolean; error?: string; canceled?: boolean; result?: any }>
+
       getLowStockParts: (threshold: number) => Promise<Part[]>
       getPartLogs: (id: number) => Promise<unknown[]>
 
@@ -120,7 +110,6 @@ declare global {
       testGdrive: (creds: string, folderId: string) => Promise<{ success: boolean; error?: string }>
       askAi: (prompt: string) => Promise<{ success: boolean; result?: string; error?: string }>
       selectDirectory: () => Promise<string | null>
-      exportExcel: (data: Record<string, unknown>[], filename?: string) => Promise<{ success: boolean; filePath?: string; canceled?: boolean; error?: string }>
       exportPdf: (data: { html: string; filename: string }) => Promise<{ success: boolean; filePath?: string; canceled?: boolean; error?: string }>
       openExternalUrl: (url: string) => Promise<boolean>
       getLogoBase64: () => Promise<string | null>

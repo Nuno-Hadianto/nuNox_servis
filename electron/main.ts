@@ -8,12 +8,11 @@ import {  app, BrowserWindow, ipcMain, dialog  } from 'electron';
 import path from 'path';
 import db from '../database/db';
 import log from 'electron-log';
-import {  autoUpdater  } from 'electron-updater';
+
 
 // Setup logging
 (log.transports.file as { level: string }).level = 'info';
-autoUpdater.logger = log;
-((autoUpdater.logger as unknown as { transports: { file: { level: string } } }).transports.file).level = 'info';
+
 log.info('App starting...');
 
 process.on('uncaughtException', (error) => {
@@ -117,7 +116,7 @@ app.whenReady().then(() => {
   console.log('Window created');
 
   // Check for updates (Disabled auto-update per user request - manual only)
-  // autoUpdater.checkForUpdatesAndNotify();
+
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -131,59 +130,7 @@ app.whenReady().then(() => {
   }, 7200000);
 });
 
-// IPC for Manual Updates
-ipcMain.handle('check-for-updates', async () => {
-  try {
-    return await autoUpdater.checkForUpdates();
-  } catch (error) {
-    log.error('Manual update check error:', error);
-    throw error;
-  }
-});
 
-ipcMain.handle('install-update', () => {
-  autoUpdater.quitAndInstall();
-});
-
-// Update Events to Frontend
-autoUpdater.on('checking-for-update', () => {
-  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'checking' });
-});
-
-autoUpdater.on('update-available', (info) => {
-  log.info('Update available:', info);
-  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'update-available', info });
-});
-
-autoUpdater.on('update-not-available', (info) => {
-  log.info('Update not available:', info);
-  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'update-not-available', info });
-});
-
-autoUpdater.on('download-progress', (progressObj) => {
-  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'download-progress', progress: progressObj });
-});
-
-autoUpdater.on('update-downloaded', (info) => {
-  log.info('Update downloaded. Prompting user to install.');
-  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'update-downloaded', info });
-  
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Pembaruan Siap',
-    message: 'Sebuah pembaruan telah selesai diunduh. Restart aplikasi sekarang untuk memasang?',
-    buttons: ['Restart Sekarang', 'Nanti']
-  }).then((result: Electron.MessageBoxReturnValue) => {
-    if (result.response === 0) {
-      autoUpdater.quitAndInstall();
-    }
-  });
-});
-
-autoUpdater.on('error', (err: Error) => {
-  log.error('Error in auto-updater. ' + err);
-  if (mainWindow) mainWindow.webContents.send('updater-event', { type: 'error', error: err.message || err });
-});
 
 async function performAutoBackup(type: 'cron' | 'daily' = 'daily') {
   try {

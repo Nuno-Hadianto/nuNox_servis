@@ -42,7 +42,6 @@ const electron_1 = require("electron");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const os_1 = __importDefault(require("os"));
-const xlsx_1 = __importDefault(require("xlsx"));
 const url_1 = __importDefault(require("url"));
 const dashboardController = __importStar(require("../../controllers/dashboardController"));
 const paymentController = __importStar(require("../../controllers/paymentController"));
@@ -128,28 +127,6 @@ function registerMiscIpc(mainWindow) {
         return false;
     });
     // Export & Print
-    electron_1.ipcMain.handle('export-excel', async (_event, data, filename) => {
-        try {
-            const { canceled, filePath } = await electron_1.dialog.showSaveDialog({
-                title: 'Simpan Laporan Excel',
-                defaultPath: filename || 'Laporan_nuNox_servis.xlsx',
-                filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
-            });
-            if (canceled || !filePath)
-                return { success: false, canceled: true };
-            const worksheet = xlsx_1.default.utils.json_to_sheet(data);
-            const colWidths = [{ wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
-            worksheet['!cols'] = colWidths;
-            const workbook = xlsx_1.default.utils.book_new();
-            xlsx_1.default.utils.book_append_sheet(workbook, worksheet, 'Laporan');
-            xlsx_1.default.writeFile(workbook, filePath);
-            return { success: true, filePath };
-        }
-        catch (error) {
-            electron_log_1.default.error('Error exporting excel:', error);
-            return { success: false, error: error.message };
-        }
-    });
     electron_1.ipcMain.handle('export-pdf', async (_event, { html, filename }) => {
         try {
             const { canceled, filePath } = await electron_1.dialog.showSaveDialog({
