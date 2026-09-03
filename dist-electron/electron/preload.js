@@ -70,6 +70,7 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getTopSpareparts: (start, end) => invokeSafe('get-top-spareparts', start, end),
     getReportBreakdown: (start, end) => invokeSafe('get-report-breakdown', start, end),
     // Backup & Restore
+    getDbSize: () => invokeSafe('get-db-size'),
     backupDatabase: () => invokeSafe('backup-database'),
     restoreDatabase: () => invokeSafe('restore-database'),
     testGdrive: (creds, folderId) => invokeSafe('test-gdrive', creds, folderId),

@@ -180,8 +180,6 @@
         </div>
       </div>
 
-
-
       <!-- Kolom Kanan -->
       <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px">
         
@@ -215,9 +213,11 @@
                 margin-bottom: 15px;
               "
             >
-              Pilih folder <strong>Google Drive</strong>, <strong>OneDrive</strong>, atau folder
-              aman lainnya di komputer Anda. Aplikasi akan otomatis melakukan pencadangan setiap
-              kali Anda menutup aplikasi.
+              Pilih folder <strong>Google Drive</strong>, <strong>OneDrive</strong>, atau folder aman lainnya di komputer Anda. Aplikasi akan otomatis melakukan pencadangan setiap kali Anda menutup aplikasi.
+              <br><br>
+              <span style="font-size: 0.85rem; color: #64748b; background: rgba(0,0,0,0.03); padding: 4px 8px; border-radius: 4px;">
+                💡 <b>Info:</b> Jika belum ada folder yang dipilih, sistem akan mem-backup secara otomatis ke folder bawaan: <b>Documents\nuNox_servis_Backups</b>
+              </span>
             </p>
             <div style="display: flex; gap: 10px; align-items: center">
               <input
@@ -254,6 +254,42 @@
               >
                 💾 Simpan Pengaturan Backup
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Penyimpanan -->
+        <div class="card" style="padding: 25px">
+          <h2
+            style="
+              font-size: 1.2rem;
+              margin-bottom: 20px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+            "
+          >
+            💽 Status Penyimpanan
+          </h2>
+          <div
+            style="
+              background: rgba(59, 130, 246, 0.05);
+              border: 1px solid rgba(59, 130, 246, 0.2);
+              border-radius: var(--radius-md);
+              padding: 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <div>
+              <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">Ukuran Database:</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">{{ dbSize }}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.85rem; color: var(--text-muted);">Format:</div>
+              <div style="font-size: 1rem; font-weight: 600; color: #475569;">SQLite (.db)</div>
             </div>
           </div>
         </div>
@@ -327,71 +363,6 @@
             </p>
           </div>
         </div>
-
-        <!-- Pembaruan Aplikasi -->
-        <div class="card" style="padding: 25px">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
-            🔄 Pembaruan Aplikasi
-          </h2>
-          <div
-            style="
-              background: rgba(245, 158, 11, 0.05);
-              border: 1px solid rgba(245, 158, 11, 0.2);
-              border-radius: var(--radius-md);
-              padding: 20px;
-              margin-bottom: 0px;
-            "
-          >
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-              <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0;">
-                Periksa ketersediaan versi terbaru aplikasi. Pastikan komputer terhubung ke internet.
-              </p>
-              
-              <div v-if="updateStatus" style="font-weight: bold; color: var(--primary-color); font-size: 0.95rem;">
-                Status: {{ updateStatus }}
-              </div>
-              
-              <div v-if="updateProgress > 0 && updateProgress < 100" style="width: 100%; background: #e2e8f0; border-radius: 10px; overflow: hidden; height: 10px;">
-                <div :style="{ width: updateProgress + '%', background: 'var(--primary-color)', height: '100%', transition: 'width 0.3s' }"></div>
-              </div>
-              
-              <button
-                v-if="!updateReady"
-                @click="checkForUpdates"
-                class="btn btn-primary"
-                :disabled="isCheckingUpdate"
-                style="border-radius: 20px; padding: 10px 20px; justify-content: center; display: flex; align-items: center; gap: 8px;"
-              >
-                <span v-if="isCheckingUpdate">⏳ Sedang Mengecek...</span>
-                <span v-else>🔍 Cek Pembaruan</span>
-              </button>
-              
-              <button
-                v-if="updateReady"
-                @click="installUpdate"
-                class="btn"
-                style="background: #10b981; color: white; border: none; border-radius: 20px; padding: 10px 20px; justify-content: center; display: flex; align-items: center; gap: 8px;"
-              >
-                🚀 Restart & Install Sekarang
-              </button>
-              
-              <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-                <span style="background: rgba(245, 158, 11, 0.1); padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 0.95rem; color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); display: inline-flex; align-items: center; gap: 6px;">
-                  🏷️ Versi Saat Ini: v{{ appVersion }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -403,6 +374,7 @@ import type { Settings } from '../../shared/types'
 import pkg from '../../package.json'
 
 const appVersion = pkg.version
+const dbSize = ref<string>('0 KB')
 
 const form = reactive<Settings>({
   business_name: '',
@@ -444,6 +416,18 @@ const loadSettings = async () => {
         settings.low_stock_threshold !== undefined ? Number(settings.low_stock_threshold) : 3
       form.default_printer = settings.default_printer || ''
       form.primary_color = settings.primary_color || '#6366f1'
+      
+      // Load DB Size
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((window.api as any).getDbSize) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const bytes = await (window.api as any).getDbSize()
+        if (bytes > 1024 * 1024) {
+          dbSize.value = (bytes / (1024 * 1024)).toFixed(2) + ' MB'
+        } else {
+          dbSize.value = (bytes / 1024).toFixed(2) + ' KB'
+        }
+      }
     } catch (error) {
       console.error(error)
     }
@@ -536,67 +520,11 @@ const restoreData = async () => {
   }
 }
 
-const isCheckingUpdate = ref(false)
-const updateStatus = ref('')
-const updateProgress = ref(0)
-const updateReady = ref(false)
-
-const checkForUpdates = async () => {
-  if (window.api && window.api.checkForUpdates) {
-    isCheckingUpdate.value = true
-    updateStatus.value = 'Mengecek ketersediaan pembaruan...'
-    updateProgress.value = 0
-    try {
-      await window.api.checkForUpdates()
-    } catch (error: unknown) {
-      isCheckingUpdate.value = false
-      updateStatus.value = 'Gagal mengecek pembaruan.'
-      console.error(error)
-    }
-  }
-}
-
-const installUpdate = () => {
-  if (window.api && window.api.installUpdate) {
-    window.api.installUpdate()
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const handleUpdaterEvent = (_event: unknown, data: any) => {
-  if (data.type === 'checking') {
-    isCheckingUpdate.value = true
-    updateStatus.value = 'Mengecek ketersediaan pembaruan...'
-  } else if (data.type === 'update-available') {
-    updateStatus.value = `Pembaruan tersedia (v${data.info?.version || 'baru'}). Mulai mengunduh...`
-  } else if (data.type === 'update-not-available') {
-    isCheckingUpdate.value = false
-    updateStatus.value = 'Aplikasi sudah dalam versi terbaru.'
-  } else if (data.type === 'download-progress') {
-    updateProgress.value = data.progress?.percent || 0
-    updateStatus.value = `Mengunduh... ${Math.round(data.progress?.percent || 0)}%`
-  } else if (data.type === 'update-downloaded') {
-    isCheckingUpdate.value = false
-    updateProgress.value = 100
-    updateReady.value = true
-    updateStatus.value = 'Pembaruan siap dipasang.'
-  } else if (data.type === 'error') {
-    isCheckingUpdate.value = false
-    updateStatus.value = 'Terjadi kesalahan saat memperbarui.'
-  }
-}
-
 onMounted(() => {
   loadSettings()
-  if (window.api && window.api.onUpdaterEvent) {
-    window.api.onUpdaterEvent(handleUpdaterEvent)
-  }
 })
 
 onUnmounted(() => {
-  if (window.api && window.api.removeUpdaterEvents) {
-    window.api.removeUpdaterEvents()
-  }
 })
 </script>
 

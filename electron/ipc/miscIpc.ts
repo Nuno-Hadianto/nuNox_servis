@@ -42,6 +42,20 @@ function registerMiscIpc(mainWindow: BrowserWindow) {
   ipcMain.handle('get-report-breakdown', (_event: IpcMainInvokeEvent, start: string, end: string) => reportController.getReportBreakdown(start, end));
 
   // Backup & Restore
+  ipcMain.handle('get-db-size', async () => {
+    try {
+      const dbPath = path.join(app.getPath('userData'), 'database', 'nunox_servis.db');
+      if (fs.existsSync(dbPath)) {
+        const stats = fs.statSync(dbPath);
+        return stats.size;
+      }
+      return 0;
+    } catch (error) {
+      log.error('Error getting DB size:', error);
+      return 0;
+    }
+  });
+
   ipcMain.handle('backup-database', async () => {
     // const dbPath = path.join(app.getPath('userData'), 'database', 'nunox_servis.db');
     const defaultPath = `nuNox_servis_Backup_${new Date().toISOString().split('T')[0]}.db`;

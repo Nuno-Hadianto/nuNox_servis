@@ -82,6 +82,7 @@ contextBridge.exposeInMainWorld('api', {
 
 
   // Backup & Restore
+  getDbSize: () => invokeSafe('get-db-size'),
   backupDatabase: () => invokeSafe('backup-database'),
   restoreDatabase: () => invokeSafe('restore-database'),
   testGdrive: (creds: string, folderId: string) => invokeSafe('test-gdrive', creds, folderId),
