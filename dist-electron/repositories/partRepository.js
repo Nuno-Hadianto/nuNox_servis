@@ -10,7 +10,6 @@ exports.updatePart = updatePart;
 exports.updatePartStock = updatePartStock;
 exports.checkPartHasServiceItems = checkPartHasServiceItems;
 exports.deletePart = deletePart;
-exports.importParts = importParts;
 exports.getLowStockParts = getLowStockParts;
 exports.getPartLogs = getPartLogs;
 const db_1 = __importDefault(require("../database/db"));
@@ -104,41 +103,4 @@ function checkPartHasServiceItems(id) {
 function deletePart(id) {
     db_1.default.drizzle.delete(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).run();
     return true;
-}
-function importParts(dataArray) {
-    const tx = db_1.default.transaction((arr) => {
-        let imported = 0;
-        let updated = 0;
-        for (const row of arr) {
-            const part_code = row['Kode'] || row['part_code'];
-            const name = row['Nama'] || row['name'] || row['Nama Sparepart'];
-            if (!name)
-                continue;
-            const category = row['Kategori'] || row['category'] || '';
-            const stock = parseInt(String(row['Stok'] || row['stock'] || 0), 10);
-            const buy_price = parseFloat(String(row['Harga Beli'] || row['buy_price'] || 0));
-            const sell_price = parseFloat(String(row['Harga Jual'] || row['sell_price'] || 0));
-            const unit = row['Satuan'] || row['unit'] || 'pcs';
-            const notes = row['Keterangan'] || row['notes'] || '';
-            if (part_code) {
-                const existing = db_1.default.drizzle.select({ id: drizzleSchema_1.spareParts.id }).from(drizzleSchema_1.spareParts)
-                    .where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.part_code, String(part_code))).get();
-                if (existing) {
-                    db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
-                        name, category, stock: (0, drizzle_orm_1.sql) `stock + ${stock || 0}`, buy_price: buy_price || 0,
-                        sell_price: sell_price || 0, unit, notes, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
-                    }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, existing.id)).run();
-                    updated++;
-                    continue;
-                }
-            }
-            db_1.default.drizzle.insert(drizzleSchema_1.spareParts).values({
-                part_code: part_code || null, name, category, stock: stock || 0,
-                buy_price: buy_price || 0, sell_price: sell_price || 0, unit, notes
-            }).run();
-            imported++;
-        }
-        return { imported, updated };
-    });
-    return tx(dataArray);
 }

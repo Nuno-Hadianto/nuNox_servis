@@ -39,7 +39,6 @@ exports.addPart = addPart;
 exports.updatePart = updatePart;
 exports.updatePartStock = updatePartStock;
 exports.deletePart = deletePart;
-exports.importParts = importParts;
 exports.getLowStockParts = getLowStockParts;
 exports.getPartLogs = getPartLogs;
 const partRepository = __importStar(require("../repositories/partRepository"));
@@ -70,9 +69,6 @@ function deletePart(id) {
         throw new Error("Sparepart tidak bisa dihapus karena sudah tercatat dalam riwayat rincian biaya servis.");
     }
     return partRepository.deletePart(id);
-}
-function importParts(dataArray) {
-    return partRepository.importParts(dataArray);
 }
 function getLowStockParts(threshold) {
     return partRepository.getLowStockParts(threshold);

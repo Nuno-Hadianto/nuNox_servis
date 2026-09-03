@@ -57,7 +57,6 @@ contextBridge.exposeInMainWorld('api', {
   updatePart: (id: number, data: Partial<Part>) => invokeSafe('update-part', id, data),
   updatePartStock: (id: number, change: number, reason?: string, ref_id?: string) => invokeSafe('update-part-stock', id, change, reason, ref_id),
   deletePart: (id: number) => invokeSafe('delete-part', id),
-  importPartsExcel: () => invokeSafe('import-parts-excel'),
   getLowStockParts: (threshold: number) => invokeSafe('get-low-stock-parts', threshold),
   getPartLogs: (id: number) => invokeSafe('get-part-logs', id),
 

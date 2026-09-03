@@ -51,7 +51,6 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     updatePart: (id, data) => invokeSafe('update-part', id, data),
     updatePartStock: (id, change, reason, ref_id) => invokeSafe('update-part-stock', id, change, reason, ref_id),
     deletePart: (id) => invokeSafe('delete-part', id),
-    importPartsExcel: () => invokeSafe('import-parts-excel'),
     getLowStockParts: (threshold) => invokeSafe('get-low-stock-parts', threshold),
     getPartLogs: (id) => invokeSafe('get-part-logs', id),
     // Service Items

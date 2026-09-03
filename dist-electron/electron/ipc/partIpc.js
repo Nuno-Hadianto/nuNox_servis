@@ -32,17 +32,12 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerPartIpc = registerPartIpc;
 const electron_1 = require("electron");
-const xlsx_1 = __importDefault(require("xlsx"));
 const partController = __importStar(require("../../controllers/partController"));
-const electron_log_1 = __importDefault(require("electron-log"));
 const validators_1 = require("../../src/utils/validators");
-function registerPartIpc(mainWindow) {
+function registerPartIpc() {
     electron_1.ipcMain.handle('get-parts', (event, searchQuery) => partController.getParts(searchQuery));
     electron_1.ipcMain.handle('get-part', (event, id) => partController.getPartById(id));
     electron_1.ipcMain.handle('add-part', (event, data) => {
@@ -57,28 +52,4 @@ function registerPartIpc(mainWindow) {
     electron_1.ipcMain.handle('delete-part', (event, id) => partController.deletePart(id));
     electron_1.ipcMain.handle('get-low-stock-parts', (event, threshold) => partController.getLowStockParts(threshold));
     electron_1.ipcMain.handle('get-part-logs', (event, id) => partController.getPartLogs(id));
-    electron_1.ipcMain.handle('import-parts-excel', async () => {
-        try {
-            const { canceled, filePaths } = await electron_1.dialog.showOpenDialog(mainWindow, {
-                title: 'Pilih File Excel Sparepart',
-                filters: [{ name: 'Excel Files', extensions: ['xlsx', 'xls'] }],
-                properties: ['openFile']
-            });
-            if (canceled || filePaths.length === 0)
-                return { success: false, canceled: true };
-            const filePath = filePaths[0];
-            const workbook = xlsx_1.default.readFile(filePath);
-            const sheetName = workbook.SheetNames[0];
-            const data = xlsx_1.default.utils.sheet_to_json(workbook.Sheets[sheetName]);
-            if (data.length === 0) {
-                return { success: false, error: 'File Excel kosong atau format tidak sesuai.' };
-            }
-            const result = partController.importParts(data);
-            return { success: true, result };
-        }
-        catch (error) {
-            electron_log_1.default.error('Error importing excel:', error);
-            return { success: false, error: error instanceof Error ? error.message : String(error) };
-        }
-    });
 }

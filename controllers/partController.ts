@@ -36,10 +36,6 @@ function deletePart(id: number | string) {
     return partRepository.deletePart(id);
 }
 
-function importParts(dataArray: Partial<Part>[]) {
-    return partRepository.importParts(dataArray);
-}
-
 function getLowStockParts(threshold: number) {
     return partRepository.getLowStockParts(threshold);
 }
@@ -51,7 +47,6 @@ export {
     updatePart,
     updatePartStock,
     deletePart,
-    importParts,
     getLowStockParts,
     getPartLogs
  };

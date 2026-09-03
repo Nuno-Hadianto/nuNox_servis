@@ -110,49 +110,6 @@ function deletePart(id: number | string) {
     return true;
 }
 
-function importParts(dataArray: Record<string, string | number>[]) {
-    const tx = db.transaction((arr: Record<string, string | number>[]) => {
-        let imported = 0;
-        let updated = 0;
-        
-        for (const row of arr) {
-            const part_code = row['Kode'] || row['part_code'];
-            const name = row['Nama'] || row['name'] || row['Nama Sparepart'];
-            if (!name) continue; 
-            
-            const category = row['Kategori'] || row['category'] || '';
-            const stock = parseInt(String(row['Stok'] || row['stock'] || 0), 10);
-            const buy_price = parseFloat(String(row['Harga Beli'] || row['buy_price'] || 0));
-            const sell_price = parseFloat(String(row['Harga Jual'] || row['sell_price'] || 0));
-            const unit = row['Satuan'] || row['unit'] || 'pcs';
-            const notes = row['Keterangan'] || row['notes'] || '';
-
-            if (part_code) {
-                const existing = db.drizzle.select({ id: spareParts.id }).from(spareParts)
-                    .where(eq(spareParts.part_code, String(part_code))).get();
-                if (existing) {
-                    db.drizzle.update(spareParts).set({
-                        name, category, stock: sql`stock + ${stock || 0}`, buy_price: buy_price || 0, 
-                        sell_price: sell_price || 0, unit, notes, updated_at: sql`CURRENT_TIMESTAMP`
-                    }).where(eq(spareParts.id, existing.id)).run();
-                    updated++;
-                    continue;
-                }
-            }
-            
-            db.drizzle.insert(spareParts).values({
-                part_code: part_code || null, name, category, stock: stock || 0, 
-                buy_price: buy_price || 0, sell_price: sell_price || 0, unit, notes
-            }).run();
-            imported++;
-        }
-        
-        return { imported, updated };
-    });
-    
-    return tx(dataArray);
-}
-
 export { 
     getParts,
     getPartById,
@@ -161,7 +118,6 @@ export {
     updatePartStock,
     checkPartHasServiceItems,
     deletePart,
-    importParts,
     getLowStockParts,
     getPartLogs
  };

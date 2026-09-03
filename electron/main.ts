@@ -73,7 +73,7 @@ function createWindow() {
   registerCustomerIpc();
   registerDeviceIpc();
   registerServiceIpc();
-  registerPartIpc(mainWindow);
+  registerPartIpc();
   registerUserIpc();
   registerMiscIpc(mainWindow);
 

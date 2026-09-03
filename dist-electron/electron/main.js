@@ -100,7 +100,7 @@ function createWindow() {
     (0, customerIpc_1.registerCustomerIpc)();
     (0, deviceIpc_1.registerDeviceIpc)();
     (0, serviceIpc_1.registerServiceIpc)();
-    (0, partIpc_1.registerPartIpc)(mainWindow);
+    (0, partIpc_1.registerPartIpc)();
     (0, userIpc_1.registerUserIpc)();
     (0, miscIpc_1.registerMiscIpc)(mainWindow);
     mainWindow.on('closed', () => {

@@ -35,13 +35,6 @@
       </div>
       <div style="display: flex; gap: 10px; flex-wrap: wrap">
         <button
-          @click="importExcel"
-          class="btn btn-secondary"
-          style="display: flex; align-items: center; gap: 6px; border-radius: 20px"
-        >
-          <span>📥</span> Import Excel
-        </button>
-        <button
           @click="exportExcel"
           class="btn"
           style="
@@ -307,26 +300,6 @@ const loadParts = async () => {
   }
 }
 
-const importExcel = async () => {
-  try {
-    const res = await window.api.importPartsExcel()
-    if (res.canceled) return
-
-    if (res.success) {
-      window.Swal.fire(
-        'Berhasil',
-        `Import: ${res.result.imported} baru, ${res.result.updated} diperbarui.`,
-        'success'
-      )
-      loadParts()
-    } else {
-      window.Swal.fire('Gagal', res.error || 'Terjadi kesalahan saat import.', 'error')
-    }
-  } catch (err) {
-    console.error(err)
-    window.Swal.fire('Error', 'Gagal memproses file Excel.', 'error')
-  }
-}
 
 // Modal Form Logic
 const isModalOpen = ref<boolean>(false)
