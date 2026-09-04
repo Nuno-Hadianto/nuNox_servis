@@ -66,7 +66,6 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getDbSize: () => invokeSafe('get-db-size'),
     backupDatabase: () => invokeSafe('backup-database'),
     restoreDatabase: () => invokeSafe('restore-database'),
-    testGdrive: (creds, folderId) => invokeSafe('test-gdrive', creds, folderId),
     selectDirectory: () => invokeSafe('select-directory'),
     // Export
     exportPdf: (data) => invokeSafe('export-pdf', data),
@@ -74,15 +73,5 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getLogoBase64: () => invokeSafe('get-logo-base64'),
     showNotification: (title, body) => invokeSafe('show-notification', { title, body }),
     // Print & Preview
-    printPreview: (options) => invokeSafe('print-preview', options),
-    // Updater
-    checkForUpdates: () => invokeSafe('check-for-updates'),
-    installUpdate: () => invokeSafe('install-update'),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onUpdaterEvent: (callback) => {
-        electron_1.ipcRenderer.on('updater-event', callback);
-    },
-    removeUpdaterEvents: () => {
-        electron_1.ipcRenderer.removeAllListeners('updater-event');
-    }
+    printPreview: (options) => invokeSafe('print-preview', options)
 });

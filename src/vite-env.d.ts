@@ -104,7 +104,6 @@ declare global {
       // Backup & Utilities
       backupDatabase: () => Promise<boolean>
       restoreDatabase: () => Promise<boolean>
-      testGdrive: (creds: string, folderId: string) => Promise<{ success: boolean; error?: string }>
       askAi: (prompt: string) => Promise<{ success: boolean; result?: string; error?: string }>
       selectDirectory: () => Promise<string | null>
       exportPdf: (data: { html: string; filename: string }) => Promise<{ success: boolean; filePath?: string; canceled?: boolean; error?: string }>
@@ -112,13 +111,6 @@ declare global {
       getLogoBase64: () => Promise<string | null>
       printPreview: (options: Record<string, unknown>) => Promise<boolean>
 
-
-      // Updater
-      checkForUpdates: () => Promise<unknown>
-      installUpdate: () => void
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onUpdaterEvent: (callback: (event: unknown, data: any) => void) => void
-      removeUpdaterEvents: () => void
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Swal: any

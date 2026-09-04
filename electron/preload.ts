@@ -79,7 +79,6 @@ contextBridge.exposeInMainWorld('api', {
   getDbSize: () => invokeSafe('get-db-size'),
   backupDatabase: () => invokeSafe('backup-database'),
   restoreDatabase: () => invokeSafe('restore-database'),
-  testGdrive: (creds: string, folderId: string) => invokeSafe('test-gdrive', creds, folderId),
   selectDirectory: () => invokeSafe('select-directory'),
 
   // Export
@@ -89,17 +88,5 @@ contextBridge.exposeInMainWorld('api', {
   showNotification: (title: string, body: string) => invokeSafe('show-notification', { title, body }),
   
   // Print & Preview
-  printPreview: (options: Record<string, unknown>) => invokeSafe('print-preview', options),
-
-
-  // Updater
-  checkForUpdates: () => invokeSafe('check-for-updates'),
-  installUpdate: () => invokeSafe('install-update'),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onUpdaterEvent: (callback: (event: unknown, data: any) => void) => {
-    ipcRenderer.on('updater-event', callback);
-  },
-  removeUpdaterEvents: () => {
-    ipcRenderer.removeAllListeners('updater-event');
-  }
+  printPreview: (options: Record<string, unknown>) => invokeSafe('print-preview', options)
 });
