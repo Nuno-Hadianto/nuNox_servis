@@ -203,6 +203,21 @@
                 "
               ></textarea>
             </div>
+            <div class="form-group">
+              <label>Kelengkapan & Kondisi Fisik (Opsional)</label>
+              <textarea
+                v-model="form.physical_condition"
+                rows="2"
+                placeholder="Contoh: Bawa charger dan tas. Bodi bawah lecet pemakaian."
+                style="
+                  border: 1px solid var(--border-color);
+                  border-radius: var(--radius-sm);
+                  padding: 10px;
+                  resize: vertical;
+                  width: 100%;
+                "
+              ></textarea>
+            </div>
             <div style="display: flex; gap: 15px">
               <div class="form-group" style="flex: 1">
                 <label>Teknisi (Opsional)</label>
@@ -419,6 +434,7 @@ const form = reactive({
   customer_id: '',
   device_id: '',
   customer_complaint: '',
+  physical_condition: '',
   technician: '',
   estimated_cost: ''
 })
@@ -427,6 +443,7 @@ const openAddModal = async () => {
   form.customer_id = ''
   form.device_id = ''
   form.customer_complaint = ''
+  form.physical_condition = ''
   form.technician = ''
   form.estimated_cost = ''
   customerDevices.value = []
@@ -438,11 +455,16 @@ const openAddModal = async () => {
 
 const saveService = async () => {
   try {
+    const finalComplaint = form.physical_condition 
+      ? `${form.customer_complaint}\n\n[Kelengkapan & Kondisi Fisik]:\n${form.physical_condition}` 
+      : form.customer_complaint;
+
     // Validasi dengan Zod
     try {
       // parse estimated_cost if string
       const payload = {
         ...form,
+        customer_complaint: finalComplaint,
         customer_id: Number(form.customer_id),
         device_id: Number(form.device_id),
         estimated_cost: form.estimated_cost ? Number(form.estimated_cost) : 0
@@ -461,6 +483,7 @@ const saveService = async () => {
 
     const finalPayload = {
       ...form,
+      customer_complaint: finalComplaint,
       customer_id: Number(form.customer_id),
       device_id: Number(form.device_id),
       estimated_cost: form.estimated_cost ? Number(form.estimated_cost) : 0

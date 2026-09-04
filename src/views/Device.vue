@@ -210,36 +210,7 @@
                 />
               </div>
             </div>
-            <div class="form-group">
-              <label>Kondisi Fisik Saat Diterima</label>
-              <textarea
-                v-model="form.physical_condition"
-                rows="2"
-                placeholder="Contoh: Ada goresan di bodi, layar retak sedikit..."
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  width: 100%;
-                  resize: vertical;
-                "
-              ></textarea>
-            </div>
-            <div class="form-group">
-              <label>Catatan Tambahan</label>
-              <textarea
-                v-model="form.notes"
-                rows="2"
-                placeholder="Informasi lain..."
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  width: 100%;
-                  resize: vertical;
-                "
-              ></textarea>
-            </div>
+
             <div
               class="modal-footer"
               style="

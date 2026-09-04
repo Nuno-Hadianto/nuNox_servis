@@ -29,11 +29,11 @@
         <!-- Dropdown -->
         <div 
           v-if="isNotificationOpen" 
-          style="position: absolute; top: 50px; right: 0; width: 320px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 100; overflow: hidden;"
+          style="position: absolute; top: 50px; right: 0; width: 320px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 100; overflow: hidden;"
         >
           <div style="padding: 12px 15px; border-bottom: 1px solid var(--border-color); font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
             <span>Notifikasi Servis</span>
-            <span style="font-size: 0.8rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 12px;">{{ alerts.length }} Baru</span>
+            <span style="font-size: 0.8rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 12px;">{{ alerts.length }} Baru</span>
           </div>
           <div style="max-height: 350px; overflow-y: auto;">
             <div v-if="alerts.length === 0" style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
@@ -43,9 +43,9 @@
               v-else
               v-for="alert in alerts" 
               :key="alert.id"
-              @click="goToService(alert.ticket_number)"
+              @click="goToService(alert.id)"
               style="padding: 12px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s;"
-              onmouseover="this.style.background='var(--surface-light)'"
+              onmouseover="this.style.background='rgba(128, 128, 128, 0.15)'"
               onmouseout="this.style.background='transparent'"
             >
               <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; color: var(--text-primary);">
@@ -122,9 +122,9 @@ const toggleNotifications = () => {
   isNotificationOpen.value = !isNotificationOpen.value
 }
 
-const goToService = (ticket: string) => {
+const goToService = (id: number) => {
   isNotificationOpen.value = false
-  router.push(`/service/${ticket}`)
+  router.push(`/services/${id}`)
 }
 
 const loadAlerts = async () => {
