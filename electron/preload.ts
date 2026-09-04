@@ -46,7 +46,7 @@ contextBridge.exposeInMainWorld('api', {
   checkWarranty: (deviceId: number) => invokeSafe('check-warranty', deviceId),
 
   // Parts
-  getParts: (searchQuery: string) => invokeSafe('get-parts', searchQuery),
+  getParts: (searchQuery: string, page: number, limit: number) => invokeSafe('get-parts', searchQuery, page, limit),
   getPart: (id: number) => invokeSafe('get-part', id),
   addPart: (data: Omit<Part, 'id'>) => invokeSafe('add-part', data),
   updatePart: (id: number, data: Partial<Part>) => invokeSafe('update-part', id, data),

@@ -4,14 +4,23 @@ import db from '../database/db';
 import {  spareParts, serviceItems  } from '../database/drizzleSchema';
 import {  eq, like, or, asc, sql  } from 'drizzle-orm';
 
-function getParts(searchQuery = '') {
+function getParts(searchQuery = '', page = 1, limit = 15) {
+    const offset = (page - 1) * limit;
+    let query = db.drizzle.select().from(spareParts).$dynamic();
+    let countQuery = db.drizzle.select({ count: sql`count(*)` }).from(spareParts).$dynamic();
+
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        return db.drizzle.select().from(spareParts)
-            .where(or(like(spareParts.name, queryStr), like(spareParts.part_code, queryStr)))
-            .orderBy(asc(spareParts.name)).all();
+        const searchFilter = or(like(spareParts.name, queryStr), like(spareParts.part_code, queryStr));
+        query = query.where(searchFilter);
+        countQuery = countQuery.where(searchFilter);
     }
-    return db.drizzle.select().from(spareParts).orderBy(asc(spareParts.name)).all();
+
+    const data = query.orderBy(asc(spareParts.name)).limit(limit).offset(offset).all();
+    const totalResult = countQuery.get();
+    const total = totalResult ? Number((totalResult as { count: number }).count) : 0;
+    
+    return { data, total };
 }
 
 function getPartById(id: number | string) {

@@ -40,8 +40,8 @@ exports.updatePart = updatePart;
 exports.deletePart = deletePart;
 const partRepository = __importStar(require("../repositories/partRepository"));
 const validators_1 = require("../src/utils/validators");
-function getParts(searchQuery = '') {
-    return partRepository.getParts(searchQuery);
+function getParts(searchQuery = '', page = 1, limit = 15) {
+    return partRepository.getParts(searchQuery, page, limit);
 }
 function getPartById(id) {
     return partRepository.getPartById(id);

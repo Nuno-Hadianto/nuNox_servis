@@ -79,6 +79,7 @@
     <!-- Custom Pagination -->
     <div
       class="pagination-controls"
+      v-if="totalPages > 1"
       style="
         margin-top: 25px;
         display: flex;

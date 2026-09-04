@@ -7,7 +7,7 @@ import * as partController from '../../controllers/partController';
 
 
 function registerPartIpc() {
-  ipcMain.handle('get-parts', (event: IpcMainInvokeEvent, searchQuery: string) => partController.getParts(searchQuery));
+  ipcMain.handle('get-parts', (event: IpcMainInvokeEvent, searchQuery: string, page: number, limit: number) => partController.getParts(searchQuery, page, limit));
   ipcMain.handle('get-part', (event: IpcMainInvokeEvent, id: number) => partController.getPartById(id));
   ipcMain.handle('add-part', (event: IpcMainInvokeEvent, data: Omit<Part, 'id'>) => {
     return partController.addPart(data);

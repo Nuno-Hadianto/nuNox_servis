@@ -41,7 +41,7 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     // Warranty
     checkWarranty: (deviceId) => invokeSafe('check-warranty', deviceId),
     // Parts
-    getParts: (searchQuery) => invokeSafe('get-parts', searchQuery),
+    getParts: (searchQuery, page, limit) => invokeSafe('get-parts', searchQuery, page, limit),
     getPart: (id) => invokeSafe('get-part', id),
     addPart: (data) => invokeSafe('add-part', data),
     updatePart: (id, data) => invokeSafe('update-part', id, data),

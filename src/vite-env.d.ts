@@ -67,7 +67,7 @@ declare global {
 
 
       // Parts
-      getParts: (searchQuery: string) => Promise<Part[]>
+      getParts: (searchQuery: string, page: number, limit: number) => Promise<{ data: Part[]; total: number }>
       getPart: (id: number) => Promise<Part>
       addPart: (data: Omit<Part, 'id'>) => Promise<number>
       updatePart: (id: number, data: Partial<Part>) => Promise<number>

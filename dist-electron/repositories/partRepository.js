@@ -12,14 +12,20 @@ exports.deletePart = deletePart;
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
 const drizzle_orm_1 = require("drizzle-orm");
-function getParts(searchQuery = '') {
+function getParts(searchQuery = '', page = 1, limit = 15) {
+    const offset = (page - 1) * limit;
+    let query = db_1.default.drizzle.select().from(drizzleSchema_1.spareParts).$dynamic();
+    let countQuery = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.spareParts).$dynamic();
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        return db_1.default.drizzle.select().from(drizzleSchema_1.spareParts)
-            .where((0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.name, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.part_code, queryStr)))
-            .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.name)).all();
+        const searchFilter = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.name, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.part_code, queryStr));
+        query = query.where(searchFilter);
+        countQuery = countQuery.where(searchFilter);
     }
-    return db_1.default.drizzle.select().from(drizzleSchema_1.spareParts).orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.name)).all();
+    const data = query.orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.name)).limit(limit).offset(offset).all();
+    const totalResult = countQuery.get();
+    const total = totalResult ? Number(totalResult.count) : 0;
+    return { data, total };
 }
 function getPartById(id) {
     return db_1.default.drizzle.select().from(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).get();

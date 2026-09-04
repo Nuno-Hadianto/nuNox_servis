@@ -37,7 +37,7 @@ exports.registerPartIpc = registerPartIpc;
 const electron_1 = require("electron");
 const partController = __importStar(require("../../controllers/partController"));
 function registerPartIpc() {
-    electron_1.ipcMain.handle('get-parts', (event, searchQuery) => partController.getParts(searchQuery));
+    electron_1.ipcMain.handle('get-parts', (event, searchQuery, page, limit) => partController.getParts(searchQuery, page, limit));
     electron_1.ipcMain.handle('get-part', (event, id) => partController.getPartById(id));
     electron_1.ipcMain.handle('add-part', (event, data) => {
         return partController.addPart(data);

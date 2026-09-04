@@ -89,6 +89,25 @@
       </table>
     </div>
 
+    <!-- Custom Pagination -->
+    <div class="pagination" v-if="totalPages > 1">
+      <button 
+        class="page-btn" 
+        :disabled="currentPage === 1" 
+        @click="prevPage"
+      >
+        <ChevronLeft :size="18" />
+      </button>
+      <span class="page-info">Halaman {{ currentPage }} dari {{ totalPages }}</span>
+      <button 
+        class="page-btn" 
+        :disabled="currentPage === totalPages" 
+        @click="nextPage"
+      >
+        <ChevronRight :size="18" />
+      </button>
+    </div>
+
     <!-- Modal Tambah/Edit -->
     <div v-if="isModalOpen" class="modal show">
       <div class="modal-content">
@@ -237,7 +256,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
@@ -246,6 +265,9 @@ import type { Part } from '../../shared/types'
 const route = useRoute()
 const parts = ref<Part[]>([])
 const searchQuery = ref<string>((route.query.search as string) || '')
+const currentPage = ref(1)
+const totalPages = ref(1)
+const limit = 15
 
 watch(
   () => route.query.search,
@@ -261,6 +283,7 @@ let searchTimeout: ReturnType<typeof setTimeout> | null = null
 const debounceSearch = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
+    currentPage.value = 1 // Reset to first page on search
     loadParts()
   }, 300)
 }
@@ -276,10 +299,26 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 const loadParts = async () => {
   if (window.api && window.api.getParts) {
     try {
-      parts.value = (await window.api.getParts(searchQuery.value)) as Part[]
+      const response = await window.api.getParts(searchQuery.value, currentPage.value, limit) as { data: Part[], total: number };
+      parts.value = response.data;
+      totalPages.value = Math.ceil(response.total / limit) || 1;
     } catch (error) {
       console.error('Failed to load parts:', error)
     }
+  }
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    loadParts()
+  }
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    loadParts()
   }
 }
 
