@@ -1,7 +1,7 @@
 import { _electron as electron } from 'playwright';
 import { test, expect } from '@playwright/test';
 
-test('App starts and shows login screen', async () => {
+test('App starts and shows Dashboard', async () => {
   const electronApp = await electron.launch({ args: ['.'] });
   
   electronApp.on('window', async (page) => {
@@ -12,17 +12,15 @@ test('App starts and shows login screen', async () => {
   const window = await electronApp.firstWindow();
   await window.waitForLoadState('domcontentloaded');
   
-  // App should start on login screen
+  // App should start and have correct title
   await expect(window).toHaveTitle(/nuNox_servis/i);
   
-  // Check if login form is present
-  const usernameInput = window.locator('input[type="text"]');
-  const passwordInput = window.locator('input[type="password"]');
-  const loginButton = window.locator('button[type="submit"]');
+  // Check if Dashboard is visible instead of login form
+  const dashboardText = window.getByText('Dashboard', { exact: true }).first();
+  const brandName = window.getByText('nuNox_servis').first();
   
-  await expect(usernameInput).toBeVisible();
-  await expect(passwordInput).toBeVisible();
-  await expect(loginButton).toBeVisible();
+  await expect(dashboardText).toBeVisible();
+  await expect(brandName).toBeVisible();
   
   await electronApp.close();
 });
