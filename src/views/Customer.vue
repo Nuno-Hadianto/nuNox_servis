@@ -91,9 +91,11 @@
         class="btn btn-secondary btn-sm"
         :disabled="currentPage === 1"
         @click="loadCustomers(currentPage - 1)"
-        style="border-radius: 20px; padding: 6px 16px"
+        style="border-radius: 20px; padding: 6px 16px; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;"
+        onmouseover="if(!this.disabled) this.style.transform='translateX(-3px)'"
+        onmouseout="if(!this.disabled) this.style.transform='translateX(0)'"
       >
-        &larr; Sebelumnya
+        <ChevronLeft :size="16" /> Sebelumnya
       </button>
       <span
         style="
@@ -110,9 +112,11 @@
         class="btn btn-secondary btn-sm"
         :disabled="currentPage >= totalPages"
         @click="loadCustomers(currentPage + 1)"
-        style="border-radius: 20px; padding: 6px 16px"
+        style="border-radius: 20px; padding: 6px 16px; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;"
+        onmouseover="if(!this.disabled) this.style.transform='translateX(3px)'"
+        onmouseout="if(!this.disabled) this.style.transform='translateX(0)'"
       >
-        Selanjutnya &rarr;
+        Selanjutnya <ChevronRight :size="16" />
       </button>
     </div>
 
@@ -195,7 +199,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted } from 'vue'
 import type { Customer } from '../../shared/types'
 import { CustomerSchema } from '../utils/validators'
