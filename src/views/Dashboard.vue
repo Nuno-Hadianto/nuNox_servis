@@ -102,7 +102,6 @@ const stats = ref<DashboardStats>({
   chartData: { labels: [], values: [] },
   serviceStatusChart: { labels: [], values: [] },
   topPartsChart: { labels: [], values: [] },
-  lowStockParts: [],
   abandonedServices: [],
   todoItems: []
 })

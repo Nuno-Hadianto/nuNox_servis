@@ -1,6 +1,5 @@
 /// <reference types="vite/client" />
 import type {
-  User,
   Customer,
   Device,
   ServiceOrder,
@@ -72,11 +71,9 @@ declare global {
       getPart: (id: number) => Promise<Part>
       addPart: (data: Omit<Part, 'id'>) => Promise<number>
       updatePart: (id: number, data: Partial<Part>) => Promise<number>
-      updatePartStock: (id: number, change: number, reason?: string, ref_id?: string) => Promise<number>
+      updatePartStock: (id: number, change: number) => Promise<number>
       deletePart: (id: number) => Promise<number>
 
-      getLowStockParts: (threshold: number) => Promise<Part[]>
-      getPartLogs: (id: number) => Promise<unknown[]>
 
       // Service Items
       getServiceItems: (serviceId: number) => Promise<ServiceItem[]>
@@ -117,18 +114,6 @@ declare global {
       silentPrint: (options: Record<string, unknown>) => Promise<boolean>
       getPrinters: () => Promise<{ name: string; isDefault?: boolean }[]>
 
-      // Auth
-      login: (u: string, p: string) => Promise<{ success: boolean; user?: User; error?: string }>
-      getUsers: () => Promise<User[]>
-      getUser: (id: number) => Promise<User>
-      addUser: (
-        data: Omit<User, 'id'>
-      ) => Promise<{ success: boolean; id?: number; error?: string }>
-      updateUser: (
-        id: number,
-        data: Partial<User>
-      ) => Promise<{ success: boolean; result?: number; error?: string }>
-      deleteUser: (id: number) => Promise<{ success: boolean; result?: number; error?: string }>
 
       // Updater
       checkForUpdates: () => Promise<unknown>

@@ -1,10 +1,4 @@
 
-export interface LowStockPart {
-  id: number;
-  part_code?: string;
-  name: string;
-  stock: number;
-}
 
 export interface AbandonedService {
   id: number;
@@ -24,7 +18,7 @@ export interface DashboardStats {
   chartData: { labels: string[], values: number[] };
   serviceStatusChart?: { labels: string[], values: number[] };
   topPartsChart?: { labels: string[], values: number[] };
-  lowStockParts: Part[];
+
   abandonedServices: AbandonedService[];
   todoItems: TodoItem[];
 }
@@ -130,19 +124,12 @@ export interface Settings {
   address: string;
   receipt_footer: string;
   auto_backup_path?: string;
-  low_stock_threshold?: number;
+
   wa_template_status?: string;
   default_printer?: string;
   primary_color?: string;
 }
 
-export interface Photo {
-  id: number;
-  service_order_id: number;
-  photo_type: string;
-  filepath: string;
-  created_at: string;
-}
 
 export interface TodoItem {
   id: number;
@@ -152,12 +139,3 @@ export interface TodoItem {
 }
 
 
-export interface PartLog {
-  id: number;
-  spare_part_id: number;
-  change_amount: number;
-  new_stock: number;
-  reason: string;
-  reference_id?: string;
-  created_at?: string;
-}

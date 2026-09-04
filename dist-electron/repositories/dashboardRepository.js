@@ -64,23 +64,6 @@ function getDashboardStats() {
         chartLabels.push(monthName);
         chartValues.push(row ? row.total : 0);
     }
-    // Get threshold from settings
-    let threshold = 3; // default
-    try {
-        const row = db_1.default.drizzle.select({ value: drizzleSchema_1.settings.value }).from(drizzleSchema_1.settings)
-            .where((0, drizzle_orm_1.eq)(drizzleSchema_1.settings.key, 'low_stock_threshold')).get();
-        if (row && row.value !== undefined && row.value !== null) {
-            threshold = Number(row.value);
-        }
-    }
-    catch {
-        // ignore
-    }
-    // Peringatan Stok Menipis
-    const lowStockParts = db_1.default.drizzle.select().from(drizzleSchema_1.spareParts)
-        .where((0, drizzle_orm_1.lte)(drizzleSchema_1.spareParts.stock, threshold))
-        .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.stock))
-        .limit(20).all();
     // Barang Terlantar / Follow Up
     // 1. Menunggu Sparepart > 7 hari
     const waitingQuery = db_1.default.drizzle.select({
@@ -162,7 +145,6 @@ function getDashboardStats() {
         chartData: { labels: chartLabels, values: chartValues },
         serviceStatusChart,
         topPartsChart,
-        lowStockParts,
         abandonedServices,
         todoItems
     };

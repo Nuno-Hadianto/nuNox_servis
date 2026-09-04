@@ -20,12 +20,8 @@ function updatePart(id: number | string, data: Omit<Part, 'id'>) {
     return partRepository.updatePart(id, validData as Omit<Part, 'id'>);
 }
 
-function updatePartStock(id: number | string, change: number, reason?: string, ref_id?: string) {
-    return partRepository.updatePartStock(id, change, reason, ref_id);
-}
-
-function getPartLogs(partId: number | string) {
-    return partRepository.getPartLogs(partId);
+function updatePartStock(id: number | string, change: number) {
+    return partRepository.updatePartStock(id, change);
 }
 
 function deletePart(id: number | string) {
@@ -36,9 +32,6 @@ function deletePart(id: number | string) {
     return partRepository.deletePart(id);
 }
 
-function getLowStockParts(threshold: number) {
-    return partRepository.getLowStockParts(threshold);
-}
 
 export { 
     getParts,
@@ -46,7 +39,5 @@ export {
     addPart,
     updatePart,
     updatePartStock,
-    deletePart,
-    getLowStockParts,
-    getPartLogs
+    deletePart
  };

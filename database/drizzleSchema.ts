@@ -81,15 +81,6 @@ export const spareParts = sqliteTable('spare_parts', {
   partCodeIdx: index('idx_sparepart_code').on(table.part_code)
 }));
 
-export const partLogs = sqliteTable('part_logs', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  spare_part_id: integer('spare_part_id').notNull().references(() => spareParts.id, { onDelete: 'cascade' }),
-  change_amount: integer('change_amount').notNull(),
-  new_stock: integer('new_stock').notNull(),
-  reason: text('reason').notNull(),
-  reference_id: text('reference_id'),
-  created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`)
-});
 
 export const serviceItems = sqliteTable('service_items', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -115,16 +106,6 @@ export const payments = sqliteTable('payments', {
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`)
 });
 
-export const receipts = sqliteTable('receipts', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  service_order_id: integer('service_order_id').notNull().references(() => serviceOrders.id, { onDelete: 'cascade' }),
-  receipt_number: text('receipt_number').notNull().unique(),
-  receipt_date: text('receipt_date').default(sql`CURRENT_TIMESTAMP`),
-  total_amount: real('total_amount').notNull(),
-  pdf_path: text('pdf_path'),
-  created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`)
-});
-
 
 export const settings = sqliteTable('settings', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -133,10 +114,3 @@ export const settings = sqliteTable('settings', {
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
 });
 
-export const servicePhotos = sqliteTable('service_photos', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  service_order_id: integer('service_order_id').notNull().references(() => serviceOrders.id, { onDelete: 'cascade' }),
-  photo_type: text('photo_type').notNull(),
-  filepath: text('filepath').notNull(),
-  created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`)
-});

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.servicePhotos = exports.settings = exports.receipts = exports.payments = exports.serviceItems = exports.partLogs = exports.spareParts = exports.serviceStatusHistory = exports.serviceOrders = exports.devices = exports.customers = void 0;
+exports.settings = exports.payments = exports.serviceItems = exports.spareParts = exports.serviceStatusHistory = exports.serviceOrders = exports.devices = exports.customers = void 0;
 const sqlite_core_1 = require("drizzle-orm/sqlite-core");
 const drizzle_orm_1 = require("drizzle-orm");
 exports.customers = (0, sqlite_core_1.sqliteTable)('customers', {
@@ -77,15 +77,6 @@ exports.spareParts = (0, sqlite_core_1.sqliteTable)('spare_parts', {
 }, (table) => ({
     partCodeIdx: (0, sqlite_core_1.index)('idx_sparepart_code').on(table.part_code)
 }));
-exports.partLogs = (0, sqlite_core_1.sqliteTable)('part_logs', {
-    id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
-    spare_part_id: (0, sqlite_core_1.integer)('spare_part_id').notNull().references(() => exports.spareParts.id, { onDelete: 'cascade' }),
-    change_amount: (0, sqlite_core_1.integer)('change_amount').notNull(),
-    new_stock: (0, sqlite_core_1.integer)('new_stock').notNull(),
-    reason: (0, sqlite_core_1.text)('reason').notNull(),
-    reference_id: (0, sqlite_core_1.text)('reference_id'),
-    created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
 exports.serviceItems = (0, sqlite_core_1.sqliteTable)('service_items', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
     service_order_id: (0, sqlite_core_1.integer)('service_order_id').notNull().references(() => exports.serviceOrders.id, { onDelete: 'cascade' }),
@@ -108,25 +99,9 @@ exports.payments = (0, sqlite_core_1.sqliteTable)('payments', {
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
 });
-exports.receipts = (0, sqlite_core_1.sqliteTable)('receipts', {
-    id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
-    service_order_id: (0, sqlite_core_1.integer)('service_order_id').notNull().references(() => exports.serviceOrders.id, { onDelete: 'cascade' }),
-    receipt_number: (0, sqlite_core_1.text)('receipt_number').notNull().unique(),
-    receipt_date: (0, sqlite_core_1.text)('receipt_date').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
-    total_amount: (0, sqlite_core_1.real)('total_amount').notNull(),
-    pdf_path: (0, sqlite_core_1.text)('pdf_path'),
-    created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
 exports.settings = (0, sqlite_core_1.sqliteTable)('settings', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
     key: (0, sqlite_core_1.text)('key').notNull().unique(),
     value: (0, sqlite_core_1.text)('value'),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
-exports.servicePhotos = (0, sqlite_core_1.sqliteTable)('service_photos', {
-    id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
-    service_order_id: (0, sqlite_core_1.integer)('service_order_id').notNull().references(() => exports.serviceOrders.id, { onDelete: 'cascade' }),
-    photo_type: (0, sqlite_core_1.text)('photo_type').notNull(),
-    filepath: (0, sqlite_core_1.text)('filepath').notNull(),
-    created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
 });

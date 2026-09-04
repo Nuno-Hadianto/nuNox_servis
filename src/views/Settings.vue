@@ -412,8 +412,6 @@ const loadSettings = async () => {
       form.wa_template_status =
         settings.wa_template_status ||
         'Halo Kak {nama}, perangkat Anda dengan No Tiket *{tiket}* saat ini berstatus: *{status}*. Mohon konfirmasinya. Terima kasih.'
-      form.low_stock_threshold =
-        settings.low_stock_threshold !== undefined ? Number(settings.low_stock_threshold) : 3
       form.default_printer = settings.default_printer || ''
       form.primary_color = settings.primary_color || '#6366f1'
       
@@ -444,7 +442,6 @@ const saveSettings = async () => {
       receipt_footer: form.receipt_footer,
       auto_backup_path: form.auto_backup_path,
       wa_template_status: form.wa_template_status,
-      low_stock_threshold: form.low_stock_threshold,
       default_printer: form.default_printer,
       primary_color: form.primary_color
     }

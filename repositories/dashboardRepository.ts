@@ -1,7 +1,7 @@
 
 import db from '../database/db';
-import {  serviceOrders, payments, serviceItems, spareParts, settings, customers  } from '../database/drizzleSchema';
-import {  eq, notLike, like, notInArray, lte, asc, sql, and, isNotNull  } from 'drizzle-orm';
+import {  serviceOrders, payments, serviceItems, customers  } from '../database/drizzleSchema';
+import {  eq, notLike, like, notInArray, sql, and, isNotNull, lte  } from 'drizzle-orm';
 export {};
 
 
@@ -75,23 +75,6 @@ function getDashboardStats() {
         chartValues.push(row ? row.total : 0);
     }
 
-    // Get threshold from settings
-    let threshold = 3; // default
-    try {
-        const row = db.drizzle.select({ value: settings.value }).from(settings)
-            .where(eq(settings.key, 'low_stock_threshold')).get();
-        if (row && row.value !== undefined && row.value !== null) {
-            threshold = Number(row.value);
-        }
-    } catch {
-        // ignore
-    }
-
-    // Peringatan Stok Menipis
-    const lowStockParts = db.drizzle.select().from(spareParts)
-        .where(lte(spareParts.stock, threshold))
-        .orderBy(asc(spareParts.stock))
-        .limit(20).all();
 
     // Barang Terlantar / Follow Up
     // 1. Menunggu Sparepart > 7 hari
@@ -198,7 +181,6 @@ function getDashboardStats() {
         chartData: { labels: chartLabels, values: chartValues },
         serviceStatusChart,
         topPartsChart,
-        lowStockParts,
         abandonedServices,
         todoItems
     };
