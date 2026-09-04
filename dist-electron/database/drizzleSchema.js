@@ -1,15 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.servicePhotos = exports.settings = exports.receipts = exports.payments = exports.serviceItems = exports.partLogs = exports.spareParts = exports.serviceStatusHistory = exports.serviceOrders = exports.devices = exports.customers = exports.users = void 0;
+exports.servicePhotos = exports.settings = exports.receipts = exports.payments = exports.serviceItems = exports.partLogs = exports.spareParts = exports.serviceStatusHistory = exports.serviceOrders = exports.devices = exports.customers = void 0;
 const sqlite_core_1 = require("drizzle-orm/sqlite-core");
 const drizzle_orm_1 = require("drizzle-orm");
-exports.users = (0, sqlite_core_1.sqliteTable)('users', {
-    id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
-    username: (0, sqlite_core_1.text)('username').notNull().unique(),
-    password: (0, sqlite_core_1.text)('password').notNull(),
-    role: (0, sqlite_core_1.text)('role').default('admin'),
-    created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
-});
 exports.customers = (0, sqlite_core_1.sqliteTable)('customers', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
     name: (0, sqlite_core_1.text)('name').notNull(),

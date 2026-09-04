@@ -346,6 +346,26 @@ a {
   background: var(--secondary-hover);
 }
 
+.btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+.btn-outline:hover {
+  background: var(--hover-bg);
+  border-color: var(--text-muted);
+}
+
+.btn-cancel {
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+}
+.btn-cancel:hover {
+  background: var(--danger);
+  color: white;
+}
+
 .btn-danger {
   background: rgba(239, 68, 68, 0.1);
   color: var(--danger);
@@ -387,6 +407,10 @@ a {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 24px;
+}
+
+.dashboard-grid > * {
+    min-width: 0;
 }
 
 /* Tables */

@@ -261,10 +261,6 @@ import { useRouter, useRoute } from 'vue-router'
 import type { ServiceOrder, Customer, Device } from '../../shared/types'
 import { ServiceOrderSchema } from '../utils/validators'
 
-import { useAuthStore } from '../stores/auth'
-
-const authStore = useAuthStore()
-
 const router = useRouter()
 const route = useRoute()
 const services = ref<ServiceOrder[]>([])
@@ -331,8 +327,7 @@ const isWarrantyActive = (dateStr?: string) => {
 const loadServices = async (page: number = 1) => {
   if (window.api && window.api.getServices) {
     try {
-      const technicianFilter = authStore.currentUser?.role === 'teknisi' ? authStore.currentUser.username : undefined
-      const result = await window.api.getServices(searchQuery.value, page, itemsPerPage, technicianFilter)
+      const result = await window.api.getServices(searchQuery.value, page, itemsPerPage)
       services.value = (result.data as ServiceOrder[]) || []
       totalItems.value = result.total || 0
       currentPage.value = result.page || 1

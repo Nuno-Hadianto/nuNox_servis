@@ -1,18 +1,19 @@
-import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>{t=(e,t,n,r=null)=>(e||={},`
+import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c=e((()=>{t=(e,t,n)=>(e||={},`
         <div class="print-nota nota-wrapper">
             <!-- Header -->
             <div class="nota-header">
                 <div class="nota-header-left">
                     ${n?`<img src="${n}" alt="Logo" class="nota-logo" />`:``}
-                    <h2 class="nota-biz-name">${e.business_name||`NUNOX SERVIS`}</h2>
-                    <div class="nota-biz-addr">${e.address||``}</div>
-                    <div class="nota-biz-phone">📞 ${e.whatsapp||e.phone||``}</div>
+                    <div class="nota-biz-info">
+                        <h2 class="nota-biz-name">${e.business_name||`NUNOX SERVIS`}</h2>
+                        <div class="nota-biz-addr">📍 ${e.address||``}</div>
+                        <div class="nota-biz-phone">📞 ${e.whatsapp||e.phone||``}</div>
+                    </div>
                 </div>
                 <div class="nota-header-right">
                     <h1 class="nota-title">TANDA TERIMA</h1>
-                    <div class="nota-no"><strong>No:</strong> ${t?t.ticket_number:`..............................`}</div>
-                    <div class="nota-date">Tanggal: ${t?new Date(t.created_at+`Z`).toLocaleDateString(`id-ID`):`..............................`}</div>
-                    ${r?`<img src="${r}" alt="QR Code" style="width: 80px; height: 80px; margin-top: 5px;" />`:``}
+                    <div class="nota-no"><strong>No:</strong> ${t?t.ticket_number:`...................................`}</div>
+                    <div class="nota-date">Tanggal: ${t?new Date(t.created_at+`Z`).toLocaleDateString(`id-ID`):`...................................`}</div>
                 </div>
             </div>
             
@@ -22,9 +23,9 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                 <div class="nota-col">
                     <h4 class="nota-col-title">Data Pelanggan</h4>
                     <table class="nota-table">
-                        <tr><td class="nota-label">Nama</td><td>: <strong>${t?t.customer_name:`.......................`}</strong></td></tr>
-                        <tr><td class="nota-label">No. HP</td><td>: ${t?t.customer_phone||`-`:`.......................`}</td></tr>
-                        <tr><td class="nota-label">Alamat</td><td>: ${t?t.customer_address||`-`:`.......................`}</td></tr>
+                        <tr><td class="nota-label">Nama</td><td>: <strong>${t?t.customer_name:`............................`}</strong></td></tr>
+                        <tr><td class="nota-label">No. HP</td><td>: ${t?t.customer_phone||`-`:`............................`}</td></tr>
+                        <tr><td class="nota-label">Alamat</td><td>: ${t?t.customer_address||`-`:`............................`}</td></tr>
                     </table>
                 </div>
                 
@@ -32,16 +33,16 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                 <div class="nota-col">
                     <h4 class="nota-col-title">Data Perangkat</h4>
                     <table class="nota-table">
-                        <tr><td class="nota-label">Jenis</td><td>: <strong>${t?t.device_type:`.......................`}</strong></td></tr>
-                        <tr><td class="nota-label">Merk/Tipe</td><td>: ${t?(t.brand||``)+` `+(t.model||``):`.......................`}</td></tr>
-                        <tr><td class="nota-label">SN</td><td>: ${t?t.serial_number||`-`:`.......................`}</td></tr>
+                        <tr><td class="nota-label">Jenis</td><td>: <strong>${t?t.device_type:`............................`}</strong></td></tr>
+                        <tr><td class="nota-label">Merk/Tipe</td><td>: ${t?(t.brand||``)+` `+(t.model||``):`............................`}</td></tr>
+                        <tr><td class="nota-label">SN</td><td>: ${t?t.serial_number||`-`:`............................`}</td></tr>
                     </table>
                 </div>
                 
                 <!-- Keluhan -->
-                <div class="nota-col-red">
-                    <h4 class="nota-col-title-red">Keluhan / Kerusakan</h4>
-                    <div class="nota-complaint">${t?t.customer_complaint:`.......................<br/>.......................<br/>.......................`}</div>
+                <div class="nota-col">
+                    <h4 class="nota-col-title">Keluhan / Kerusakan</h4>
+                    <div class="nota-complaint">${t?t.customer_complaint:`..................................................<br/>..................................................<br/>..................................................`}</div>
                 </div>
             </div>
             
@@ -62,7 +63,7 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                 
                 <div class="nota-sig-box">
                     <div class="nota-sig-title">Pelanggan,</div>
-                    <div class="nota-sig-line">${t?t.customer_name:`.......................`}</div>
+                    <div class="nota-sig-line">${t?t.customer_name:`............................`}</div>
                 </div>
             </div>
         </div>
@@ -80,9 +81,11 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
             <div class="inv-header">
                 <div class="inv-header-left">
                     ${i?`<img src="${i}" alt="Logo" class="inv-logo" />`:`<div class="inv-logo-placeholder">${(e.business_name||`N`).charAt(0)}</div>`}
-                    <h2 class="inv-biz-name">${e.business_name||`NUNOX SERVIS`}</h2>
-                    <div class="inv-biz-addr">${e.address||``}</div>
-                    <div class="inv-biz-phone">${e.whatsapp||e.phone||``}</div>
+                    <div class="inv-biz-info">
+                        <h2 class="inv-biz-name">${e.business_name||`NUNOX SERVIS`}</h2>
+                        <div class="inv-biz-addr">📍 ${e.address||``}</div>
+                        <div class="inv-biz-phone">${e.whatsapp||e.phone||``}</div>
+                    </div>
                 </div>
                 <div class="inv-header-right">
                     <h1 class="inv-title">INVOICE</h1>
@@ -156,7 +159,7 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                     <div class="nota-sig-line">${t.customer_name}</div>
                 </div>
                 <div class="inv-sig-col">
-                    <div class="nota-sig-title">Teknisi / Kasir</div>
+                    <div class="nota-sig-title">Hormat Kami</div>
                     <div class="nota-sig-line">${e.business_name||`NUNOX`}</div>
                 </div>
             </div>
@@ -167,14 +170,16 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
             <div class="nota-header">
                 <div class="nota-header-left">
                     ${t?`<img src="${t}" alt="Logo" class="nota-logo" />`:``}
-                    <h2 class="nota-biz-name">${e.business_name||`NUNOX SERVIS`}</h2>
-                    <div class="nota-biz-addr">${e.address||``}</div>
-                    <div class="nota-biz-phone">📞 ${e.whatsapp||e.phone||``}</div>
+                    <div class="nota-biz-info">
+                        <h2 class="nota-biz-name">${e.business_name||`NUNOX SERVIS`}</h2>
+                        <div class="nota-biz-addr">📍 ${e.address||``}</div>
+                        <div class="nota-biz-phone">📞 ${e.whatsapp||e.phone||``}</div>
+                    </div>
                 </div>
                 <div class="nota-header-right">
                     <h1 class="nota-title">TANDA TERIMA</h1>
-                    <div class="nota-no"><strong>No:</strong> ..............................</div>
-                    <div class="nota-date">Tanggal: ..............................</div>
+                    <div class="nota-no"><strong>No:</strong> ...................................</div>
+                    <div class="nota-date">Tanggal: ...................................</div>
                 </div>
             </div>
             
@@ -184,9 +189,9 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                 <div class="nota-col">
                     <h4 class="nota-col-title">Data Pelanggan</h4>
                     <table class="nota-table">
-                        <tr><td class="nota-label">Nama</td><td>: <strong>.......................</strong></td></tr>
-                        <tr><td class="nota-label">No. HP</td><td>: .......................</td></tr>
-                        <tr><td class="nota-label">Alamat</td><td>: .......................</td></tr>
+                        <tr><td class="nota-label">Nama</td><td>: <strong>............................</strong></td></tr>
+                        <tr><td class="nota-label">No. HP</td><td>: ............................</td></tr>
+                        <tr><td class="nota-label">Alamat</td><td>: ............................</td></tr>
                     </table>
                 </div>
                 
@@ -194,16 +199,20 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                 <div class="nota-col">
                     <h4 class="nota-col-title">Data Perangkat</h4>
                     <table class="nota-table">
-                        <tr><td class="nota-label">Jenis</td><td>: <strong>.......................</strong></td></tr>
-                        <tr><td class="nota-label">Merk/Tipe</td><td>: .......................</td></tr>
-                        <tr><td class="nota-label">SN</td><td>: .......................</td></tr>
+                        <tr><td class="nota-label">Jenis</td><td>: <strong>............................</strong></td></tr>
+                        <tr><td class="nota-label">Merk/Tipe</td><td>: ............................</td></tr>
+                        <tr><td class="nota-label">SN</td><td>: ............................</td></tr>
                     </table>
                 </div>
                 
                 <!-- Keluhan -->
-                <div class="nota-col-red">
-                    <h4 class="nota-col-title-red">Keluhan / Kerusakan</h4>
-                    <div class="nota-complaint">.......................<br/>.......................<br/>.......................</div>
+                <div class="nota-col">
+                    <h4 class="nota-col-title">Keluhan / Kerusakan</h4>
+                    <table class="nota-table">
+                        <tr><td>..................................................</td></tr>
+                        <tr><td>..................................................</td></tr>
+                        <tr><td>..................................................</td></tr>
+                    </table>
                 </div>
             </div>
             
@@ -216,10 +225,10 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
             <div class="nota-footer">
                 <div class="nota-sig-box">
                     <div class="nota-sig-title">Pelanggan</div>
-                    <div class="nota-sig-line">.........................</div>
+                    <div class="nota-sig-line">..............................</div>
                 </div>
                 <div class="nota-sig-box">
-                    <div class="nota-sig-title">Teknisi / Kasir</div>
+                    <div class="nota-sig-title">Hormat Kami</div>
                     <div class="nota-sig-line">${e.business_name||`NUNOX`}</div>
                 </div>
             </div>
@@ -231,15 +240,17 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
     `),i=(e,t)=>(e||={},`
         <div class="print-receipt rcpt-wrapper">
             <div class="rcpt-header">
-                <div>
+                <div class="nota-header-left">
                     ${t?`<img src="${t}" alt="Logo" class="nota-logo" />`:``}
-                    <h2 class="rcpt-biz-name">${e.business_name||`NUNOX SERVIS`}</h2>
-                    <div class="rcpt-biz-addr">${e.address||``}</div>
-                    <div class="rcpt-biz-phone">📞 Telp/WA: ${e.whatsapp||e.phone||``}</div>
+                    <div class="nota-biz-info">
+                        <h2 class="rcpt-biz-name">${e.business_name||`NUNOX SERVIS`}</h2>
+                        <div class="rcpt-biz-addr">📍 ${e.address||``}</div>
+                        <div class="rcpt-biz-phone">📞 Telp/WA: ${e.whatsapp||e.phone||``}</div>
+                    </div>
                 </div>
                 <div style="text-align: right;">
                     <h1 class="rcpt-title">KWITANSI</h1>
-                    <div class="rcpt-no"><strong>No:</strong> ....................................</div>
+                    <div class="rcpt-no"><strong>No:</strong> .........................................</div>
                 </div>
             </div>
             
@@ -248,24 +259,26 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                     <tr>
                         <td class="rcpt-label">Telah terima dari</td>
                         <td class="rcpt-colon">:</td>
-                        <td class="rcpt-line"></td>
+                        <td class="rcpt-line">&nbsp;</td>
                     </tr>
                     <tr>
                         <td class="rcpt-label">Uang Sejumlah</td>
                         <td class="rcpt-colon">:</td>
-                        <td class="rcpt-amount-box">
-                            <span class="rcpt-rp">Rp</span>
+                        <td style="padding-top: 10px; padding-bottom: 10px;">
+                            <div class="rcpt-amount-box">
+                                <span class="rcpt-rp">Rp</span>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="rcpt-label rcpt-vtop">Untuk Pembayaran</td>
                         <td class="rcpt-colon rcpt-vtop">:</td>
-                        <td class="rcpt-line rcpt-vtop"></td>
+                        <td class="rcpt-line rcpt-vtop">&nbsp;</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
-                        <td class="rcpt-line"></td>
+                        <td class="rcpt-line">&nbsp;</td>
                     </tr>
                 </table>
             </div>
@@ -273,10 +286,10 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
             <div class="rcpt-footer">
                 <div class="rcpt-bal-box">
                     <span class="rcpt-bal-label">Sisa Tagihan</span>
-                    <span class="rcpt-bal-val">Rp .................................</span>
+                    <span class="rcpt-bal-val">Rp ......................................</span>
                 </div>
                 <div class="rcpt-sig-box">
-                    <p class="rcpt-date">................., ......................... ${new Date().getFullYear()}</p>
+                    <p class="rcpt-date">................., .............................. ${new Date().getFullYear()}</p>
                     <div class="rcpt-sig-line"></div>
                     <p class="rcpt-sig-title">Tanda Tangan Penerima</p>
                 </div>
@@ -367,67 +380,4 @@ import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c,l=e((()=>
                 <div style="margin-top: 10px; font-weight: bold;">( ${e.business_name||`Pemilik`} )</div>
             </div>
         </div>
-    `},o=async(e,t=!1,n=!1)=>{let r=!1,i=``;if(window.api&&window.api.getSettings)try{let e=await window.api.getSettings();e&&e.default_printer&&n&&(r=!0,i=e.default_printer)}catch(e){console.error(`Failed to get settings for silent print:`,e)}let a=``;a=n?`<style>@media print { @page { size: 58mm auto; margin: 0; } body { margin: 0; padding: 0; } }</style>`:t?`<style>@media print { @page { size: A5 landscape; } }</style>`:`<style>@media print { @page { size: A4 portrait; } }</style>`;let o=`<!DOCTYPE html><html><head>${a}</head><body>${e}</body></html>`;if(r&&window.api&&window.api.silentPrint)try{await window.api.silentPrint({html:o,printerName:i,isThermal:n});return}catch(e){console.error(`Silent print error:`,e)}let s=document.getElementById(`print-area`);if(s){s.innerHTML=e;let r=document.getElementById(`dynamic-print-style`);if(r||(r=document.createElement(`style`),r.id=`dynamic-print-style`,document.head.appendChild(r)),n?r.innerHTML=`@media print { @page { size: 58mm auto; margin: 0; } }`:r.innerHTML=t?`@media print { @page { size: A5 landscape; } }`:`@media print { @page { size: A4 portrait; } }`,window.api&&window.api.printPreview)try{let e={landscape:t&&!n};n||(e.pageSize=t?`A5`:`A4`),await window.api.printPreview(e)}catch(e){console.error(`Print preview error:`,e)}else window.print();s.innerHTML=``,r&&(r.innerHTML=``)}},s=async(e,t)=>window.api&&window.api.exportPdf?await window.api.exportPdf({html:e,filename:t}):{success:!1,error:`API exportPdf not found`},c=(e,t,n,r=null)=>(e||={},`
-        <div class="print-thermal">
-            <!-- Header -->
-            <div class="thm-center">
-                ${n?`<img src="${n}" alt="Logo" class="thm-logo" />`:``}
-                <div class="thm-bold thm-biz-name">${e.business_name||`NUNOX SERVIS`}</div>
-                <div class="thm-biz-sub">${e.address||``}</div>
-                <div class="thm-biz-sub">WA: ${e.whatsapp||e.phone||``}</div>
-            </div>
-            
-            <div class="thm-dashed"></div>
-            
-            <div class="thm-center thm-bold thm-title">TANDA TERIMA</div>
-            
-            <div class="thm-row">
-                <span class="thm-label">No:</span>
-                <span class="thm-val thm-bold">${t?t.ticket_number:`-`}</span>
-            </div>
-            <div class="thm-row">
-                <span class="thm-label">Tgl:</span>
-                <span class="thm-val">${t?new Date(t.created_at+`Z`).toLocaleDateString(`id-ID`):`-`}</span>
-            </div>
-            
-            <div class="thm-dashed"></div>
-            
-            <div class="thm-bold thm-section-title">PELANGGAN:</div>
-            <div>${t?t.customer_name:`-`}</div>
-            <div>${t&&t.customer_phone||``}</div>
-            
-            <div class="thm-dashed"></div>
-            
-            <div class="thm-bold thm-section-title">PERANGKAT:</div>
-            <div>${t?t.device_type:`-`}</div>
-            <div>${t?(t.brand||``)+` `+(t.model||``):`-`}</div>
-            <div class="thm-row" style="margin-top: 2px;">
-                <span class="thm-label">SN:</span>
-                <span class="thm-val">${t&&t.serial_number||`-`}</span>
-            </div>
-            
-            <div class="thm-dashed"></div>
-            
-            <div class="thm-bold thm-section-title">KELUHAN:</div>
-            <div class="thm-text-sm">${t?t.customer_complaint:`-`}</div>
-            
-            <div class="thm-dashed"></div>
-            
-            <div class="thm-bold thm-section-title">KELENGKAPAN:</div>
-            <div class="thm-text-sm">${t&&t.accessories||`-`}</div>
-            
-            <div class="thm-dashed"></div>
-            
-            <div class="thm-center thm-sig">
-                <div>Hormat Kami,</div>
-                <br><br><br>
-                <div>( .................... )</div>
-            </div>
-            
-            <div class="thm-center thm-footer">
-                * Harap bawa struk ini saat mengambil barang.
-            </div>
-            ${r?`<div class="thm-center" style="margin-top: 15px;"><img src="${r}" alt="QR" style="width: 100px; height: 100px;" /><div style="font-size: 8pt; margin-top: 5px;">Scan untuk detail</div></div>`:``}
-            <div class="thm-gap"></div> <!-- Extra space for tearing -->
-        </div>
-    `)}));export{t as a,l as c,n as i,o as l,r as n,a as o,i as r,c as s,s as t};
+    `},o=async(e,t=!1,n=!1)=>{let r=!1,i=``;if(window.api&&window.api.getSettings)try{let e=await window.api.getSettings();e&&e.default_printer&&n&&(r=!0,i=e.default_printer)}catch(e){console.error(`Failed to get settings for silent print:`,e)}let a=``;a=n?`<style>@media print { @page { size: 58mm auto; margin: 0; } body { margin: 0; padding: 0; } }</style>`:t?`<style>@media print { @page { size: A5 landscape; } }</style>`:`<style>@media print { @page { size: A4 portrait; } }</style>`;let o=`<!DOCTYPE html><html><head>${a}</head><body>${e}</body></html>`;if(r&&window.api&&window.api.silentPrint)try{await window.api.silentPrint({html:o,printerName:i,isThermal:n});return}catch(e){console.error(`Silent print error:`,e)}let s=document.getElementById(`print-area`);if(s){s.innerHTML=e;let r=document.getElementById(`dynamic-print-style`);if(r||(r=document.createElement(`style`),r.id=`dynamic-print-style`,document.head.appendChild(r)),n?r.innerHTML=`@media print { @page { size: 58mm auto; margin: 0; } }`:r.innerHTML=t?`@media print { @page { size: A5 landscape; } }`:`@media print { @page { size: A4 portrait; } }`,window.api&&window.api.printPreview)try{let e={landscape:t&&!n};n||(e.pageSize=t?`A5`:`A4`),await window.api.printPreview(e)}catch(e){console.error(`Print preview error:`,e)}else window.print();s.innerHTML=``,r&&(r.innerHTML=``)}},s=async(e,t)=>window.api&&window.api.exportPdf?await window.api.exportPdf({html:e,filename:t}):{success:!1,error:`API exportPdf not found`}}));export{t as a,o as c,n as i,r as n,a as o,i as r,c as s,s as t};

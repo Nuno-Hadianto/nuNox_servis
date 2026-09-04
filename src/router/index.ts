@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+
 import type { RouteRecordRaw } from 'vue-router'
 import Dashboard from '../views/Dashboard.vue'
 import Customer from '../views/Customer.vue'
@@ -9,43 +9,43 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Dashboard',
     component: Dashboard,
-    meta: { title: 'Dashboard', roles: ['admin', 'kasir'] }
+    meta: { title: 'Dashboard' }
   },
   {
     path: '/customers',
     name: 'Customers',
     component: Customer,
-    meta: { title: 'Daftar Pelanggan', roles: ['admin', 'kasir', 'teknisi'] }
+    meta: { title: 'Daftar Pelanggan' }
   },
   {
     path: '/devices',
     name: 'Devices',
     component: () => import('../views/Device.vue'),
-    meta: { title: 'Daftar Perangkat', roles: ['admin', 'kasir', 'teknisi'] }
+    meta: { title: 'Daftar Perangkat' }
   },
   {
     path: '/services',
     name: 'Services',
     component: () => import('../views/Service.vue'),
-    meta: { title: 'Daftar Servis', roles: ['admin', 'kasir', 'teknisi'] }
+    meta: { title: 'Daftar Servis' }
   },
   {
     path: '/services/:id',
     name: 'ServiceDetail',
     component: () => import('../views/ServiceDetail.vue'),
-    meta: { title: 'Detail Servis', roles: ['admin', 'kasir', 'teknisi'] }
+    meta: { title: 'Detail Servis' }
   },
   {
     path: '/parts',
     name: 'Parts',
     component: () => import('../views/Part.vue'),
-    meta: { title: 'Katalog Harga Servis', roles: ['admin', 'kasir', 'teknisi'] }
+    meta: { title: 'Katalog Harga Servis' }
   },
   {
     path: '/reports',
     name: 'Reports',
     component: () => import('../views/Report.vue'),
-    meta: { title: 'Laporan Keuangan', roles: ['admin'] }
+    meta: { title: 'Laporan Keuangan' }
   },
 
 
@@ -53,7 +53,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/settings',
     name: 'Settings',
     component: () => import('../views/Settings.vue'),
-    meta: { title: 'Pengaturan', roles: ['admin'] }
+    meta: { title: 'Pengaturan' }
   }
 ]
 
@@ -62,24 +62,6 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore()
-  if (!authStore.isLoggedIn) {
-    return next() // Biarkan App.vue yang menghandle layar login (v-if="!isLoggedIn")
-  }
 
-  const userRole = authStore.currentUser?.role || 'admin'
-  const requiredRoles = to.meta.roles as string[] | undefined
-
-  if (requiredRoles && !requiredRoles.includes(userRole)) {
-    // Redirect ke halaman yang diizinkan berdasarkan role
-    if (userRole === 'teknisi') {
-      return next({ name: 'Services' })
-    }
-    return next({ name: 'Dashboard' })
-  }
-
-  next()
-})
 
 export default router

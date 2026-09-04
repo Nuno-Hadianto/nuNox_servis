@@ -1,11 +1,4 @@
 
-export interface User {
-  id: number;
-  username: string;
-  password?: string;
-  role: string;
-}
-
 export interface LowStockPart {
   id: number;
   part_code?: string;

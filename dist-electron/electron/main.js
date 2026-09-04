@@ -58,9 +58,7 @@ const customerIpc_1 = require("./ipc/customerIpc");
 const deviceIpc_1 = require("./ipc/deviceIpc");
 const serviceIpc_1 = require("./ipc/serviceIpc");
 const partIpc_1 = require("./ipc/partIpc");
-const userIpc_1 = require("./ipc/userIpc");
 const miscIpc_1 = require("./ipc/miscIpc");
-const userController = __importStar(require("../controllers/userController"));
 let mainWindow = null;
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
@@ -98,7 +96,6 @@ function createWindow() {
     (0, deviceIpc_1.registerDeviceIpc)();
     (0, serviceIpc_1.registerServiceIpc)();
     (0, partIpc_1.registerPartIpc)();
-    (0, userIpc_1.registerUserIpc)();
     (0, miscIpc_1.registerMiscIpc)(mainWindow);
     mainWindow.on('closed', () => {
         mainWindow = null;
@@ -114,8 +111,6 @@ electron_1.app.whenReady().then(() => {
         console.log('Running migrations...');
         (0, migrate_1.default)();
         console.log('Migrations done');
-        // Initialize default admin user after migrations
-        userController.init();
     }
     catch (error) {
         console.error('Database migration error:', error);

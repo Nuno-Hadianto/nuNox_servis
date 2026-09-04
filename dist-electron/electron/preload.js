@@ -80,13 +80,6 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     printPreview: (options) => invokeSafe('print-preview', options),
     getPrinters: () => invokeSafe('get-printers'),
     silentPrint: (options) => invokeSafe('silent-print', options),
-    // Users & Auth
-    login: (username, password) => invokeSafe('login', username, password),
-    getUsers: () => invokeSafe('get-users'),
-    getUser: (id) => invokeSafe('get-user', id),
-    addUser: (data) => invokeSafe('add-user', data),
-    updateUser: (id, data) => invokeSafe('update-user', id, data),
-    deleteUser: (id) => invokeSafe('delete-user', id),
     // Updater
     checkForUpdates: () => invokeSafe('check-for-updates'),
     installUpdate: () => invokeSafe('install-update'),

@@ -6,7 +6,7 @@
     </div>
     <nav class="sidebar-nav">
       <ul>
-        <li v-if="currentUser?.role !== 'teknisi'" :class="{ active: $route.name === 'Dashboard' }">
+        <li :class="{ active: $route.name === 'Dashboard' }">
           <router-link to="/"> <LayoutDashboard class="menu-icon" /> Dashboard </router-link>
         </li>
         <li class="nav-header">OPERASIONAL</li>
@@ -24,14 +24,14 @@
           <router-link to="/parts"><Package class="menu-icon" /> Katalog Harga</router-link>
         </li>
 
-        <li v-if="currentUser?.role === 'admin'" class="nav-header">KEUANGAN</li>
-        <li v-if="currentUser?.role === 'admin'" :class="{ active: $route.name === 'Reports' }">
+        <li class="nav-header">KEUANGAN</li>
+        <li :class="{ active: $route.name === 'Reports' }">
           <router-link to="/reports"><BarChart3 class="menu-icon" /> Laporan</router-link>
         </li>
 
-        <li v-if="currentUser?.role === 'admin'" class="nav-header">SISTEM</li>
+        <li class="nav-header">SISTEM</li>
 
-        <li v-if="currentUser?.role === 'admin'" :class="{ active: $route.name === 'Settings' }">
+        <li :class="{ active: $route.name === 'Settings' }">
           <router-link to="/settings"
             ><Settings class="menu-icon" /> Pengaturan</router-link
           >
@@ -54,11 +54,7 @@ import {
   BarChart3,
   Settings
 } from 'lucide-vue-next'
-import { storeToRefs } from 'pinia'
-import { useAuthStore } from '../stores/auth'
 
-const authStore = useAuthStore()
-const { currentUser } = storeToRefs(authStore)
 
 
 

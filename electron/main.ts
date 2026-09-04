@@ -28,10 +28,7 @@ import {  registerCustomerIpc  } from './ipc/customerIpc';
 import {  registerDeviceIpc  } from './ipc/deviceIpc';
 import {  registerServiceIpc  } from './ipc/serviceIpc';
 import {  registerPartIpc  } from './ipc/partIpc';
-import {  registerUserIpc  } from './ipc/userIpc';
 import {  registerMiscIpc  } from './ipc/miscIpc';
-
-import * as userController from '../controllers/userController';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -73,7 +70,6 @@ function createWindow() {
   registerDeviceIpc();
   registerServiceIpc();
   registerPartIpc();
-  registerUserIpc();
   registerMiscIpc(mainWindow);
 
 
@@ -93,9 +89,6 @@ app.whenReady().then(() => {
     console.log('Running migrations...');
     runMigrations();
     console.log('Migrations done');
-    
-    // Initialize default admin user after migrations
-    userController.init();
   } catch (error) {
     console.error('Database migration error:', error);
     log.error('Database migration error:', error);

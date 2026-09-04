@@ -1,4 +1,4 @@
-import type { User, Customer, Device, ServiceOrder, Part, ServiceItem, Payment, Settings } from '../shared/types';
+import type { Customer, Device, ServiceOrder, Part, ServiceItem, Payment, Settings } from '../shared/types';
 import {  contextBridge, ipcRenderer  } from 'electron';
 
 const invokeSafe = async (channel: string, ...args: unknown[]) => {
@@ -94,13 +94,6 @@ contextBridge.exposeInMainWorld('api', {
   getPrinters: () => invokeSafe('get-printers'),
   silentPrint: (options: Record<string, unknown>) => invokeSafe('silent-print', options),
 
-  // Users & Auth
-  login: (username: string, password: string) => invokeSafe('login', username, password),
-  getUsers: () => invokeSafe('get-users'),
-  getUser: (id: number) => invokeSafe('get-user', id),
-  addUser: (data: Omit<User, 'id'>) => invokeSafe('add-user', data),
-  updateUser: (id: number, data: Partial<User>) => invokeSafe('update-user', id, data),
-  deleteUser: (id: number) => invokeSafe('delete-user', id),
 
   // Updater
   checkForUpdates: () => invokeSafe('check-for-updates'),
