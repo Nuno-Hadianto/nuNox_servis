@@ -111,8 +111,6 @@ declare global {
       openExternalUrl: (url: string) => Promise<boolean>
       getLogoBase64: () => Promise<string | null>
       printPreview: (options: Record<string, unknown>) => Promise<boolean>
-      silentPrint: (options: Record<string, unknown>) => Promise<boolean>
-      getPrinters: () => Promise<{ name: string; isDefault?: boolean }[]>
 
 
       // Updater

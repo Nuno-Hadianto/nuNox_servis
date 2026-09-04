@@ -2,16 +2,9 @@
   <div class="view-section" style="position: relative;">
     <div
       class="action-bar"
-      style="
-        display: flex;
-        gap: 15px;
-        align-items: center;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        justify-content: space-between;
-      "
+      style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px"
     >
-      <div style="position: relative; flex: 1; min-width: 250px; max-width: 400px">
+      <div style="position: relative; flex: 1; max-width: 400px">
         <Search
           class="search-icon"
           :size="18"

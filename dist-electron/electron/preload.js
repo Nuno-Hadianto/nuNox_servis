@@ -75,8 +75,6 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     showNotification: (title, body) => invokeSafe('show-notification', { title, body }),
     // Print & Preview
     printPreview: (options) => invokeSafe('print-preview', options),
-    getPrinters: () => invokeSafe('get-printers'),
-    silentPrint: (options) => invokeSafe('silent-print', options),
     // Updater
     checkForUpdates: () => invokeSafe('check-for-updates'),
     installUpdate: () => invokeSafe('install-update'),

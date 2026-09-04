@@ -115,62 +115,8 @@
           </form>
         </div>
 
-        <!-- Tema Warna Utama -->
-        <div class="card" style="padding: 25px">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
-            🎨 Pengaturan Tampilan
-          </h2>
-          <form @submit.prevent="saveSettings">
-            <div class="form-group" style="margin-bottom: 0;">
-              <label style="font-weight: 500; font-size: 0.9rem">Tema Warna Utama (Primary Color)</label>
-              <div style="display: flex; gap: 15px; align-items: center; margin-top: 5px;">
-                <input
-                  type="color"
-                  v-model="form.primary_color"
-                  class="form-control"
-                  style="width: 50px; height: 40px; padding: 0; cursor: pointer;"
-                />
-                <span style="font-family: monospace; padding: 5px 10px; background: rgba(0,0,0,0.05); border-radius: 4px;">{{ form.primary_color }}</span>
-                <button
-                  type="button"
-                  @click="form.primary_color = '#6366f1'"
-                  class="btn btn-secondary"
-                  style="padding: 5px 10px; border-radius: 4px; font-size: 0.8rem;"
-                >Reset Default</button>
-              </div>
-              <!-- Preset Colors -->
-              <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button type="button" class="color-swatch" style="background: #6366f1;" @click="form.primary_color = '#6366f1'" title="Indigo"></button>
-                <button type="button" class="color-swatch" style="background: #10b981;" @click="form.primary_color = '#10b981'" title="Emerald"></button>
-                <button type="button" class="color-swatch" style="background: #f43f5e;" @click="form.primary_color = '#f43f5e'" title="Rose"></button>
-                <button type="button" class="color-swatch" style="background: #f59e0b;" @click="form.primary_color = '#f59e0b'" title="Amber"></button>
-                <button type="button" class="color-swatch" style="background: #3b82f6;" @click="form.primary_color = '#3b82f6'" title="Blue"></button>
-                <button type="button" class="color-swatch" style="background: #8b5cf6;" @click="form.primary_color = '#8b5cf6'" title="Purple"></button>
-              </div>
-              <small style="color: var(--text-muted); display: block; margin-top: 6px">
-                Pilih warna identitas toko Anda. Membutuhkan <i>restart</i> aplikasi agar sempurna diterapkan.
-              </small>
-            </div>
-            <div style="margin-top: 20px; text-align: right">
-              <button
-                type="submit"
-                class="btn btn-primary"
-                style="padding: 8px 16px; border-radius: 20px"
-              >
-                💾 Simpan Tampilan
-              </button>
-            </div>
-          </form>
-        </div>
+
+
       </div>
 
       <!-- Kolom Kanan -->
@@ -253,42 +199,6 @@
           </div>
         </div>
 
-        <!-- Status Penyimpanan -->
-        <div class="card" style="padding: 25px">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
-            💽 Status Penyimpanan
-          </h2>
-          <div
-            style="
-              background: rgba(59, 130, 246, 0.05);
-              border: 1px solid rgba(59, 130, 246, 0.2);
-              border-radius: var(--radius-md);
-              padding: 20px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            "
-          >
-            <div>
-              <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">Ukuran Database:</div>
-              <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">{{ dbSize }}</div>
-            </div>
-            <div style="text-align: right;">
-              <div style="font-size: 0.85rem; color: var(--text-muted);">Format:</div>
-              <div style="font-size: 1rem; font-weight: 600; color: #475569;">SQLite (.db)</div>
-            </div>
-          </div>
-        </div>
-
         <div class="card" style="padding: 25px">
           <h2
             style="
@@ -358,6 +268,42 @@
             </p>
           </div>
         </div>
+
+        <!-- Status Penyimpanan -->
+        <div class="card" style="padding: 25px">
+          <h2
+            style="
+              font-size: 1.2rem;
+              margin-bottom: 20px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+            "
+          >
+            💽 Status Penyimpanan
+          </h2>
+          <div
+            style="
+              background: rgba(59, 130, 246, 0.05);
+              border: 1px solid rgba(59, 130, 246, 0.2);
+              border-radius: var(--radius-md);
+              padding: 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <div>
+              <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">Ukuran Database:</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">{{ dbSize }}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.85rem; color: var(--text-muted);">Format:</div>
+              <div style="font-size: 1rem; font-weight: 600; color: #475569;">SQLite (.db)</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -375,9 +321,7 @@ const form = reactive<Settings>({
   address: '',
   receipt_footer: '',
   auto_backup_path: '',
-  wa_template_status: '',
-  default_printer: '',
-  primary_color: '#6366f1'
+  wa_template_status: ''
 })
 
 
@@ -405,8 +349,6 @@ const loadSettings = async () => {
       form.wa_template_status =
         settings.wa_template_status ||
         'Halo Kak {nama}, perangkat Anda dengan No Tiket *{tiket}* saat ini berstatus: *{status}*. Mohon konfirmasinya. Terima kasih.'
-      form.default_printer = settings.default_printer || ''
-      form.primary_color = settings.primary_color || '#6366f1'
       
       // Load DB Size
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -434,14 +376,9 @@ const saveSettings = async () => {
       address: form.address,
       receipt_footer: form.receipt_footer,
       auto_backup_path: form.auto_backup_path,
-      wa_template_status: form.wa_template_status,
-      default_printer: form.default_printer,
-      primary_color: form.primary_color
+      wa_template_status: form.wa_template_status
     }
     await window.api.updateSettings(data)
-    
-    // Apply theme immediately
-    document.documentElement.style.setProperty('--primary', form.primary_color || '#6366f1');
     
     window.Swal.fire({
       icon: 'success',
@@ -518,18 +455,4 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
-.color-swatch {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  padding: 0;
-}
-.color-swatch:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 8px rgba(0,0,0,0.3);
-}
-</style>
+

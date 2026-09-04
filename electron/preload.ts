@@ -90,8 +90,6 @@ contextBridge.exposeInMainWorld('api', {
   
   // Print & Preview
   printPreview: (options: Record<string, unknown>) => invokeSafe('print-preview', options),
-  getPrinters: () => invokeSafe('get-printers'),
-  silentPrint: (options: Record<string, unknown>) => invokeSafe('silent-print', options),
 
 
   // Updater
