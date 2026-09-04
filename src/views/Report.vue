@@ -31,7 +31,6 @@
           @click="generateReport"
           class="btn btn-primary"
           style="
-            padding: 8px 16px;
             border-radius: 20px;
             display: flex;
             align-items: center;
