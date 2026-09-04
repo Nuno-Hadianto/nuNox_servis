@@ -299,7 +299,6 @@ const form = reactive({
   part_code: '',
   name: '',
   category: '',
-  stock: 0,
   buy_price: 0,
   sell_price: 0,
   unit: 'Pcs',
@@ -312,7 +311,6 @@ const openAddModal = () => {
   form.part_code = ''
   form.name = ''
   form.category = ''
-  form.stock = 0
   form.buy_price = 0
   form.sell_price = 0
   form.unit = 'Pcs'
@@ -331,7 +329,6 @@ const editPart = async (p: Part) => {
       form.part_code = detail.part_code || ''
       form.name = detail.name || ''
       form.category = detail.category || ''
-      form.stock = detail.stock || 0
       form.buy_price = detail.buy_price || 0
       form.sell_price = detail.sell_price || 0
       form.unit = detail.unit || ''

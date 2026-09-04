@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateData = exports.UserSchema = exports.PaymentSchema = exports.ServiceItemSchema = exports.ServiceOrderSchema = exports.DeviceSchema = exports.SparepartSchema = exports.CustomerSchema = void 0;
+exports.validateData = exports.PaymentSchema = exports.ServiceItemSchema = exports.ServiceOrderSchema = exports.DeviceSchema = exports.SparepartSchema = exports.CustomerSchema = void 0;
 const zod_1 = require("zod");
 exports.CustomerSchema = zod_1.z.object({
     name: zod_1.z.string().min(1, 'Nama pelanggan wajib diisi.').max(100, 'Nama terlalu panjang.'),
@@ -12,7 +12,6 @@ exports.SparepartSchema = zod_1.z.object({
     part_code: zod_1.z.string().optional().nullable(),
     name: zod_1.z.string().min(1, 'Nama sparepart wajib diisi.').max(150, 'Nama terlalu panjang.'),
     category: zod_1.z.string().optional().nullable(),
-    stock: zod_1.z.number().int('Stok harus berupa bilangan bulat.').min(0, 'Stok tidak boleh negatif.'),
     buy_price: zod_1.z.number().min(0, 'Harga beli tidak boleh negatif.').optional().default(0),
     sell_price: zod_1.z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0),
     unit: zod_1.z.string().optional().nullable(),
@@ -56,11 +55,6 @@ exports.PaymentSchema = zod_1.z.object({
     amount: zod_1.z.number().min(1, 'Jumlah pembayaran minimal 1.'),
     payment_method: zod_1.z.string().min(1, 'Metode pembayaran wajib diisi.'),
     notes: zod_1.z.string().optional().nullable()
-});
-exports.UserSchema = zod_1.z.object({
-    username: zod_1.z.string().min(3, 'Username minimal 3 karakter.').max(50, 'Username terlalu panjang.'),
-    password: zod_1.z.string().min(6, 'Password minimal 6 karakter.'),
-    role: zod_1.z.enum(['admin', 'kasir', 'teknisi']).default('kasir')
 });
 const validateData = (schema, data) => {
     try {

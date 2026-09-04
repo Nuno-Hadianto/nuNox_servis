@@ -20,9 +20,9 @@ function getPartById(id: number | string) {
 
 function addPart(data: Omit<Part, 'id'>) {
     return db.transaction(() => {
-        const { part_code, name, category, stock, buy_price, sell_price, unit, notes } = data as Part;
+        const { part_code, name, category, buy_price, sell_price, unit, notes } = data as Part;
         const result = db.drizzle.insert(spareParts).values({
-            part_code, name, category, stock, buy_price, sell_price, unit, notes
+            part_code, name, category, buy_price, sell_price, unit, notes
         }).run();
         const partId = result.lastInsertRowid;
         
@@ -32,26 +32,17 @@ function addPart(data: Omit<Part, 'id'>) {
 
 function updatePart(id: number | string, data: Omit<Part, 'id'>) {
     return db.transaction(() => {
-        const { part_code, name, category, stock, buy_price, sell_price, unit, notes } = data as Part;
+        const { part_code, name, category, buy_price, sell_price, unit, notes } = data as Part;
         
         db.drizzle.update(spareParts).set({
-            part_code, name, category, stock, buy_price, sell_price, unit, notes, updated_at: sql`CURRENT_TIMESTAMP`
+            part_code, name, category, buy_price, sell_price, unit, notes, updated_at: sql`CURRENT_TIMESTAMP`
         }).where(eq(spareParts.id, Number(id))).run();
         
         return true;
     })();
 }
 
-function updatePartStock(id: number | string, change: number) {
-    const tx = db.transaction(() => {
-        db.drizzle.update(spareParts).set({
-            stock: sql`stock + ${change}`,
-            updated_at: sql`CURRENT_TIMESTAMP`
-        }).where(eq(spareParts.id, Number(id))).run();
-    });
-    tx();
-    return true;
-}
+
 
 
 function checkPartHasServiceItems(id: number | string) {
@@ -70,7 +61,6 @@ export {
     getPartById,
     addPart,
     updatePart,
-    updatePartStock,
     checkPartHasServiceItems,
     deletePart
  };

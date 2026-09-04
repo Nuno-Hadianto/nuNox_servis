@@ -7,7 +7,6 @@ exports.getParts = getParts;
 exports.getPartById = getPartById;
 exports.addPart = addPart;
 exports.updatePart = updatePart;
-exports.updatePartStock = updatePartStock;
 exports.checkPartHasServiceItems = checkPartHasServiceItems;
 exports.deletePart = deletePart;
 const db_1 = __importDefault(require("../database/db"));
@@ -27,9 +26,9 @@ function getPartById(id) {
 }
 function addPart(data) {
     return db_1.default.transaction(() => {
-        const { part_code, name, category, stock, buy_price, sell_price, unit, notes } = data;
+        const { part_code, name, category, buy_price, sell_price, unit, notes } = data;
         const result = db_1.default.drizzle.insert(drizzleSchema_1.spareParts).values({
-            part_code, name, category, stock, buy_price, sell_price, unit, notes
+            part_code, name, category, buy_price, sell_price, unit, notes
         }).run();
         const partId = result.lastInsertRowid;
         return partId;
@@ -37,22 +36,12 @@ function addPart(data) {
 }
 function updatePart(id, data) {
     return db_1.default.transaction(() => {
-        const { part_code, name, category, stock, buy_price, sell_price, unit, notes } = data;
+        const { part_code, name, category, buy_price, sell_price, unit, notes } = data;
         db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
-            part_code, name, category, stock, buy_price, sell_price, unit, notes, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
+            part_code, name, category, buy_price, sell_price, unit, notes, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
         }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).run();
         return true;
     })();
-}
-function updatePartStock(id, change) {
-    const tx = db_1.default.transaction(() => {
-        db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
-            stock: (0, drizzle_orm_1.sql) `stock + ${change}`,
-            updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
-        }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).run();
-    });
-    tx();
-    return true;
 }
 function checkPartHasServiceItems(id) {
     const result = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.serviceItems)

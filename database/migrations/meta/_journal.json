@@ -29,6 +29,13 @@
       "when": 1788488024738,
       "tag": "0003_clammy_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1788489517582,
+      "tag": "0004_equal_korg",
+      "breakpoints": true
     }
   ]
 }

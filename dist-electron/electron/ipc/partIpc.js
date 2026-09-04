@@ -45,6 +45,5 @@ function registerPartIpc() {
     electron_1.ipcMain.handle('update-part', (event, id, data) => {
         return partController.updatePart(id, data);
     });
-    electron_1.ipcMain.handle('update-part-stock', (event, id, change) => partController.updatePartStock(id, change));
     electron_1.ipcMain.handle('delete-part', (event, id) => partController.deletePart(id));
 }

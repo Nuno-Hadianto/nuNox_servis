@@ -50,7 +50,7 @@ contextBridge.exposeInMainWorld('api', {
   getPart: (id: number) => invokeSafe('get-part', id),
   addPart: (data: Omit<Part, 'id'>) => invokeSafe('add-part', data),
   updatePart: (id: number, data: Partial<Part>) => invokeSafe('update-part', id, data),
-  updatePartStock: (id: number, change: number) => invokeSafe('update-part-stock', id, change),
+
   deletePart: (id: number) => invokeSafe('delete-part', id),
 
 

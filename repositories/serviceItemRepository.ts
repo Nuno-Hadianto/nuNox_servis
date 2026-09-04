@@ -34,7 +34,7 @@ function addServiceItem(data: ServiceItem) {
 
     let cost_price = data.cost_price || 0;
     if (item_type === 'Sparepart' && spare_part_id) {
-        const part = db.drizzle.select({ stock: spareParts.stock, buy_price: spareParts.buy_price })
+        const part = db.drizzle.select({ buy_price: spareParts.buy_price })
             .from(spareParts).where(eq(spareParts.id, spare_part_id)).get();
         if (part) {
             cost_price = part.buy_price * quantity;

@@ -67,7 +67,6 @@ exports.spareParts = (0, sqlite_core_1.sqliteTable)('spare_parts', {
     part_code: (0, sqlite_core_1.text)('part_code').unique(),
     name: (0, sqlite_core_1.text)('name').notNull(),
     category: (0, sqlite_core_1.text)('category'),
-    stock: (0, sqlite_core_1.integer)('stock').default(0),
     buy_price: (0, sqlite_core_1.real)('buy_price').default(0),
     sell_price: (0, sqlite_core_1.real)('sell_price').default(0),
     unit: (0, sqlite_core_1.text)('unit'),

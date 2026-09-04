@@ -71,7 +71,7 @@ declare global {
       getPart: (id: number) => Promise<Part>
       addPart: (data: Omit<Part, 'id'>) => Promise<number>
       updatePart: (id: number, data: Partial<Part>) => Promise<number>
-      updatePartStock: (id: number, change: number) => Promise<number>
+
       deletePart: (id: number) => Promise<number>
 
 

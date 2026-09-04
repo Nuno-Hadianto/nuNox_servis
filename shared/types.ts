@@ -36,7 +36,6 @@ export interface Part {
   part_code: string;
   name: string;
   category: string;
-  stock: number;
   buy_price: number;
   sell_price: number;
   unit: string;

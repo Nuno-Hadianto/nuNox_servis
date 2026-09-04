@@ -70,7 +70,6 @@ export const spareParts = sqliteTable('spare_parts', {
   part_code: text('part_code').unique(),
   name: text('name').notNull(),
   category: text('category'),
-  stock: integer('stock').default(0),
   buy_price: real('buy_price').default(0),
   sell_price: real('sell_price').default(0),
   unit: text('unit'),

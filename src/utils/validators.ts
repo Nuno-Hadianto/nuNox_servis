@@ -11,7 +11,6 @@ export const SparepartSchema = z.object({
   part_code: z.string().optional().nullable(),
   name: z.string().min(1, 'Nama sparepart wajib diisi.').max(150, 'Nama terlalu panjang.'),
   category: z.string().optional().nullable(),
-  stock: z.number().int('Stok harus berupa bilangan bulat.').min(0, 'Stok tidak boleh negatif.'),
   buy_price: z.number().min(0, 'Harga beli tidak boleh negatif.').optional().default(0),
   sell_price: z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0),
   unit: z.string().optional().nullable(),
@@ -61,11 +60,7 @@ export const PaymentSchema = z.object({
   notes: z.string().optional().nullable()
 })
 
-export const UserSchema = z.object({
-  username: z.string().min(3, 'Username minimal 3 karakter.').max(50, 'Username terlalu panjang.'),
-  password: z.string().min(6, 'Password minimal 6 karakter.'),
-  role: z.enum(['admin', 'kasir', 'teknisi']).default('kasir')
-})
+
 
 
 export const validateData = <T>(schema: z.ZodSchema<T>, data: unknown): T => {

@@ -20,9 +20,7 @@ function updatePart(id: number | string, data: Omit<Part, 'id'>) {
     return partRepository.updatePart(id, validData as Omit<Part, 'id'>);
 }
 
-function updatePartStock(id: number | string, change: number) {
-    return partRepository.updatePartStock(id, change);
-}
+
 
 function deletePart(id: number | string) {
     const hasServiceItems = partRepository.checkPartHasServiceItems(id);
@@ -38,6 +36,5 @@ export {
     getPartById,
     addPart,
     updatePart,
-    updatePartStock,
     deletePart
  };

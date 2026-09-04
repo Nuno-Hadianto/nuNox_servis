@@ -15,7 +15,7 @@ function registerPartIpc() {
   ipcMain.handle('update-part', (event: IpcMainInvokeEvent, id: number, data: Omit<Part, 'id'>) => {
     return partController.updatePart(id, data);
   });
-  ipcMain.handle('update-part-stock', (event: IpcMainInvokeEvent, id: number, change: number) => partController.updatePartStock(id, change));
+
   ipcMain.handle('delete-part', (event: IpcMainInvokeEvent, id: number) => partController.deletePart(id));
 
 
