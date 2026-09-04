@@ -209,14 +209,6 @@ function updateServiceDetails(id, data) {
 }
 function deleteService(id) {
     return db_1.default.transaction(() => {
-        const items = db_1.default.drizzle.select().from(drizzleSchema_1.serviceItems)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.service_order_id, Number(id)), (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.item_type, 'Sparepart'), (0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceItems.spare_part_id)))
-            .all();
-        for (const item of items) {
-            db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
-                stock: (0, drizzle_orm_1.sql) `stock + ${item.quantity}`
-            }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, item.spare_part_id)).run();
-        }
         db_1.default.drizzle.delete(drizzleSchema_1.serviceOrders).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, Number(id))).run();
         return true;
     })();

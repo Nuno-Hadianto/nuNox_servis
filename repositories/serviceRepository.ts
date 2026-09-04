@@ -1,6 +1,6 @@
 import { ServiceOrder } from '../shared/types';
 import db from '../database/db';
-import {  serviceOrders, customers, devices, serviceStatusHistory, serviceItems, spareParts  } from '../database/drizzleSchema';
+import {  serviceOrders, customers, devices, serviceStatusHistory  } from '../database/drizzleSchema';
 import {  eq, like, notLike, notInArray, or, asc, desc, sql, and, gte, isNotNull, SQL  } from 'drizzle-orm';
 
 function generateTicketNumber() {
@@ -228,18 +228,6 @@ function updateServiceDetails(id: number | string, data: ServiceOrder) {
 
 function deleteService(id: number | string) {
     return db.transaction(() => {
-        const items = db.drizzle.select().from(serviceItems)
-            .where(and(eq(serviceItems.service_order_id, Number(id)), eq(serviceItems.item_type, 'Sparepart'), isNotNull(serviceItems.spare_part_id)))
-            .all();
-            
-        for (const item of items) {
-            db.drizzle.update(spareParts).set({
-                stock: sql`stock + ${item.quantity}`
-            }).where(eq(spareParts.id, item.spare_part_id)).run();
-            
-
-        }
-        
         db.drizzle.delete(serviceOrders).where(eq(serviceOrders.id, Number(id))).run();
         
         return true;

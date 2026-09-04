@@ -79,7 +79,14 @@
             </td>
             <td>{{ formatCurrency(s.total_cost) }}</td>
             <td>
-              <button class="btn btn-primary btn-sm" @click="goToDetail(s.id)">Detail</button>
+              <div style="display: flex; justify-content: center; gap: 8px;">
+                <button class="btn btn-primary btn-sm" @click="goToDetail(s.id)" style="display: inline-flex; align-items: center; gap: 6px">
+                  <Edit :size="14" /> Detail
+                </button>
+                <button class="btn btn-danger btn-sm" @click="deleteService(s.id, s.ticket_number)" style="display: inline-flex; align-items: center; gap: 6px">
+                  <Trash2 :size="14" /> Hapus
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -259,7 +266,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Search, Plus, ChevronLeft, ChevronRight, Edit, Trash2 } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { ServiceOrder, Customer, Device } from '../../shared/types'
@@ -379,6 +386,31 @@ const onDeviceChange = async () => {
 
 const goToDetail = (id: number) => {
   router.push(`/services/${id}`)
+}
+
+const deleteService = async (id: number, ticketNo: string) => {
+  const result = await window.Swal.fire({
+    title: 'Hapus Tiket Servis?',
+    text: `Anda yakin ingin menghapus tiket ${ticketNo}? Tindakan ini tidak bisa dibatalkan!`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#ef4444',
+    cancelButtonColor: '#6b7280',
+    confirmButtonText: 'Ya, Hapus!',
+    cancelButtonText: 'Batal'
+  })
+
+  if (result.isConfirmed) {
+    try {
+      await window.api.deleteService(id)
+      window.Swal.fire('Terhapus!', 'Tiket servis berhasil dihapus.', 'success')
+      loadServices(currentPage.value)
+    } catch (error: unknown) {
+      console.error(error)
+      const msg = error instanceof Error ? error.message : String(error)
+      window.Swal.fire('Gagal', msg || 'Gagal menghapus tiket servis.', 'error')
+    }
+  }
 }
 
 // Modal Form Logic
