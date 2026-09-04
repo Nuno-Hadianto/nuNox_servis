@@ -158,16 +158,7 @@
                 style="resize: vertical;"
               ></textarea>
             </div>
-            <div class="form-group">
-              <label>Catatan Tambahan</label>
-              <textarea
-                v-model="form.notes"
-                rows="2"
-                placeholder="Catatan internal..."
-                class="form-control"
-                style="resize: vertical;"
-              ></textarea>
-            </div>
+
             <div
               class="modal-footer"
               style="
@@ -240,8 +231,7 @@ const formId = ref<number | null>(null)
 const form = reactive({
   name: '',
   phone: '',
-  address: '',
-  notes: ''
+  address: ''
 })
 
 const openAddModal = () => {
@@ -250,7 +240,6 @@ const openAddModal = () => {
   form.name = ''
   form.phone = ''
   form.address = ''
-  form.notes = ''
   isModalOpen.value = true
 }
 
@@ -263,7 +252,6 @@ const editCustomer = async (c: Customer) => {
       form.name = detail.name || ''
       form.phone = detail.phone || ''
       form.address = detail.address || ''
-      form.notes = detail.notes || ''
       isModalOpen.value = true
     }
   } catch (error) {
