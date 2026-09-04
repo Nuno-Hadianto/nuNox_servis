@@ -18,14 +18,7 @@
             🏢 Pengaturan Identitas Toko
           </h2>
           <form @submit.prevent="saveSettings">
-            <div class="form-group">
-              <label style="font-weight: 500; font-size: 0.9rem">Nama Usaha / Toko</label>
-              <input
-                type="text"
-                v-model="form.business_name"
-                class="form-control"
-              />
-            </div>
+
             <div class="form-group">
               <label style="font-weight: 500; font-size: 0.9rem">No. Telp / WhatsApp</label>
               <input
