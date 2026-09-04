@@ -50,7 +50,7 @@
                 <span v-else class="badge badge-info">Menunggu</span>
               </td>
               <td>
-                <button class="btn-action">
+                <button class="btn-action" @click.stop="$router.push('/services/' + todo.id)">
                   <ArrowRight :size="14" :stroke-width="2.5" /> Buka
                 </button>
               </td>

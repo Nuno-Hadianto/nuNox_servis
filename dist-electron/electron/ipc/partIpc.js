@@ -36,17 +36,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerPartIpc = registerPartIpc;
 const electron_1 = require("electron");
 const partController = __importStar(require("../../controllers/partController"));
-const validators_1 = require("../../src/utils/validators");
 function registerPartIpc() {
     electron_1.ipcMain.handle('get-parts', (event, searchQuery) => partController.getParts(searchQuery));
     electron_1.ipcMain.handle('get-part', (event, id) => partController.getPartById(id));
     electron_1.ipcMain.handle('add-part', (event, data) => {
-        const validData = (0, validators_1.validateData)(validators_1.SparepartSchema, data);
-        return partController.addPart(validData);
+        return partController.addPart(data);
     });
     electron_1.ipcMain.handle('update-part', (event, id, data) => {
-        const validData = (0, validators_1.validateData)(validators_1.SparepartSchema.partial(), data);
-        return partController.updatePart(id, validData);
+        return partController.updatePart(id, data);
     });
     electron_1.ipcMain.handle('update-part-stock', (event, id, change, reason, ref_id) => partController.updatePartStock(id, change, reason, ref_id));
     electron_1.ipcMain.handle('delete-part', (event, id) => partController.deletePart(id));
