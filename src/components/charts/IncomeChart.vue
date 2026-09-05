@@ -46,6 +46,10 @@ const renderChart = () => {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      animation: {
+        duration: 1500,
+        easing: 'easeOutQuart'
+      },
       plugins: { legend: { display: false } },
       scales: {
         y: {

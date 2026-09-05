@@ -33,7 +33,7 @@ function getCustomers(searchQuery = '', page = 1, limit = 50, sortBy = 'name_asc
     }
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        const filter = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.phone, queryStr));
+        const filter = (0, drizzle_orm_1.and)((0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.phone, queryStr)), (0, drizzle_orm_1.isNull)(drizzleSchema_1.customers.deleted_at));
         data = db_1.default.drizzle.select().from(drizzleSchema_1.customers)
             .where(filter)
             .orderBy(orderCondition)
@@ -45,16 +45,18 @@ function getCustomers(searchQuery = '', page = 1, limit = 50, sortBy = 'name_asc
     }
     else {
         data = db_1.default.drizzle.select().from(drizzleSchema_1.customers)
+            .where((0, drizzle_orm_1.isNull)(drizzleSchema_1.customers.deleted_at))
             .orderBy(orderCondition)
             .limit(limit)
             .offset(offset)
             .all();
-        total = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.customers).get().count;
+        total = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.customers)
+            .where((0, drizzle_orm_1.isNull)(drizzleSchema_1.customers.deleted_at)).get().count;
     }
     return { data, total, page, limit };
 }
 function getCustomerById(id) {
-    return db_1.default.drizzle.select().from(drizzleSchema_1.customers).where((0, drizzle_orm_1.eq)(drizzleSchema_1.customers.id, Number(id))).get();
+    return db_1.default.drizzle.select().from(drizzleSchema_1.customers).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.customers.id, Number(id)), (0, drizzle_orm_1.isNull)(drizzleSchema_1.customers.deleted_at))).get();
 }
 function addCustomer(data) {
     const { name, phone, address, notes } = data;
@@ -74,6 +76,8 @@ function checkCustomerHasServiceOrders(id) {
     return result.count > 0;
 }
 function deleteCustomer(id) {
-    db_1.default.drizzle.delete(drizzleSchema_1.customers).where((0, drizzle_orm_1.eq)(drizzleSchema_1.customers.id, Number(id))).run();
+    db_1.default.drizzle.update(drizzleSchema_1.customers)
+        .set({ deleted_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP` })
+        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.customers.id, Number(id))).run();
     return true;
 }

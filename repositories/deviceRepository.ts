@@ -1,7 +1,7 @@
 import { Device } from '../shared/types';
 import db from '../database/db';
 import {  devices, customers, serviceOrders  } from '../database/drizzleSchema';
-import {  eq, like, or, desc, asc, sql  } from 'drizzle-orm';
+import {  eq, like, or, and, isNull, desc, asc, sql  } from 'drizzle-orm';
 
 function getDevices(searchQuery = '', sortBy = 'name_asc'): Device[] {
     const baseQuery = db.drizzle.select({
@@ -25,13 +25,18 @@ function getDevices(searchQuery = '', sortBy = 'name_asc'): Device[] {
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
         query = baseQuery.where(
-            or(
-                like(devices.brand, queryStr),
-                like(devices.model, queryStr),
-                like(devices.serial_number, queryStr),
-                like(customers.name, queryStr)
+            and(
+                or(
+                    like(devices.brand, queryStr),
+                    like(devices.model, queryStr),
+                    like(devices.serial_number, queryStr),
+                    like(customers.name, queryStr)
+                ),
+                isNull(devices.deleted_at)
             )
         ) as unknown as typeof baseQuery;
+    } else {
+        query = baseQuery.where(isNull(devices.deleted_at)) as unknown as typeof baseQuery;
     }
     
     switch (sortBy) {
@@ -49,12 +54,12 @@ function getDevices(searchQuery = '', sortBy = 'name_asc'): Device[] {
 }
 
 function getDeviceById(id: number | string) {
-    return db.drizzle.select().from(devices).where(eq(devices.id, Number(id))).get();
+    return db.drizzle.select().from(devices).where(and(eq(devices.id, Number(id)), isNull(devices.deleted_at))).get();
 }
 
 function getDevicesByCustomerId(customerId: number | string) {
     return db.drizzle.select().from(devices)
-        .where(eq(devices.customer_id, Number(customerId)))
+        .where(and(eq(devices.customer_id, Number(customerId)), isNull(devices.deleted_at)))
         .orderBy(desc(devices.id)).all();
 }
 
@@ -81,7 +86,7 @@ function checkDeviceHasServiceOrders(id: number | string) {
 }
 
 function deleteDevice(id: number | string) {
-    db.drizzle.delete(devices).where(eq(devices.id, Number(id))).run();
+    db.drizzle.update(devices).set({ deleted_at: sql`CURRENT_TIMESTAMP` }).where(eq(devices.id, Number(id))).run();
     return true;
 }
 

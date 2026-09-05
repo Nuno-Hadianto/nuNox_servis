@@ -73,5 +73,9 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getLogoBase64: () => invokeSafe('get-logo-base64'),
     showNotification: (title, body) => invokeSafe('show-notification', { title, body }),
     // Print & Preview
-    printPreview: (options) => invokeSafe('print-preview', options)
+    printPreview: (options) => invokeSafe('print-preview', options),
+    // Keranjang Sampah (Recycle Bin)
+    getDeletedItems: () => invokeSafe('get-deleted-items'),
+    restoreItem: (id, type) => invokeSafe('restore-item', id, type),
+    hardDeleteItem: (id, type) => invokeSafe('hard-delete-item', id, type)
 });

@@ -156,4 +156,10 @@ export interface TodoItem {
   description: string;
 }
 
+export interface RecycleBinItem {
+  id: number;
+  type: 'customer' | 'device' | 'service' | 'part';
+  name: string;
+  deleted_at: string;
+}
 

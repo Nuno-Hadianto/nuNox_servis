@@ -65,19 +65,19 @@ function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter, s
         .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
         .innerJoin(drizzleSchema_1.devices, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.device_id, drizzleSchema_1.devices.id));
     let data, total;
-    let condition = undefined;
+    let condition = (0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at);
     if (searchQuery) {
         if (searchQuery === 'Sedang Dikerjakan') {
-            condition = (0, drizzle_orm_1.and)((0, drizzle_orm_1.notLike)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, [types_1.ServiceStatus.BATAL, types_1.ServiceStatus.DIBATALKAN]));
+            condition = (0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.notLike)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, [types_1.ServiceStatus.BATAL, types_1.ServiceStatus.DIBATALKAN]));
         }
         else if (searchQuery === 'Hari Ini') {
             const d = new Date();
             const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-            condition = (0, drizzle_orm_1.eq)((0, drizzle_orm_1.sql) `DATE(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')`, today);
+            condition = (0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.eq)((0, drizzle_orm_1.sql) `DATE(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')`, today));
         }
         else {
             const qStr = `%${searchQuery}%`;
-            condition = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.ticket_number, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, qStr));
+            condition = (0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.ticket_number, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, qStr)));
         }
     }
     let orderByClause;
@@ -140,12 +140,12 @@ function getServiceById(id) {
     }).from(drizzleSchema_1.serviceOrders)
         .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
         .innerJoin(drizzleSchema_1.devices, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.device_id, drizzleSchema_1.devices.id))
-        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, Number(id)))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, Number(id)), (0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at)))
         .get();
 }
 function getServiceByTicketNumber(ticketNumber) {
     return db_1.default.drizzle.select({ id: drizzleSchema_1.serviceOrders.id }).from(drizzleSchema_1.serviceOrders)
-        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.ticket_number, ticketNumber)).get();
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.ticket_number, ticketNumber), (0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at))).get();
 }
 function getServiceStatusHistory(serviceOrderId) {
     return db_1.default.drizzle.select().from(drizzleSchema_1.serviceStatusHistory)
@@ -221,7 +221,7 @@ function updateServiceDetails(id, data) {
 }
 function deleteService(id) {
     return db_1.default.transaction(() => {
-        db_1.default.drizzle.delete(drizzleSchema_1.serviceOrders).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, Number(id))).run();
+        db_1.default.drizzle.update(drizzleSchema_1.serviceOrders).set({ deleted_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP` }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, Number(id))).run();
         return true;
     })();
 }
@@ -229,7 +229,7 @@ function deleteService(id) {
 function checkWarranty(deviceId) {
     return db_1.default.drizzle.select({ ticket_number: drizzleSchema_1.serviceOrders.ticket_number, warranty_end_date: drizzleSchema_1.serviceOrders.warranty_end_date })
         .from(drizzleSchema_1.serviceOrders)
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.device_id, Number(deviceId)), (0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceOrders.warranty_end_date), (0, drizzle_orm_1.gte)(drizzleSchema_1.serviceOrders.warranty_end_date, (0, drizzle_orm_1.sql) `datetime('now')`)))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.device_id, Number(deviceId)), (0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceOrders.warranty_end_date), (0, drizzle_orm_1.gte)(drizzleSchema_1.serviceOrders.warranty_end_date, (0, drizzle_orm_1.sql) `datetime('now')`)))
         .orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.serviceOrders.warranty_end_date))
         .limit(1)
         .get() || null;

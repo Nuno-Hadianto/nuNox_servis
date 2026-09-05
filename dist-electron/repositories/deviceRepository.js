@@ -33,7 +33,10 @@ function getDevices(searchQuery = '', sortBy = 'name_asc') {
     let query = baseQuery;
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        query = baseQuery.where((0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.model, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.serial_number, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, queryStr)));
+        query = baseQuery.where((0, drizzle_orm_1.and)((0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.model, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.serial_number, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, queryStr)), (0, drizzle_orm_1.isNull)(drizzleSchema_1.devices.deleted_at)));
+    }
+    else {
+        query = baseQuery.where((0, drizzle_orm_1.isNull)(drizzleSchema_1.devices.deleted_at));
     }
     switch (sortBy) {
         case 'name_asc':
@@ -49,11 +52,11 @@ function getDevices(searchQuery = '', sortBy = 'name_asc') {
     }
 }
 function getDeviceById(id) {
-    return db_1.default.drizzle.select().from(drizzleSchema_1.devices).where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.id, Number(id))).get();
+    return db_1.default.drizzle.select().from(drizzleSchema_1.devices).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.id, Number(id)), (0, drizzle_orm_1.isNull)(drizzleSchema_1.devices.deleted_at))).get();
 }
 function getDevicesByCustomerId(customerId) {
     return db_1.default.drizzle.select().from(drizzleSchema_1.devices)
-        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.customer_id, Number(customerId)))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.customer_id, Number(customerId)), (0, drizzle_orm_1.isNull)(drizzleSchema_1.devices.deleted_at)))
         .orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.id)).all();
 }
 function addDevice(data) {
@@ -76,6 +79,6 @@ function checkDeviceHasServiceOrders(id) {
     return result.count > 0;
 }
 function deleteDevice(id) {
-    db_1.default.drizzle.delete(drizzleSchema_1.devices).where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.id, Number(id))).run();
+    db_1.default.drizzle.update(drizzleSchema_1.devices).set({ deleted_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP` }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.id, Number(id))).run();
     return true;
 }

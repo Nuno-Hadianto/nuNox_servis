@@ -29,6 +29,7 @@ import {  registerDeviceIpc  } from './ipc/deviceIpc';
 import {  registerServiceIpc  } from './ipc/serviceIpc';
 import {  registerPartIpc  } from './ipc/partIpc';
 import {  registerMiscIpc  } from './ipc/miscIpc';
+import {  registerRecycleBinIpc  } from './ipc/recycleBinIpc';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -71,6 +72,7 @@ function createWindow() {
   registerServiceIpc();
   registerPartIpc();
   registerMiscIpc(mainWindow);
+  registerRecycleBinIpc();
 
 
   mainWindow.on('closed', () => {

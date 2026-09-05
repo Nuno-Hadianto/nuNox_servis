@@ -9,7 +9,8 @@ export const customers = sqliteTable('customers', {
   address: text('address'),
   notes: text('notes'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
-  updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
+  updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
+  deleted_at: text('deleted_at')
 }, (table) => ({
   nameIdx: index('idx_customer_name').on(table.name)
 }));
@@ -26,7 +27,8 @@ export const devices = sqliteTable('devices', {
   physical_condition: text('physical_condition'),
   notes: text('notes'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
-  updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
+  updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
+  deleted_at: text('deleted_at')
 }, (table) => ({
   customerIdIdx: index('idx_device_customer_id').on(table.customer_id)
 }));
@@ -48,7 +50,8 @@ export const serviceOrders = sqliteTable('service_orders', {
   completed_date: text('completed_date'),
   warranty_end_date: text('warranty_end_date'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
-  updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
+  updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
+  deleted_at: text('deleted_at')
 }, (table) => ({
   ticketNumberIdx: index('idx_so_ticket_number').on(table.ticket_number),
   customerIdIdx: index('idx_so_customer_id').on(table.customer_id),
@@ -73,7 +76,8 @@ export const spareParts = sqliteTable('spare_parts', {
   unit: text('unit'),
   notes: text('notes'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
-  updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`)
+  updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
+  deleted_at: text('deleted_at')
 }, (table) => ({
   partCodeIdx: index('idx_sparepart_code').on(table.part_code)
 }));

@@ -59,6 +59,7 @@ const deviceIpc_1 = require("./ipc/deviceIpc");
 const serviceIpc_1 = require("./ipc/serviceIpc");
 const partIpc_1 = require("./ipc/partIpc");
 const miscIpc_1 = require("./ipc/miscIpc");
+const recycleBinIpc_1 = require("./ipc/recycleBinIpc");
 let mainWindow = null;
 function createWindow() {
     mainWindow = new electron_1.BrowserWindow({
@@ -97,6 +98,7 @@ function createWindow() {
     (0, serviceIpc_1.registerServiceIpc)();
     (0, partIpc_1.registerPartIpc)();
     (0, miscIpc_1.registerMiscIpc)(mainWindow);
+    (0, recycleBinIpc_1.registerRecycleBinIpc)();
     mainWindow.on('closed', () => {
         mainWindow = null;
     });

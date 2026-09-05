@@ -50,6 +50,12 @@ const routes: Array<RouteRecordRaw> = [
 
 
   {
+    path: '/recycle-bin',
+    name: 'RecycleBin',
+    component: () => import('../views/RecycleBin.vue'),
+    meta: { title: 'Keranjang Sampah' }
+  },
+  {
     path: '/settings',
     name: 'Settings',
     component: () => import('../views/Settings.vue'),

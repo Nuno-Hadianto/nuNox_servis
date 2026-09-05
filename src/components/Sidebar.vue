@@ -36,6 +36,9 @@
             ><Settings class="menu-icon" /> Pengaturan</router-link
           >
         </li>
+        <li :class="{ active: $route.name === 'RecycleBin' }">
+          <router-link to="/recycle-bin"><Trash2 class="menu-icon" /> Keranjang Sampah</router-link>
+        </li>
       </ul>
       <div class="sidebar-footer">
         <!-- User info and logout hidden for solo mode -->
@@ -52,7 +55,8 @@ import {
   Wrench,
   Package,
   BarChart3,
-  Settings
+  Settings,
+  Trash2
 } from 'lucide-vue-next'
 
 

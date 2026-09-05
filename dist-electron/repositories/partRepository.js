@@ -18,9 +18,13 @@ function getParts(searchQuery = '', page = 1, limit = 15, sortBy = 'name_asc') {
     let countQuery = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.spareParts).$dynamic();
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        const searchFilter = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.name, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.part_code, queryStr));
+        const searchFilter = (0, drizzle_orm_1.and)((0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.name, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.spareParts.part_code, queryStr)), (0, drizzle_orm_1.isNull)(drizzleSchema_1.spareParts.deleted_at));
         query = query.where(searchFilter);
         countQuery = countQuery.where(searchFilter);
+    }
+    else {
+        query = query.where((0, drizzle_orm_1.isNull)(drizzleSchema_1.spareParts.deleted_at));
+        countQuery = countQuery.where((0, drizzle_orm_1.isNull)(drizzleSchema_1.spareParts.deleted_at));
     }
     let orderCondition;
     switch (sortBy) {
@@ -44,7 +48,7 @@ function getParts(searchQuery = '', page = 1, limit = 15, sortBy = 'name_asc') {
     return { data, total };
 }
 function getPartById(id) {
-    return db_1.default.drizzle.select().from(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).get();
+    return db_1.default.drizzle.select().from(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id)), (0, drizzle_orm_1.isNull)(drizzleSchema_1.spareParts.deleted_at))).get();
 }
 function addPart(data) {
     return db_1.default.transaction(() => {
@@ -71,6 +75,6 @@ function checkPartHasServiceItems(id) {
     return result.count > 0;
 }
 function deletePart(id) {
-    db_1.default.drizzle.delete(drizzleSchema_1.spareParts).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).run();
+    db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({ deleted_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP` }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).run();
     return true;
 }

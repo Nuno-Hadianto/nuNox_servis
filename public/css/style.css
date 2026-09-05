@@ -568,6 +568,23 @@ select.form-control {
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
+/* Custom Date Picker Styling */
+.modern-date-input::-webkit-calendar-picker-indicator {
+  background-color: transparent;
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 6px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.modern-date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+.dark-mode .modern-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+
 /* Badges */
 .badge {
   display: inline-block;

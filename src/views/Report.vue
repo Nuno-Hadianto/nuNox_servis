@@ -17,15 +17,15 @@
         <input
           type="date"
           v-model="startDate"
-          class="form-control"
-          style="width: 150px; border-radius: 20px; padding: 8px 15px"
+          class="form-control modern-date-input"
+          style="width: 170px; border-radius: 20px; padding: 8px 15px; border: 1px solid var(--border-color); color: var(--text-primary);"
         />
         <span style="font-weight: 500; color: var(--text-muted)">s/d</span>
         <input
           type="date"
           v-model="endDate"
-          class="form-control"
-          style="width: 150px; border-radius: 20px; padding: 8px 15px"
+          class="form-control modern-date-input"
+          style="width: 170px; border-radius: 20px; padding: 8px 15px; border: 1px solid var(--border-color); color: var(--text-primary);"
         />
         <button
           @click="generateReport"

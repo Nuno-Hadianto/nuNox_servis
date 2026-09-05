@@ -10,7 +10,8 @@ exports.customers = (0, sqlite_core_1.sqliteTable)('customers', {
     address: (0, sqlite_core_1.text)('address'),
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
-    updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
+    updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
+    deleted_at: (0, sqlite_core_1.text)('deleted_at')
 }, (table) => ({
     nameIdx: (0, sqlite_core_1.index)('idx_customer_name').on(table.name)
 }));
@@ -26,7 +27,8 @@ exports.devices = (0, sqlite_core_1.sqliteTable)('devices', {
     physical_condition: (0, sqlite_core_1.text)('physical_condition'),
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
-    updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
+    updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
+    deleted_at: (0, sqlite_core_1.text)('deleted_at')
 }, (table) => ({
     customerIdIdx: (0, sqlite_core_1.index)('idx_device_customer_id').on(table.customer_id)
 }));
@@ -47,7 +49,8 @@ exports.serviceOrders = (0, sqlite_core_1.sqliteTable)('service_orders', {
     completed_date: (0, sqlite_core_1.text)('completed_date'),
     warranty_end_date: (0, sqlite_core_1.text)('warranty_end_date'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
-    updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
+    updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
+    deleted_at: (0, sqlite_core_1.text)('deleted_at')
 }, (table) => ({
     ticketNumberIdx: (0, sqlite_core_1.index)('idx_so_ticket_number').on(table.ticket_number),
     customerIdIdx: (0, sqlite_core_1.index)('idx_so_customer_id').on(table.customer_id),
@@ -70,7 +73,8 @@ exports.spareParts = (0, sqlite_core_1.sqliteTable)('spare_parts', {
     unit: (0, sqlite_core_1.text)('unit'),
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
-    updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`)
+    updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
+    deleted_at: (0, sqlite_core_1.text)('deleted_at')
 }, (table) => ({
     partCodeIdx: (0, sqlite_core_1.index)('idx_sparepart_code').on(table.part_code)
 }));

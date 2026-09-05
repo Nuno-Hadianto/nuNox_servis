@@ -16,13 +16,13 @@ function getDashboardStats() {
     // Servis Hari Ini
     const todayServicesQuery = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `COUNT(*)` })
         .from(drizzleSchema_1.serviceOrders)
-        .where((0, drizzle_orm_1.eq)((0, drizzle_orm_1.sql) `DATE(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')`, today))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)((0, drizzle_orm_1.sql) `DATE(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')`, today), (0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at)))
         .get();
     const todayServices = todayServicesQuery?.count || 0;
     // Sedang Dikerjakan
     const inProgressQuery = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `COUNT(*)` })
         .from(drizzleSchema_1.serviceOrders)
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, [
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, [
         types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL,
         types_1.ServiceStatus.SELESAI_SUDAH_DIAMBIL,
         types_1.ServiceStatus.BATAL,
@@ -33,20 +33,21 @@ function getDashboardStats() {
     // Selesai (hari ini atau bulan ini atau total?) Let's say all time total completed, or just completed
     const completedQuery = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `COUNT(*)` })
         .from(drizzleSchema_1.serviceOrders)
-        .where((0, drizzle_orm_1.inArray)(drizzleSchema_1.serviceOrders.service_status, [types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL, types_1.ServiceStatus.SELESAI_SUDAH_DIAMBIL]))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.inArray)(drizzleSchema_1.serviceOrders.service_status, [types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL, types_1.ServiceStatus.SELESAI_SUDAH_DIAMBIL]), (0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at)))
         .get();
     const completed = completedQuery?.count || 0;
     // Pendapatan Bulan Ini (Total dari payments)
     const incomeMonthQuery = db_1.default.drizzle.select({ total: (0, drizzle_orm_1.sql) `SUM(${drizzleSchema_1.payments.amount})` })
         .from(drizzleSchema_1.payments)
-        .where((0, drizzle_orm_1.eq)((0, drizzle_orm_1.sql) `strftime('%Y-%m', ${drizzleSchema_1.payments.payment_date}, 'localtime')`, currentMonth))
+        .innerJoin(drizzleSchema_1.serviceOrders, (0, drizzle_orm_1.eq)(drizzleSchema_1.payments.service_order_id, drizzleSchema_1.serviceOrders.id))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)((0, drizzle_orm_1.sql) `strftime('%Y-%m', ${drizzleSchema_1.payments.payment_date}, 'localtime')`, currentMonth), (0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at)))
         .get();
     const incomeMonth = incomeMonthQuery?.total || 0;
     // HPP (Modal Sparepart) untuk transaksi yang diselesaikan bulan ini
     const hppMonthQuery = db_1.default.drizzle.select({ hpp: (0, drizzle_orm_1.sql) `SUM(${drizzleSchema_1.serviceItems.cost_price})` })
         .from(drizzleSchema_1.serviceItems)
         .innerJoin(drizzleSchema_1.serviceOrders, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.service_order_id, drizzleSchema_1.serviceOrders.id))
-        .where((0, drizzle_orm_1.eq)((0, drizzle_orm_1.sql) `strftime('%Y-%m', ${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, currentMonth))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)((0, drizzle_orm_1.sql) `strftime('%Y-%m', ${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, currentMonth), (0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at)))
         .get();
     const hppMonth = hppMonthQuery?.hpp || 0;
     const labaBersih = incomeMonth - hppMonth;
@@ -54,7 +55,9 @@ function getDashboardStats() {
     const chartDataRaw = db_1.default.prepare(`
         SELECT strftime('%Y-%m', payment_date, 'localtime') as month, SUM(amount) as total 
         FROM payments 
+        JOIN service_orders ON payments.service_order_id = service_orders.id
         WHERE date(payment_date, 'localtime') >= date('now', 'localtime', 'start of month', '-5 months')
+        AND service_orders.deleted_at IS NULL
         GROUP BY month 
         ORDER BY month ASC
     `).all();
@@ -81,7 +84,7 @@ function getDashboardStats() {
         days_pending: (0, drizzle_orm_1.sql) `CAST(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.created_at}, 'localtime') AS INTEGER)`
     }).from(drizzleSchema_1.serviceOrders)
         .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, 'Menunggu Sparepart'), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')) > 7`)).all();
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, 'Menunggu Sparepart'), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')) > 7`)).all();
     // 2. Selesai (Belum Diambil) > 14 hari
     const completedNotPickedQuery = db_1.default.drizzle.select({
         id: drizzleSchema_1.serviceOrders.id,
@@ -92,7 +95,7 @@ function getDashboardStats() {
         days_pending: (0, drizzle_orm_1.sql) `CAST(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime') AS INTEGER)`
     }).from(drizzleSchema_1.serviceOrders)
         .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL), (0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceOrders.completed_date), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')) > 14`)).all();
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL), (0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceOrders.completed_date), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')) > 14`)).all();
     const abandonedServices = [
         ...waitingQuery,
         ...completedNotPickedQuery
@@ -101,6 +104,7 @@ function getDashboardStats() {
     const statusData = db_1.default.prepare(`
         SELECT service_status, COUNT(*) as count 
         FROM service_orders 
+        WHERE deleted_at IS NULL
         GROUP BY service_status
     `).all();
     const serviceStatusChart = {
@@ -110,7 +114,9 @@ function getDashboardStats() {
     // Top 5 Spare Parts (Bar Chart) - Complex union all
     const topPartsData = db_1.default.prepare(`
         SELECT sp.name, SUM(total_qty) as qty FROM (
-            SELECT spare_part_id, quantity as total_qty FROM service_items WHERE item_type = 'Sparepart'
+            SELECT spare_part_id, quantity as total_qty FROM service_items 
+            JOIN service_orders ON service_items.service_order_id = service_orders.id
+            WHERE item_type = 'Sparepart' AND service_orders.deleted_at IS NULL
         ) items
         JOIN spare_parts sp ON sp.id = items.spare_part_id
         GROUP BY sp.id
@@ -129,7 +135,7 @@ function getDashboardStats() {
         type: (0, drizzle_orm_1.sql) `CASE WHEN date(${drizzleSchema_1.serviceOrders.estimated_completion_date}, 'localtime') < ${today} THEN 'overdue' ELSE 'deadline_today' END`,
         description: (0, drizzle_orm_1.sql) `'Deadline ' || date(${drizzleSchema_1.serviceOrders.estimated_completion_date}, 'localtime')`
     }).from(drizzleSchema_1.serviceOrders)
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceOrders.estimated_completion_date), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.estimated_completion_date}, 'localtime')`, today), (0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, [
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceOrders.estimated_completion_date), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.estimated_completion_date}, 'localtime')`, today), (0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, [
         types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL,
         types_1.ServiceStatus.SELESAI_SUDAH_DIAMBIL,
         types_1.ServiceStatus.BATAL,
@@ -142,7 +148,7 @@ function getDashboardStats() {
         type: (0, drizzle_orm_1.sql) `'waiting_part'`,
         description: (0, drizzle_orm_1.sql) `'Menunggu sparepart'`
     }).from(drizzleSchema_1.serviceOrders)
-        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, 'Menunggu Sparepart')).all();
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, 'Menunggu Sparepart'))).all();
     const todoItems = [
         ...deadlineQuery,
         ...waitingPartQuery
@@ -170,7 +176,7 @@ function getAlerts() {
         days_pending: (0, drizzle_orm_1.sql) `CAST(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.created_at}, 'localtime') AS INTEGER)`
     }).from(drizzleSchema_1.serviceOrders)
         .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, 'Menunggu Sparepart'), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')) > 7`)).all();
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, 'Menunggu Sparepart'), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.created_at}, 'localtime')) > 7`)).all();
     // 2. Selesai (Belum Diambil) > 14 hari
     const completedNotPickedQuery = db_1.default.drizzle.select({
         id: drizzleSchema_1.serviceOrders.id,
@@ -180,7 +186,7 @@ function getAlerts() {
         days_pending: (0, drizzle_orm_1.sql) `CAST(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime') AS INTEGER)`
     }).from(drizzleSchema_1.serviceOrders)
         .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL), (0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceOrders.completed_date), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')) > 14`)).all();
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.isNull)(drizzleSchema_1.serviceOrders.deleted_at), (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.service_status, types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL), (0, drizzle_orm_1.isNotNull)(drizzleSchema_1.serviceOrders.completed_date), (0, drizzle_orm_1.sql) `(julianday('now', 'localtime') - julianday(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')) > 14`)).all();
     return [
         ...waitingQuery,
         ...completedNotPickedQuery

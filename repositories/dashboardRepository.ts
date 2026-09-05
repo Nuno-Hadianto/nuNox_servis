@@ -1,7 +1,7 @@
 
 import db from '../database/db';
 import {  serviceOrders, payments, serviceItems, customers  } from '../database/drizzleSchema';
-import {  eq, notInArray, sql, and, isNotNull, lte, inArray  } from 'drizzle-orm';
+import {  eq, notInArray, sql, and, isNotNull, isNull, lte, inArray  } from 'drizzle-orm';
 import { ServiceStatus } from '../shared/types';
 export {};
 
@@ -16,7 +16,10 @@ function getDashboardStats() {
     // Servis Hari Ini
     const todayServicesQuery = db.drizzle.select({ count: sql`COUNT(*)` })
         .from(serviceOrders)
-        .where(eq(sql`DATE(${serviceOrders.created_at}, 'localtime')`, today))
+        .where(and(
+            eq(sql`DATE(${serviceOrders.created_at}, 'localtime')`, today),
+            isNull(serviceOrders.deleted_at)
+        ))
         .get();
     const todayServices = todayServicesQuery?.count || 0;
 
@@ -24,6 +27,7 @@ function getDashboardStats() {
     const inProgressQuery = db.drizzle.select({ count: sql`COUNT(*)` })
         .from(serviceOrders)
         .where(and(
+            isNull(serviceOrders.deleted_at),
             notInArray(serviceOrders.service_status, [
                 ServiceStatus.SELESAI_BELUM_DIAMBIL, 
                 ServiceStatus.SELESAI_SUDAH_DIAMBIL, 
@@ -37,14 +41,21 @@ function getDashboardStats() {
     // Selesai (hari ini atau bulan ini atau total?) Let's say all time total completed, or just completed
     const completedQuery = db.drizzle.select({ count: sql`COUNT(*)` })
         .from(serviceOrders)
-        .where(inArray(serviceOrders.service_status, [ServiceStatus.SELESAI_BELUM_DIAMBIL, ServiceStatus.SELESAI_SUDAH_DIAMBIL]))
+        .where(and(
+            inArray(serviceOrders.service_status, [ServiceStatus.SELESAI_BELUM_DIAMBIL, ServiceStatus.SELESAI_SUDAH_DIAMBIL]),
+            isNull(serviceOrders.deleted_at)
+        ))
         .get();
     const completed = completedQuery?.count || 0;
 
     // Pendapatan Bulan Ini (Total dari payments)
     const incomeMonthQuery = db.drizzle.select({ total: sql`SUM(${payments.amount})` })
         .from(payments)
-        .where(eq(sql`strftime('%Y-%m', ${payments.payment_date}, 'localtime')`, currentMonth))
+        .innerJoin(serviceOrders, eq(payments.service_order_id, serviceOrders.id))
+        .where(and(
+            eq(sql`strftime('%Y-%m', ${payments.payment_date}, 'localtime')`, currentMonth),
+            isNull(serviceOrders.deleted_at)
+        ))
         .get();
     const incomeMonth = incomeMonthQuery?.total || 0;
 
@@ -52,7 +63,10 @@ function getDashboardStats() {
     const hppMonthQuery = db.drizzle.select({ hpp: sql`SUM(${serviceItems.cost_price})` })
         .from(serviceItems)
         .innerJoin(serviceOrders, eq(serviceItems.service_order_id, serviceOrders.id))
-        .where(eq(sql`strftime('%Y-%m', ${serviceOrders.completed_date}, 'localtime')`, currentMonth))
+        .where(and(
+            eq(sql`strftime('%Y-%m', ${serviceOrders.completed_date}, 'localtime')`, currentMonth),
+            isNull(serviceOrders.deleted_at)
+        ))
         .get();
     const hppMonth = hppMonthQuery?.hpp || 0;
     const labaBersih = incomeMonth - hppMonth;
@@ -61,7 +75,9 @@ function getDashboardStats() {
     const chartDataRaw = db.prepare(`
         SELECT strftime('%Y-%m', payment_date, 'localtime') as month, SUM(amount) as total 
         FROM payments 
+        JOIN service_orders ON payments.service_order_id = service_orders.id
         WHERE date(payment_date, 'localtime') >= date('now', 'localtime', 'start of month', '-5 months')
+        AND service_orders.deleted_at IS NULL
         GROUP BY month 
         ORDER BY month ASC
     `).all();
@@ -93,6 +109,7 @@ function getDashboardStats() {
     }).from(serviceOrders)
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .where(and(
+          isNull(serviceOrders.deleted_at),
           eq(serviceOrders.service_status, 'Menunggu Sparepart'),
           sql`(julianday('now', 'localtime') - julianday(${serviceOrders.created_at}, 'localtime')) > 7`
       )).all();
@@ -108,6 +125,7 @@ function getDashboardStats() {
     }).from(serviceOrders)
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .where(and(
+          isNull(serviceOrders.deleted_at),
           eq(serviceOrders.service_status, ServiceStatus.SELESAI_BELUM_DIAMBIL),
           isNotNull(serviceOrders.completed_date),
           sql`(julianday('now', 'localtime') - julianday(${serviceOrders.completed_date}, 'localtime')) > 14`
@@ -122,6 +140,7 @@ function getDashboardStats() {
     const statusData = db.prepare(`
         SELECT service_status, COUNT(*) as count 
         FROM service_orders 
+        WHERE deleted_at IS NULL
         GROUP BY service_status
     `).all();
     
@@ -133,7 +152,9 @@ function getDashboardStats() {
     // Top 5 Spare Parts (Bar Chart) - Complex union all
     const topPartsData = db.prepare(`
         SELECT sp.name, SUM(total_qty) as qty FROM (
-            SELECT spare_part_id, quantity as total_qty FROM service_items WHERE item_type = 'Sparepart'
+            SELECT spare_part_id, quantity as total_qty FROM service_items 
+            JOIN service_orders ON service_items.service_order_id = service_orders.id
+            WHERE item_type = 'Sparepart' AND service_orders.deleted_at IS NULL
         ) items
         JOIN spare_parts sp ON sp.id = items.spare_part_id
         GROUP BY sp.id
@@ -155,6 +176,7 @@ function getDashboardStats() {
         description: sql`'Deadline ' || date(${serviceOrders.estimated_completion_date}, 'localtime')`
     }).from(serviceOrders)
       .where(and(
+          isNull(serviceOrders.deleted_at),
           isNotNull(serviceOrders.estimated_completion_date),
           lte(sql`date(${serviceOrders.estimated_completion_date}, 'localtime')`, today),
           notInArray(serviceOrders.service_status, [
@@ -172,9 +194,10 @@ function getDashboardStats() {
         type: sql`'waiting_part'`,
         description: sql`'Menunggu sparepart'`
     }).from(serviceOrders)
-      .where(
+      .where(and(
+          isNull(serviceOrders.deleted_at),
           eq(serviceOrders.service_status, 'Menunggu Sparepart')
-      ).all();
+      )).all();
 
     const todoItems = [
         ...deadlineQuery,
@@ -206,6 +229,7 @@ function getAlerts() {
     }).from(serviceOrders)
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .where(and(
+          isNull(serviceOrders.deleted_at),
           eq(serviceOrders.service_status, 'Menunggu Sparepart'),
           sql`(julianday('now', 'localtime') - julianday(${serviceOrders.created_at}, 'localtime')) > 7`
       )).all();
@@ -220,6 +244,7 @@ function getAlerts() {
     }).from(serviceOrders)
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .where(and(
+          isNull(serviceOrders.deleted_at),
           eq(serviceOrders.service_status, ServiceStatus.SELESAI_BELUM_DIAMBIL),
           isNotNull(serviceOrders.completed_date),
           sql`(julianday('now', 'localtime') - julianday(${serviceOrders.completed_date}, 'localtime')) > 14`

@@ -1,7 +1,7 @@
 import { ServiceOrder, ServiceStatus, PaginatedResponse } from '../shared/types';
 import db from '../database/db';
 import {  serviceOrders, customers, devices, serviceStatusHistory  } from '../database/drizzleSchema';
-import {  eq, like, notLike, notInArray, or, asc, desc, sql, and, gte, isNotNull, SQL  } from 'drizzle-orm';
+import {  eq, like, notLike, notInArray, or, asc, desc, sql, and, gte, isNotNull, isNull, SQL  } from 'drizzle-orm';
 
 function generateTicketNumber() {
     const year = new Date().getFullYear();
@@ -57,25 +57,32 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
         .innerJoin(devices, eq(serviceOrders.device_id, devices.id));
 
     let data, total;
-    let condition: SQL | undefined = undefined;
+    let condition: SQL | undefined = isNull(serviceOrders.deleted_at);
     
     if (searchQuery) {
         if (searchQuery === 'Sedang Dikerjakan') {
             condition = and(
+                isNull(serviceOrders.deleted_at),
                 notLike(serviceOrders.service_status, '%Selesai%'),
                 notInArray(serviceOrders.service_status, [ServiceStatus.BATAL, ServiceStatus.DIBATALKAN])
             );
         } else if (searchQuery === 'Hari Ini') {
             const d = new Date();
             const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-            condition = eq(sql`DATE(${serviceOrders.created_at}, 'localtime')`, today);
+            condition = and(
+                isNull(serviceOrders.deleted_at),
+                eq(sql`DATE(${serviceOrders.created_at}, 'localtime')`, today)
+            );
         } else {
             const qStr = `%${searchQuery}%`;
-            condition = or(
-                like(serviceOrders.ticket_number, qStr),
-                like(customers.name, qStr),
-                like(devices.brand, qStr),
-                like(serviceOrders.service_status, qStr)
+            condition = and(
+                isNull(serviceOrders.deleted_at),
+                or(
+                    like(serviceOrders.ticket_number, qStr),
+                    like(customers.name, qStr),
+                    like(devices.brand, qStr),
+                    like(serviceOrders.service_status, qStr)
+                )
             );
         }
     }
@@ -142,13 +149,13 @@ function getServiceById(id: number | string) {
     }).from(serviceOrders)
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .innerJoin(devices, eq(serviceOrders.device_id, devices.id))
-      .where(eq(serviceOrders.id, Number(id)))
+      .where(and(eq(serviceOrders.id, Number(id)), isNull(serviceOrders.deleted_at)))
       .get();
 }
 
 function getServiceByTicketNumber(ticketNumber: string) {
     return db.drizzle.select({ id: serviceOrders.id }).from(serviceOrders)
-        .where(eq(serviceOrders.ticket_number, ticketNumber)).get();
+        .where(and(eq(serviceOrders.ticket_number, ticketNumber), isNull(serviceOrders.deleted_at))).get();
 }
 
 function getServiceStatusHistory(serviceOrderId: number | string) {
@@ -236,7 +243,7 @@ function updateServiceDetails(id: number | string, data: Partial<ServiceOrder>) 
 
 function deleteService(id: number | string) {
     return db.transaction(() => {
-        db.drizzle.delete(serviceOrders).where(eq(serviceOrders.id, Number(id))).run();
+        db.drizzle.update(serviceOrders).set({ deleted_at: sql`CURRENT_TIMESTAMP` }).where(eq(serviceOrders.id, Number(id))).run();
         
         return true;
     })();
@@ -248,6 +255,7 @@ function checkWarranty(deviceId: number | string) {
         .from(serviceOrders)
         .where(and(
             eq(serviceOrders.device_id, Number(deviceId)),
+            isNull(serviceOrders.deleted_at),
             isNotNull(serviceOrders.warranty_end_date),
             gte(serviceOrders.warranty_end_date, sql`datetime('now')`)
         ))

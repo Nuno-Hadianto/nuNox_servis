@@ -1,7 +1,7 @@
 import { Customer } from '../shared/types';
 import db from '../database/db';
 import {  customers, serviceOrders  } from '../database/drizzleSchema';
-import {  eq, like, or, asc, desc, sql  } from 'drizzle-orm';
+import {  eq, like, or, and, asc, desc, sql, isNull  } from 'drizzle-orm';
 
 function getCustomers(searchQuery: string = '', page: number = 1, limit: number = 50, sortBy: string = 'name_asc') {
     const offset = (page - 1) * limit;
@@ -18,7 +18,10 @@ function getCustomers(searchQuery: string = '', page: number = 1, limit: number 
     
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        const filter = or(like(customers.name, queryStr), like(customers.phone, queryStr));
+        const filter = and(
+            or(like(customers.name, queryStr), like(customers.phone, queryStr)),
+            isNull(customers.deleted_at)
+        );
         
         data = db.drizzle.select().from(customers)
             .where(filter)
@@ -31,18 +34,20 @@ function getCustomers(searchQuery: string = '', page: number = 1, limit: number 
             .where(filter).get().count;
     } else {
         data = db.drizzle.select().from(customers)
+            .where(isNull(customers.deleted_at))
             .orderBy(orderCondition)
             .limit(limit)
             .offset(offset)
             .all();
             
-        total = db.drizzle.select({ count: sql`count(*)` }).from(customers).get().count;
+        total = db.drizzle.select({ count: sql`count(*)` }).from(customers)
+            .where(isNull(customers.deleted_at)).get().count;
     }
     return { data, total, page, limit };
 }
 
 function getCustomerById(id: number | string) {
-    return db.drizzle.select().from(customers).where(eq(customers.id, Number(id))).get();
+    return db.drizzle.select().from(customers).where(and(eq(customers.id, Number(id)), isNull(customers.deleted_at))).get();
 }
 
 function addCustomer(data: Customer) {
@@ -66,7 +71,9 @@ function checkCustomerHasServiceOrders(id: number | string) {
 }
 
 function deleteCustomer(id: number | string) {
-    db.drizzle.delete(customers).where(eq(customers.id, Number(id))).run();
+    db.drizzle.update(customers)
+        .set({ deleted_at: sql`CURRENT_TIMESTAMP` })
+        .where(eq(customers.id, Number(id))).run();
     return true;
 }
 

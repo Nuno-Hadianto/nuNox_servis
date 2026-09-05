@@ -1,7 +1,7 @@
 import { Part } from '../shared/types';
 import db from '../database/db';
 import {  spareParts, serviceItems  } from '../database/drizzleSchema';
-import {  eq, like, or, asc, desc, sql  } from 'drizzle-orm';
+import {  eq, like, or, and, isNull, asc, desc, sql  } from 'drizzle-orm';
 
 function getParts(searchQuery: string = '', page: number = 1, limit: number = 15, sortBy: string = 'name_asc') {
     const offset = (page - 1) * limit;
@@ -10,9 +10,15 @@ function getParts(searchQuery: string = '', page: number = 1, limit: number = 15
 
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        const searchFilter = or(like(spareParts.name, queryStr), like(spareParts.part_code, queryStr));
+        const searchFilter = and(
+            or(like(spareParts.name, queryStr), like(spareParts.part_code, queryStr)),
+            isNull(spareParts.deleted_at)
+        );
         query = query.where(searchFilter);
         countQuery = countQuery.where(searchFilter);
+    } else {
+        query = query.where(isNull(spareParts.deleted_at));
+        countQuery = countQuery.where(isNull(spareParts.deleted_at));
     }
     
     let orderCondition;
@@ -32,7 +38,7 @@ function getParts(searchQuery: string = '', page: number = 1, limit: number = 15
 }
 
 function getPartById(id: number | string) {
-    return db.drizzle.select().from(spareParts).where(eq(spareParts.id, Number(id))).get();
+    return db.drizzle.select().from(spareParts).where(and(eq(spareParts.id, Number(id)), isNull(spareParts.deleted_at))).get();
 }
 
 function addPart(data: Omit<Part, 'id'>) {
@@ -69,7 +75,7 @@ function checkPartHasServiceItems(id: number | string) {
 }
 
 function deletePart(id: number | string) {
-    db.drizzle.delete(spareParts).where(eq(spareParts.id, Number(id))).run();
+    db.drizzle.update(spareParts).set({ deleted_at: sql`CURRENT_TIMESTAMP` }).where(eq(spareParts.id, Number(id))).run();
     return true;
 }
 

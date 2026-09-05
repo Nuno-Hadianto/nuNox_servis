@@ -88,5 +88,10 @@ contextBridge.exposeInMainWorld('api', {
   showNotification: (title: string, body: string) => invokeSafe('show-notification', { title, body }),
   
   // Print & Preview
-  printPreview: (options: Record<string, unknown>) => invokeSafe('print-preview', options)
+  printPreview: (options?: Record<string, unknown>) => invokeSafe('print-preview', options),
+
+  // Keranjang Sampah (Recycle Bin)
+  getDeletedItems: () => invokeSafe('get-deleted-items'),
+  restoreItem: (id: number, type: 'customer' | 'device' | 'service' | 'part') => invokeSafe('restore-item', id, type),
+  hardDeleteItem: (id: number, type: 'customer' | 'device' | 'service' | 'part') => invokeSafe('hard-delete-item', id, type)
 });
