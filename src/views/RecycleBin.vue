@@ -48,20 +48,22 @@
             <td style="font-weight: 500;">{{ item.name }}</td>
             <td>{{ formatDate(item.deleted_at) }}</td>
             <td>
-              <button
-                class="btn btn-primary btn-sm"
-                @click="restoreItem(item)"
-                style="display: inline-flex; align-items: center; gap: 6px; margin-right: 8px;"
-              >
-                <RefreshCcw :size="14" /> Pulihkan
-              </button>
-              <button
-                class="btn btn-danger btn-sm"
-                @click="hardDeleteItem(item)"
-                style="display: inline-flex; align-items: center; gap: 6px"
-              >
-                <Trash :size="14" /> Hapus Permanen
-              </button>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button
+                  class="btn btn-primary btn-sm"
+                  @click="restoreItem(item)"
+                  style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex: 1; min-width: 110px; white-space: nowrap;"
+                >
+                  <RefreshCcw :size="14" /> Pulihkan
+                </button>
+                <button
+                  class="btn btn-danger btn-sm"
+                  @click="hardDeleteItem(item)"
+                  style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex: 1; min-width: 140px; white-space: nowrap;"
+                >
+                  <Trash :size="14" /> Hapus Permanen
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
