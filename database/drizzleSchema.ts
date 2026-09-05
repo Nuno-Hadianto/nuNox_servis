@@ -38,7 +38,6 @@ export const serviceOrders = sqliteTable('service_orders', {
   device_id: integer('device_id').notNull().references(() => devices.id),
   received_date: text('received_date').default(sql`CURRENT_TIMESTAMP`),
   estimated_completion_date: text('estimated_completion_date'),
-  technician: text('technician'),
   customer_complaint: text('customer_complaint'),
   diagnosis_result: text('diagnosis_result'),
   actions_taken: text('actions_taken'),

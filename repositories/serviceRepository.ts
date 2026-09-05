@@ -23,7 +23,7 @@ function generateTicketNumber() {
     return `${prefix}${nextNum.toString().padStart(4, '0')}`;
 }
 
-function getServices(searchQuery: string = '', page: number = 1, limit: number = 50, technicianFilter?: string) {
+function getServices(searchQuery: string = '', page: number = 1, limit: number = 50) {
     const offset = (page - 1) * limit;
     
     const baseQuery = db.drizzle.select({
@@ -33,7 +33,6 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
         device_id: serviceOrders.device_id,
         received_date: serviceOrders.received_date,
         estimated_completion_date: serviceOrders.estimated_completion_date,
-        technician: serviceOrders.technician,
         customer_complaint: serviceOrders.customer_complaint,
         diagnosis_result: serviceOrders.diagnosis_result,
         actions_taken: serviceOrders.actions_taken,
@@ -81,15 +80,6 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
         }
     }
     
-    if (technicianFilter) {
-        const techCondition = eq(serviceOrders.technician, technicianFilter);
-        if (condition) {
-            condition = and(condition, techCondition);
-        } else {
-            condition = techCondition;
-        }
-    }
-
     if (condition) {
         data = baseQuery.where(condition).orderBy(desc(serviceOrders.id)).limit(limit).offset(offset).all();
         const t = countQuery.where(condition).get();
@@ -111,7 +101,6 @@ function getServiceById(id: number | string) {
         device_id: serviceOrders.device_id,
         received_date: serviceOrders.received_date,
         estimated_completion_date: serviceOrders.estimated_completion_date,
-        technician: serviceOrders.technician,
         customer_complaint: serviceOrders.customer_complaint,
         diagnosis_result: serviceOrders.diagnosis_result,
         actions_taken: serviceOrders.actions_taken,
@@ -151,7 +140,7 @@ function getServiceStatusHistory(serviceOrderId: number | string) {
 }
 
 function addService(data: ServiceOrder) {
-    const { customer_id, device_id, estimated_completion_date, technician, customer_complaint } = data;
+    const { customer_id, device_id, estimated_completion_date, customer_complaint } = data;
     const ticket_number = generateTicketNumber();
     
     return db.transaction(() => {
@@ -160,7 +149,6 @@ function addService(data: ServiceOrder) {
             customer_id, 
             device_id, 
             estimated_completion_date, 
-            technician, 
             customer_complaint, 
             service_status: 'Diterima'
         }).run();

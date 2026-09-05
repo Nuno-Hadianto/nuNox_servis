@@ -218,22 +218,6 @@
                 "
               ></textarea>
             </div>
-            <div style="display: flex; gap: 15px">
-              <div class="form-group" style="flex: 1">
-                <label>Teknisi (Opsional)</label>
-                <input
-                  type="text"
-                  v-model="form.technician"
-                  placeholder="Nama teknisi"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
-                />
-              </div>
-            </div>
             <div
               class="modal-footer"
               style="
@@ -418,8 +402,7 @@ const form = reactive({
   customer_id: '',
   device_id: '',
   customer_complaint: '',
-  physical_condition: '',
-  technician: ''
+  physical_condition: ''
 })
 
 const openAddModal = async () => {
@@ -427,7 +410,6 @@ const openAddModal = async () => {
   form.device_id = ''
   form.customer_complaint = ''
   form.physical_condition = ''
-  form.technician = ''
   customerDevices.value = []
 
   await loadCustomersDropdown()

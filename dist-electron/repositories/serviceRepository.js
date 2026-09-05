@@ -33,7 +33,7 @@ function generateTicketNumber() {
     }
     return `${prefix}${nextNum.toString().padStart(4, '0')}`;
 }
-function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter) {
+function getServices(searchQuery = '', page = 1, limit = 50) {
     const offset = (page - 1) * limit;
     const baseQuery = db_1.default.drizzle.select({
         id: drizzleSchema_1.serviceOrders.id,
@@ -42,7 +42,6 @@ function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter) {
         device_id: drizzleSchema_1.serviceOrders.device_id,
         received_date: drizzleSchema_1.serviceOrders.received_date,
         estimated_completion_date: drizzleSchema_1.serviceOrders.estimated_completion_date,
-        technician: drizzleSchema_1.serviceOrders.technician,
         customer_complaint: drizzleSchema_1.serviceOrders.customer_complaint,
         diagnosis_result: drizzleSchema_1.serviceOrders.diagnosis_result,
         actions_taken: drizzleSchema_1.serviceOrders.actions_taken,
@@ -80,15 +79,6 @@ function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter) {
             condition = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.ticket_number, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, qStr));
         }
     }
-    if (technicianFilter) {
-        const techCondition = (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.technician, technicianFilter);
-        if (condition) {
-            condition = (0, drizzle_orm_1.and)(condition, techCondition);
-        }
-        else {
-            condition = techCondition;
-        }
-    }
     if (condition) {
         data = baseQuery.where(condition).orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.serviceOrders.id)).limit(limit).offset(offset).all();
         const t = countQuery.where(condition).get();
@@ -109,7 +99,6 @@ function getServiceById(id) {
         device_id: drizzleSchema_1.serviceOrders.device_id,
         received_date: drizzleSchema_1.serviceOrders.received_date,
         estimated_completion_date: drizzleSchema_1.serviceOrders.estimated_completion_date,
-        technician: drizzleSchema_1.serviceOrders.technician,
         customer_complaint: drizzleSchema_1.serviceOrders.customer_complaint,
         diagnosis_result: drizzleSchema_1.serviceOrders.diagnosis_result,
         actions_taken: drizzleSchema_1.serviceOrders.actions_taken,
@@ -146,7 +135,7 @@ function getServiceStatusHistory(serviceOrderId) {
         .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.serviceStatusHistory.id)).all();
 }
 function addService(data) {
-    const { customer_id, device_id, estimated_completion_date, technician, customer_complaint } = data;
+    const { customer_id, device_id, estimated_completion_date, customer_complaint } = data;
     const ticket_number = generateTicketNumber();
     return db_1.default.transaction(() => {
         const info = db_1.default.drizzle.insert(drizzleSchema_1.serviceOrders).values({
@@ -154,7 +143,6 @@ function addService(data) {
             customer_id,
             device_id,
             estimated_completion_date,
-            technician,
             customer_complaint,
             service_status: 'Diterima'
         }).run();

@@ -32,7 +32,6 @@ exports.ServiceOrderSchema = zod_1.z.object({
     customer_id: zod_1.z.number().int('ID Pelanggan tidak valid.'),
     device_id: zod_1.z.number().int('ID Perangkat tidak valid.'),
     estimated_completion_date: zod_1.z.string().optional().nullable(),
-    technician: zod_1.z.string().optional().nullable(),
     customer_complaint: zod_1.z.string().optional().nullable(),
     diagnosis_result: zod_1.z.string().optional().nullable(),
     actions_taken: zod_1.z.string().optional().nullable(),

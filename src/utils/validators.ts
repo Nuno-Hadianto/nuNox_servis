@@ -33,7 +33,6 @@ export const ServiceOrderSchema = z.object({
   customer_id: z.number().int('ID Pelanggan tidak valid.'),
   device_id: z.number().int('ID Perangkat tidak valid.'),
   estimated_completion_date: z.string().optional().nullable(),
-  technician: z.string().optional().nullable(),
   customer_complaint: z.string().optional().nullable(),
   diagnosis_result: z.string().optional().nullable(),
   actions_taken: z.string().optional().nullable(),

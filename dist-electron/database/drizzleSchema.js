@@ -37,7 +37,6 @@ exports.serviceOrders = (0, sqlite_core_1.sqliteTable)('service_orders', {
     device_id: (0, sqlite_core_1.integer)('device_id').notNull().references(() => exports.devices.id),
     received_date: (0, sqlite_core_1.text)('received_date').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     estimated_completion_date: (0, sqlite_core_1.text)('estimated_completion_date'),
-    technician: (0, sqlite_core_1.text)('technician'),
     customer_complaint: (0, sqlite_core_1.text)('customer_complaint'),
     diagnosis_result: (0, sqlite_core_1.text)('diagnosis_result'),
     actions_taken: (0, sqlite_core_1.text)('actions_taken'),
