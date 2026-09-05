@@ -4,7 +4,7 @@ exports.validateData = exports.PaymentSchema = exports.ServiceItemSchema = expor
 const zod_1 = require("zod");
 exports.CustomerSchema = zod_1.z.object({
     name: zod_1.z.string().min(1, 'Nama pelanggan wajib diisi.').max(100, 'Nama terlalu panjang.'),
-    phone: zod_1.z.string().optional().nullable(),
+    phone: zod_1.z.string().min(1, 'No. HP/WhatsApp wajib diisi.'),
     address: zod_1.z.string().optional().nullable(),
     notes: zod_1.z.string().optional().nullable()
 });

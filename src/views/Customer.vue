@@ -145,12 +145,13 @@
               <input
                 type="text"
                 v-model="form.phone"
+                required
                 placeholder="Contoh: 08123456789"
                 class="form-control"
               />
             </div>
             <div class="form-group">
-              <label>Alamat</label>
+              <label>Alamat (Opsional)</label>
               <textarea
                 v-model="form.address"
                 rows="3"
@@ -232,7 +233,8 @@ const formId = ref<number | null>(null)
 const form = reactive({
   name: '',
   phone: '',
-  address: ''
+  address: '',
+  notes: ''
 })
 
 const openAddModal = () => {
@@ -241,6 +243,7 @@ const openAddModal = () => {
   form.name = ''
   form.phone = ''
   form.address = ''
+  form.notes = ''
   isModalOpen.value = true
 }
 
@@ -253,6 +256,7 @@ const editCustomer = async (c: Customer) => {
       form.name = detail.name || ''
       form.phone = detail.phone || ''
       form.address = detail.address || ''
+      form.notes = detail.notes || ''
       isModalOpen.value = true
     }
   } catch (error) {

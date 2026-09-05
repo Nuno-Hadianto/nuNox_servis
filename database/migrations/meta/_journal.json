@@ -50,6 +50,13 @@
       "when": 1788572929483,
       "tag": "0006_narrow_abomination",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1788584738967,
+      "tag": "0007_pretty_wither",
+      "breakpoints": true
     }
   ]
 }

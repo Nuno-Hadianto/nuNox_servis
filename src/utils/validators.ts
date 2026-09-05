@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const CustomerSchema = z.object({
   name: z.string().min(1, 'Nama pelanggan wajib diisi.').max(100, 'Nama terlalu panjang.'),
-  phone: z.string().optional().nullable(),
+  phone: z.string().min(1, 'No. HP/WhatsApp wajib diisi.'),
   address: z.string().optional().nullable(),
   notes: z.string().optional().nullable()
 })

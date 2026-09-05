@@ -6,7 +6,7 @@ const drizzle_orm_1 = require("drizzle-orm");
 exports.customers = (0, sqlite_core_1.sqliteTable)('customers', {
     id: (0, sqlite_core_1.integer)('id').primaryKey({ autoIncrement: true }),
     name: (0, sqlite_core_1.text)('name').notNull(),
-    phone: (0, sqlite_core_1.text)('phone'),
+    phone: (0, sqlite_core_1.text)('phone').notNull(),
     address: (0, sqlite_core_1.text)('address'),
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
