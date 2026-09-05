@@ -27,6 +27,18 @@
         />
       </div>
 
+      <select
+        v-model="sortBy"
+        @change="loadCustomers(1)"
+        class="form-control"
+        style="width: auto; height: 38px; border-radius: 20px; cursor: pointer"
+      >
+        <option value="name_asc">Urutan: Nama (A-Z)</option>
+        <option value="name_desc">Urutan: Nama (Z-A)</option>
+        <option value="id_desc">Urutan: Terbaru Ditambah</option>
+        <option value="id_asc">Urutan: Terlama Ditambah</option>
+      </select>
+
       <button
         @click="openAddModal"
         class="btn btn-primary"
@@ -200,6 +212,7 @@ import { CustomerSchema } from '../utils/validators'
 
 const customers = ref<Customer[]>([])
 const searchQuery = ref<string>('')
+const sortBy = ref<string>('name_asc')
 const currentPage = ref<number>(1)
 const itemsPerPage = 50
 const totalItems = ref<number>(0)
@@ -216,7 +229,7 @@ const debounceSearch = () => {
 const loadCustomers = async (page: number = 1) => {
   if (window.api && window.api.getCustomers) {
     try {
-      const result = await window.api.getCustomers(searchQuery.value, page, itemsPerPage)
+      const result = await window.api.getCustomers(searchQuery.value, page, itemsPerPage, sortBy.value)
       customers.value = (result.data as Customer[]) || []
       totalItems.value = result.total || 0
       currentPage.value = result.page || 1

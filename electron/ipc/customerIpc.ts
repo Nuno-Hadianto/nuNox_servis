@@ -5,7 +5,7 @@ import * as customerController from '../../controllers/customerController';
 import {  validateData, CustomerSchema  } from '../../src/utils/validators';
 
 function registerCustomerIpc() {
-  ipcMain.handle('get-customers', (event: IpcMainInvokeEvent, searchQuery: string, page: number, limit: number) => customerController.getCustomers(searchQuery, page, limit));
+  ipcMain.handle('get-customers', (event: IpcMainInvokeEvent, searchQuery: string, page: number, limit: number, sortBy: string = 'name_asc') => customerController.getCustomers(searchQuery, page, limit, sortBy));
   ipcMain.handle('get-customer', (event: IpcMainInvokeEvent, id: number) => customerController.getCustomerById(id));
   ipcMain.handle('add-customer', (event: IpcMainInvokeEvent, data: Omit<Customer, 'id'>) => {
     const validData = validateData(CustomerSchema, data) as Customer;

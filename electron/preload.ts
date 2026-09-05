@@ -18,7 +18,7 @@ contextBridge.exposeInMainWorld('api', {
   getAlerts: () => invokeSafe('get-alerts'),
   
   // Customers
-  getCustomers: (searchQuery: string, page: number, limit: number) => invokeSafe('get-customers', searchQuery, page, limit),
+  getCustomers: (searchQuery: string, page: number, limit: number, sortBy: string = 'name_asc') => invokeSafe('get-customers', searchQuery, page, limit, sortBy),
   getCustomer: (id: number) => invokeSafe('get-customer', id),
   addCustomer: (data: Omit<Customer, 'id'>) => invokeSafe('add-customer', data),
   updateCustomer: (id: number, data: Partial<Customer>) => invokeSafe('update-customer', id, data),
@@ -46,7 +46,7 @@ contextBridge.exposeInMainWorld('api', {
   checkWarranty: (deviceId: number) => invokeSafe('check-warranty', deviceId),
 
   // Parts
-  getParts: (searchQuery: string, page: number, limit: number) => invokeSafe('get-parts', searchQuery, page, limit),
+  getParts: (searchQuery: string, page: number, limit: number, sortBy: string = 'name_asc') => invokeSafe('get-parts', searchQuery, page, limit, sortBy),
   getPart: (id: number) => invokeSafe('get-part', id),
   addPart: (data: Omit<Part, 'id'>) => invokeSafe('add-part', data),
   updatePart: (id: number, data: Partial<Part>) => invokeSafe('update-part', id, data),

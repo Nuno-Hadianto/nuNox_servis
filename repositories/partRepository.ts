@@ -1,10 +1,9 @@
-
 import { Part } from '../shared/types';
 import db from '../database/db';
 import {  spareParts, serviceItems  } from '../database/drizzleSchema';
-import {  eq, like, or, asc, sql  } from 'drizzle-orm';
+import {  eq, like, or, asc, desc, sql  } from 'drizzle-orm';
 
-function getParts(searchQuery = '', page = 1, limit = 15) {
+function getParts(searchQuery: string = '', page: number = 1, limit: number = 15, sortBy: string = 'name_asc') {
     const offset = (page - 1) * limit;
     let query = db.drizzle.select().from(spareParts).$dynamic();
     let countQuery = db.drizzle.select({ count: sql`count(*)` }).from(spareParts).$dynamic();
@@ -15,8 +14,17 @@ function getParts(searchQuery = '', page = 1, limit = 15) {
         query = query.where(searchFilter);
         countQuery = countQuery.where(searchFilter);
     }
+    
+    let orderCondition;
+    switch (sortBy) {
+        case 'name_desc': orderCondition = desc(spareParts.name); break;
+        case 'id_desc': orderCondition = desc(spareParts.id); break;
+        case 'id_asc': orderCondition = asc(spareParts.id); break;
+        case 'name_asc':
+        default: orderCondition = asc(spareParts.name); break;
+    }
 
-    const data = query.orderBy(asc(spareParts.name)).limit(limit).offset(offset).all();
+    const data = query.orderBy(orderCondition).limit(limit).offset(offset).all();
     const totalResult = countQuery.get();
     const total = totalResult ? Number((totalResult as { count: number }).count) : 0;
     

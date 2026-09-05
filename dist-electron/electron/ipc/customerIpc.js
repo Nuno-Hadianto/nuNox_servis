@@ -38,7 +38,7 @@ const electron_1 = require("electron");
 const customerController = __importStar(require("../../controllers/customerController"));
 const validators_1 = require("../../src/utils/validators");
 function registerCustomerIpc() {
-    electron_1.ipcMain.handle('get-customers', (event, searchQuery, page, limit) => customerController.getCustomers(searchQuery, page, limit));
+    electron_1.ipcMain.handle('get-customers', (event, searchQuery, page, limit, sortBy = 'name_asc') => customerController.getCustomers(searchQuery, page, limit, sortBy));
     electron_1.ipcMain.handle('get-customer', (event, id) => customerController.getCustomerById(id));
     electron_1.ipcMain.handle('add-customer', (event, data) => {
         const validData = (0, validators_1.validateData)(validators_1.CustomerSchema, data);

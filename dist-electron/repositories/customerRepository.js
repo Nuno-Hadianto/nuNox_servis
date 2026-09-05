@@ -12,15 +12,31 @@ exports.deleteCustomer = deleteCustomer;
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
 const drizzle_orm_1 = require("drizzle-orm");
-function getCustomers(searchQuery = '', page = 1, limit = 50) {
+function getCustomers(searchQuery = '', page = 1, limit = 50, sortBy = 'name_asc') {
     const offset = (page - 1) * limit;
     let data, total;
+    let orderCondition;
+    switch (sortBy) {
+        case 'name_desc':
+            orderCondition = (0, drizzle_orm_1.desc)(drizzleSchema_1.customers.name);
+            break;
+        case 'id_desc':
+            orderCondition = (0, drizzle_orm_1.desc)(drizzleSchema_1.customers.id);
+            break;
+        case 'id_asc':
+            orderCondition = (0, drizzle_orm_1.asc)(drizzleSchema_1.customers.id);
+            break;
+        case 'name_asc':
+        default:
+            orderCondition = (0, drizzle_orm_1.asc)(drizzleSchema_1.customers.name);
+            break;
+    }
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
         const filter = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.phone, queryStr));
         data = db_1.default.drizzle.select().from(drizzleSchema_1.customers)
             .where(filter)
-            .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.customers.name))
+            .orderBy(orderCondition)
             .limit(limit)
             .offset(offset)
             .all();
@@ -29,7 +45,7 @@ function getCustomers(searchQuery = '', page = 1, limit = 50) {
     }
     else {
         data = db_1.default.drizzle.select().from(drizzleSchema_1.customers)
-            .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.customers.name))
+            .orderBy(orderCondition)
             .limit(limit)
             .offset(offset)
             .all();

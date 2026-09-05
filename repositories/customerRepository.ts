@@ -1,11 +1,20 @@
 import { Customer } from '../shared/types';
 import db from '../database/db';
 import {  customers, serviceOrders  } from '../database/drizzleSchema';
-import {  eq, like, or, asc, sql  } from 'drizzle-orm';
+import {  eq, like, or, asc, desc, sql  } from 'drizzle-orm';
 
-function getCustomers(searchQuery: string = '', page: number = 1, limit: number = 50) {
+function getCustomers(searchQuery: string = '', page: number = 1, limit: number = 50, sortBy: string = 'name_asc') {
     const offset = (page - 1) * limit;
     let data, total;
+    
+    let orderCondition;
+    switch (sortBy) {
+        case 'name_desc': orderCondition = desc(customers.name); break;
+        case 'id_desc': orderCondition = desc(customers.id); break;
+        case 'id_asc': orderCondition = asc(customers.id); break;
+        case 'name_asc':
+        default: orderCondition = asc(customers.name); break;
+    }
     
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
@@ -13,7 +22,7 @@ function getCustomers(searchQuery: string = '', page: number = 1, limit: number 
         
         data = db.drizzle.select().from(customers)
             .where(filter)
-            .orderBy(asc(customers.name))
+            .orderBy(orderCondition)
             .limit(limit)
             .offset(offset)
             .all();
@@ -22,7 +31,7 @@ function getCustomers(searchQuery: string = '', page: number = 1, limit: number 
             .where(filter).get().count;
     } else {
         data = db.drizzle.select().from(customers)
-            .orderBy(asc(customers.name))
+            .orderBy(orderCondition)
             .limit(limit)
             .offset(offset)
             .all();

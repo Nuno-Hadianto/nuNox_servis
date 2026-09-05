@@ -28,7 +28,8 @@ declare global {
       getCustomers: (
         searchQuery: string,
         page: number,
-        limit: number
+        limit: number,
+        sortBy?: string
       ) => Promise<{ data: Customer[]; total: number; page: number }>
       getCustomer: (id: number) => Promise<Customer>
       addCustomer: (data: Omit<Customer, 'id'>) => Promise<number>
@@ -67,7 +68,7 @@ declare global {
 
 
       // Parts
-      getParts: (searchQuery: string, page: number, limit: number) => Promise<{ data: Part[]; total: number }>
+      getParts: (searchQuery: string, page: number, limit: number, sortBy?: string) => Promise<{ data: Part[]; total: number }>
       getPart: (id: number) => Promise<Part>
       addPart: (data: Omit<Part, 'id'>) => Promise<number>
       updatePart: (id: number, data: Partial<Part>) => Promise<number>

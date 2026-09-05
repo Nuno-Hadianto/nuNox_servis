@@ -40,8 +40,8 @@ exports.updateCustomer = updateCustomer;
 exports.deleteCustomer = deleteCustomer;
 const customerRepository = __importStar(require("../repositories/customerRepository"));
 const validators_1 = require("../src/utils/validators");
-function getCustomers(searchQuery = '', page = 1, limit = 50) {
-    return customerRepository.getCustomers(searchQuery, page, limit);
+function getCustomers(searchQuery = '', page = 1, limit = 50, sortBy = 'name_asc') {
+    return customerRepository.getCustomers(searchQuery, page, limit, sortBy);
 }
 function getCustomerById(id) {
     return customerRepository.getCustomerById(id);

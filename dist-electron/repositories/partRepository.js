@@ -12,7 +12,7 @@ exports.deletePart = deletePart;
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
 const drizzle_orm_1 = require("drizzle-orm");
-function getParts(searchQuery = '', page = 1, limit = 15) {
+function getParts(searchQuery = '', page = 1, limit = 15, sortBy = 'name_asc') {
     const offset = (page - 1) * limit;
     let query = db_1.default.drizzle.select().from(drizzleSchema_1.spareParts).$dynamic();
     let countQuery = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.spareParts).$dynamic();
@@ -22,7 +22,23 @@ function getParts(searchQuery = '', page = 1, limit = 15) {
         query = query.where(searchFilter);
         countQuery = countQuery.where(searchFilter);
     }
-    const data = query.orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.name)).limit(limit).offset(offset).all();
+    let orderCondition;
+    switch (sortBy) {
+        case 'name_desc':
+            orderCondition = (0, drizzle_orm_1.desc)(drizzleSchema_1.spareParts.name);
+            break;
+        case 'id_desc':
+            orderCondition = (0, drizzle_orm_1.desc)(drizzleSchema_1.spareParts.id);
+            break;
+        case 'id_asc':
+            orderCondition = (0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.id);
+            break;
+        case 'name_asc':
+        default:
+            orderCondition = (0, drizzle_orm_1.asc)(drizzleSchema_1.spareParts.name);
+            break;
+    }
+    const data = query.orderBy(orderCondition).limit(limit).offset(offset).all();
     const totalResult = countQuery.get();
     const total = totalResult ? Number(totalResult.count) : 0;
     return { data, total };

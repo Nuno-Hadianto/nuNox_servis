@@ -2,8 +2,8 @@ import { Customer } from '../shared/types';
 import * as customerRepository from '../repositories/customerRepository';
 import {  CustomerSchema, validateData  } from '../src/utils/validators';
 
-function getCustomers(searchQuery: string = '', page: number = 1, limit: number = 50) {
-    return customerRepository.getCustomers(searchQuery, page, limit);
+function getCustomers(searchQuery: string = '', page: number = 1, limit: number = 50, sortBy: string = 'name_asc') {
+    return customerRepository.getCustomers(searchQuery, page, limit, sortBy);
 }
 
 function getCustomerById(id: number | string) {

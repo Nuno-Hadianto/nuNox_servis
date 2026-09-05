@@ -27,6 +27,17 @@
         />
       </div>
       <div style="display: flex; gap: 10px; flex-wrap: wrap">
+        <select
+          v-model="sortBy"
+          @change="loadParts(1)"
+          class="form-control"
+          style="width: auto; height: 38px; border-radius: 20px; cursor: pointer"
+        >
+          <option value="name_asc">Urutan: Nama (A-Z)</option>
+          <option value="name_desc">Urutan: Nama (Z-A)</option>
+          <option value="id_desc">Urutan: Terbaru Ditambah</option>
+          <option value="id_asc">Urutan: Terlama Ditambah</option>
+        </select>
 
         <button
           @click="openAddModal"
@@ -264,6 +275,7 @@ import type { Part } from '../../shared/types'
 
 const route = useRoute()
 const parts = ref<Part[]>([])
+const sortBy = ref<string>('name_asc')
 const searchQuery = ref<string>((route.query.search as string) || '')
 const currentPage = ref(1)
 const totalPages = ref(1)
@@ -296,10 +308,13 @@ const formatCurrency = (amount: number | string | undefined | null) => {
   }).format(Number(amount || 0))
 }
 
-const loadParts = async () => {
+const loadParts = async (page?: number) => {
+  if (page) {
+    currentPage.value = page
+  }
   if (window.api && window.api.getParts) {
     try {
-      const response = await window.api.getParts(searchQuery.value, currentPage.value, limit) as { data: Part[], total: number };
+      const response = await window.api.getParts(searchQuery.value, currentPage.value, limit, sortBy.value) as { data: Part[], total: number };
       parts.value = response.data;
       totalPages.value = Math.ceil(response.total / limit) || 1;
     } catch (error) {

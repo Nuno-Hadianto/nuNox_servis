@@ -17,7 +17,7 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     getDashboardStats: () => invokeSafe('get-dashboard-stats'),
     getAlerts: () => invokeSafe('get-alerts'),
     // Customers
-    getCustomers: (searchQuery, page, limit) => invokeSafe('get-customers', searchQuery, page, limit),
+    getCustomers: (searchQuery, page, limit, sortBy = 'name_asc') => invokeSafe('get-customers', searchQuery, page, limit, sortBy),
     getCustomer: (id) => invokeSafe('get-customer', id),
     addCustomer: (data) => invokeSafe('add-customer', data),
     updateCustomer: (id, data) => invokeSafe('update-customer', id, data),
@@ -41,7 +41,7 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     // Warranty
     checkWarranty: (deviceId) => invokeSafe('check-warranty', deviceId),
     // Parts
-    getParts: (searchQuery, page, limit) => invokeSafe('get-parts', searchQuery, page, limit),
+    getParts: (searchQuery, page, limit, sortBy = 'name_asc') => invokeSafe('get-parts', searchQuery, page, limit, sortBy),
     getPart: (id) => invokeSafe('get-part', id),
     addPart: (data) => invokeSafe('add-part', data),
     updatePart: (id, data) => invokeSafe('update-part', id, data),

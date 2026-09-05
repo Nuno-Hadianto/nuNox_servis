@@ -2,8 +2,8 @@ import { Part } from '../shared/types';
 import * as partRepository from '../repositories/partRepository';
 import {  SparepartSchema, validateData  } from '../src/utils/validators';
 
-function getParts(searchQuery = '', page = 1, limit = 15) {
-    return partRepository.getParts(searchQuery, page, limit);
+function getParts(searchQuery: string = '', page: number = 1, limit: number = 50, sortBy: string = 'name_asc') {
+    return partRepository.getParts(searchQuery, page, limit, sortBy);
 }
 
 function getPartById(id: number | string) {
