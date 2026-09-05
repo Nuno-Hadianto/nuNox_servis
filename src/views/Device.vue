@@ -60,7 +60,13 @@
         </thead>
         <tbody>
           <tr v-if="devices.length === 0">
-            <td colspan="6" style="text-align: center; padding: 20px">Belum ada data perangkat.</td>
+            <td colspan="6" style="text-align: center; padding: 40px 20px">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
+                <Monitor :size="48" style="margin-bottom: 15px; color: var(--primary);" />
+                <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Belum Ada Data Perangkat</h3>
+                <p style="margin: 0; font-size: 0.95rem;">Klik tombol "Tambah Perangkat" di atas untuk menambahkan data pertama Anda.</p>
+              </div>
+            </td>
           </tr>
           <tr v-for="d in devices" :key="d.id">
             <td>{{ d.id }}</td>
@@ -254,7 +260,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Monitor } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import type { Device, Customer } from '../../shared/types'
 

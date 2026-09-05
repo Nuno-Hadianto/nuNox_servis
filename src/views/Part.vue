@@ -63,7 +63,13 @@
         </thead>
         <tbody>
           <tr v-if="parts.length === 0">
-            <td colspan="6" style="text-align: center; padding: 20px">Belum ada data sparepart.</td>
+            <td colspan="7" style="text-align: center; padding: 40px 20px">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
+                <Box :size="48" style="margin-bottom: 15px; color: var(--primary);" />
+                <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Belum Ada Data Sparepart</h3>
+                <p style="margin: 0; font-size: 0.95rem;">Klik tombol "Tambah Sparepart" di atas untuk menambahkan data pertama Anda.</p>
+              </div>
+            </td>
           </tr>
           <tr v-for="p in parts" :key="p.id">
             <td>{{ p.part_code || '-' }}</td>
@@ -267,7 +273,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Box } from 'lucide-vue-next'
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'

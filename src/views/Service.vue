@@ -61,7 +61,13 @@
         </thead>
         <tbody>
           <tr v-if="services.length === 0">
-            <td colspan="6" style="text-align: center; padding: 20px">Belum ada data servis.</td>
+            <td colspan="6" style="text-align: center; padding: 40px 20px">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
+                <Wrench :size="48" style="margin-bottom: 15px; color: var(--primary);" />
+                <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Belum Ada Data Servis</h3>
+                <p style="margin: 0; font-size: 0.95rem;">Klik tombol "Buat Tiket Servis" di atas untuk menambahkan data pertama Anda.</p>
+              </div>
+            </td>
           </tr>
           <tr v-for="s in services" :key="s.id">
             <td>
@@ -269,7 +275,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, ChevronLeft, ChevronRight, Edit, Trash2 } from 'lucide-vue-next'
+import { Search, Plus, ChevronLeft, ChevronRight, Edit, Trash2, Info, Wrench, Save } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { ServiceOrder, Customer, Device } from '../../shared/types'
@@ -330,7 +336,9 @@ const getStatusColor = (status: string) => {
     background: bg,
     color: color,
     fontSize: '0.85rem',
-    fontWeight: '500'
+    fontWeight: '500',
+    boxShadow: `0 0 10px ${bg}66`,
+    border: `1px solid ${bg}`
   }
 }
 

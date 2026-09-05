@@ -60,7 +60,13 @@
         </thead>
         <tbody>
           <tr v-if="customers.length === 0">
-            <td colspan="5" style="text-align: center; padding: 20px">Belum ada data pelanggan.</td>
+            <td colspan="5" style="text-align: center; padding: 40px 20px">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
+                <FolderOpen :size="48" style="margin-bottom: 15px; color: var(--primary);" />
+                <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Belum Ada Data Pelanggan</h3>
+                <p style="margin: 0; font-size: 0.95rem;">Klik tombol "Tambah Pelanggan" di atas untuk menambahkan data pertama Anda.</p>
+              </div>
+            </td>
           </tr>
           <tr v-for="c in customers" :key="c.id">
             <td>{{ c.id }}</td>
@@ -204,7 +210,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, FolderOpen } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted } from 'vue'
 import type { Customer } from '../../shared/types'
 import { CustomerSchema } from '../utils/validators'
