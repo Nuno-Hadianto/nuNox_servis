@@ -36,8 +36,7 @@ exports.ServiceOrderSchema = zod_1.z.object({
     customer_complaint: zod_1.z.string().optional().nullable(),
     diagnosis_result: zod_1.z.string().optional().nullable(),
     actions_taken: zod_1.z.string().optional().nullable(),
-    technician_notes: zod_1.z.string().optional().nullable(),
-    estimated_cost: zod_1.z.number().min(0, 'Estimasi biaya tidak boleh negatif.').default(0)
+    technician_notes: zod_1.z.string().optional().nullable()
 });
 exports.ServiceItemSchema = zod_1.z.object({
     service_order_id: zod_1.z.number().int('ID Servis tidak valid.'),

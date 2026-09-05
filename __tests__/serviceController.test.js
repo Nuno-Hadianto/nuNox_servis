@@ -46,7 +46,7 @@ describe('Service Controller Integration Tests', () => {
             estimated_completion_date: '2030-12-31',
             technician: 'Teknisi A',
             customer_complaint: 'Mati Total',
-            estimated_cost: 500000
+
         });
 
         expect(serviceId).toBeGreaterThan(0);
@@ -69,7 +69,7 @@ describe('Service Controller Integration Tests', () => {
             customer_id: customerId,
             device_id: deviceId,
             customer_complaint: 'Ganti Baterai',
-            estimated_cost: 200000
+
         });
 
         // Update ke Dikerjakan

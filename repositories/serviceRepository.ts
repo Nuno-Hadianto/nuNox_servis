@@ -38,7 +38,6 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
         diagnosis_result: serviceOrders.diagnosis_result,
         actions_taken: serviceOrders.actions_taken,
         technician_notes: serviceOrders.technician_notes,
-        estimated_cost: serviceOrders.estimated_cost,
         total_cost: serviceOrders.total_cost,
         service_status: serviceOrders.service_status,
         payment_status: serviceOrders.payment_status,
@@ -117,7 +116,6 @@ function getServiceById(id: number | string) {
         diagnosis_result: serviceOrders.diagnosis_result,
         actions_taken: serviceOrders.actions_taken,
         technician_notes: serviceOrders.technician_notes,
-        estimated_cost: serviceOrders.estimated_cost,
         total_cost: serviceOrders.total_cost,
         service_status: serviceOrders.service_status,
         payment_status: serviceOrders.payment_status,
@@ -153,7 +151,7 @@ function getServiceStatusHistory(serviceOrderId: number | string) {
 }
 
 function addService(data: ServiceOrder) {
-    const { customer_id, device_id, estimated_completion_date, technician, customer_complaint, estimated_cost } = data;
+    const { customer_id, device_id, estimated_completion_date, technician, customer_complaint } = data;
     const ticket_number = generateTicketNumber();
     
     return db.transaction(() => {
@@ -164,7 +162,6 @@ function addService(data: ServiceOrder) {
             estimated_completion_date, 
             technician, 
             customer_complaint, 
-            estimated_cost: estimated_cost || 0, 
             service_status: 'Diterima'
         }).run();
         

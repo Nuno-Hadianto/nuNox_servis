@@ -42,7 +42,6 @@ exports.serviceOrders = (0, sqlite_core_1.sqliteTable)('service_orders', {
     diagnosis_result: (0, sqlite_core_1.text)('diagnosis_result'),
     actions_taken: (0, sqlite_core_1.text)('actions_taken'),
     technician_notes: (0, sqlite_core_1.text)('technician_notes'),
-    estimated_cost: (0, sqlite_core_1.real)('estimated_cost').default(0),
     total_cost: (0, sqlite_core_1.real)('total_cost').default(0),
     service_status: (0, sqlite_core_1.text)('service_status').default('Diterima'),
     payment_status: (0, sqlite_core_1.text)('payment_status').default('Belum Bayar'),

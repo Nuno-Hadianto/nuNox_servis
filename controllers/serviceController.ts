@@ -19,9 +19,6 @@ function getServiceStatusHistory(serviceOrderId: number) {
 }
 
 function addService(data: ServiceOrder) {
-    // Make sure we only validate the keys that matter for creation, or partial validation
-    // because estimated_cost might be missing on creation.
-    // wait, Zod schema has default(0) for estimated_cost.
     const validData = validateData(ServiceOrderSchema, data) as ServiceOrder;
     return serviceRepository.addService(validData);
 }

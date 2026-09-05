@@ -17,7 +17,7 @@ describe('paymentController (White-box testing)', () => {
             customer_id: customerId,
             device_id: deviceId,
             customer_complaint: 'Rusak',
-            estimated_cost: 0
+
         });
     });
 

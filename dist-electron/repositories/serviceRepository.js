@@ -47,7 +47,6 @@ function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter) {
         diagnosis_result: drizzleSchema_1.serviceOrders.diagnosis_result,
         actions_taken: drizzleSchema_1.serviceOrders.actions_taken,
         technician_notes: drizzleSchema_1.serviceOrders.technician_notes,
-        estimated_cost: drizzleSchema_1.serviceOrders.estimated_cost,
         total_cost: drizzleSchema_1.serviceOrders.total_cost,
         service_status: drizzleSchema_1.serviceOrders.service_status,
         payment_status: drizzleSchema_1.serviceOrders.payment_status,
@@ -115,7 +114,6 @@ function getServiceById(id) {
         diagnosis_result: drizzleSchema_1.serviceOrders.diagnosis_result,
         actions_taken: drizzleSchema_1.serviceOrders.actions_taken,
         technician_notes: drizzleSchema_1.serviceOrders.technician_notes,
-        estimated_cost: drizzleSchema_1.serviceOrders.estimated_cost,
         total_cost: drizzleSchema_1.serviceOrders.total_cost,
         service_status: drizzleSchema_1.serviceOrders.service_status,
         payment_status: drizzleSchema_1.serviceOrders.payment_status,
@@ -148,7 +146,7 @@ function getServiceStatusHistory(serviceOrderId) {
         .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.serviceStatusHistory.id)).all();
 }
 function addService(data) {
-    const { customer_id, device_id, estimated_completion_date, technician, customer_complaint, estimated_cost } = data;
+    const { customer_id, device_id, estimated_completion_date, technician, customer_complaint } = data;
     const ticket_number = generateTicketNumber();
     return db_1.default.transaction(() => {
         const info = db_1.default.drizzle.insert(drizzleSchema_1.serviceOrders).values({
@@ -158,7 +156,6 @@ function addService(data) {
             estimated_completion_date,
             technician,
             customer_complaint,
-            estimated_cost: estimated_cost || 0,
             service_status: 'Diterima'
         }).run();
         const serviceOrderId = info.lastInsertRowid;

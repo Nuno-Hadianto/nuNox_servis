@@ -37,8 +37,7 @@ export const ServiceOrderSchema = z.object({
   customer_complaint: z.string().optional().nullable(),
   diagnosis_result: z.string().optional().nullable(),
   actions_taken: z.string().optional().nullable(),
-  technician_notes: z.string().optional().nullable(),
-  estimated_cost: z.number().min(0, 'Estimasi biaya tidak boleh negatif.').default(0)
+  technician_notes: z.string().optional().nullable()
 })
 
 export const ServiceItemSchema = z.object({

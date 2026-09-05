@@ -41,7 +41,7 @@ describe('Dashboard Controller Integration Tests', () => {
             customer_id: customerId,
             device_id: deviceId,
             service_status: 'Diterima',
-            estimated_cost: 100000,
+
             estimated_completion: '2030-01-01',
             notes: 'Test service'
         });

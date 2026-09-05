@@ -69,7 +69,6 @@ export interface ServiceOrder {
   serial_number?: string;
   customer_complaint: string;
   technician: string;
-  estimated_cost: number;
   service_status: string;
   total_cost: number;
   payment_status: string;

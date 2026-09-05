@@ -43,7 +43,6 @@ export const serviceOrders = sqliteTable('service_orders', {
   diagnosis_result: text('diagnosis_result'),
   actions_taken: text('actions_taken'),
   technician_notes: text('technician_notes'),
-  estimated_cost: real('estimated_cost').default(0),
   total_cost: real('total_cost').default(0),
   service_status: text('service_status').default('Diterima'),
   payment_status: text('payment_status').default('Belum Bayar'),

@@ -233,22 +233,6 @@
                   "
                 />
               </div>
-              <div class="form-group" style="flex: 1">
-                <label style="display: flex; justify-content: space-between; align-items: center;">
-                  Estimasi Biaya Awal (Opsional)
-                </label>
-                <input
-                  type="number"
-                  v-model="form.estimated_cost"
-                  placeholder="Misal: 150000"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
-                />
-              </div>
             </div>
             <div
               class="modal-footer"
@@ -435,8 +419,7 @@ const form = reactive({
   device_id: '',
   customer_complaint: '',
   physical_condition: '',
-  technician: '',
-  estimated_cost: ''
+  technician: ''
 })
 
 const openAddModal = async () => {
@@ -445,7 +428,6 @@ const openAddModal = async () => {
   form.customer_complaint = ''
   form.physical_condition = ''
   form.technician = ''
-  form.estimated_cost = ''
   customerDevices.value = []
 
   await loadCustomersDropdown()
@@ -466,8 +448,7 @@ const saveService = async () => {
         ...form,
         customer_complaint: finalComplaint,
         customer_id: Number(form.customer_id),
-        device_id: Number(form.device_id),
-        estimated_cost: form.estimated_cost ? Number(form.estimated_cost) : 0
+        device_id: Number(form.device_id)
       }
       ServiceOrderSchema.parse(payload)
     } catch (validationError: unknown) {
@@ -485,8 +466,7 @@ const saveService = async () => {
       ...form,
       customer_complaint: finalComplaint,
       customer_id: Number(form.customer_id),
-      device_id: Number(form.device_id),
-      estimated_cost: form.estimated_cost ? Number(form.estimated_cost) : 0
+      device_id: Number(form.device_id)
     }
 
     await window.api.addService(finalPayload)
