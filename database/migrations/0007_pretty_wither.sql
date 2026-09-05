@@ -13,4 +13,4 @@ INSERT INTO `__new_customers`("id", "name", "phone", "address", "notes", "create
 DROP TABLE `customers`;--> statement-breakpoint
 ALTER TABLE `__new_customers` RENAME TO `customers`;--> statement-breakpoint
 PRAGMA foreign_keys=ON;--> statement-breakpoint
-CREATE INDEX `idx_customer_name` ON `customers` (`name`);
+CREATE INDEX IF NOT EXISTS `idx_customer_name` ON `customers` (`name`);
