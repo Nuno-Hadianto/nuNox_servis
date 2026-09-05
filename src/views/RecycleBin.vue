@@ -115,7 +115,7 @@ const loadDeletedItems = async () => {
   try {
     const response = await window.api.getDeletedItems();
     if (response.success) {
-      deletedItems.value = response.data;
+      deletedItems.value = response.data || [];
     } else {
       console.error(response.error);
     }
