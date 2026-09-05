@@ -26,6 +26,18 @@
           style="width: 100%; padding-left: 38px; border-radius: 20px"
         />
       </div>
+      
+      <select
+        v-model="sortBy"
+        @change="loadServices(1)"
+        class="form-control"
+        style="width: max-content; min-width: 200px; padding: 8px 16px; border-radius: 20px; cursor: pointer"
+      >
+        <option value="name_asc">Urutan: Nama Pelanggan (A-Z)</option>
+        <option value="name_desc">Urutan: Nama Pelanggan (Z-A)</option>
+        <option value="id_desc">Urutan: Terbaru Dibuat</option>
+        <option value="id_asc">Urutan: Terlama Dibuat</option>
+      </select>
 
       <button
         @click="openAddModal"
@@ -265,15 +277,16 @@ import { ServiceOrderSchema } from '../utils/validators'
 
 const router = useRouter()
 const route = useRoute()
-const services = ref<ServiceOrder[]>([])
+const customerDevices = ref<Device[]>([])
 const searchQuery = ref<string>('')
+const sortBy = ref<string>('id_desc')
 const currentPage = ref<number>(1)
 const itemsPerPage = 50
 const totalItems = ref<number>(0)
 const totalPages = computed<number>(() => Math.ceil(totalItems.value / itemsPerPage) || 1)
 
+const services = ref<ServiceOrder[]>([])
 const customers = ref<Customer[]>([])
-const customerDevices = ref<Device[]>([])
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 const debounceSearch = () => {
@@ -329,7 +342,7 @@ const isWarrantyActive = (dateStr?: string) => {
 const loadServices = async (page: number = 1) => {
   if (window.api && window.api.getServices) {
     try {
-      const result = await window.api.getServices(searchQuery.value, page, itemsPerPage)
+      const result = await window.api.getServices(searchQuery.value, page, itemsPerPage, undefined, sortBy.value)
       services.value = (result.data as ServiceOrder[]) || []
       totalItems.value = result.total || 0
       currentPage.value = result.page || 1

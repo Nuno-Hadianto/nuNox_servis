@@ -33,7 +33,7 @@ function generateTicketNumber() {
     }
     return `${prefix}${nextNum.toString().padStart(4, '0')}`;
 }
-function getServices(searchQuery = '', page = 1, limit = 50) {
+function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter, sortBy = 'name_asc') {
     const offset = (page - 1) * limit;
     const baseQuery = db_1.default.drizzle.select({
         id: drizzleSchema_1.serviceOrders.id,
@@ -79,15 +79,32 @@ function getServices(searchQuery = '', page = 1, limit = 50) {
             condition = (0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.ticket_number, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, qStr), (0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, qStr));
         }
     }
+    let orderByClause;
+    switch (sortBy) {
+        case 'name_asc':
+            orderByClause = [(0, drizzle_orm_1.asc)(drizzleSchema_1.customers.name), (0, drizzle_orm_1.asc)(drizzleSchema_1.devices.brand)];
+            break;
+        case 'name_desc':
+            orderByClause = [(0, drizzle_orm_1.desc)(drizzleSchema_1.customers.name), (0, drizzle_orm_1.desc)(drizzleSchema_1.devices.brand)];
+            break;
+        case 'id_desc':
+            orderByClause = [(0, drizzle_orm_1.desc)(drizzleSchema_1.serviceOrders.id)];
+            break;
+        case 'id_asc':
+            orderByClause = [(0, drizzle_orm_1.asc)(drizzleSchema_1.serviceOrders.id)];
+            break;
+        default:
+            orderByClause = [(0, drizzle_orm_1.desc)(drizzleSchema_1.serviceOrders.id)];
+    }
     if (condition) {
-        data = baseQuery.where(condition).orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.serviceOrders.id)).limit(limit).offset(offset).all();
+        data = baseQuery.where(condition).orderBy(...orderByClause).limit(limit).offset(offset).all();
         const t = countQuery.where(condition).get();
-        total = t?.count || 0;
+        total = t ? Number(t.count) : 0;
     }
     else {
-        data = baseQuery.orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.serviceOrders.id)).limit(limit).offset(offset).all();
+        data = baseQuery.orderBy(...orderByClause).limit(limit).offset(offset).all();
         const t = countQuery.get();
-        total = t?.count || 0;
+        total = t ? Number(t.count) : 0;
     }
     return { data, total, page, limit };
 }

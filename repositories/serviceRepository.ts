@@ -23,7 +23,7 @@ function generateTicketNumber() {
     return `${prefix}${nextNum.toString().padStart(4, '0')}`;
 }
 
-function getServices(searchQuery: string = '', page: number = 1, limit: number = 50) {
+function getServices(searchQuery: string = '', page: number = 1, limit: number = 50, technicianFilter?: string, sortBy: string = 'name_asc') {
     const offset = (page - 1) * limit;
     
     const baseQuery = db.drizzle.select({
@@ -80,14 +80,32 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
         }
     }
     
+    let orderByClause;
+    switch (sortBy) {
+        case 'name_asc':
+            orderByClause = [asc(customers.name), asc(devices.brand)];
+            break;
+        case 'name_desc':
+            orderByClause = [desc(customers.name), desc(devices.brand)];
+            break;
+        case 'id_desc':
+            orderByClause = [desc(serviceOrders.id)];
+            break;
+        case 'id_asc':
+            orderByClause = [asc(serviceOrders.id)];
+            break;
+        default:
+            orderByClause = [desc(serviceOrders.id)];
+    }
+    
     if (condition) {
-        data = baseQuery.where(condition).orderBy(desc(serviceOrders.id)).limit(limit).offset(offset).all();
+        data = baseQuery.where(condition).orderBy(...orderByClause).limit(limit).offset(offset).all();
         const t = countQuery.where(condition).get();
-        total = t?.count || 0;
+        total = t ? Number((t as { count: number | string }).count) : 0;
     } else {
-        data = baseQuery.orderBy(desc(serviceOrders.id)).limit(limit).offset(offset).all();
+        data = baseQuery.orderBy(...orderByClause).limit(limit).offset(offset).all();
         const t = countQuery.get();
-        total = t?.count || 0;
+        total = t ? Number((t as { count: number | string }).count) : 0;
     }
     
     return { data, total, page, limit };

@@ -44,7 +44,9 @@ function runMigrations() {
     }
 
     log.info(`Running migrations from ${migrationsFolder}...`);
+    db.pragma('foreign_keys = OFF');
     migrate(db.drizzle, { migrationsFolder });
+    db.pragma('foreign_keys = ON');
     log.info('Database migration completed successfully.');
     
     seedDefaultSettings();

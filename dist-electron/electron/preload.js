@@ -23,14 +23,14 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     updateCustomer: (id, data) => invokeSafe('update-customer', id, data),
     deleteCustomer: (id) => invokeSafe('delete-customer', id),
     // Devices
-    getDevices: (searchQuery) => invokeSafe('get-devices', searchQuery),
+    getDevices: (searchQuery, sortBy = 'name_asc') => invokeSafe('get-devices', searchQuery, sortBy),
     getDevice: (id) => invokeSafe('get-device', id),
     getDevicesByCustomer: (customerId) => invokeSafe('get-devices-by-customer', customerId),
     addDevice: (data) => invokeSafe('add-device', data),
     updateDevice: (id, data) => invokeSafe('update-device', id, data),
     deleteDevice: (id) => invokeSafe('delete-device', id),
     // Services
-    getServices: (searchQuery, page, limit) => invokeSafe('get-services', searchQuery, page, limit),
+    getServices: (searchQuery, page, limit, technicianFilter, sortBy = 'name_asc') => invokeSafe('get-services', searchQuery, page, limit, technicianFilter, sortBy),
     getService: (id) => invokeSafe('get-service', id),
     getServiceByTicket: (ticket) => invokeSafe('get-service-by-ticket', ticket),
     getServiceHistory: (id) => invokeSafe('get-service-history', id),

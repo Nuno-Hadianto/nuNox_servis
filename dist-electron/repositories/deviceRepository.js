@@ -13,7 +13,7 @@ exports.deleteDevice = deleteDevice;
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
 const drizzle_orm_1 = require("drizzle-orm");
-function getDevices(searchQuery = '') {
+function getDevices(searchQuery = '', sortBy = 'name_asc') {
     const baseQuery = db_1.default.drizzle.select({
         id: drizzleSchema_1.devices.id,
         customer_id: drizzleSchema_1.devices.customer_id,
@@ -30,11 +30,23 @@ function getDevices(searchQuery = '') {
         customer_name: drizzleSchema_1.customers.name,
         customer_phone: drizzleSchema_1.customers.phone
     }).from(drizzleSchema_1.devices).innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.devices.customer_id, drizzleSchema_1.customers.id));
+    let query = baseQuery;
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        return baseQuery.where((0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.model, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.serial_number, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, queryStr))).orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.id)).all();
+        query = baseQuery.where((0, drizzle_orm_1.or)((0, drizzle_orm_1.like)(drizzleSchema_1.devices.brand, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.model, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.devices.serial_number, queryStr), (0, drizzle_orm_1.like)(drizzleSchema_1.customers.name, queryStr)));
     }
-    return baseQuery.orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.id)).all();
+    switch (sortBy) {
+        case 'name_asc':
+            return query.orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.devices.brand), (0, drizzle_orm_1.asc)(drizzleSchema_1.devices.model)).all();
+        case 'name_desc':
+            return query.orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.brand), (0, drizzle_orm_1.desc)(drizzleSchema_1.devices.model)).all();
+        case 'id_desc':
+            return query.orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.id)).all();
+        case 'id_asc':
+            return query.orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.devices.id)).all();
+        default:
+            return query.orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.id)).all();
+    }
 }
 function getDeviceById(id) {
     return db_1.default.drizzle.select().from(drizzleSchema_1.devices).where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.id, Number(id))).get();

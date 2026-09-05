@@ -38,7 +38,7 @@ const electron_1 = require("electron");
 const deviceController = __importStar(require("../../controllers/deviceController"));
 const validators_1 = require("../../src/utils/validators");
 function registerDeviceIpc() {
-    electron_1.ipcMain.handle('get-devices', (_event, searchQuery) => deviceController.getDevices(searchQuery));
+    electron_1.ipcMain.handle('get-devices', (_event, searchQuery, sortBy = 'name_asc') => deviceController.getDevices(searchQuery, sortBy));
     electron_1.ipcMain.handle('get-device', (_event, id) => deviceController.getDeviceById(id));
     electron_1.ipcMain.handle('get-devices-by-customer', (_event, customerId) => deviceController.getDevicesByCustomerId(customerId));
     electron_1.ipcMain.handle('add-device', (_event, data) => {

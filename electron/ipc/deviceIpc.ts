@@ -5,7 +5,7 @@ import * as deviceController from '../../controllers/deviceController';
 import {  validateData, DeviceSchema  } from '../../src/utils/validators';
 
 function registerDeviceIpc() {
-  ipcMain.handle('get-devices', (_event: IpcMainInvokeEvent, searchQuery: string) => deviceController.getDevices(searchQuery));
+  ipcMain.handle('get-devices', (_event: IpcMainInvokeEvent, searchQuery: string, sortBy: string = 'name_asc') => deviceController.getDevices(searchQuery, sortBy));
   ipcMain.handle('get-device', (_event: IpcMainInvokeEvent, id: number) => deviceController.getDeviceById(id));
   ipcMain.handle('get-devices-by-customer', (_event: IpcMainInvokeEvent, customerId: number) => deviceController.getDevicesByCustomerId(customerId));
   ipcMain.handle('add-device', (_event: IpcMainInvokeEvent, data: Omit<Device, 'id'>) => {

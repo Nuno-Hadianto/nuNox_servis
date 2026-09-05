@@ -6,7 +6,7 @@ import * as serviceItemController from '../../controllers/serviceItemController'
 import {  validateData, ServiceOrderSchema, ServiceItemSchema  } from '../../src/utils/validators';
 
 function registerServiceIpc() {
-  ipcMain.handle('get-services', (event: IpcMainInvokeEvent, searchQuery: string, page: number, limit: number) => serviceController.getServices(searchQuery, page, limit));
+  ipcMain.handle('get-services', (event: IpcMainInvokeEvent, searchQuery: string, page: number, limit: number, technicianFilter?: string, sortBy: string = 'name_asc') => serviceController.getServices(searchQuery, page, limit, technicianFilter, sortBy));
   ipcMain.handle('get-service', (event: IpcMainInvokeEvent, id: number) => serviceController.getServiceById(id));
   ipcMain.handle('get-service-by-ticket', (event: IpcMainInvokeEvent, ticketNumber: string) => serviceController.getServiceByTicketNumber(ticketNumber));
   ipcMain.handle('get-service-history', (event: IpcMainInvokeEvent, id: number) => serviceController.getServiceStatusHistory(id));

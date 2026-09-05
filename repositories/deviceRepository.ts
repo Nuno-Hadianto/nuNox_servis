@@ -1,9 +1,9 @@
 import { Device } from '../shared/types';
 import db from '../database/db';
 import {  devices, customers, serviceOrders  } from '../database/drizzleSchema';
-import {  eq, like, or, desc, sql  } from 'drizzle-orm';
+import {  eq, like, or, desc, asc, sql  } from 'drizzle-orm';
 
-function getDevices(searchQuery = '') {
+function getDevices(searchQuery = '', sortBy = 'name_asc') {
     const baseQuery = db.drizzle.select({
         id: devices.id,
         customer_id: devices.customer_id,
@@ -21,19 +21,31 @@ function getDevices(searchQuery = '') {
         customer_phone: customers.phone
     }).from(devices).innerJoin(customers, eq(devices.customer_id, customers.id));
 
+    let query = baseQuery;
     if (searchQuery) {
         const queryStr = `%${searchQuery}%`;
-        return baseQuery.where(
+        query = baseQuery.where(
             or(
                 like(devices.brand, queryStr),
                 like(devices.model, queryStr),
                 like(devices.serial_number, queryStr),
                 like(customers.name, queryStr)
             )
-        ).orderBy(desc(devices.id)).all();
+        ) as unknown as typeof baseQuery;
     }
     
-    return baseQuery.orderBy(desc(devices.id)).all();
+    switch (sortBy) {
+        case 'name_asc':
+            return query.orderBy(asc(devices.brand), asc(devices.model)).all();
+        case 'name_desc':
+            return query.orderBy(desc(devices.brand), desc(devices.model)).all();
+        case 'id_desc':
+            return query.orderBy(desc(devices.id)).all();
+        case 'id_asc':
+            return query.orderBy(asc(devices.id)).all();
+        default:
+            return query.orderBy(desc(devices.id)).all();
+    }
 }
 
 function getDeviceById(id: number | string) {

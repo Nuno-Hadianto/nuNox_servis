@@ -37,7 +37,7 @@ declare global {
       deleteCustomer: (id: number) => Promise<number>
 
       // Devices
-      getDevices: (searchQuery: string) => Promise<Device[]>
+      getDevices: (searchQuery: string, sortBy?: string) => Promise<Device[]>
       getDevice: (id: number) => Promise<Device>
       getDevicesByCustomer: (customerId: number) => Promise<Device[]>
       addDevice: (data: Omit<Device, 'id'>) => Promise<number>
@@ -49,7 +49,8 @@ declare global {
         searchQuery: string,
         page: number,
         limit: number,
-        technicianFilter?: string
+        technicianFilter?: string,
+        sortBy?: string
       ) => Promise<{ data: ServiceOrder[]; total: number; page: number }>
       getService: (id: number) => Promise<ServiceOrder>
       getServiceByTicket: (ticket: string) => Promise<ServiceOrder>

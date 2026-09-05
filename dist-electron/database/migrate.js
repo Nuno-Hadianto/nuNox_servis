@@ -48,7 +48,9 @@ function runMigrations() {
             }
         }
         electron_log_1.default.info(`Running migrations from ${migrationsFolder}...`);
+        db_1.default.pragma('foreign_keys = OFF');
         (0, migrator_1.migrate)(db_1.default.drizzle, { migrationsFolder });
+        db_1.default.pragma('foreign_keys = ON');
         electron_log_1.default.info('Database migration completed successfully.');
         seedDefaultSettings();
     }

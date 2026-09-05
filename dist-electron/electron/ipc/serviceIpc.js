@@ -39,7 +39,7 @@ const serviceController = __importStar(require("../../controllers/serviceControl
 const serviceItemController = __importStar(require("../../controllers/serviceItemController"));
 const validators_1 = require("../../src/utils/validators");
 function registerServiceIpc() {
-    electron_1.ipcMain.handle('get-services', (event, searchQuery, page, limit) => serviceController.getServices(searchQuery, page, limit));
+    electron_1.ipcMain.handle('get-services', (event, searchQuery, page, limit, technicianFilter, sortBy = 'name_asc') => serviceController.getServices(searchQuery, page, limit, technicianFilter, sortBy));
     electron_1.ipcMain.handle('get-service', (event, id) => serviceController.getServiceById(id));
     electron_1.ipcMain.handle('get-service-by-ticket', (event, ticketNumber) => serviceController.getServiceByTicketNumber(ticketNumber));
     electron_1.ipcMain.handle('get-service-history', (event, id) => serviceController.getServiceStatusHistory(id));

@@ -41,8 +41,8 @@ exports.updateDevice = updateDevice;
 exports.deleteDevice = deleteDevice;
 const deviceRepository = __importStar(require("../repositories/deviceRepository"));
 const validators_1 = require("../src/utils/validators");
-function getDevices(searchQuery = '') {
-    return deviceRepository.getDevices(searchQuery);
+function getDevices(searchQuery = '', sortBy = 'name_asc') {
+    return deviceRepository.getDevices(searchQuery, sortBy);
 }
 function getDeviceById(id) {
     return deviceRepository.getDeviceById(id);

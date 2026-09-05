@@ -2,8 +2,8 @@ import { Device } from '../shared/types';
 import * as deviceRepository from '../repositories/deviceRepository';
 import {  DeviceSchema, validateData  } from '../src/utils/validators';
 
-function getDevices(searchQuery = '') {
-    return deviceRepository.getDevices(searchQuery);
+function getDevices(searchQuery = '', sortBy = 'name_asc') {
+    return deviceRepository.getDevices(searchQuery, sortBy);
 }
 
 function getDeviceById(id: number | string) {

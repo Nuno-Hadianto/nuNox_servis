@@ -25,7 +25,7 @@ contextBridge.exposeInMainWorld('api', {
   deleteCustomer: (id: number) => invokeSafe('delete-customer', id),
 
   // Devices
-  getDevices: (searchQuery: string) => invokeSafe('get-devices', searchQuery),
+  getDevices: (searchQuery: string, sortBy: string = 'name_asc') => invokeSafe('get-devices', searchQuery, sortBy),
   getDevice: (id: number) => invokeSafe('get-device', id),
   getDevicesByCustomer: (customerId: number) => invokeSafe('get-devices-by-customer', customerId),
   addDevice: (data: Omit<Device, 'id'>) => invokeSafe('add-device', data),
@@ -33,7 +33,7 @@ contextBridge.exposeInMainWorld('api', {
   deleteDevice: (id: number) => invokeSafe('delete-device', id),
 
   // Services
-  getServices: (searchQuery: string, page: number, limit: number) => invokeSafe('get-services', searchQuery, page, limit),
+  getServices: (searchQuery: string, page: number, limit: number, technicianFilter?: string, sortBy: string = 'name_asc') => invokeSafe('get-services', searchQuery, page, limit, technicianFilter, sortBy),
   getService: (id: number) => invokeSafe('get-service', id),
   getServiceByTicket: (ticket: string) => invokeSafe('get-service-by-ticket', ticket),
   getServiceHistory: (id: number) => invokeSafe('get-service-history', id),

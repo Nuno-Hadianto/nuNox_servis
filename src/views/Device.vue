@@ -26,6 +26,18 @@
           style="width: 100%; padding-left: 38px; border-radius: 20px"
         />
       </div>
+      
+      <select
+        v-model="sortBy"
+        @change="loadDevices()"
+        class="form-control"
+        style="width: max-content; min-width: 200px; padding: 8px 16px; border-radius: 20px; cursor: pointer"
+      >
+        <option value="name_asc">Urutan: Merek & Model (A-Z)</option>
+        <option value="name_desc">Urutan: Merek & Model (Z-A)</option>
+        <option value="id_desc">Urutan: Terbaru Ditambah</option>
+        <option value="id_asc">Urutan: Terlama Ditambah</option>
+      </select>
       <button
         @click="openAddModal"
         class="btn btn-primary"
@@ -249,6 +261,7 @@ import type { Device, Customer } from '../../shared/types'
 const devices = ref<Device[]>([])
 const customers = ref<Customer[]>([])
 const searchQuery = ref<string>('')
+const sortBy = ref<string>('id_desc')
 const currentPage = ref<number>(1)
 const itemsPerPage = 50
 const totalItems = ref<number>(0)
@@ -265,7 +278,7 @@ const debounceSearch = () => {
 const loadDevices = async () => {
   if (window.api && window.api.getDevices) {
     try {
-      const result = (await window.api.getDevices(searchQuery.value)) as Device[] | { data: Device[]; total: number; page: number }
+      const result = (await window.api.getDevices(searchQuery.value, sortBy.value)) as Device[] | { data: Device[]; total: number; page: number }
       // Adjust based on how getDevices actually returns. Assuming it returns { data, total, page } like Customer
       if (Array.isArray(result)) {
         devices.value = result

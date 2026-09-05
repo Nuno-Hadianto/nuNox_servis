@@ -319,6 +319,32 @@ a {
   transform: scale(0.95);
 }
 
+/* Icon Animations inside buttons */
+.btn svg {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  stroke-width: 2.5px !important;
+}
+
+.btn:hover svg {
+  transform: scale(1.15);
+}
+
+.btn-primary:hover svg {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.btn-danger:hover svg {
+  animation: wiggle 0.4s ease-in-out forwards;
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(0deg) scale(1.15); }
+  25% { transform: rotate(-10deg) scale(1.15); }
+  50% { transform: rotate(8deg) scale(1.15); }
+  75% { transform: rotate(-4deg) scale(1.15); }
+  100% { transform: rotate(0deg) scale(1.15); }
+}
+
 .btn-sm {
   padding: 6px 14px;
   font-size: 0.85rem;

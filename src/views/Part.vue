@@ -31,7 +31,7 @@
           v-model="sortBy"
           @change="loadParts(1)"
           class="form-control"
-          style="width: auto; height: 38px; border-radius: 20px; cursor: pointer"
+          style="width: max-content; min-width: 200px; padding: 8px 16px; border-radius: 20px; cursor: pointer"
         >
           <option value="name_asc">Urutan: Nama (A-Z)</option>
           <option value="name_desc">Urutan: Nama (Z-A)</option>
