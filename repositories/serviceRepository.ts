@@ -198,15 +198,20 @@ function updateServiceStatus(id: number | string, status: string, notes: string,
     })();
 }
 
-function updateServiceDetails(id: number | string, data: ServiceOrder) {
-    const { diagnosis_result, actions_taken, technician_notes } = data;
-    
-    db.drizzle.update(serviceOrders).set({
-        diagnosis_result,
-        actions_taken,
-        technician_notes,
+function updateServiceDetails(id: number | string, data: Partial<ServiceOrder>) {
+    const setValues: Record<string, unknown> = {
         updated_at: sql`CURRENT_TIMESTAMP`
-    }).where(eq(serviceOrders.id, Number(id))).run();
+    };
+    
+    if (data.diagnosis_result !== undefined) setValues.diagnosis_result = data.diagnosis_result;
+    if (data.actions_taken !== undefined) setValues.actions_taken = data.actions_taken;
+    if (data.technician_notes !== undefined) setValues.technician_notes = data.technician_notes;
+    
+    if (data.customer_id !== undefined) setValues.customer_id = data.customer_id;
+    if (data.device_id !== undefined) setValues.device_id = data.device_id;
+    if (data.customer_complaint !== undefined) setValues.customer_complaint = data.customer_complaint;
+    
+    db.drizzle.update(serviceOrders).set(setValues).where(eq(serviceOrders.id, Number(id))).run();
     
     return true;
 }

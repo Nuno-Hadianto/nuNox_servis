@@ -80,8 +80,11 @@
             <td>{{ formatCurrency(s.total_cost) }}</td>
             <td>
               <div style="display: flex; justify-content: center; gap: 8px;">
+                <button class="btn btn-secondary btn-sm" @click="openEditModal(s)" style="display: inline-flex; align-items: center; gap: 6px;">
+                  <Edit :size="14" /> Edit
+                </button>
                 <button class="btn btn-primary btn-sm" @click="goToDetail(s.id)" style="display: inline-flex; align-items: center; gap: 6px">
-                  <Edit :size="14" /> Detail
+                  <Info :size="14" /> Detail
                 </button>
                 <button class="btn btn-danger btn-sm" @click="deleteService(s.id, s.ticket_number)" style="display: inline-flex; align-items: center; gap: 6px">
                   <Trash2 :size="14" /> Hapus
@@ -142,8 +145,8 @@
     <div v-if="isModalOpen" class="modal show">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>Buat Tiket Servis Baru</h2>
-          <span class="close-modal" @click="isModalOpen = false">&times;</span>
+          <h2>{{ editId ? 'Edit Tiket Servis' : 'Buat Tiket Servis Baru' }}</h2>
+          <button class="btn-close" @click="isModalOpen = false"><X :size="20" /></button>
         </div>
         <div class="modal-body">
           <form @submit.prevent="saveService">
@@ -203,7 +206,7 @@
                 "
               ></textarea>
             </div>
-            <div class="form-group">
+            <div class="form-group" v-if="!editId">
               <label>Kelengkapan & Kondisi Fisik (Opsional)</label>
               <textarea
                 v-model="form.physical_condition"
@@ -237,8 +240,13 @@
               >
                 Batal
               </button>
-              <button type="submit" class="btn btn-primary" style="padding: 8px 20px">
-                💾 Buat Tiket
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="display: flex; align-items: center; gap: 5px"
+                :disabled="!form.customer_id || !form.device_id"
+              >
+                <Save :size="16" /> {{ editId ? 'Simpan Perubahan' : 'Buat Tiket' }}
               </button>
             </div>
           </form>
@@ -398,6 +406,7 @@ const deleteService = async (id: number, ticketNo: string) => {
 
 // Modal Form Logic
 const isModalOpen = ref<boolean>(false)
+const editId = ref<number | null>(null)
 const form = reactive({
   customer_id: '',
   device_id: '',
@@ -406,6 +415,7 @@ const form = reactive({
 })
 
 const openAddModal = async () => {
+  editId.value = null
   form.customer_id = ''
   form.device_id = ''
   form.customer_complaint = ''
@@ -413,6 +423,20 @@ const openAddModal = async () => {
   customerDevices.value = []
 
   await loadCustomersDropdown()
+  isModalOpen.value = true
+}
+
+const openEditModal = async (s: ServiceOrder) => {
+  editId.value = s.id
+  await loadCustomersDropdown()
+  
+  form.customer_id = String(s.customer_id)
+  await onCustomerChange()
+  
+  form.device_id = String(s.device_id)
+  form.customer_complaint = s.customer_complaint
+  form.physical_condition = '' // Tidak dipakai saat edit karena sudah digabung
+  
   isModalOpen.value = true
 }
 
@@ -451,13 +475,18 @@ const saveService = async () => {
       device_id: Number(form.device_id)
     }
 
-    await window.api.addService(finalPayload)
+    if (editId.value) {
+      await window.api.updateServiceDetails(editId.value, finalPayload)
+    } else {
+      await window.api.addService(finalPayload)
+    }
+    
     isModalOpen.value = false
     loadServices()
     window.Swal.fire({
       icon: 'success',
-      title: 'Dibuat!',
-      text: 'Tiket servis berhasil dibuat.',
+      title: editId.value ? 'Tersimpan!' : 'Dibuat!',
+      text: editId.value ? 'Perubahan berhasil disimpan.' : 'Tiket servis berhasil dibuat.',
       timer: 1500,
       showConfirmButton: false
     })

@@ -377,6 +377,17 @@ a {
   color: white;
 }
 
+.btn-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.btn-warning:hover {
+  background: var(--warning);
+  color: white;
+}
+
 /* Cards (Glassmorphism) */
 .card {
   background: var(--glass-bg);

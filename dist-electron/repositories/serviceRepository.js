@@ -183,13 +183,22 @@ function updateServiceStatus(id, status, notes, warrantyDays = 0) {
     })();
 }
 function updateServiceDetails(id, data) {
-    const { diagnosis_result, actions_taken, technician_notes } = data;
-    db_1.default.drizzle.update(drizzleSchema_1.serviceOrders).set({
-        diagnosis_result,
-        actions_taken,
-        technician_notes,
+    const setValues = {
         updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
-    }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, Number(id))).run();
+    };
+    if (data.diagnosis_result !== undefined)
+        setValues.diagnosis_result = data.diagnosis_result;
+    if (data.actions_taken !== undefined)
+        setValues.actions_taken = data.actions_taken;
+    if (data.technician_notes !== undefined)
+        setValues.technician_notes = data.technician_notes;
+    if (data.customer_id !== undefined)
+        setValues.customer_id = data.customer_id;
+    if (data.device_id !== undefined)
+        setValues.device_id = data.device_id;
+    if (data.customer_complaint !== undefined)
+        setValues.customer_complaint = data.customer_complaint;
+    db_1.default.drizzle.update(drizzleSchema_1.serviceOrders).set(setValues).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, Number(id))).run();
     return true;
 }
 function deleteService(id) {
