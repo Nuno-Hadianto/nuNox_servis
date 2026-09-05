@@ -102,6 +102,7 @@
 import { reactive, watch } from 'vue'
 import { Trash2 } from 'lucide-vue-next'
 import type { Payment } from '../../../shared/types'
+import { PaymentStatus } from '../../../shared/types'
 
 const props = defineProps<{
   payments: Payment[]
@@ -137,9 +138,10 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 }
 
 const paymentStatusStyle = (status: string) => {
-  if (status === 'Lunas') return { color: '#10b981' }
-  if (status === 'DP / Sebagian') return { color: '#f59e0b' }
-  return { color: '#ef4444' }
+  if (status === PaymentStatus.LUNAS) return { color: '#10b981' }
+  if (status === PaymentStatus.BELUM_LUNAS) return { color: '#ef4444' }
+  if (status === PaymentStatus.DP) return { color: '#f59e0b' }
+  return { color: '#64748b' }
 }
 
 const addPayment = () => {

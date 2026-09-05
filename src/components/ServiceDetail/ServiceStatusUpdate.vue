@@ -19,13 +19,13 @@
           class="form-control"
           style="padding: 10px; border-radius: var(--radius-sm);"
         >
-          <option value="Diterima">Diterima</option>
+          <option :value="ServiceStatus.DITERIMA">Diterima</option>
           <option value="Pengecekan">Pengecekan</option>
-          <option value="Menunggu Sparepart">Menunggu Sparepart</option>
-          <option value="Proses Perbaikan">Proses Perbaikan</option>
-          <option value="Selesai (Belum Diambil)">Selesai (Belum Diambil)</option>
-          <option value="Selesai (Sudah Diambil)">Selesai (Sudah Diambil)</option>
-          <option value="Batal">Batal</option>
+          <option :value="ServiceStatus.MENUNGGU_SPAREPART">Menunggu Sparepart</option>
+          <option :value="ServiceStatus.PROSES_PERBAIKAN">Proses Perbaikan</option>
+          <option :value="ServiceStatus.SELESAI_BELUM_DIAMBIL">Selesai (Belum Diambil)</option>
+          <option :value="ServiceStatus.SELESAI_SUDAH_DIAMBIL">Selesai (Sudah Diambil)</option>
+          <option :value="ServiceStatus.BATAL">Batal</option>
         </select>
       </div>
       <div class="form-group" style="margin: 0">
@@ -79,6 +79,7 @@
 <script setup lang="ts">
 import { reactive, watch } from 'vue'
 import type { ServiceOrder } from '../../../shared/types'
+import { ServiceStatus } from '../../../shared/types'
 
 const props = defineProps<{
   service: ServiceOrder

@@ -1,7 +1,8 @@
 
 import db from '../database/db';
 import {  serviceOrders, payments, serviceItems, customers  } from '../database/drizzleSchema';
-import {  eq, notLike, like, notInArray, sql, and, isNotNull, lte  } from 'drizzle-orm';
+import {  eq, notInArray, sql, and, isNotNull, lte, inArray  } from 'drizzle-orm';
+import { ServiceStatus } from '../shared/types';
 export {};
 
 
@@ -23,8 +24,12 @@ function getDashboardStats() {
     const inProgressQuery = db.drizzle.select({ count: sql`COUNT(*)` })
         .from(serviceOrders)
         .where(and(
-            notLike(serviceOrders.service_status, '%Selesai%'),
-            notInArray(serviceOrders.service_status, ['Batal', 'Dibatalkan'])
+            notInArray(serviceOrders.service_status, [
+                ServiceStatus.SELESAI_BELUM_DIAMBIL, 
+                ServiceStatus.SELESAI_SUDAH_DIAMBIL, 
+                ServiceStatus.BATAL, 
+                ServiceStatus.DIBATALKAN
+            ])
         ))
         .get();
     const inProgress = inProgressQuery?.count || 0;
@@ -32,7 +37,7 @@ function getDashboardStats() {
     // Selesai (hari ini atau bulan ini atau total?) Let's say all time total completed, or just completed
     const completedQuery = db.drizzle.select({ count: sql`COUNT(*)` })
         .from(serviceOrders)
-        .where(like(serviceOrders.service_status, '%Selesai%'))
+        .where(inArray(serviceOrders.service_status, [ServiceStatus.SELESAI_BELUM_DIAMBIL, ServiceStatus.SELESAI_SUDAH_DIAMBIL]))
         .get();
     const completed = completedQuery?.count || 0;
 
@@ -103,7 +108,7 @@ function getDashboardStats() {
     }).from(serviceOrders)
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .where(and(
-          eq(serviceOrders.service_status, 'Selesai (Belum Diambil)'),
+          eq(serviceOrders.service_status, ServiceStatus.SELESAI_BELUM_DIAMBIL),
           isNotNull(serviceOrders.completed_date),
           sql`(julianday('now', 'localtime') - julianday(${serviceOrders.completed_date}, 'localtime')) > 14`
       )).all();
@@ -152,8 +157,12 @@ function getDashboardStats() {
       .where(and(
           isNotNull(serviceOrders.estimated_completion_date),
           lte(sql`date(${serviceOrders.estimated_completion_date}, 'localtime')`, today),
-          notLike(serviceOrders.service_status, '%Selesai%'),
-          notInArray(serviceOrders.service_status, ['Batal', 'Dibatalkan'])
+          notInArray(serviceOrders.service_status, [
+              ServiceStatus.SELESAI_BELUM_DIAMBIL, 
+              ServiceStatus.SELESAI_SUDAH_DIAMBIL, 
+              ServiceStatus.BATAL, 
+              ServiceStatus.DIBATALKAN
+          ])
       )).all();
 
     // 2. Menunggu Sparepart
@@ -211,7 +220,7 @@ function getAlerts() {
     }).from(serviceOrders)
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .where(and(
-          eq(serviceOrders.service_status, 'Selesai (Belum Diambil)'),
+          eq(serviceOrders.service_status, ServiceStatus.SELESAI_BELUM_DIAMBIL),
           isNotNull(serviceOrders.completed_date),
           sql`(julianday('now', 'localtime') - julianday(${serviceOrders.completed_date}, 'localtime')) > 14`
       )).all();

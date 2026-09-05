@@ -278,7 +278,8 @@
 import { Search, Plus, ChevronLeft, ChevronRight, Edit, Trash2, Info, Wrench, Save } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import type { ServiceOrder, Customer, Device } from '../../shared/types'
+import type { ServiceOrder, Customer, Device, PaginatedResponse } from '../../shared/types'
+import { ServiceStatus } from '../../shared/types'
 import { ServiceOrderSchema } from '../utils/validators'
 
 const router = useRouter()
@@ -313,19 +314,19 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 const getStatusColor = (status: string) => {
   let bg = '#e2e8f0'
   let color = '#334155'
-  if (status === 'Selesai (Sudah Diambil)') {
+  if (status === ServiceStatus.SELESAI_SUDAH_DIAMBIL) {
     bg = '#10b981'
     color = 'white'
-  } else if (status === 'Selesai (Belum Diambil)') {
+  } else if (status === ServiceStatus.SELESAI_BELUM_DIAMBIL) {
     bg = '#34d399'
     color = 'white'
-  } else if (status === 'Proses Perbaikan') {
+  } else if (status === ServiceStatus.PROSES_PERBAIKAN) {
     bg = '#3b82f6'
     color = 'white'
-  } else if (status === 'Menunggu Sparepart') {
+  } else if (status === ServiceStatus.MENUNGGU_SPAREPART) {
     bg = '#f59e0b'
     color = 'white'
-  } else if (status === 'Batal') {
+  } else if (status === ServiceStatus.BATAL || status === 'Dibatalkan') {
     bg = '#ef4444'
     color = 'white'
   }
@@ -350,8 +351,8 @@ const isWarrantyActive = (dateStr?: string) => {
 const loadServices = async (page: number = 1) => {
   if (window.api && window.api.getServices) {
     try {
-      const result = await window.api.getServices(searchQuery.value, page, itemsPerPage, undefined, sortBy.value)
-      services.value = (result.data as ServiceOrder[]) || []
+      const result = await window.api.getServices(searchQuery.value, page, itemsPerPage, undefined, sortBy.value) as PaginatedResponse<ServiceOrder>
+      services.value = result.data || []
       totalItems.value = result.total || 0
       currentPage.value = result.page || 1
     } catch (error) {

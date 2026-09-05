@@ -1,4 +1,25 @@
+export enum ServiceStatus {
+  DITERIMA = 'Diterima',
+  PROSES_PERBAIKAN = 'Proses Perbaikan',
+  MENUNGGU_SPAREPART = 'Menunggu Sparepart',
+  SELESAI_BELUM_DIAMBIL = 'Selesai (Belum Diambil)',
+  SELESAI_SUDAH_DIAMBIL = 'Selesai (Sudah Diambil)',
+  BATAL = 'Batal',
+  DIBATALKAN = 'Dibatalkan'
+}
 
+export enum PaymentStatus {
+  BELUM_LUNAS = 'Belum Lunas',
+  LUNAS = 'Lunas',
+  DP = 'DP / Sebagian'
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
 
 export interface AbandonedService {
   id: number;
@@ -68,9 +89,9 @@ export interface ServiceOrder {
   model?: string;
   serial_number?: string;
   customer_complaint: string;
-  service_status: string;
+  service_status: ServiceStatus | string;
   total_cost: number;
-  payment_status: string;
+  payment_status: PaymentStatus | string;
   received_date: string;
   estimated_completion_date?: string;
   completed_date?: string;

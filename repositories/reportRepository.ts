@@ -1,6 +1,7 @@
 import db from '../database/db';
 import {  payments, serviceOrders, customers, devices, serviceItems, spareParts  } from '../database/drizzleSchema';
-import {  sql, and, gte, lte, eq, like  } from 'drizzle-orm';
+import {  sql, and, gte, lte, eq, inArray  } from 'drizzle-orm';
+import { ServiceStatus } from '../shared/types';
 
 function getIncomeReport(startDate: string, endDate: string) {
     const report = db.drizzle.select({
@@ -28,7 +29,7 @@ function getCompletedServices(startDate: string, endDate: string) {
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .innerJoin(devices, eq(serviceOrders.device_id, devices.id))
       .where(and(
-          like(serviceOrders.service_status, '%Selesai%'),
+          inArray(serviceOrders.service_status, [ServiceStatus.SELESAI_BELUM_DIAMBIL, ServiceStatus.SELESAI_SUDAH_DIAMBIL]),
           gte(sql`date(${serviceOrders.completed_date}, 'localtime')`, sql`date(${startDate})`),
           lte(sql`date(${serviceOrders.completed_date}, 'localtime')`, sql`date(${endDate})`)
       )).all();
@@ -42,7 +43,7 @@ function getTopSpareparts(startDate: string, endDate: string) {
       .innerJoin(serviceOrders, eq(serviceItems.service_order_id, serviceOrders.id))
       .innerJoin(spareParts, eq(serviceItems.spare_part_id, spareParts.id))
       .where(and(
-          like(serviceOrders.service_status, '%Selesai%'),
+          inArray(serviceOrders.service_status, [ServiceStatus.SELESAI_BELUM_DIAMBIL, ServiceStatus.SELESAI_SUDAH_DIAMBIL]),
           gte(sql`date(${serviceOrders.completed_date}, 'localtime')`, sql`date(${startDate})`),
           lte(sql`date(${serviceOrders.completed_date}, 'localtime')`, sql`date(${endDate})`)
       ))
@@ -60,7 +61,7 @@ function getReportBreakdown(startDate: string, endDate: string) {
     }).from(serviceItems)
       .innerJoin(serviceOrders, eq(serviceItems.service_order_id, serviceOrders.id))
       .where(and(
-          like(serviceOrders.service_status, '%Selesai%'),
+          inArray(serviceOrders.service_status, [ServiceStatus.SELESAI_BELUM_DIAMBIL, ServiceStatus.SELESAI_SUDAH_DIAMBIL]),
           gte(sql`date(${serviceOrders.completed_date}, 'localtime')`, sql`date(${startDate})`),
           lte(sql`date(${serviceOrders.completed_date}, 'localtime')`, sql`date(${endDate})`)
       ))

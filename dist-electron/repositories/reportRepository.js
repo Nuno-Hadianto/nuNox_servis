@@ -10,6 +10,7 @@ exports.getReportBreakdown = getReportBreakdown;
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
 const drizzle_orm_1 = require("drizzle-orm");
+const types_1 = require("../shared/types");
 function getIncomeReport(startDate, endDate) {
     const report = db_1.default.drizzle.select({
         total_income: (0, drizzle_orm_1.sql) `SUM(${drizzleSchema_1.payments.amount})`,
@@ -30,7 +31,7 @@ function getCompletedServices(startDate, endDate) {
     }).from(drizzleSchema_1.serviceOrders)
         .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
         .innerJoin(drizzleSchema_1.devices, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.device_id, drizzleSchema_1.devices.id))
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.gte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${startDate})`), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${endDate})`))).all();
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.inArray)(drizzleSchema_1.serviceOrders.service_status, [types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL, types_1.ServiceStatus.SELESAI_SUDAH_DIAMBIL]), (0, drizzle_orm_1.gte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${startDate})`), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${endDate})`))).all();
 }
 function getTopSpareparts(startDate, endDate) {
     return db_1.default.drizzle.select({
@@ -39,7 +40,7 @@ function getTopSpareparts(startDate, endDate) {
     }).from(drizzleSchema_1.serviceItems)
         .innerJoin(drizzleSchema_1.serviceOrders, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.service_order_id, drizzleSchema_1.serviceOrders.id))
         .innerJoin(drizzleSchema_1.spareParts, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.spare_part_id, drizzleSchema_1.spareParts.id))
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.gte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${startDate})`), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${endDate})`)))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.inArray)(drizzleSchema_1.serviceOrders.service_status, [types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL, types_1.ServiceStatus.SELESAI_SUDAH_DIAMBIL]), (0, drizzle_orm_1.gte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${startDate})`), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${endDate})`)))
         .groupBy(drizzleSchema_1.spareParts.id)
         .orderBy((0, drizzle_orm_1.sql) `SUM(${drizzleSchema_1.serviceItems.quantity}) DESC`)
         .limit(5)
@@ -52,7 +53,7 @@ function getReportBreakdown(startDate, endDate) {
         total_modal: (0, drizzle_orm_1.sql) `SUM(${drizzleSchema_1.serviceItems.cost_price})`
     }).from(drizzleSchema_1.serviceItems)
         .innerJoin(drizzleSchema_1.serviceOrders, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceItems.service_order_id, drizzleSchema_1.serviceOrders.id))
-        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.like)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.gte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${startDate})`), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${endDate})`)))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.inArray)(drizzleSchema_1.serviceOrders.service_status, [types_1.ServiceStatus.SELESAI_BELUM_DIAMBIL, types_1.ServiceStatus.SELESAI_SUDAH_DIAMBIL]), (0, drizzle_orm_1.gte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${startDate})`), (0, drizzle_orm_1.lte)((0, drizzle_orm_1.sql) `date(${drizzleSchema_1.serviceOrders.completed_date}, 'localtime')`, (0, drizzle_orm_1.sql) `date(${endDate})`)))
         .groupBy(drizzleSchema_1.serviceItems.item_type)
         .all();
     // Default values if empty

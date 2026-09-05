@@ -1,4 +1,4 @@
-import { ServiceOrder } from '../shared/types';
+import { ServiceOrder, ServiceStatus, PaginatedResponse } from '../shared/types';
 import db from '../database/db';
 import {  serviceOrders, customers, devices, serviceStatusHistory  } from '../database/drizzleSchema';
 import {  eq, like, notLike, notInArray, or, asc, desc, sql, and, gte, isNotNull, SQL  } from 'drizzle-orm';
@@ -23,7 +23,7 @@ function generateTicketNumber() {
     return `${prefix}${nextNum.toString().padStart(4, '0')}`;
 }
 
-function getServices(searchQuery: string = '', page: number = 1, limit: number = 50, technicianFilter?: string, sortBy: string = 'name_asc') {
+function getServices(searchQuery: string = '', page: number = 1, limit: number = 50, technicianFilter?: string, sortBy: string = 'id_desc'): PaginatedResponse<ServiceOrder> {
     const offset = (page - 1) * limit;
     
     const baseQuery = db.drizzle.select({
@@ -63,7 +63,7 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
         if (searchQuery === 'Sedang Dikerjakan') {
             condition = and(
                 notLike(serviceOrders.service_status, '%Selesai%'),
-                notInArray(serviceOrders.service_status, ['Batal', 'Dibatalkan'])
+                notInArray(serviceOrders.service_status, [ServiceStatus.BATAL, ServiceStatus.DIBATALKAN])
             );
         } else if (searchQuery === 'Hari Ini') {
             const d = new Date();

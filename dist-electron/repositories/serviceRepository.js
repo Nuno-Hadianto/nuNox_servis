@@ -13,6 +13,7 @@ exports.updateServiceStatus = updateServiceStatus;
 exports.updateServiceDetails = updateServiceDetails;
 exports.deleteService = deleteService;
 exports.checkWarranty = checkWarranty;
+const types_1 = require("../shared/types");
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
 const drizzle_orm_1 = require("drizzle-orm");
@@ -33,7 +34,7 @@ function generateTicketNumber() {
     }
     return `${prefix}${nextNum.toString().padStart(4, '0')}`;
 }
-function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter, sortBy = 'name_asc') {
+function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter, sortBy = 'id_desc') {
     const offset = (page - 1) * limit;
     const baseQuery = db_1.default.drizzle.select({
         id: drizzleSchema_1.serviceOrders.id,
@@ -67,7 +68,7 @@ function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter, s
     let condition = undefined;
     if (searchQuery) {
         if (searchQuery === 'Sedang Dikerjakan') {
-            condition = (0, drizzle_orm_1.and)((0, drizzle_orm_1.notLike)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, ['Batal', 'Dibatalkan']));
+            condition = (0, drizzle_orm_1.and)((0, drizzle_orm_1.notLike)(drizzleSchema_1.serviceOrders.service_status, '%Selesai%'), (0, drizzle_orm_1.notInArray)(drizzleSchema_1.serviceOrders.service_status, [types_1.ServiceStatus.BATAL, types_1.ServiceStatus.DIBATALKAN]));
         }
         else if (searchQuery === 'Hari Ini') {
             const d = new Date();

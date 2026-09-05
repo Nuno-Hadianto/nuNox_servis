@@ -3,7 +3,7 @@ import db from '../database/db';
 import {  devices, customers, serviceOrders  } from '../database/drizzleSchema';
 import {  eq, like, or, desc, asc, sql  } from 'drizzle-orm';
 
-function getDevices(searchQuery = '', sortBy = 'name_asc') {
+function getDevices(searchQuery = '', sortBy = 'name_asc'): Device[] {
     const baseQuery = db.drizzle.select({
         id: devices.id,
         customer_id: devices.customer_id,
