@@ -93,9 +93,9 @@
       <button
         @click="addItem"
         class="btn btn-primary"
-        style="padding: 8px 16px; border-radius: var(--radius-sm)"
+        style="padding: 8px 16px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;"
       >
-        ➕
+        <Plus :size="20" />
       </button>
     </div>
 
@@ -174,7 +174,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { Trash2 } from 'lucide-vue-next'
+import { Trash2, Plus } from 'lucide-vue-next'
 import type { ServiceItem, Part } from '../../../shared/types'
 
 defineProps<{
