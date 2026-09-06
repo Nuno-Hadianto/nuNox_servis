@@ -52,6 +52,10 @@ defineProps<{
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
+.stat-card:hover :deep(svg) {
+  animation: wiggle 0.4s ease-in-out forwards;
+}
+
 .center-align {
   text-align: center;
   align-items: center;

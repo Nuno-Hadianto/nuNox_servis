@@ -84,6 +84,9 @@ const $router = useRouter()
   align-items: center;
   gap: 8px;
 }
+.warning-card:hover .warning-title svg {
+  animation: wiggle 0.4s ease-in-out forwards;
+}
 .table-scroll {
   max-height: 250px;
 }
@@ -119,6 +122,9 @@ const $router = useRouter()
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(37, 211, 102, 0.4);
   background: linear-gradient(135deg, #2ef176, #128c7e);
+}
+.btn-wa:hover svg {
+  animation: wiggle 0.4s ease-in-out forwards;
 }
 .btn-wa:active {
   transform: scale(0.95);

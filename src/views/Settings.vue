@@ -115,8 +115,44 @@
           </form>
         </div>
 
-
-
+        <!-- Pengaturan Notifikasi -->
+        <div class="card" style="padding: 25px; height: fit-content;">
+          <h2
+            style="
+              font-size: 1.2rem;
+              margin-bottom: 20px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              color: var(--primary-color);
+            "
+          >
+            <Bell :size="20" style="color: var(--primary)" /> Pengaturan Notifikasi
+          </h2>
+          <form @submit.prevent="saveSettings">
+            <div class="form-group" style="display: flex; flex-direction: column; gap: 15px;">
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <input type="checkbox" v-model="form.sound_notification" style="width: 18px; height: 18px; cursor: pointer;" />
+                <span style="color: var(--text-primary); font-size: 0.95rem;">Bunyikan suara saat ada peringatan <i>Follow-up</i> baru</span>
+              </label>
+              
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <input type="checkbox" v-model="form.popup_notification" style="width: 18px; height: 18px; cursor: pointer;" />
+                <span style="color: var(--text-primary); font-size: 0.95rem;">Tampilkan <i>pop-up</i> notifikasi di layar</span>
+              </label>
+            </div>
+            
+            <div style="margin-top: 25px; text-align: right">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                style="padding: 10px 24px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;"
+              >
+                <Save :size="16" /> Simpan Notifikasi
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
       <!-- Kolom Kanan -->
@@ -191,7 +227,7 @@
               <button
                 @click="saveSettings"
                 class="btn btn-primary"
-                style="padding: 8px 16px; border-radius: 20px"
+                style="padding: 8px 16px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;"
               >
                 <Save :size="16" /> Simpan Pengaturan Backup
               </button>
@@ -221,6 +257,22 @@
               margin-bottom: 20px;
             "
           >
+            <div style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px;">
+              Fitur ini memungkinkan Anda untuk mencadangkan atau memulihkan seluruh data aplikasi secara manual.
+              
+              <div style="margin-top: 10px; margin-bottom: 12px; color: var(--text-primary);">
+                <strong>Fungsi Tombol:</strong>
+                <ul style="margin-top: 4px; padding-left: 20px; margin-bottom: 0;">
+                  <li><b>Backup Data Sekarang:</b> Menyimpan seluruh data saat ini ke dalam satu file.</li>
+                  <li><b>Pulihkan Data (Restore):</b> Mengembalikan data aplikasi dari file backup Anda.</li>
+                </ul>
+              </div>
+
+              <div style="font-size: 0.85rem; color: #b91c1c; background: rgba(239, 68, 68, 0.1); padding: 10px 12px; border-radius: 6px; border-left: 3px solid #ef4444; margin-top: 15px; line-height: 1.4;">
+                ⚠️ <b>Peringatan:</b> Proses <i>Restore</i> akan <b>menimpa seluruh data saat ini</b> secara permanen. Sangat disarankan melakukan <i>Backup</i> terlebih dahulu sebelum <i>Restore</i>!
+              </div>
+            </div>
+
             <button
               @click="backupData"
               class="btn btn-primary"
@@ -252,17 +304,6 @@
             >
               <RefreshCw :size="16" /> Pulihkan Data (Restore)
             </button>
-            <p
-              style="
-                color: var(--text-muted);
-                font-size: 0.8rem;
-                line-height: 1.4;
-                margin-top: 10px;
-                text-align: center;
-              "
-            >
-              Restore akan menimpa seluruh data aplikasi.
-            </p>
           </div>
         </div>
 
@@ -308,7 +349,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
-import { Save, Store, MessageCircle, Cloud, FolderSearch, HardDrive, Download, RefreshCw, Database } from 'lucide-vue-next'
+import { Save, Store, MessageCircle, Cloud, FolderSearch, HardDrive, Download, RefreshCw, Database, Bell } from 'lucide-vue-next'
 import type { Settings } from '../../shared/types'
 
 const dbSize = ref<string>('0 KB')
@@ -319,7 +360,9 @@ const form = reactive<Settings>({
   address: '',
   receipt_footer: '',
   auto_backup_path: '',
-  wa_template_status: ''
+  wa_template_status: '',
+  sound_notification: true,
+  popup_notification: true
 })
 
 
@@ -348,6 +391,9 @@ const loadSettings = async () => {
         settings.wa_template_status ||
         'Halo Kak {nama}, perangkat Anda dengan No Tiket *{tiket}* saat ini berstatus: *{status}*. Mohon konfirmasinya. Terima kasih.'
       
+      form.sound_notification = String(settings.sound_notification) !== 'false'
+      form.popup_notification = String(settings.popup_notification) !== 'false'
+      
       // Load DB Size
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((window.api as any).getDbSize) {
@@ -374,7 +420,9 @@ const saveSettings = async () => {
       address: form.address,
       receipt_footer: form.receipt_footer,
       auto_backup_path: form.auto_backup_path,
-      wa_template_status: form.wa_template_status
+      wa_template_status: form.wa_template_status,
+      sound_notification: form.sound_notification,
+      popup_notification: form.popup_notification
     }
     await window.api.updateSettings(data)
     
@@ -452,5 +500,15 @@ onMounted(() => {
 onUnmounted(() => {
 })
 </script>
+
+<style scoped>
+.card h2 svg {
+  transition: transform 0.2s ease;
+}
+
+.card:hover h2 svg {
+  animation: wiggle 0.4s ease-in-out forwards;
+}
+</style>
 
 

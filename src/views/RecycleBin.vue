@@ -2,9 +2,43 @@
   <div class="view-section">
     <div
       class="action-bar"
-      style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; justify-content: space-between;"
+      style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; justify-content: space-between; flex-wrap: wrap;"
     >
-      <h2 style="margin: 0; font-size: 1.5rem; font-weight: 600;">Keranjang Sampah</h2>
+      <div style="display: flex; gap: 10px; flex: 1; max-width: 600px;">
+        <div style="position: relative; flex: 1;">
+          <Search
+            class="search-icon"
+            :size="18"
+            style="
+              position: absolute;
+              left: 12px;
+              top: 50%;
+              transform: translateY(-50%);
+              opacity: 0.5;
+              color: var(--text-primary);
+            "
+          />
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Cari data terhapus..."
+            class="form-control"
+            style="width: 100%; padding-left: 38px; border-radius: 20px"
+          />
+        </div>
+        <select
+          v-model="filterType"
+          class="form-control"
+          style="width: max-content; min-width: 150px; padding: 8px 16px; border-radius: 20px; cursor: pointer"
+        >
+          <option value="all">Semua Data</option>
+          <option value="customer">Pelanggan</option>
+          <option value="device">Perangkat</option>
+          <option value="service">Servis</option>
+          <option value="part">Sparepart</option>
+        </select>
+      </div>
+
       <button
         @click="loadDeletedItems"
         class="btn btn-secondary"
@@ -25,7 +59,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-if="deletedItems.length === 0 && !loading">
+          <tr v-if="filteredItems.length === 0 && !loading">
             <td colspan="4" style="text-align: center; padding: 40px 20px">
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
                 <Trash2 :size="48" style="margin-bottom: 15px; color: var(--primary);" />
@@ -39,7 +73,7 @@
                Memuat data...
             </td>
           </tr>
-          <tr v-for="item in deletedItems" :key="`${item.type}-${item.id}`">
+          <tr v-for="item in filteredItems" :key="`${item.type}-${item.id}`">
             <td>
               <span class="badge" :class="getBadgeClass(item.type)">
                 {{ getTypeName(item.type) }}
@@ -73,13 +107,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { RefreshCw, RefreshCcw, Trash, Trash2 } from 'lucide-vue-next';
+import { ref, computed, onMounted } from 'vue';
+import { RefreshCw, RefreshCcw, Trash, Trash2, Search } from 'lucide-vue-next';
 import type { RecycleBinItem } from '../../shared/types';
 import Swal from 'sweetalert2';
 
 const deletedItems = ref<RecycleBinItem[]>([]);
 const loading = ref(false);
+const searchQuery = ref('');
+const filterType = ref('all');
+
+const filteredItems = computed(() => {
+  return deletedItems.value.filter(item => {
+    const matchSearch = item.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+    const matchType = filterType.value === 'all' || item.type === filterType.value;
+    return matchSearch && matchType;
+  });
+});
 
 const getTypeName = (type: string) => {
   switch (type) {

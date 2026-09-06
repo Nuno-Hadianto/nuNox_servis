@@ -161,6 +161,18 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.topbar-title h1 {
+  transition: all 0.3s ease;
+  cursor: default;
+  display: inline-block;
+}
+
+.topbar-title h1:hover {
+  transform: translateY(-2px) scale(1.02);
+  text-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  color: var(--primary);
+}
+
 .topbar-icon-btn {
   padding: 8px;
   border-radius: 50%;

@@ -84,6 +84,9 @@ const $router = useRouter()
   align-items: center;
   gap: 8px;
 }
+.warning-card:hover .warning-title svg {
+  animation: wiggle 0.4s ease-in-out forwards;
+}
 .table-scroll {
   max-height: 250px;
 }
@@ -114,10 +117,16 @@ const $router = useRouter()
   transition: all 0.2s ease;
   cursor: pointer;
 }
+.btn-action svg {
+  transition: transform 0.2s ease;
+}
 .btn-action:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
   background: linear-gradient(135deg, #6b70f0, #4f46e5);
+}
+.btn-action:hover svg {
+  transform: translateX(3px);
 }
 .btn-action:active {
   transform: scale(0.95);

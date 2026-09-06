@@ -146,6 +146,8 @@ export interface Settings {
   wa_template_status?: string;
   default_printer?: string;
   primary_color?: string;
+  sound_notification?: boolean;
+  popup_notification?: boolean;
 }
 
 

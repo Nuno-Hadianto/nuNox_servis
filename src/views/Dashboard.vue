@@ -52,13 +52,17 @@
     <div class="dashboard-grid">
       <!-- Kiri Atas (2fr): Tren Pendapatan -->
       <div class="card chart-container">
-        <h2>Tren Pendapatan (6 Bulan)</h2>
+        <h2 class="chart-title">
+          <LineChart style="width: 24px; height: 24px;" class="text-primary" /> Tren Pendapatan (6 Bulan)
+        </h2>
         <IncomeChart v-if="stats.chartData" :data="stats.chartData" />
       </div>
 
       <!-- Kanan Atas (1fr): Distribusi Status -->
       <div class="card chart-container">
-        <h2 class="chart-title">Distribusi Status Servis</h2>
+        <h2 class="chart-title">
+          <PieChart style="width: 24px; height: 24px;" class="text-info" /> Distribusi Status Servis
+        </h2>
         <StatusChart v-if="stats.serviceStatusChart" :data="stats.serviceStatusChart" />
       </div>
 
@@ -83,7 +87,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import { Wrench, Hourglass, CheckCircle, Wallet, TrendingUp } from 'lucide-vue-next'
+import { Wrench, Hourglass, CheckCircle, Wallet, TrendingUp, LineChart, PieChart } from 'lucide-vue-next'
 import StatCard from '../components/StatCard.vue'
 import TodoWidget from '../components/dashboard/TodoWidget.vue'
 import AbandonedWidget from '../components/dashboard/AbandonedWidget.vue'
@@ -173,6 +177,19 @@ onMounted(() => {
 .chart-title {
   font-size: 1.1rem;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.chart-container:hover .chart-title svg {
+  animation: wiggle 0.4s ease-in-out forwards;
+}
+.text-primary {
+  color: var(--primary);
+}
+.text-info {
+  color: var(--info);
 }
 .text-success {
   color: #10b981;
