@@ -12,7 +12,7 @@
       "
     >
       <div style="display: flex; gap: 10px; align-items: center">
-        <Calendar class="search-icon" :size="18" style="opacity: 0.5; color: var(--text-primary)" />
+        <Calendar class="calendar-icon" :size="18" />
         <span style="font-weight: 500; color: var(--text-muted)">Filter:</span>
         <input
           type="date"
@@ -37,23 +37,21 @@
             gap: 8px;
           "
         >
-          Terapkan
+          <Filter :size="16" /> Terapkan
         </button>
       </div>
       <div style="display: flex; gap: 10px; flex-wrap: wrap">
-        <button @click="printBlankNota" class="btn btn-secondary" style="border-radius: 20px">
-          Nota Kosong
+        <button @click="printBlankNota" class="btn btn-secondary" style="border-radius: 20px; display: flex; align-items: center; gap: 6px;">
+          <FileText :size="16" /> Nota Kosong
         </button>
-        <button @click="printBlankReceipt" class="btn btn-secondary" style="border-radius: 20px">
-          Kwitansi Kosong
+        <button @click="printBlankReceipt" class="btn btn-secondary" style="border-radius: 20px; display: flex; align-items: center; gap: 6px;">
+          <FileText :size="16" /> Kwitansi Kosong
         </button>
 
         <button
           @click="exportPdf"
-          class="btn"
+          class="btn btn-danger"
           style="
-            background-color: #ef4444;
-            color: white;
             border-radius: 20px;
             display: flex;
             align-items: center;
@@ -196,7 +194,9 @@ import {
   Wallet,
   TrendingDown,
   TrendingUp,
-  CheckCircle
+  CheckCircle,
+  Filter,
+  FileText
 } from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
 import {
@@ -334,3 +334,18 @@ const printBlankReceipt = async () => {
   }
 }
 </script>
+
+<style scoped>
+.calendar-icon {
+  opacity: 0.5;
+  color: var(--text-primary);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+
+.calendar-icon:hover {
+  opacity: 1;
+  color: var(--primary);
+  transform: scale(1.2) rotate(-10deg);
+}
+</style>

@@ -370,6 +370,8 @@ a {
 
 .btn-secondary:hover {
   background: var(--secondary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
 }
 
 .btn-outline {
@@ -380,6 +382,8 @@ a {
 .btn-outline:hover {
   background: var(--hover-bg);
   border-color: var(--text-muted);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .btn-cancel {
@@ -406,6 +410,8 @@ a {
 .btn-danger:hover {
   background: var(--danger);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .btn-warning {
@@ -417,6 +423,8 @@ a {
 .btn-warning:hover {
   background: var(--warning);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 /* Cards (Glassmorphism) */
@@ -429,6 +437,12 @@ a {
   box-shadow: var(--glass-shadow);
   padding: 24px;
   transition: var(--transition);
+}
+
+.form-control:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  border-color: var(--primary);
 }
 
 .card:hover {
@@ -487,14 +501,21 @@ a {
   letter-spacing: 0.5px;
   color: white;
   background: var(--primary);
+  transition: var(--transition);
 }
+
+
 
 .data-table tbody tr {
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .data-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  position: relative;
+  z-index: 10;
 }
 
 .data-table td .btn {
@@ -574,6 +595,11 @@ select.form-control {
 }
 
 /* Custom Date Picker Styling */
+.modern-date-input:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  border-color: var(--primary);
+}
 .modern-date-input::-webkit-calendar-picker-indicator {
   background-color: transparent;
   padding: 5px;
@@ -713,6 +739,13 @@ select.form-control {
   background: var(--card-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
+  transition: var(--transition);
+}
+
+.table-container:hover {
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
 }
 
 .data-table {
@@ -733,7 +766,9 @@ select.form-control {
   text-transform: uppercase;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
+  transition: var(--transition);
 }
+
 
 .data-table tr {
   transition: var(--transition);
@@ -744,7 +779,11 @@ select.form-control {
 }
 
 .data-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  position: relative;
+  z-index: 10;
 }
 
 .modal {

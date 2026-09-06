@@ -15,7 +15,7 @@
               color: var(--primary-color);
             "
           >
-            🏢 Pengaturan Identitas Toko
+            <Store :size="20" style="color: var(--primary)" /> Pengaturan Identitas Toko
           </h2>
           <form @submit.prevent="saveSettings">
 
@@ -75,7 +75,7 @@
               color: var(--primary-color);
             "
           >
-            💬 Template Pesan WhatsApp
+            <MessageCircle :size="20" style="color: var(--primary)" /> Template Pesan WhatsApp
           </h2>
           <form @submit.prevent="saveSettings">
             <div class="form-group">
@@ -133,7 +133,7 @@
               color: var(--primary-color);
             "
           >
-            ☁️ Auto-Backup (Cloud/Folder)
+            <Cloud :size="20" style="color: var(--primary)" /> Auto-Backup (Cloud/Folder)
           </h2>
           <div
             style="
@@ -177,9 +177,9 @@
               <button
                 @click="selectBackupDir"
                 class="btn btn-primary"
-                style="padding: 10px 15px; border-radius: var(--radius-sm)"
+                style="padding: 10px 15px; border-radius: var(--radius-sm); display: inline-flex; align-items: center; gap: 6px;"
               >
-                Pilih Folder
+                <FolderSearch :size="16" /> Pilih Folder
               </button>
             </div>
             
@@ -210,7 +210,7 @@
               color: var(--primary-color);
             "
           >
-            🗄️ Manual Backup & Restore
+            <HardDrive :size="20" style="color: var(--primary)" /> Manual Backup & Restore
           </h2>
           <div
             style="
@@ -235,15 +235,12 @@
                 justify-content: center;
               "
             >
-              ⬇️ Backup Data Sekarang
+              <Download :size="16" /> Backup Data Sekarang
             </button>
             <button
               @click="restoreData"
-              class="btn"
+              class="btn btn-danger"
               style="
-                background-color: white;
-                color: #ef4444;
-                border: 1px solid #ef4444;
                 display: flex;
                 align-items: center;
                 gap: 6px;
@@ -253,7 +250,7 @@
                 justify-content: center;
               "
             >
-              🔄 Pulihkan Data (Restore)
+              <RefreshCw :size="16" /> Pulihkan Data (Restore)
             </button>
             <p
               style="
@@ -281,7 +278,7 @@
               color: var(--primary-color);
             "
           >
-            💽 Status Penyimpanan
+            <Database :size="20" style="color: var(--primary)" /> Status Penyimpanan
           </h2>
           <div
             style="
@@ -311,7 +308,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
-import { Save } from 'lucide-vue-next'
+import { Save, Store, MessageCircle, Cloud, FolderSearch, HardDrive, Download, RefreshCw, Database } from 'lucide-vue-next'
 import type { Settings } from '../../shared/types'
 
 const dbSize = ref<string>('0 KB')

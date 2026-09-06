@@ -81,6 +81,7 @@ import {
 .sidebar-nav a:hover .menu-icon {
   opacity: 1;
   stroke: var(--primary);
+  animation: wiggle 0.4s ease-in-out forwards;
 }
 .sidebar-header-custom {
   justify-content: center;
@@ -92,6 +93,12 @@ import {
   max-height: 80px;
   width: auto;
   object-fit: contain;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.sidebar-logo:hover {
+  transform: scale(1.05) rotate(-3deg);
+  filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.5));
 }
 .sidebar-brand {
   margin: 0;
@@ -99,6 +106,12 @@ import {
   font-weight: 800;
   letter-spacing: -0.5px;
   color: var(--text-primary);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.sidebar-brand:hover {
+  transform: translateY(-2px);
+  text-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
 .brand-accent {
   color: var(--primary);

@@ -178,8 +178,15 @@ onUnmounted(() => {
 }
 
 .topbar-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: scale(1.05);
+  background: rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.topbar-icon-btn:hover svg {
+  animation: wiggle 0.4s ease-in-out forwards;
 }
 
 .badge-count {
@@ -209,5 +216,14 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   border-radius: 20px;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.datetime-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.05);
 }
 </style>
