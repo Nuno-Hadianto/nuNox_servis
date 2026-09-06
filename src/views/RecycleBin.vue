@@ -2,47 +2,46 @@
   <div class="view-section">
     <div
       class="action-bar"
-      style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; justify-content: space-between; flex-wrap: wrap;"
+      style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;"
     >
-      <div style="display: flex; gap: 10px; flex: 1; max-width: 600px;">
-        <div style="position: relative; flex: 1;">
-          <Search
-            class="search-icon"
-            :size="18"
-            style="
-              position: absolute;
-              left: 12px;
-              top: 50%;
-              transform: translateY(-50%);
-              opacity: 0.5;
-              color: var(--text-primary);
-            "
-          />
-          <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Cari data terhapus..."
-            class="form-control"
-            style="width: 100%; padding-left: 38px; border-radius: 20px"
-          />
-        </div>
-        <select
-          v-model="filterType"
+      <div style="position: relative; flex: 1; min-width: 200px; max-width: 400px;">
+        <Search
+          class="search-icon"
+          :size="18"
+          style="
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+            color: var(--text-primary);
+          "
+        />
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Cari data terhapus..."
           class="form-control"
-          style="width: max-content; min-width: 150px; padding: 8px 16px; border-radius: 20px; cursor: pointer"
-        >
-          <option value="all">Semua Data</option>
-          <option value="customer">Pelanggan</option>
-          <option value="device">Perangkat</option>
-          <option value="service">Servis</option>
-          <option value="part">Sparepart</option>
-        </select>
+          style="width: 100%; padding-left: 38px; border-radius: 20px"
+        />
       </div>
+
+      <select
+        v-model="filterType"
+        class="form-control"
+        style="width: max-content; min-width: 150px; padding: 8px 16px; border-radius: 20px; cursor: pointer"
+      >
+        <option value="all">Semua Data</option>
+        <option value="customer">Pelanggan</option>
+        <option value="device">Perangkat</option>
+        <option value="service">Servis</option>
+        <option value="part">Sparepart</option>
+      </select>
 
       <button
         @click="loadDeletedItems"
         class="btn btn-secondary"
-        style="display: flex; align-items: center; gap: 8px"
+        style="display: flex; align-items: center; gap: 8px; border-radius: 20px; padding: 8px 16px;"
       >
         <RefreshCw :size="18" :class="{ 'spin-anim': loading }" /> Segarkan
       </button>
