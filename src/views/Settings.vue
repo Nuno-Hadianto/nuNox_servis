@@ -57,7 +57,7 @@
                   gap: 6px;
                 "
               >
-                💾 Simpan Identitas
+                <Save :size="16" /> Simpan Identitas
               </button>
             </div>
           </form>
@@ -109,7 +109,7 @@
                   gap: 6px;
                 "
               >
-                💾 Simpan Template
+                <Save :size="16" /> Simpan Template
               </button>
             </div>
           </form>
@@ -193,7 +193,7 @@
                 class="btn btn-primary"
                 style="padding: 8px 16px; border-radius: 20px"
               >
-                💾 Simpan Pengaturan Backup
+                <Save :size="16" /> Simpan Pengaturan Backup
               </button>
             </div>
           </div>
@@ -311,6 +311,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
+import { Save } from 'lucide-vue-next'
 import type { Settings } from '../../shared/types'
 
 const dbSize = ref<string>('0 KB')

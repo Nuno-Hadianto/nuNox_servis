@@ -390,6 +390,11 @@ a {
 .btn-cancel:hover {
   background: var(--danger);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+.btn-cancel:hover svg {
+  animation: wiggle 0.4s ease-in-out forwards;
 }
 
 .btn-danger {

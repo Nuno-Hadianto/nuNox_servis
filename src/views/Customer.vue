@@ -196,10 +196,10 @@
                 @click="isModalOpen = false"
                 style="padding: 8px 20px"
               >
-                Batal
+                <X :size="16" style="margin-right: 5px;" /> Batal
               </button>
               <button type="submit" class="btn btn-primary" style="padding: 8px 20px">
-                💾 Simpan
+                <Save :size="16" style="margin-right: 5px;" /> Simpan
               </button>
             </div>
           </form>
@@ -210,7 +210,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, FolderOpen } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, FolderOpen, Save, X } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted } from 'vue'
 import type { Customer } from '../../shared/types'
 import { CustomerSchema } from '../utils/validators'

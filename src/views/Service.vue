@@ -174,12 +174,7 @@
                 v-model="form.customer_id"
                 @change="onCustomerChange"
                 required
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  width: 100%;
-                "
+                class="form-control"
               >
                 <option value="">-- Pilih Pelanggan --</option>
                 <option v-for="c in customers" :key="c.id" :value="c.id">
@@ -194,12 +189,7 @@
                 @change="onDeviceChange"
                 required
                 :disabled="!form.customer_id"
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  width: 100%;
-                "
+                class="form-control"
               >
                 <option value="">-- Pilih Perangkat --</option>
                 <option v-for="d in customerDevices" :key="d.id" :value="d.id">
@@ -214,14 +204,9 @@
                 v-model="form.customer_complaint"
                 rows="3"
                 required
+                class="form-control"
                 placeholder="Contoh: Mati total, layar bergaris..."
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  resize: vertical;
-                  width: 100%;
-                "
+                style="resize: vertical;"
               ></textarea>
             </div>
             <div class="form-group" v-if="!editId">
@@ -229,14 +214,9 @@
               <textarea
                 v-model="form.physical_condition"
                 rows="2"
+                class="form-control"
                 placeholder="Contoh: Bawa charger dan tas. Bodi bawah lecet pemakaian."
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  resize: vertical;
-                  width: 100%;
-                "
+                style="resize: vertical;"
               ></textarea>
             </div>
             <div
@@ -256,7 +236,7 @@
                 @click="isModalOpen = false"
                 style="padding: 8px 20px"
               >
-                Batal
+                <X :size="16" style="margin-right: 5px;" /> Batal
               </button>
               <button
                 type="submit"
@@ -275,7 +255,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, ChevronLeft, ChevronRight, Edit, Trash2, Info, Wrench, Save } from 'lucide-vue-next'
+import { Search, Plus, ChevronLeft, ChevronRight, Edit, Trash2, Info, Wrench, Save, X } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { ServiceOrder, Customer, Device, PaginatedResponse } from '../../shared/types'

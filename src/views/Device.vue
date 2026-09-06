@@ -154,12 +154,7 @@
               <select
                 v-model="form.customer_id"
                 required
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  width: 100%;
-                "
+                class="form-control"
               >
                 <option value="">-- Pilih Pelanggan --</option>
                 <option v-for="c in customers" :key="c.id" :value="c.id">
@@ -173,13 +168,8 @@
                 <input
                   type="text"
                   v-model="form.brand"
+                  class="form-control"
                   placeholder="Misal: Samsung, Asus"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
                 />
               </div>
               <div class="form-group" style="flex: 1">
@@ -187,13 +177,8 @@
                 <input
                   type="text"
                   v-model="form.model"
+                  class="form-control"
                   placeholder="Misal: Galaxy S21"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
                 />
               </div>
             </div>
@@ -204,13 +189,8 @@
                   type="text"
                   v-model="form.device_type"
                   required
+                  class="form-control"
                   placeholder="Misal: Smartphone, Laptop"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
                 />
               </div>
               <div class="form-group" style="flex: 1">
@@ -218,13 +198,8 @@
                 <input
                   type="text"
                   v-model="form.serial_number"
+                  class="form-control"
                   placeholder="Opsional"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
                 />
               </div>
             </div>
@@ -246,10 +221,10 @@
                 @click="isModalOpen = false"
                 style="padding: 8px 20px"
               >
-                Batal
+                <X :size="16" style="margin-right: 5px;" /> Batal
               </button>
               <button type="submit" class="btn btn-primary" style="padding: 8px 20px">
-                💾 Simpan
+                <Save :size="16" style="margin-right: 5px;" /> Simpan
               </button>
             </div>
           </form>
@@ -260,7 +235,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Monitor } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Monitor, Save, X } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import type { Device, Customer } from '../../shared/types'
 

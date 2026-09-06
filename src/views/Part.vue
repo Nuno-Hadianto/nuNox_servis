@@ -140,13 +140,8 @@
                 <input
                   type="text"
                   v-model="form.part_code"
+                  class="form-control"
                   placeholder="Contoh: LCD-IP-11"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
                 />
               </div>
               <div class="form-group" style="flex: 1">
@@ -154,13 +149,8 @@
                 <input
                   type="text"
                   v-model="form.category"
+                  class="form-control"
                   placeholder="Contoh: LCD, Baterai..."
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
                 />
               </div>
             </div>
@@ -170,13 +160,8 @@
                 type="text"
                 v-model="form.name"
                 required
+                class="form-control"
                 placeholder="Nama barang / jasa"
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  width: 100%;
-                "
               />
             </div>
             <div style="display: flex; gap: 15px">
@@ -185,13 +170,8 @@
                 <input
                   type="text"
                   v-model="form.unit"
+                  class="form-control"
                   placeholder="Pcs, Unit..."
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
                 />
               </div>
             </div>
@@ -203,12 +183,7 @@
                   v-model.number="form.buy_price"
                   required
                   min="0"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
+                  class="form-control"
                 />
               </div>
               <div class="form-group" style="flex: 1">
@@ -218,12 +193,7 @@
                   v-model.number="form.sell_price"
                   required
                   min="0"
-                  style="
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--radius-sm);
-                    padding: 10px;
-                    width: 100%;
-                  "
+                  class="form-control"
                 />
               </div>
             </div>
@@ -232,13 +202,8 @@
               <textarea
                 v-model="form.notes"
                 rows="2"
-                style="
-                  border: 1px solid var(--border-color);
-                  border-radius: var(--radius-sm);
-                  padding: 10px;
-                  width: 100%;
-                  resize: vertical;
-                "
+                class="form-control"
+                style="resize: vertical;"
               ></textarea>
             </div>
             <div
@@ -258,10 +223,10 @@
                 @click="isModalOpen = false"
                 style="padding: 8px 20px"
               >
-                Batal
+                <X :size="16" style="margin-right: 5px;" /> Batal
               </button>
               <button type="submit" class="btn btn-primary" style="padding: 8px 20px">
-                💾 Simpan
+                <Save :size="16" style="margin-right: 5px;" /> Simpan
               </button>
             </div>
           </form>
@@ -273,7 +238,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Box } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Box, Save, X } from 'lucide-vue-next'
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
