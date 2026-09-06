@@ -37,14 +37,6 @@
         <option value="service">Servis</option>
         <option value="part">Sparepart</option>
       </select>
-
-      <button
-        @click="loadDeletedItems"
-        class="btn btn-secondary"
-        style="display: flex; align-items: center; gap: 8px; border-radius: 20px; padding: 8px 16px;"
-      >
-        <RefreshCw :size="18" :class="{ 'spin-anim': loading }" /> Segarkan
-      </button>
     </div>
 
     <div class="table-container">
@@ -238,11 +230,11 @@ onMounted(() => {
   font-weight: 600;
   display: inline-block;
 }
-.badge-success { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-.badge-primary { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-.badge-warning { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-.badge-info { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; }
-.badge-secondary { background: rgba(107, 114, 128, 0.15); color: #6b7280; }
+.badge-success { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 0 8px rgba(16, 185, 129, 0.2); }
+.badge-primary { background: rgba(99, 102, 241, 0.15); color: var(--primary); border: 1px solid rgba(99, 102, 241, 0.3); box-shadow: 0 0 8px rgba(99, 102, 241, 0.3); }
+.badge-warning { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 0 8px rgba(245, 158, 11, 0.2); }
+.badge-info { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; border: 1px solid rgba(14, 165, 233, 0.3); box-shadow: 0 0 8px rgba(14, 165, 233, 0.2); }
+.badge-secondary { background: rgba(107, 114, 128, 0.15); color: var(--text-muted); border: 1px solid rgba(107, 114, 128, 0.3); box-shadow: 0 0 8px rgba(107, 114, 128, 0.2); }
 
 .spin-anim {
   animation: spin 1s linear infinite;
