@@ -53,7 +53,9 @@
           <tr v-if="filteredItems.length === 0 && !loading">
             <td colspan="4" style="text-align: center; padding: 40px 20px">
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
-                <Trash2 :size="48" style="margin-bottom: 15px; color: var(--primary);" />
+                <div class="empty-icon" style="margin-bottom: 15px; color: var(--primary); display: inline-flex;">
+                  <Trash2 :size="48" />
+                </div>
                 <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Keranjang Sampah Kosong</h3>
                 <p style="margin: 0; font-size: 0.95rem;">Belum ada data yang dihapus saat ini.</p>
               </div>
@@ -99,7 +101,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { RefreshCw, RefreshCcw, Trash, Trash2, Search } from 'lucide-vue-next';
+import { RefreshCcw, Trash, Trash2, Search } from 'lucide-vue-next';
 import type { RecycleBinItem } from '../../shared/types';
 import Swal from 'sweetalert2';
 

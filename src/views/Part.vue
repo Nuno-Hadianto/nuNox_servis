@@ -65,7 +65,9 @@
           <tr v-if="parts.length === 0">
             <td colspan="7" style="text-align: center; padding: 40px 20px">
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
-                <Box :size="48" style="margin-bottom: 15px; color: var(--primary);" />
+                <div class="empty-icon" style="margin-bottom: 15px; color: var(--primary); display: inline-flex;">
+                  <Box :size="48" />
+                </div>
                 <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Belum Ada Data Sparepart</h3>
                 <p style="margin: 0; font-size: 0.95rem;">Klik tombol "Tambah Sparepart" di atas untuk menambahkan data pertama Anda.</p>
               </div>

@@ -170,8 +170,14 @@
         </thead>
         <tbody>
           <tr v-if="services.length === 0">
-            <td colspan="5" style="text-align: center; padding: 20px">
-              Tidak ada transaksi selesai pada periode ini.
+            <td colspan="5" style="text-align: center; padding: 40px 20px">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
+                <div class="empty-icon" style="margin-bottom: 15px; color: var(--primary); display: inline-flex;">
+                  <Inbox :size="48" />
+                </div>
+                <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Tidak Ada Transaksi</h3>
+                <p style="margin: 0; font-size: 0.95rem;">Tidak ada transaksi selesai pada periode ini.</p>
+              </div>
             </td>
           </tr>
           <tr v-for="s in services" :key="s.id">
@@ -196,7 +202,8 @@ import {
   TrendingUp,
   CheckCircle,
   Filter,
-  FileText
+  FileText,
+  Inbox
 } from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
 import {

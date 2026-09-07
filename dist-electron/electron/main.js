@@ -92,13 +92,22 @@ function createWindow() {
         // Memuat file hasil build Vite
         mainWindow.loadFile(path_1.default.join(__dirname, '..', '..', 'dist_frontend', 'index.html'));
     }
-    // Register IPC handlers
-    (0, customerIpc_1.registerCustomerIpc)();
-    (0, deviceIpc_1.registerDeviceIpc)();
-    (0, serviceIpc_1.registerServiceIpc)();
-    (0, partIpc_1.registerPartIpc)();
-    (0, miscIpc_1.registerMiscIpc)(mainWindow);
-    (0, recycleBinIpc_1.registerRecycleBinIpc)();
+    // Register IPC handlers safely to prevent one failure from halting all others
+    const registerSafe = (name, fn) => {
+        try {
+            fn();
+        }
+        catch (error) {
+            console.error(`Failed to register ${name}:`, error);
+            electron_log_1.default.error(`Failed to register ${name}:`, error);
+        }
+    };
+    registerSafe('Customer IPC', customerIpc_1.registerCustomerIpc);
+    registerSafe('Device IPC', deviceIpc_1.registerDeviceIpc);
+    registerSafe('Service IPC', serviceIpc_1.registerServiceIpc);
+    registerSafe('Part IPC', partIpc_1.registerPartIpc);
+    registerSafe('Misc IPC', () => (0, miscIpc_1.registerMiscIpc)(mainWindow));
+    registerSafe('Recycle Bin IPC', recycleBinIpc_1.registerRecycleBinIpc);
     mainWindow.on('closed', () => {
         mainWindow = null;
     });

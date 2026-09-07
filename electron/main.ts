@@ -66,13 +66,22 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, '..', '..', 'dist_frontend', 'index.html'));
   }
 
-  // Register IPC handlers
-  registerCustomerIpc();
-  registerDeviceIpc();
-  registerServiceIpc();
-  registerPartIpc();
-  registerMiscIpc(mainWindow);
-  registerRecycleBinIpc();
+  // Register IPC handlers safely to prevent one failure from halting all others
+  const registerSafe = (name: string, fn: () => void) => {
+    try {
+      fn();
+    } catch (error) {
+      console.error(`Failed to register ${name}:`, error);
+      log.error(`Failed to register ${name}:`, error);
+    }
+  };
+
+  registerSafe('Customer IPC', registerCustomerIpc);
+  registerSafe('Device IPC', registerDeviceIpc);
+  registerSafe('Service IPC', registerServiceIpc);
+  registerSafe('Part IPC', registerPartIpc);
+  registerSafe('Misc IPC', () => registerMiscIpc(mainWindow!));
+  registerSafe('Recycle Bin IPC', registerRecycleBinIpc);
 
 
   mainWindow.on('closed', () => {
