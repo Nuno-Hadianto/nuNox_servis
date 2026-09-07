@@ -45,6 +45,16 @@
     "win": {
       "target": "nsis"
     },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "nuNox Servis",
+      "installerSidebar": "public/img/installerSidebar.bmp",
+      "uninstallerSidebar": "public/img/installerSidebar.bmp",
+      "installerHeader": "public/img/installerHeader.bmp"
+    },
     "files": [
       "dist-electron/**/*",
       "dist_frontend/**/*",
