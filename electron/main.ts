@@ -8,6 +8,7 @@ import {  app, BrowserWindow, ipcMain, dialog  } from 'electron';
 import path from 'path';
 import db from '../database/db';
 import log from 'electron-log';
+import { EventBus } from './services/EventBus';
 
 
 // Setup logging
@@ -189,15 +190,19 @@ async function performAutoBackup(type: 'cron' | 'daily' = 'daily') {
         zip.writeZip(backupPathZip);
         fs.unlinkSync(backupPathDb);
         log.info(`Auto backup (${type}) saved to:`, backupPathZip);
+        
+        EventBus.sendToast('success', `Backup otomatis (${type}) berhasil disimpan!`);
 
 
       } catch (zipError) {
         log.error('Error zipping backup:', zipError);
         log.info('Fallback: Unzipped DB saved to:', backupPathDb);
+        EventBus.sendToast('warning', `Gagal kompresi ZIP, namun backup DB mentah berhasil disimpan.`);
       }
     }
   } catch (error) {
     log.error(`Failed to perform auto backup (${type}):`, error);
+    EventBus.sendToast('error', `Gagal melakukan backup otomatis: ${error}`);
   }
 }
 

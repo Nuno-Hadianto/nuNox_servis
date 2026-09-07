@@ -44,6 +44,7 @@ const electron_1 = require("electron");
 const path_1 = __importDefault(require("path"));
 const db_1 = __importDefault(require("../database/db"));
 const electron_log_1 = __importDefault(require("electron-log"));
+const EventBus_1 = require("./services/EventBus");
 // Setup logging
 electron_log_1.default.transports.file.level = 'info';
 electron_log_1.default.info('App starting...');
@@ -187,15 +188,18 @@ async function performAutoBackup(type = 'daily') {
                 zip.writeZip(backupPathZip);
                 fs_1.default.unlinkSync(backupPathDb);
                 electron_log_1.default.info(`Auto backup (${type}) saved to:`, backupPathZip);
+                EventBus_1.EventBus.sendToast('success', `Backup otomatis (${type}) berhasil disimpan!`);
             }
             catch (zipError) {
                 electron_log_1.default.error('Error zipping backup:', zipError);
                 electron_log_1.default.info('Fallback: Unzipped DB saved to:', backupPathDb);
+                EventBus_1.EventBus.sendToast('warning', `Gagal kompresi ZIP, namun backup DB mentah berhasil disimpan.`);
             }
         }
     }
     catch (error) {
         electron_log_1.default.error(`Failed to perform auto backup (${type}):`, error);
+        EventBus_1.EventBus.sendToast('error', `Gagal melakukan backup otomatis: ${error}`);
     }
 }
 electron_1.app.on('window-all-closed', async () => {

@@ -77,5 +77,10 @@ electron_1.contextBridge.exposeInMainWorld('api', {
     // Keranjang Sampah (Recycle Bin)
     getDeletedItems: () => invokeSafe('get-deleted-items'),
     restoreItem: (id, type) => invokeSafe('restore-item', id, type),
-    hardDeleteItem: (id, type) => invokeSafe('hard-delete-item', id, type)
+    hardDeleteItem: (id, type) => invokeSafe('hard-delete-item', id, type),
+    // System Events (Backend -> Frontend)
+    onSystemEvent: (callback) => {
+        electron_1.ipcRenderer.on('system-event', callback);
+        return () => electron_1.ipcRenderer.removeListener('system-event', callback);
+    }
 });

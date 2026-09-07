@@ -1,5 +1,6 @@
-import type { Customer, Device, ServiceOrder, Part, ServiceItem, Payment, Settings } from '../shared/types';
-import {  contextBridge, ipcRenderer  } from 'electron';
+import type { Customer, Device, ServiceOrder, Part, ServiceItem, Payment, Settings, SystemEvent } from '../shared/types';
+import { contextBridge, ipcRenderer } from 'electron';
+import type { IpcRendererEvent } from 'electron';
 
 const invokeSafe = async (channel: string, ...args: unknown[]) => {
   try {
@@ -93,5 +94,11 @@ contextBridge.exposeInMainWorld('api', {
   // Keranjang Sampah (Recycle Bin)
   getDeletedItems: () => invokeSafe('get-deleted-items'),
   restoreItem: (id: number, type: 'customer' | 'device' | 'service' | 'part') => invokeSafe('restore-item', id, type),
-  hardDeleteItem: (id: number, type: 'customer' | 'device' | 'service' | 'part') => invokeSafe('hard-delete-item', id, type)
+  hardDeleteItem: (id: number, type: 'customer' | 'device' | 'service' | 'part') => invokeSafe('hard-delete-item', id, type),
+
+  // System Events (Backend -> Frontend)
+  onSystemEvent: (callback: (event: IpcRendererEvent, data: SystemEvent) => void) => {
+    ipcRenderer.on('system-event', callback);
+    return () => ipcRenderer.removeListener('system-event', callback);
+  }
 });

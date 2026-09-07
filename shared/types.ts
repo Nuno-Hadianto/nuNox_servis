@@ -21,6 +21,12 @@ export interface PaginatedResponse<T> {
   limit: number;
 }
 
+export interface SystemEvent {
+  type: 'toast';
+  level: 'info' | 'success' | 'warning' | 'error';
+  message: string;
+}
+
 export interface AbandonedService {
   id: number;
   ticket_number: string;

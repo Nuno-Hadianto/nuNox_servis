@@ -117,6 +117,7 @@ declare global {
       getDeletedItems: () => Promise<{ success: boolean; data?: RecycleBinItem[]; error?: string }>
       restoreItem: (id: number, type: 'customer' | 'device' | 'service' | 'part') => Promise<{ success: boolean; message?: string; error?: string }>
       hardDeleteItem: (id: number, type: 'customer' | 'device' | 'service' | 'part') => Promise<{ success: boolean; message?: string; error?: string }>
+      onSystemEvent: (callback: (event: unknown, data: import('../shared/types').SystemEvent) => void) => () => void
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Swal: any
