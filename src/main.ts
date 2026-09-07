@@ -12,6 +12,20 @@ const pinia = createPinia()
 
 app.config.globalProperties.$api = window.api
 
+app.config.errorHandler = (err, instance, info) => {
+  console.error('Vue Global Error:', err, info)
+  Swal.fire({
+    toast: true,
+    position: 'bottom-end',
+    icon: 'error',
+    title: 'Error Tampilan',
+    text: err instanceof Error ? err.message : String(err),
+    showConfirmButton: false,
+    timer: 5000,
+    timerProgressBar: true
+  })
+}
+
 app.use(pinia)
 app.use(router)
 

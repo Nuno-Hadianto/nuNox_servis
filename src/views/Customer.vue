@@ -91,54 +91,33 @@
 
 <script setup lang="ts">
 import { Plus, Edit, Trash2, FolderOpen } from 'lucide-vue-next'
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { Customer } from '../../shared/types'
 import { CustomerService } from '@/services/CustomerService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
 import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
+import { useDataTable } from '@/composables/useDataTable'
 
 import SearchBar from '@/components/common/SearchBar.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import CustomerFormModal from '@/components/modals/CustomerFormModal.vue'
 
-const customers = ref<Customer[]>([])
-const searchQuery = ref<string>('')
-const sortBy = ref<string>('name_asc')
-const currentPage = ref<number>(1)
-const itemsPerPage = 50
-const totalItems = ref<number>(0)
-const totalPages = computed<number>(() => Math.ceil(totalItems.value / itemsPerPage) || 1)
+const cacheStore = useAppCacheStore()
 
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-const debounceSearch = () => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    loadCustomers(1)
-  }, 300)
-}
-
-const loadCustomers = async (page: number = 1) => {
-  const cacheStore = useAppCacheStore()
-  
-  if (page === 1 && searchQuery.value === '' && cacheStore.customers.hasCached) {
-    customers.value = cacheStore.customers.data
-    totalItems.value = cacheStore.customers.total
-    currentPage.value = 1
-  }
-
-  try {
-    const result = await CustomerService.getAll(searchQuery.value, page, itemsPerPage, sortBy.value)
-    customers.value = (result.data as Customer[]) || []
-    totalItems.value = result.total || 0
-    currentPage.value = result.page || 1
-
-    if (page === 1 && searchQuery.value === '') {
-      cacheStore.setCustomerCache(customers.value, totalItems.value)
-    }
-  } catch (error) {
-    console.error('Failed to load customers:', error)
-  }
-}
+const {
+  items: customers,
+  searchQuery,
+  sortBy,
+  currentPage,
+  totalPages,
+  loadData: loadCustomers,
+  debounceSearch
+} = useDataTable<Customer>({
+  fetchFn: CustomerService.getAll,
+  defaultSort: 'name_asc',
+  cacheData: cacheStore.customers,
+  setCache: cacheStore.setCustomerCache
+})
 
 // Modal Form Logic
 const isModalOpen = ref<boolean>(false)
@@ -178,7 +157,7 @@ const editCustomer = async (c: Customer) => {
   }
 }
 
-const saveCustomer = async (data: { name: string; phone: string; address: string; notes: string }) => {
+const saveCustomer = async (data: Omit<Customer, 'id'>) => {
   try {
     if (formId.value) {
       await CustomerService.update(formId.value, data)
@@ -194,14 +173,14 @@ const saveCustomer = async (data: { name: string; phone: string; address: string
   } catch (error: unknown) {
     console.error(error)
     const msg = error instanceof Error ? error.message : String(error)
-    AppAlert.fire('Error', msg || 'Gagal menyimpan data pelanggan.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal menyimpan pelanggan.', 'error')
   }
 }
 
 const deleteCustomer = async (id: number) => {
   const result = await ConfirmDialog.fire({
     title: 'Hapus Pelanggan?',
-    text: 'Data tidak dapat dikembalikan! Semua perangkat terkait mungkin tidak bisa dihapus jika memiliki riwayat servis.',
+    text: 'Apakah Anda yakin ingin menghapus pelanggan ini?',
     confirmButtonText: 'Ya, Hapus!'
   })
 
@@ -218,7 +197,7 @@ const deleteCustomer = async (id: number) => {
 }
 
 onMounted(() => {
-  loadCustomers()
+  loadCustomers(1)
 })
 </script>
 

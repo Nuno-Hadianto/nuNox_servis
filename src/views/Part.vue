@@ -108,37 +108,40 @@ import type { Part } from '../../shared/types'
 import { PartService } from '@/services/PartService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
 import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
+import { useDataTable } from '@/composables/useDataTable'
 
 import SearchBar from '@/components/common/SearchBar.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import PartFormModal from '@/components/modals/PartFormModal.vue'
 
 const route = useRoute()
-const parts = ref<Part[]>([])
-const sortBy = ref<string>('name_asc')
-const searchQuery = ref<string>((route.query.search as string) || '')
-const currentPage = ref(1)
-const totalPages = ref(1)
-const limit = 15
+const cacheStore = useAppCacheStore()
+
+const {
+  items: parts,
+  searchQuery,
+  sortBy,
+  currentPage,
+  totalPages,
+  loadData: loadParts,
+  debounceSearch
+} = useDataTable<Part>({
+  fetchFn: PartService.getAll,
+  defaultSort: 'name_asc',
+  itemsPerPage: 15,
+  cacheData: cacheStore.parts,
+  setCache: cacheStore.setPartCache
+})
 
 watch(
   () => route.query.search,
   (newSearch) => {
     if (newSearch !== undefined) {
       searchQuery.value = newSearch as string
-      loadParts()
+      loadParts(1)
     }
   }
 )
-
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-const debounceSearch = () => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    currentPage.value = 1
-    loadParts()
-  }, 300)
-}
 
 const formatCurrency = (amount: number | string | undefined | null) => {
   return new Intl.NumberFormat('id-ID', {
@@ -148,60 +151,37 @@ const formatCurrency = (amount: number | string | undefined | null) => {
   }).format(Number(amount || 0))
 }
 
-const loadParts = async (page: number = 1) => {
-  const cacheStore = useAppCacheStore()
-
-  if (page === 1 && searchQuery.value === '' && cacheStore.parts.hasCached) {
-    parts.value = cacheStore.parts.data
-    totalPages.value = Math.ceil(cacheStore.parts.total / limit)
-    currentPage.value = 1
-  }
-
-  try {
-    const response = await PartService.getAll(searchQuery.value, page, limit, sortBy.value) as { data: Part[], total: number };
-    parts.value = response.data;
-    totalPages.value = Math.ceil(response.total / limit) || 1;
-    currentPage.value = page;
-
-    if (page === 1 && searchQuery.value === '') {
-      cacheStore.setPartCache(parts.value, response.total)
-    }
-  } catch (error) {
-    console.error('Failed to load parts:', error)
-  }
-}
-
 // Modal Form Logic
 const isModalOpen = ref<boolean>(false)
-const modalTitle = ref<string>('Tambah Item')
+const modalTitle = ref<string>('Tambah Sparepart/Jasa')
 const formId = ref<number | null>(null)
 const formInitialData = ref<{
   part_code: string
   name: string
   category: string
-  buy_price: number
-  sell_price: number
+  buy_price: number | ''
+  sell_price: number | ''
   unit: string
   notes: string
 }>({
   part_code: '',
   name: '',
-  category: '',
-  buy_price: 0,
-  sell_price: 0,
+  category: 'Sparepart',
+  buy_price: '',
+  sell_price: '',
   unit: 'Pcs',
   notes: ''
 })
 
 const openAddModal = () => {
-  modalTitle.value = 'Tambah Item'
+  modalTitle.value = 'Tambah Sparepart/Jasa'
   formId.value = null
   formInitialData.value = {
     part_code: '',
     name: '',
-    category: '',
-    buy_price: 0,
-    sell_price: 0,
+    category: 'Sparepart',
+    buy_price: '',
+    sell_price: '',
     unit: 'Pcs',
     notes: ''
   }
@@ -212,14 +192,14 @@ const editPart = async (p: Part) => {
   try {
     const detail = (await PartService.getById(p.id)) as Part
     if (detail) {
-      modalTitle.value = 'Edit Item'
+      modalTitle.value = 'Edit Sparepart/Jasa'
       formId.value = detail.id || null
       formInitialData.value = {
         part_code: detail.part_code || '',
         name: detail.name || '',
         category: detail.category || '',
-        buy_price: detail.buy_price || 0,
-        sell_price: detail.sell_price || 0,
+        buy_price: detail.buy_price || '',
+        sell_price: detail.sell_price || '',
         unit: detail.unit || '',
         notes: detail.notes || ''
       }
@@ -227,22 +207,36 @@ const editPart = async (p: Part) => {
     }
   } catch (error) {
     console.error(error)
-    AppAlert.fire('Error', 'Gagal memuat detail sparepart.', 'error')
+    AppAlert.fire('Error', 'Gagal memuat detail data.', 'error')
   }
 }
 
-const savePart = async (data: Omit<Part, 'id'>) => {
+const savePart = async (data: {
+  part_code: string
+  name: string
+  category: string
+  buy_price: number | ''
+  sell_price: number | ''
+  unit: string
+  notes: string
+}) => {
   try {
+    const parsedData: Omit<Part, 'id'> = {
+      ...data,
+      buy_price: typeof data.buy_price === 'number' ? data.buy_price : 0,
+      sell_price: typeof data.sell_price === 'number' ? data.sell_price : 0
+    }
+
     if (formId.value) {
-      await PartService.update(formId.value, data)
+      await PartService.update(formId.value, parsedData)
     } else {
-      await PartService.create(data)
+      await PartService.create(parsedData)
     }
     isModalOpen.value = false
-    loadParts(currentPage.value) // Use current page to stay where they were
+    loadParts(currentPage.value)
     Toast.fire({
       icon: 'success',
-      title: 'Data sparepart berhasil disimpan.'
+      title: 'Data berhasil disimpan.'
     })
   } catch (error: unknown) {
     console.error(error)
@@ -253,15 +247,15 @@ const savePart = async (data: Omit<Part, 'id'>) => {
 
 const deletePart = async (id: number) => {
   const result = await ConfirmDialog.fire({
-    title: 'Hapus Sparepart?',
-    text: 'Data yang dihapus tidak bisa dikembalikan.',
+    title: 'Hapus Data?',
+    text: 'Apakah Anda yakin ingin menghapus item ini?',
     confirmButtonText: 'Ya, Hapus!'
   })
 
   if (result.isConfirmed) {
     try {
       await PartService.delete(id)
-      Toast.fire({ icon: 'success', title: 'Sparepart berhasil dihapus.' })
+      Toast.fire({ icon: 'success', title: 'Data berhasil dihapus.' })
       loadParts(currentPage.value)
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)
@@ -280,7 +274,10 @@ const handleKeydown = (e: KeyboardEvent) => {
 }
 
 onMounted(() => {
-  loadParts()
+  if (route.query.search) {
+    searchQuery.value = route.query.search as string
+  }
+  loadParts(1)
   window.addEventListener('keydown', handleKeydown)
 })
 

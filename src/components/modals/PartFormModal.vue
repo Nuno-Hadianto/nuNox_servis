@@ -109,8 +109,8 @@ const props = defineProps<{
     part_code?: string
     name?: string
     category?: string
-    buy_price?: number
-    sell_price?: number
+    buy_price?: number | ''
+    sell_price?: number | ''
     unit?: string
     notes?: string
   }

@@ -1,20 +1,17 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 import type { RouteRecordRaw } from 'vue-router'
-import Dashboard from '@/views/Dashboard.vue'
-import Customer from '@/views/Customer.vue'
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Dashboard',
-    component: Dashboard,
+    component: () => import('@/views/Dashboard.vue'),
     meta: { title: 'Dashboard' }
   },
   {
     path: '/customers',
     name: 'Customers',
-    component: Customer,
+    component: () => import('@/views/Customer.vue'),
     meta: { title: 'Daftar Pelanggan' }
   },
   {

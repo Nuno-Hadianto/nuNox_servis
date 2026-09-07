@@ -108,56 +108,35 @@
 
 <script setup lang="ts">
 import { Plus, Edit, Trash2, Monitor } from 'lucide-vue-next'
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { Device, Customer } from '../../shared/types'
 import { DeviceService } from '@/services/DeviceService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
 import { CustomerService } from '@/services/CustomerService'
 import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
+import { useDataTable } from '@/composables/useDataTable'
 
 import SearchBar from '@/components/common/SearchBar.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import DeviceFormModal from '@/components/modals/DeviceFormModal.vue'
 
-const devices = ref<Device[]>([])
+const cacheStore = useAppCacheStore()
 const customers = ref<Customer[]>([])
-const searchQuery = ref<string>('')
-const sortBy = ref<string>('id_desc')
-const currentPage = ref<number>(1)
-const itemsPerPage = 50
-const totalItems = ref<number>(0)
-const totalPages = computed<number>(() => Math.ceil(totalItems.value / itemsPerPage) || 1)
 
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-const debounceSearch = () => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    loadDevices()
-  }, 300)
-}
-
-const loadDevices = async (page: number = 1) => {
-  const cacheStore = useAppCacheStore()
-
-  if (page === 1 && searchQuery.value === '' && cacheStore.devices.hasCached) {
-    devices.value = cacheStore.devices.data
-    totalItems.value = cacheStore.devices.total
-    currentPage.value = 1
-  }
-
-  try {
-    const result = await DeviceService.getAll(searchQuery.value, sortBy.value)
-    devices.value = result || []
-    totalItems.value = result.length || 0
-    currentPage.value = 1
-
-    if (page === 1 && searchQuery.value === '') {
-      cacheStore.setDeviceCache(devices.value, totalItems.value)
-    }
-  } catch (error) {
-    console.error('Failed to load devices:', error)
-  }
-}
+const {
+  items: devices,
+  searchQuery,
+  sortBy,
+  currentPage,
+  totalPages,
+  loadData: loadDevices,
+  debounceSearch
+} = useDataTable<Device>({
+  fetchFn: (search, page, limit, sort) => DeviceService.getAll(search, sort),
+  defaultSort: 'id_desc',
+  cacheData: cacheStore.devices,
+  setCache: cacheStore.setDeviceCache
+})
 
 const loadCustomersDropdown = async () => {
   try {
@@ -250,7 +229,7 @@ const saveDevice = async (data: Omit<Device, 'id'>) => {
       await DeviceService.create(data)
     }
     isModalOpen.value = false
-    loadDevices()
+    loadDevices(currentPage.value)
     Toast.fire({
       icon: 'success',
       title: 'Data perangkat berhasil disimpan.'
@@ -273,7 +252,7 @@ const deleteDevice = async (id: number) => {
     try {
       await DeviceService.delete(id)
       Toast.fire({ icon: 'success', title: 'Perangkat berhasil dihapus.' })
-      loadDevices()
+      loadDevices(currentPage.value)
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)
       AppAlert.fire('Error', msg || 'Gagal menghapus.', 'error')
@@ -282,7 +261,7 @@ const deleteDevice = async (id: number) => {
 }
 
 onMounted(() => {
-  loadDevices()
+  loadDevices(1)
 })
 </script>
 

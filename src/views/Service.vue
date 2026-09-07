@@ -105,12 +105,13 @@
 import { Plus, Edit, Trash2, Info, Wrench } from 'lucide-vue-next'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import type { ServiceOrder, Customer, PaginatedResponse } from '../../shared/types'
+import type { ServiceOrder, Customer } from '../../shared/types'
 import { ServiceOrderSchema } from '@/utils/validators'
 import { ServiceOrderService } from '@/services/ServiceOrderService'
 import { CustomerService } from '@/services/CustomerService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
 import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
+import { useDataTable } from '@/composables/useDataTable'
 
 import SearchBar from '@/components/common/SearchBar.vue'
 import Pagination from '@/components/common/Pagination.vue'
@@ -119,23 +120,24 @@ import ServiceFormModal from '@/components/modals/ServiceFormModal.vue'
 
 const router = useRouter()
 const route = useRoute()
-const searchQuery = ref<string>('')
-const sortBy = ref<string>('id_desc')
-const currentPage = ref<number>(1)
-const itemsPerPage = 50
-const totalItems = ref<number>(0)
-const totalPages = computed<number>(() => Math.ceil(totalItems.value / itemsPerPage) || 1)
+const cacheStore = useAppCacheStore()
 
-const services = ref<ServiceOrder[]>([])
+const {
+  items: services,
+  searchQuery,
+  sortBy,
+  currentPage,
+  totalPages,
+  loadData: loadServices,
+  debounceSearch
+} = useDataTable<ServiceOrder>({
+  fetchFn: (search, page, limit, sort) => ServiceOrderService.getAll(search, page, limit, undefined, sort),
+  defaultSort: 'id_desc',
+  cacheData: cacheStore.services,
+  setCache: cacheStore.setServiceCache
+})
+
 const customers = ref<Customer[]>([])
-
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-const debounceSearch = () => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    loadServices(1)
-  }, 300)
-}
 
 const formatCurrency = (amount: number | string | undefined | null) => {
   return new Intl.NumberFormat('id-ID', {
@@ -148,29 +150,6 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 const isWarrantyActive = (dateStr?: string) => {
   if (!dateStr) return false
   return new Date(dateStr) >= new Date()
-}
-
-const loadServices = async (page: number = 1) => {
-  const cacheStore = useAppCacheStore()
-
-  if (page === 1 && searchQuery.value === '' && cacheStore.services.hasCached) {
-    services.value = cacheStore.services.data
-    totalItems.value = cacheStore.services.total
-    currentPage.value = 1
-  }
-
-  try {
-    const result = await ServiceOrderService.getAll(searchQuery.value, page, itemsPerPage, undefined, sortBy.value) as PaginatedResponse<ServiceOrder>
-    services.value = result.data || []
-    totalItems.value = result.total || 0
-    currentPage.value = result.page || 1
-
-    if (page === 1 && searchQuery.value === '') {
-      cacheStore.setServiceCache(services.value, totalItems.value)
-    }
-  } catch (error) {
-    console.error('Failed to load services:', error)
-  }
 }
 
 const loadCustomersDropdown = async () => {
@@ -250,7 +229,7 @@ const openEditModal = async (s: ServiceOrder) => {
 }
 
 
-const saveService = async (data: any) => {
+const saveService = async (data: { customer_id: number; device_id: number; customer_complaint: string; physical_condition: string }) => {
   try {
     const finalComplaint = data.physical_condition 
       ? `${data.customer_complaint}\n\n[Kelengkapan & Kondisi Fisik]:\n${data.physical_condition}` 
