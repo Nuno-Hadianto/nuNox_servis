@@ -1,20 +1,11 @@
 <template>
   <div class="view-section">
-    <div style="display: flex; gap: 25px; flex-wrap: wrap; align-items: flex-start;">
+    <div class="settings-grid">
       <!-- Kolom Kiri -->
-      <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px">
+      <div class="settings-column">
         <!-- Pengaturan Identitas -->
-        <div class="card" style="padding: 25px; height: fit-content;">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
+        <div class="card settings-card">
+          <h2 class="settings-header">
             <Store :size="20" style="color: var(--primary)" /> Pengaturan Identitas Toko
           </h2>
           <form @submit.prevent="saveSettings">
@@ -45,18 +36,8 @@
                 style="resize: vertical;"
               ></textarea>
             </div>
-            <div style="margin-top: 25px; text-align: right">
-              <button
-                type="submit"
-                class="btn btn-primary"
-                style="
-                  padding: 10px 24px;
-                  border-radius: 20px;
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 6px;
-                "
-              >
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary settings-btn">
                 <Save :size="16" /> Simpan Identitas
               </button>
             </div>
@@ -64,17 +45,8 @@
         </div>
 
         <!-- Template Pesan WhatsApp -->
-        <div class="card" style="padding: 25px; height: fit-content;">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
+        <div class="card settings-card">
+          <h2 class="settings-header">
             <MessageCircle :size="20" style="color: var(--primary)" /> Template Pesan WhatsApp
           </h2>
           <form @submit.prevent="saveSettings">
@@ -97,18 +69,8 @@
                 </div>
               </div>
             </div>
-            <div style="margin-top: 25px; text-align: right">
-              <button
-                type="submit"
-                class="btn btn-primary"
-                style="
-                  padding: 10px 24px;
-                  border-radius: 20px;
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 6px;
-                "
-              >
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary settings-btn">
                 <Save :size="16" /> Simpan Template
               </button>
             </div>
@@ -116,17 +78,8 @@
         </div>
 
         <!-- Pengaturan Notifikasi -->
-        <div class="card" style="padding: 25px; height: fit-content;">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
+        <div class="card settings-card">
+          <h2 class="settings-header">
             <Bell :size="20" style="color: var(--primary)" /> Pengaturan Notifikasi
           </h2>
           <form @submit.prevent="saveSettings">
@@ -142,12 +95,8 @@
               </label>
             </div>
             
-            <div style="margin-top: 25px; text-align: right">
-              <button
-                type="submit"
-                class="btn btn-primary"
-                style="padding: 10px 24px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;"
-              >
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary settings-btn">
                 <Save :size="16" /> Simpan Notifikasi
               </button>
             </div>
@@ -156,30 +105,13 @@
       </div>
 
       <!-- Kolom Kanan -->
-      <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px">
+      <div class="settings-column">
         
-        <div class="card" style="padding: 25px">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
+        <div class="card settings-card">
+          <h2 class="settings-header">
             <Cloud :size="20" style="color: var(--primary)" /> Auto-Backup (Cloud/Folder)
           </h2>
-          <div
-            style="
-              background: rgba(16, 185, 129, 0.05);
-              border: 1px solid rgba(16, 185, 129, 0.2);
-              border-radius: var(--radius-md);
-              padding: 20px;
-              margin-bottom: 15px;
-            "
-          >
+          <div class="info-box success-box">
             <div style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px;">
               Pilih lokasi folder untuk menyimpan cadangan data (seperti <strong>Google Drive</strong> atau <strong>OneDrive</strong>).
               
@@ -223,85 +155,33 @@
 
 
 
-            <div style="margin-top: 15px; text-align: right">
-              <button
-                @click="saveSettings"
-                class="btn btn-primary"
-                style="padding: 8px 16px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;"
-              >
+            <div class="form-actions">
+              <button @click="saveSettings" class="btn btn-primary settings-btn">
                 <Save :size="16" /> Simpan Pengaturan Backup
               </button>
             </div>
           </div>
         </div>
 
-        <div class="card" style="padding: 25px">
-          <h2
-            style="
-              font-size: 1.2rem;
-              margin-bottom: 20px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              color: var(--primary-color);
-            "
-          >
+        <div class="card settings-card">
+          <h2 class="settings-header">
             <HardDrive :size="20" style="color: var(--primary)" /> Manual Backup & Restore
           </h2>
-          <div
-            style="
-              background: rgba(99, 102, 241, 0.05);
-              border: 1px solid rgba(99, 102, 241, 0.2);
-              border-radius: var(--radius-md);
-              padding: 20px;
-              margin-bottom: 20px;
-            "
-          >
+          <div class="info-box primary-box">
             <div style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px;">
               Fitur ini memungkinkan Anda untuk mencadangkan atau memulihkan seluruh data aplikasi secara manual.
               
-              <div style="margin-top: 10px; margin-bottom: 12px; color: var(--text-primary);">
-                <strong>Fungsi Tombol:</strong>
-                <ul style="margin-top: 4px; padding-left: 20px; margin-bottom: 0;">
-                  <li><b>Backup Data Sekarang:</b> Menyimpan seluruh data saat ini ke dalam satu file.</li>
-                  <li><b>Pulihkan Data (Restore):</b> Mengembalikan data aplikasi dari file backup Anda.</li>
-                </ul>
-              </div>
+
 
               <div style="font-size: 0.85rem; color: #b91c1c; background: rgba(239, 68, 68, 0.1); padding: 10px 12px; border-radius: 6px; border-left: 3px solid #ef4444; margin-top: 15px; line-height: 1.4;">
                 ⚠️ <b>Peringatan:</b> Proses <i>Restore</i> akan <b>menimpa seluruh data saat ini</b> secara permanen. Sangat disarankan melakukan <i>Backup</i> terlebih dahulu sebelum <i>Restore</i>!
               </div>
             </div>
 
-            <button
-              @click="backupData"
-              class="btn btn-primary"
-              style="
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                border-radius: 20px;
-                padding: 10px 20px;
-                margin-bottom: 15px;
-                width: 100%;
-                justify-content: center;
-              "
-            >
+            <button @click="backupData" class="btn btn-primary btn-block mb-15">
               <Download :size="16" /> Backup Data Sekarang
             </button>
-            <button
-              @click="restoreData"
-              class="btn btn-danger"
-              style="
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                border-radius: 20px;
-                padding: 10px 20px;
-                width: 100%;
-                justify-content: center;
-              "
-            >
+            <button @click="restoreData" class="btn btn-danger btn-block">
               <RefreshCw :size="16" /> Pulihkan Data (Restore)
             </button>
           </div>
@@ -351,6 +231,7 @@
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { Save, Store, MessageCircle, Cloud, FolderSearch, HardDrive, Download, RefreshCw, Database, Bell } from 'lucide-vue-next'
 import type { Settings } from '../../shared/types'
+import { Toast, AppAlert, ConfirmDialog } from '../utils/alert'
 
 const dbSize = ref<string>('0 KB')
 
@@ -426,17 +307,14 @@ const saveSettings = async () => {
     }
     await window.api.updateSettings(data)
     
-    window.Swal.fire({
+    Toast.fire({
       icon: 'success',
-      title: 'Tersimpan',
-      text: 'Pengaturan berhasil disimpan.',
-      timer: 1500,
-      showConfirmButton: false
+      title: 'Pengaturan berhasil disimpan.'
     })
   } catch (error: unknown) {
     console.error(error)
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal menyimpan pengaturan.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal menyimpan pengaturan.', 'error')
   }
 }
 
@@ -444,12 +322,12 @@ const backupData = async () => {
   try {
     const success = await window.api.backupDatabase()
     if (success) {
-      window.Swal.fire('Berhasil', 'Backup database berhasil!', 'success')
+      Toast.fire({ icon: 'success', title: 'Backup database berhasil!' })
     }
   } catch (error: unknown) {
     console.error(error)
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal backup database.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal backup database.', 'error')
   }
 }
 
@@ -465,11 +343,8 @@ const selectBackupDir = async () => {
 }
 
 const restoreData = async () => {
-  const result = await window.Swal.fire({
-    title: 'Peringatan',
+  const result = await ConfirmDialog.fire({
     text: 'Restore akan menimpa semua data saat ini. Aplikasi akan ditutup dan dibuka ulang. Yakin ingin melanjutkan?',
-    icon: 'warning',
-    showCancelButton: true,
     confirmButtonText: 'Ya, Restore'
   })
 
@@ -477,7 +352,7 @@ const restoreData = async () => {
     try {
       const success = await window.api.restoreDatabase()
       if (success) {
-        window.Swal.fire({
+        AppAlert.fire({
           icon: 'success',
           title: 'Restore Berhasil!',
           text: 'Aplikasi akan dimuat ulang secara otomatis untuk menerapkan data baru...',
@@ -488,7 +363,7 @@ const restoreData = async () => {
     } catch (error: unknown) {
       console.error(error)
       const msg = error instanceof Error ? error.message : String(error)
-      window.Swal.fire('Error', msg || 'Gagal restore database.', 'error')
+      AppAlert.fire('Error', msg || 'Gagal restore database.', 'error')
     }
   }
 }
@@ -502,9 +377,73 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.settings-grid {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.settings-column {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.settings-card {
+  padding: 25px;
+  height: fit-content;
+}
+.settings-header {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-color);
+}
+.form-actions {
+  margin-top: 25px;
+  text-align: right;
+}
+.settings-btn {
+  padding: 10px 24px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.info-box {
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 15px;
+}
+.success-box {
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.primary-box {
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  margin-bottom: 20px;
+}
+.btn-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 20px;
+  padding: 10px 20px;
+  width: 100%;
+}
+.mb-15 {
+  margin-bottom: 15px;
+}
+
 .card h2 svg {
   transition: transform 0.2s ease;
 }
+
 
 .card:hover h2 svg {
   animation: wiggle 0.4s ease-in-out forwards;

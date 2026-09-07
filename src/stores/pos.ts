@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Part } from '../../shared/types'
-import { Toast } from '@/utils/toast'
+import { Toast } from '@/utils/alert'
 
 export interface CartItem {
   id: number
@@ -40,7 +40,7 @@ export const usePosStore = defineStore('pos', () => {
         name: part.name,
         price: part.sell_price,
         qty: 1,
-        maxStock: part.stock
+        maxStock: 999 // Part does not have stock property yet in nuNox_servis
       })
     }
   }

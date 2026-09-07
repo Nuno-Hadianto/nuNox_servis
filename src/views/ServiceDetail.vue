@@ -65,6 +65,7 @@ import {
   generateNotaHtml,
   printHtml
 } from '../utils/printUtils.js'
+import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
 
 import ServiceActionBar from '@/components/ServiceDetail/ServiceActionBar.vue'
 import ServiceInfo from '@/components/ServiceDetail/ServiceInfo.vue'
@@ -176,17 +177,16 @@ const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken:
     if (updateForm.status !== service.value.service_status) {
       let warrantyDays = 0
       if (updateForm.status.includes('Selesai')) {
-        const { value: days } = await window.Swal.fire({
+        const { value: days, isConfirmed } = await ConfirmDialog.fire({
           title: 'Atur Garansi',
           text: 'Berapa hari garansi untuk servis ini? (Isi 0 jika tidak ada)',
           input: 'number',
           inputValue: 0,
-          showCancelButton: true,
           confirmButtonText: 'Simpan',
           cancelButtonText: 'Batal'
         })
-        if (days) {
-          warrantyDays = parseInt(days)
+        if (isConfirmed && days !== undefined) {
+          warrantyDays = parseInt(days as string)
         }
       }
       await ServiceOrderService.updateStatus(
@@ -197,18 +197,15 @@ const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken:
       )
     }
 
-    window.Swal.fire({
+    Toast.fire({
       icon: 'success',
-      title: 'Tersimpan',
-      text: 'Detail servis berhasil diperbarui',
-      timer: 1500,
-      showConfirmButton: false
+      title: 'Detail servis berhasil diperbarui'
     })
     await loadServiceDetail()
     await loadHistory()
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal menyimpan.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal menyimpan.', 'error')
   }
 }
 
@@ -216,7 +213,7 @@ const addItem = async (itemForm: { desc: string; type: string; qty: number; cost
   if (!service.value) return
   const desc = itemForm.desc
 
-  if (!desc) return window.Swal.fire('Info', 'Keterangan wajib diisi!', 'info')
+  if (!desc) return AppAlert.fire('Info', 'Keterangan wajib diisi!', 'info')
 
   const data = {
     service_order_id: service.value.id,
@@ -249,15 +246,13 @@ const addItem = async (itemForm: { desc: string; type: string; qty: number; cost
     if (itemForm.type === 'Sparepart') await loadParts()
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal menambah item.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal menambah item.', 'error')
   }
 }
 
 const deleteItem = async (itemId: number) => {
-  const result = await window.Swal.fire({
+  const result = await ConfirmDialog.fire({
     title: 'Hapus item ini?',
-    icon: 'warning',
-    showCancelButton: true,
     confirmButtonText: 'Ya, Hapus'
   })
   if (result.isConfirmed) {
@@ -270,13 +265,11 @@ const deleteItem = async (itemId: number) => {
 
 const addPayment = async (paymentForm: { amount: number; method: string }) => {
   if (!service.value) return
-  if (paymentForm.amount <= 0) return window.Swal.fire('Info', 'Nominal harus lebih dari 0', 'info')
+  if (paymentForm.amount <= 0) return AppAlert.fire('Info', 'Nominal harus lebih dari 0', 'info')
   if (paymentForm.amount > remainingBill.value) {
-    const confirm = await window.Swal.fire({
+    const confirm = await ConfirmDialog.fire({
       title: 'Nominal Berlebih',
       text: `Nominal yang dimasukkan (${formatCurrency(paymentForm.amount)}) lebih besar dari sisa tagihan (${formatCurrency(remainingBill.value)}). Tetap lanjutkan?`,
-      icon: 'warning',
-      showCancelButton: true,
       confirmButtonText: 'Lanjutkan'
     })
     if (!confirm.isConfirmed) return
@@ -294,7 +287,7 @@ const addPayment = async (paymentForm: { amount: number; method: string }) => {
   } catch (validationError: unknown) {
     const err = validationError as { issues: { message: string }[] }
     const errMsgs = err.issues?.map((e) => e.message).join('<br/>') || 'Validasi Gagal'
-    return window.Swal.fire({ icon: 'error', title: 'Validasi Gagal', html: errMsgs })
+    return AppAlert.fire({ icon: 'error', title: 'Validasi Gagal', html: errMsgs })
   }
 
   try {
@@ -303,16 +296,14 @@ const addPayment = async (paymentForm: { amount: number; method: string }) => {
     await loadServiceDetail()
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal memproses pembayaran.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal memproses pembayaran.', 'error')
   }
 }
 
 const deletePayment = async (paymentId: number) => {
   if (!service.value) return
-  const result = await window.Swal.fire({
+  const result = await ConfirmDialog.fire({
     title: 'Hapus pembayaran?',
-    icon: 'warning',
-    showCancelButton: true,
     confirmButtonText: 'Ya, Hapus'
   })
   if (result.isConfirmed) {
@@ -332,7 +323,7 @@ const sendWhatsApp = () => {
   if (!service.value) return
   const phone = service.value.customer_phone
   if (!phone) {
-    return window.Swal.fire('Info', 'Pelanggan tidak memiliki nomor telepon', 'info')
+    return AppAlert.fire('Info', 'Pelanggan tidak memiliki nomor telepon', 'info')
   }
 
   let text = `Halo Kak ${service.value.customer_name},
@@ -374,7 +365,7 @@ const printNota = async () => {
   } catch (error: unknown) {
     console.error(error)
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal mencetak tanda terima.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal mencetak tanda terima.', 'error')
   }
 }
 
@@ -394,7 +385,7 @@ const printReceipt = async () => {
   } catch (error: unknown) {
     console.error(error)
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal mencetak invoice.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal mencetak invoice.', 'error')
   }
 }
 

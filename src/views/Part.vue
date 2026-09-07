@@ -246,6 +246,7 @@ import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
 import { PartService } from '@/services/PartService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
+import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
 
 
 const route = useRoute()
@@ -367,7 +368,7 @@ const editPart = async (p: Part) => {
     }
   } catch (error) {
     console.error(error)
-    window.Swal.fire('Error', 'Gagal memuat detail sparepart.', 'error')
+    AppAlert.fire('Error', 'Gagal memuat detail sparepart.', 'error')
   }
 }
 
@@ -380,39 +381,32 @@ const savePart = async () => {
     }
     isModalOpen.value = false
     loadParts()
-    window.Swal.fire({
+    Toast.fire({
       icon: 'success',
-      title: 'Tersimpan!',
-      text: 'Data sparepart berhasil disimpan.',
-      timer: 1500,
-      showConfirmButton: false
+      title: 'Data sparepart berhasil disimpan.'
     })
   } catch (error: unknown) {
     console.error(error)
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal menyimpan data.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal menyimpan data.', 'error')
   }
 }
 
 const deletePart = async (id: number) => {
-  const result = await window.Swal.fire({
+  const result = await ConfirmDialog.fire({
     title: 'Hapus Sparepart?',
     text: 'Data yang dihapus tidak bisa dikembalikan.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#ef4444',
-    cancelButtonColor: '#64748b',
     confirmButtonText: 'Ya, Hapus!'
   })
 
   if (result.isConfirmed) {
     try {
       await PartService.delete(id)
-      window.Swal.fire('Terhapus!', 'Sparepart berhasil dihapus.', 'success')
+      Toast.fire({ icon: 'success', title: 'Sparepart berhasil dihapus.' })
       loadParts()
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)
-      window.Swal.fire('Error', msg || 'Gagal menghapus.', 'error')
+      AppAlert.fire('Error', msg || 'Gagal menghapus.', 'error')
     }
   }
 }

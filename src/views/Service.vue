@@ -267,6 +267,7 @@ import { ServiceOrderService } from '@/services/ServiceOrderService'
 import { CustomerService } from '@/services/CustomerService'
 import { DeviceService } from '@/services/DeviceService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
+import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
 
 const router = useRouter()
 const route = useRoute()
@@ -386,11 +387,10 @@ const onDeviceChange = async () => {
       const warranty = await ServiceOrderService.checkWarranty(Number(form.device_id))
       if (warranty && warranty.status === 'valid') {
         const dateStr = new Date(warranty.warranty_end_date as string).toLocaleDateString('id-ID')
-        window.Swal.fire({
+        AppAlert.fire({
           icon: 'warning',
           title: 'Perhatian!',
-          html: `Perangkat ini <b>masih dalam masa garansi</b> dari tiket <b>${warranty.ticket_number}</b> hingga tanggal <b>${dateStr}</b>.`,
-          confirmButtonText: 'Tutup'
+          html: `Perangkat ini <b>masih dalam masa garansi</b> dari tiket <b>${warranty.ticket_number}</b> hingga tanggal <b>${dateStr}</b>.`
         })
       }
     } catch (error) {
@@ -404,26 +404,21 @@ const goToDetail = (id: number) => {
 }
 
 const deleteService = async (id: number, ticketNo: string) => {
-  const result = await window.Swal.fire({
+  const result = await ConfirmDialog.fire({
     title: 'Hapus Tiket Servis?',
     text: `Anda yakin ingin menghapus tiket ${ticketNo}? Tindakan ini tidak bisa dibatalkan!`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#ef4444',
-    cancelButtonColor: '#6b7280',
-    confirmButtonText: 'Ya, Hapus!',
-    cancelButtonText: 'Batal'
+    confirmButtonText: 'Ya, Hapus!'
   })
 
   if (result.isConfirmed) {
     try {
       await ServiceOrderService.delete(id)
-      window.Swal.fire('Terhapus!', 'Tiket servis berhasil dihapus.', 'success')
+      Toast.fire({ icon: 'success', title: 'Tiket servis berhasil dihapus.' })
       loadServices(currentPage.value)
     } catch (error: unknown) {
       console.error(error)
       const msg = error instanceof Error ? error.message : String(error)
-      window.Swal.fire('Gagal', msg || 'Gagal menghapus tiket servis.', 'error')
+      AppAlert.fire('Gagal', msg || 'Gagal menghapus tiket servis.', 'error')
     }
   }
 }
@@ -484,7 +479,7 @@ const saveService = async () => {
     } catch (validationError: unknown) {
       const err = validationError as { issues?: { message: string }[] }
       const errMsgs = err.issues?.map((e) => e.message).join('<br/>') || 'Validasi Gagal'
-      window.Swal.fire({
+      AppAlert.fire({
         icon: 'error',
         title: 'Validasi Gagal',
         html: errMsgs
@@ -507,17 +502,14 @@ const saveService = async () => {
     
     isModalOpen.value = false
     loadServices()
-    window.Swal.fire({
+    Toast.fire({
       icon: 'success',
-      title: editId.value ? 'Tersimpan!' : 'Dibuat!',
-      text: editId.value ? 'Perubahan berhasil disimpan.' : 'Tiket servis berhasil dibuat.',
-      timer: 1500,
-      showConfirmButton: false
+      title: editId.value ? 'Perubahan berhasil disimpan.' : 'Tiket servis berhasil dibuat.'
     })
   } catch (error: unknown) {
     console.error(error)
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal membuat tiket servis.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal membuat tiket servis.', 'error')
   }
 }
 

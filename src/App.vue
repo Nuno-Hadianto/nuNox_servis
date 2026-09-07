@@ -29,6 +29,7 @@ import { useThemeStore } from '@/stores/theme'
 import type { Settings } from '../shared/types'
 import Sidebar from '@/components/Sidebar.vue'
 import Topbar from '@/components/Topbar.vue'
+import { Toast } from '@/utils/alert'
 
 const route = useRoute()
 
@@ -62,17 +63,6 @@ onMounted(() => {
   if (window.api && window.api.onSystemEvent) {
     const cleanup = window.api.onSystemEvent((_e: unknown, data: import('../shared/types').SystemEvent) => {
       if (data && data.type === 'toast') {
-        const Toast = window.Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast: HTMLElement) => {
-            toast.addEventListener('mouseenter', window.Swal.stopTimer)
-            toast.addEventListener('mouseleave', window.Swal.resumeTimer)
-          }
-        })
         Toast.fire({
           icon: data.level,
           title: data.message

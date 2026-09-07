@@ -213,7 +213,7 @@ import {
   printHtml,
   exportHtmlToPdf
 } from '../utils/printUtils'
-import { Toast } from '@/utils/toast'
+import { Toast, AppAlert } from '@/utils/alert'
 import StatCard from '@/components/StatCard.vue'
 import type { ServiceOrder, Settings } from '../../shared/types'
 import { ReportService } from '@/services/ReportService'
@@ -279,7 +279,7 @@ const getCommonData = async () => {
 
 const exportPdf = async () => {
   if (services.value.length === 0) {
-    return window.Swal.fire('Info', 'Tidak ada data untuk diekspor pada periode ini.', 'info')
+    return AppAlert.fire('Info', 'Tidak ada data untuk diekspor pada periode ini.', 'info')
   }
   try {
     const { settings, logoBase64 } = await getCommonData()
@@ -310,12 +310,12 @@ const exportPdf = async () => {
         title: 'Laporan PDF berhasil disimpan!'
       })
     } else if (result && !result.canceled) {
-      window.Swal.fire('Error', 'Gagal menyimpan laporan PDF: ' + (result.error || ''), 'error')
+      AppAlert.fire('Error', 'Gagal menyimpan laporan PDF: ' + (result.error || ''), 'error')
     }
   } catch (error: unknown) {
     console.error(error)
     const err = error as Error
-    window.Swal.fire('Error', `Terjadi kesalahan saat memproses PDF: ${err?.message || String(error)}`, 'error')
+    AppAlert.fire('Error', `Terjadi kesalahan saat memproses PDF: ${err?.message || String(error)}`, 'error')
   }
 }
 
@@ -326,7 +326,7 @@ const printBlankNota = async () => {
     await printHtml(html, true) // landscape
   } catch (error) {
     console.error(error)
-    window.Swal.fire('Error', 'Gagal mencetak nota kosong.', 'error')
+    AppAlert.fire('Error', 'Gagal mencetak nota kosong.', 'error')
   }
 }
 
@@ -337,7 +337,7 @@ const printBlankReceipt = async () => {
     await printHtml(html, true) // landscape
   } catch (error) {
     console.error(error)
-    window.Swal.fire('Error', 'Gagal mencetak kwitansi kosong.', 'error')
+    AppAlert.fire('Error', 'Gagal mencetak kwitansi kosong.', 'error')
   }
 }
 </script>

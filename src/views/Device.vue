@@ -243,6 +243,7 @@ import type { Device, Customer } from '../../shared/types'
 import { DeviceService } from '@/services/DeviceService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
 import { CustomerService } from '@/services/CustomerService'
+import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
 
 const devices = ref<Device[]>([])
 const customers = ref<Customer[]>([])
@@ -349,7 +350,7 @@ const editDevice = async (d: Device) => {
     }
   } catch (error) {
     console.error(error)
-    window.Swal.fire('Error', 'Gagal memuat detail perangkat.', 'error')
+    AppAlert.fire('Error', 'Gagal memuat detail perangkat.', 'error')
   }
 }
 
@@ -362,39 +363,32 @@ const saveDevice = async () => {
     }
     isModalOpen.value = false
     loadDevices()
-    window.Swal.fire({
+    Toast.fire({
       icon: 'success',
-      title: 'Tersimpan!',
-      text: 'Data perangkat berhasil disimpan.',
-      timer: 1500,
-      showConfirmButton: false
+      title: 'Data perangkat berhasil disimpan.'
     })
   } catch (error: unknown) {
     console.error(error)
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal menyimpan perangkat.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal menyimpan perangkat.', 'error')
   }
 }
 
 const deleteDevice = async (id: number) => {
-  const result = await window.Swal.fire({
+  const result = await ConfirmDialog.fire({
     title: 'Hapus Perangkat?',
     text: 'Apakah Anda yakin ingin menghapus perangkat ini?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#ef4444',
-    cancelButtonColor: '#64748b',
     confirmButtonText: 'Ya, Hapus!'
   })
 
   if (result.isConfirmed) {
     try {
       await DeviceService.delete(id)
-      window.Swal.fire('Terhapus!', 'Perangkat berhasil dihapus.', 'success')
+      Toast.fire({ icon: 'success', title: 'Perangkat berhasil dihapus.' })
       loadDevices()
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)
-      window.Swal.fire('Error', msg || 'Gagal menghapus.', 'error')
+      AppAlert.fire('Error', msg || 'Gagal menghapus.', 'error')
     }
   }
 }

@@ -224,6 +224,7 @@ import type { Customer } from '../../shared/types'
 import { CustomerSchema } from '@/utils/validators'
 import { CustomerService } from '@/services/CustomerService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
+import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
 
 const customers = ref<Customer[]>([])
 const searchQuery = ref<string>('')
@@ -304,7 +305,7 @@ const editCustomer = async (c: Customer) => {
     }
   } catch (error) {
     console.error(error)
-    window.Swal.fire('Error', 'Gagal memuat detail pelanggan.', 'error')
+    AppAlert.fire('Error', 'Gagal memuat detail pelanggan.', 'error')
   }
 }
 
@@ -331,39 +332,32 @@ const saveCustomer = async () => {
     }
     isModalOpen.value = false
     loadCustomers(currentPage.value)
-    window.Swal.fire({
+    Toast.fire({
       icon: 'success',
-      title: 'Tersimpan!',
-      text: 'Data pelanggan berhasil disimpan.',
-      timer: 1500,
-      showConfirmButton: false
+      title: 'Data pelanggan berhasil disimpan.'
     })
   } catch (error: unknown) {
     console.error(error)
     const msg = error instanceof Error ? error.message : String(error)
-    window.Swal.fire('Error', msg || 'Gagal menyimpan data pelanggan.', 'error')
+    AppAlert.fire('Error', msg || 'Gagal menyimpan data pelanggan.', 'error')
   }
 }
 
 const deleteCustomer = async (id: number) => {
-  const result = await window.Swal.fire({
+  const result = await ConfirmDialog.fire({
     title: 'Hapus Pelanggan?',
     text: 'Data tidak dapat dikembalikan! Semua perangkat terkait mungkin tidak bisa dihapus jika memiliki riwayat servis.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#ef4444',
-    cancelButtonColor: '#64748b',
     confirmButtonText: 'Ya, Hapus!'
   })
 
   if (result.isConfirmed) {
     try {
       await CustomerService.delete(id)
-      window.Swal.fire('Terhapus!', 'Pelanggan berhasil dihapus.', 'success')
+      Toast.fire({ icon: 'success', title: 'Pelanggan berhasil dihapus.' })
       loadCustomers(currentPage.value)
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)
-      window.Swal.fire('Error', msg || 'Gagal menghapus.', 'error')
+      AppAlert.fire('Error', msg || 'Gagal menghapus.', 'error')
     }
   }
 }
