@@ -17,7 +17,6 @@ export const ReportService = {
   async getReportBreakdown(start: string, end: string): Promise<{
     jasa: { omset: number; modal: number };
     sparepart: { omset: number; modal: number };
-    diskon: { omset: number; modal: number };
     lainnya: { omset: number; modal: number };
   }> {
     if (!window.api?.getReportBreakdown) throw new Error('API not available')

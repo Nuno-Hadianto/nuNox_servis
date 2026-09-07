@@ -63,11 +63,7 @@ function getServiceItems(serviceOrderId) {
 }
 function addServiceItem(data) {
     const { service_order_id, item_type, spare_part_id, description, quantity, price } = data;
-    // Diskon uses negative total
-    let total = quantity * price;
-    if (item_type === 'Diskon') {
-        total = -Math.abs(total);
-    }
+    const total = quantity * price;
     let cost_price = data.cost_price || 0;
     if (item_type === 'Sparepart' && spare_part_id) {
         const part = db_1.default.drizzle.select({ buy_price: drizzleSchema_1.spareParts.buy_price })

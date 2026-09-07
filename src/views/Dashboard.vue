@@ -96,6 +96,7 @@ import StatusChart from '@/components/charts/StatusChart.vue'
 import type { DashboardStats, AbandonedService } from '../../shared/types'
 import { DashboardService } from '@/services/DashboardService'
 import { SettingsService } from '@/services/SettingsService'
+import { useAppCacheStore } from '@/stores/appCacheStore'
 
 const isLoading = ref(true)
 
@@ -146,10 +147,19 @@ Mohon konfirmasinya. Terima kasih.`
 }
 
 const loadDashboard = async () => {
-  isLoading.value = true
+  const cacheStore = useAppCacheStore()
+
+  if (cacheStore.dashboard.hasCached && cacheStore.dashboard.stats) {
+    stats.value = cacheStore.dashboard.stats
+    isLoading.value = false
+  } else {
+    isLoading.value = true
+  }
+
   try {
     const data = await DashboardService.getStats()
     stats.value = data
+    cacheStore.setDashboardCache(data)
 
     const settings = await SettingsService.getSettings()
     if (settings && settings.wa_template_status) {

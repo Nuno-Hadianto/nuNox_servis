@@ -241,6 +241,7 @@ import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Monitor, Save, X
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import type { Device, Customer } from '../../shared/types'
 import { DeviceService } from '@/services/DeviceService'
+import { useAppCacheStore } from '@/stores/appCacheStore'
 import { CustomerService } from '@/services/CustomerService'
 
 const devices = ref<Device[]>([])
@@ -260,17 +261,23 @@ const debounceSearch = () => {
   }, 300)
 }
 
-const loadDevices = async () => {
+const loadDevices = async (page: number = 1) => {
+  const cacheStore = useAppCacheStore()
+
+  if (page === 1 && searchQuery.value === '' && cacheStore.devices.hasCached) {
+    devices.value = cacheStore.devices.data
+    totalItems.value = cacheStore.devices.total
+    currentPage.value = 1
+  }
+
   try {
-    const result = (await DeviceService.getAll(searchQuery.value, sortBy.value)) as Device[] | { data: Device[]; total: number; page: number }
-    // Adjust based on how getDevices actually returns. Assuming it returns { data, total, page } like Customer
-    if (Array.isArray(result)) {
-      devices.value = result
-      totalItems.value = result.length // Or don't use pagination
-    } else {
-      devices.value = result.data || []
-      totalItems.value = result.total || 0
-      currentPage.value = result.page || 1
+    const result = await DeviceService.getAll(searchQuery.value, sortBy.value)
+    devices.value = result || []
+    totalItems.value = result.length || 0
+    currentPage.value = 1
+
+    if (page === 1 && searchQuery.value === '') {
+      cacheStore.setDeviceCache(devices.value, totalItems.value)
     }
   } catch (error) {
     console.error('Failed to load devices:', error)

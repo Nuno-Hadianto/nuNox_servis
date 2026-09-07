@@ -223,6 +223,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import type { Customer } from '../../shared/types'
 import { CustomerSchema } from '@/utils/validators'
 import { CustomerService } from '@/services/CustomerService'
+import { useAppCacheStore } from '@/stores/appCacheStore'
 
 const customers = ref<Customer[]>([])
 const searchQuery = ref<string>('')
@@ -241,11 +242,25 @@ const debounceSearch = () => {
 }
 
 const loadCustomers = async (page: number = 1) => {
+  const cacheStore = useAppCacheStore()
+  
+  // SWR Cache: Use cache instantly if we are on page 1 and no search query
+  if (page === 1 && searchQuery.value === '' && cacheStore.customers.hasCached) {
+    customers.value = cacheStore.customers.data
+    totalItems.value = cacheStore.customers.total
+    currentPage.value = 1
+  }
+
   try {
     const result = await CustomerService.getAll(searchQuery.value, page, itemsPerPage, sortBy.value)
     customers.value = (result.data as Customer[]) || []
     totalItems.value = result.total || 0
     currentPage.value = result.page || 1
+
+    // Update Cache if on page 1 and no search query
+    if (page === 1 && searchQuery.value === '') {
+      cacheStore.setCustomerCache(customers.value, totalItems.value)
+    }
   } catch (error) {
     console.error('Failed to load customers:', error)
   }

@@ -245,6 +245,7 @@ import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
 import { PartService } from '@/services/PartService'
+import { useAppCacheStore } from '@/stores/appCacheStore'
 
 
 const route = useRoute()
@@ -282,14 +283,24 @@ const formatCurrency = (amount: number | string | undefined | null) => {
   }).format(Number(amount || 0))
 }
 
-const loadParts = async (page?: number) => {
-  if (page) {
-    currentPage.value = page
+const loadParts = async (page: number = 1) => {
+  const cacheStore = useAppCacheStore()
+
+  if (page === 1 && searchQuery.value === '' && cacheStore.parts.hasCached) {
+    parts.value = cacheStore.parts.data
+    totalPages.value = Math.ceil(cacheStore.parts.total / limit)
+    currentPage.value = 1
   }
+
   try {
-    const response = await PartService.getAll(searchQuery.value, currentPage.value, limit, sortBy.value) as { data: Part[], total: number };
+    const response = await PartService.getAll(searchQuery.value, page, limit, sortBy.value) as { data: Part[], total: number };
     parts.value = response.data;
     totalPages.value = Math.ceil(response.total / limit) || 1;
+    currentPage.value = page;
+
+    if (page === 1 && searchQuery.value === '') {
+      cacheStore.setPartCache(parts.value, response.total)
+    }
   } catch (error) {
     console.error('Failed to load parts:', error)
   }

@@ -266,6 +266,7 @@ import { ServiceOrderSchema } from '@/utils/validators'
 import { ServiceOrderService } from '@/services/ServiceOrderService'
 import { CustomerService } from '@/services/CustomerService'
 import { DeviceService } from '@/services/DeviceService'
+import { useAppCacheStore } from '@/stores/appCacheStore'
 
 const router = useRouter()
 const route = useRoute()
@@ -334,11 +335,23 @@ const isWarrantyActive = (dateStr?: string) => {
 }
 
 const loadServices = async (page: number = 1) => {
+  const cacheStore = useAppCacheStore()
+
+  if (page === 1 && searchQuery.value === '' && cacheStore.services.hasCached) {
+    services.value = cacheStore.services.data
+    totalItems.value = cacheStore.services.total
+    currentPage.value = 1
+  }
+
   try {
     const result = await ServiceOrderService.getAll(searchQuery.value, page, itemsPerPage, undefined, sortBy.value) as PaginatedResponse<ServiceOrder>
     services.value = result.data || []
     totalItems.value = result.total || 0
     currentPage.value = result.page || 1
+
+    if (page === 1 && searchQuery.value === '') {
+      cacheStore.setServiceCache(services.value, totalItems.value)
+    }
   } catch (error) {
     console.error('Failed to load services:', error)
   }

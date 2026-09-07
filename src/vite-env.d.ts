@@ -99,7 +99,6 @@ declare global {
       getReportBreakdown: (start: string, end: string) => Promise<{
         jasa: { omset: number; modal: number };
         sparepart: { omset: number; modal: number };
-        diskon: { omset: number; modal: number };
         lainnya: { omset: number; modal: number };
       }>
 

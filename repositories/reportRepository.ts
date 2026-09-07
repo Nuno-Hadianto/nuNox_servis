@@ -77,14 +77,12 @@ function getReportBreakdown(startDate: string, endDate: string) {
     const breakdown = {
         jasa: { omset: 0, modal: 0 },
         sparepart: { omset: 0, modal: 0 },
-        diskon: { omset: 0, modal: 0 },
         lainnya: { omset: 0, modal: 0 }
     };
     
     data.forEach((row: { item_type: string | null; total_omset: number | null; total_modal: number | null; }) => {
         const type = row.item_type === 'Jasa' ? 'jasa' :
-                     row.item_type === 'Sparepart' ? 'sparepart' :
-                     row.item_type === 'Diskon' ? 'diskon' : 'lainnya';
+                     row.item_type === 'Sparepart' ? 'sparepart' : 'lainnya';
         
         breakdown[type].omset += (row.total_omset || 0);
         breakdown[type].modal += (row.total_modal || 0);
