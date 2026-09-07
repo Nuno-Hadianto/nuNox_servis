@@ -1,78 +1,47 @@
 <template>
   <div class="view-section">
-    <div
-      class="action-bar"
-      style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 15px;
-        margin-bottom: 25px;
-      "
-    >
-      <div style="display: flex; gap: 10px; align-items: center">
+    <div class="action-bar header-actions">
+      <div class="filter-group">
         <Calendar class="calendar-icon" :size="18" />
-        <span style="font-weight: 500; color: var(--text-muted)">Filter:</span>
+        <span class="filter-label">Filter:</span>
         <input
           type="date"
           v-model="startDate"
           class="form-control modern-date-input"
-          style="width: 170px; border-radius: 20px; padding: 8px 15px; border: 1px solid var(--border-color); color: var(--text-primary);"
         />
-        <span style="font-weight: 500; color: var(--text-muted)">s/d</span>
+        <span class="filter-label">s/d</span>
         <input
           type="date"
           v-model="endDate"
           class="form-control modern-date-input"
-          style="width: 170px; border-radius: 20px; padding: 8px 15px; border: 1px solid var(--border-color); color: var(--text-primary);"
         />
         <button
           @click="generateReport"
-          class="btn btn-primary"
-          style="
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-          "
+          class="btn btn-primary btn-generate"
         >
-          <Filter :size="16" /> Terapkan
+          <Filter :size="16" /> Tampilkan
         </button>
       </div>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap">
-        <button @click="printBlankNota" class="btn btn-secondary" style="border-radius: 20px; display: flex; align-items: center; gap: 6px;">
+      <div class="export-actions">
+        <button @click="printBlankNota" class="btn btn-secondary btn-icon-text">
           <FileText :size="16" /> Nota Kosong
         </button>
-        <button @click="printBlankReceipt" class="btn btn-secondary" style="border-radius: 20px; display: flex; align-items: center; gap: 6px;">
+        <button @click="printBlankReceipt" class="btn btn-secondary btn-icon-text">
           <FileText :size="16" /> Kwitansi Kosong
         </button>
-
         <button
           @click="exportPdf"
-          class="btn btn-danger"
-          style="
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-          "
+          class="btn btn-danger btn-export"
         >
-          <Printer :size="18" /> Cetak Laporan
+          <Printer :size="16" /> Ekspor PDF
         </button>
       </div>
     </div>
 
-    <div
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        margin-bottom: 25px;
-      "
-    >
+    <!-- Stats Summary -->
+    <div class="stats-grid">
       <StatCard
-        title="Total Pendapatan (Omset)"
+        title="Omset Keseluruhan"
         :value="formatCurrency(totalOmset)"
         variant="primary"
         :center="true"
@@ -90,7 +59,7 @@
         <template #icon-small><TrendingDown :size="16" /></template>
       </StatCard>
       <StatCard
-        title="Laba Bersih (Profit)"
+        title="Laba Bersih (Estimasi)"
         :value="formatCurrency(netProfit)"
         variant="success"
         :center="true"
@@ -110,15 +79,8 @@
     </div>
 
     <!-- Breakdown Section -->
-    <h3 style="margin-bottom: 15px; color: var(--text-primary);">Rincian Pendapatan & Margin</h3>
-    <div
-      style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        margin-bottom: 25px;
-      "
-    >
+    <h3 class="section-title">Rincian Pendapatan & Margin</h3>
+    <div class="breakdown-grid">
       <StatCard
         title="Omset Jasa Servis"
         :value="formatCurrency(breakdownData?.jasa?.omset)"
@@ -170,13 +132,13 @@
         </thead>
         <tbody>
           <tr v-if="services.length === 0">
-            <td colspan="5" style="text-align: center; padding: 40px 20px">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
-                <div class="empty-icon" style="margin-bottom: 15px; color: var(--primary); display: inline-flex;">
+            <td colspan="5" class="empty-state">
+              <div class="empty-state-content">
+                <div class="empty-icon">
                   <Inbox :size="48" />
                 </div>
-                <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Tidak Ada Transaksi</h3>
-                <p style="margin: 0; font-size: 0.95rem;">Tidak ada transaksi selesai pada periode ini.</p>
+                <h3>Tidak Ada Transaksi</h3>
+                <p>Tidak ada transaksi selesai pada periode ini.</p>
               </div>
             </td>
           </tr>
@@ -343,13 +305,95 @@ const printBlankReceipt = async () => {
 </script>
 
 <style scoped>
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+.filter-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.filter-label {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.modern-date-input {
+  width: 170px;
+  border-radius: 20px;
+  padding: 8px 15px;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+.btn-generate, .btn-export {
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-icon-text {
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.export-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+.section-title {
+  margin-bottom: 15px;
+  color: var(--text-primary);
+}
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+.empty-icon {
+  margin-bottom: 15px;
+  color: var(--primary);
+  display: inline-flex;
+}
+.empty-state-content h3 {
+  margin: 0 0 10px;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+.empty-state-content p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
 .calendar-icon {
   opacity: 0.5;
   color: var(--text-primary);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
 }
-
 .calendar-icon:hover {
   opacity: 1;
   color: var(--primary);

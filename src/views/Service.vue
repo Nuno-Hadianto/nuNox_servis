@@ -1,52 +1,33 @@
 <template>
   <div class="view-section">
-    <div
-      class="action-bar"
-      style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px"
-    >
-      <div style="position: relative; flex: 1; max-width: 400px">
-        <Search
-          class="search-icon"
-          :size="18"
-          style="
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.5;
-            color: var(--text-primary);
-          "
-        />
-        <input
-          type="text"
-          v-model="searchQuery"
-          @input="debounceSearch"
-          placeholder="Cari tiket, pelanggan, perangkat..."
-          class="form-control"
-          style="width: 100%; padding-left: 38px; border-radius: 20px"
-        />
-      </div>
+    <div class="action-bar-container">
+      <SearchBar
+        v-model="searchQuery"
+        @input="debounceSearch"
+        placeholder="Cari tiket, pelanggan, perangkat..."
+      />
       
-      <select
-        v-model="sortBy"
-        @change="loadServices(1)"
-        class="form-control"
-        style="width: max-content; min-width: 200px; padding: 8px 16px; border-radius: 20px; cursor: pointer"
-      >
-        <option value="name_asc">Urutan: Nama Pelanggan (A-Z)</option>
-        <option value="name_desc">Urutan: Nama Pelanggan (Z-A)</option>
-        <option value="id_desc">Urutan: Terbaru Dibuat</option>
-        <option value="id_asc">Urutan: Terlama Dibuat</option>
-      </select>
+      <div class="action-buttons">
+        <select
+          v-model="sortBy"
+          @change="loadServices(1)"
+          class="form-control sort-select"
+        >
+          <option value="name_asc">Urutan: Nama Pelanggan (A-Z)</option>
+          <option value="name_desc">Urutan: Nama Pelanggan (Z-A)</option>
+          <option value="id_desc">Urutan: Terbaru Dibuat</option>
+          <option value="id_asc">Urutan: Terlama Dibuat</option>
+        </select>
 
-      <button
-        @click="openAddModal"
-        class="btn btn-primary"
-        style="display: flex; align-items: center; gap: 8px"
-      >
-        <Plus :size="18" /> Buat Tiket Servis
-      </button>
+        <button
+          @click="openAddModal"
+          class="btn btn-primary add-btn"
+        >
+          <Plus :size="18" /> Buat Tiket Servis
+        </button>
+      </div>
     </div>
+    
     <div class="table-container">
       <table class="data-table">
         <thead>
@@ -56,18 +37,18 @@
             <th>Perangkat</th>
             <th>Status</th>
             <th>Total Biaya</th>
-            <th>Aksi</th>
+            <th style="text-align: center">Aksi</th>
           </tr>
         </thead>
         <tbody>
           <tr v-if="services.length === 0">
-            <td colspan="6" style="text-align: center; padding: 40px 20px">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
-                <div class="empty-icon" style="margin-bottom: 15px; color: var(--primary); display: inline-flex;">
+            <td colspan="6" class="empty-state">
+              <div class="empty-state-content">
+                <div class="empty-icon">
                   <Wrench :size="48" />
                 </div>
-                <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Belum Ada Data Servis</h3>
-                <p style="margin: 0; font-size: 0.95rem;">Klik tombol "Buat Tiket Servis" di atas untuk menambahkan data pertama Anda.</p>
+                <h3>Belum Ada Data Servis</h3>
+                <p>Klik tombol "Buat Tiket Servis" di atas untuk menambahkan data pertama Anda.</p>
               </div>
             </td>
           </tr>
@@ -78,35 +59,21 @@
             <td>{{ s.customer_name }}</td>
             <td>{{ s.brand || '' }} {{ s.model || '' }}</td>
             <td>
-              <span class="badge" :style="getStatusColor(s.service_status)">
-                {{ s.service_status }}
-              </span>
-              <span
-                v-if="isWarrantyActive(s.warranty_end_date)"
-                style="
-                  display: inline-block;
-                  margin-top: 4px;
-                  padding: 2px 6px;
-                  border-radius: 4px;
-                  background: #10b981;
-                  color: white;
-                  font-size: 0.75rem;
-                  font-weight: bold;
-                "
-              >
+              <StatusBadge :status="s.service_status" />
+              <div v-if="isWarrantyActive(s.warranty_end_date)" class="warranty-badge">
                 🛡️ Garansi Aktif
-              </span>
+              </div>
             </td>
             <td>{{ formatCurrency(s.total_cost) }}</td>
             <td>
-              <div style="display: flex; justify-content: center; gap: 8px;">
-                <button class="btn btn-secondary btn-sm" @click="openEditModal(s)" style="display: inline-flex; align-items: center; gap: 6px;">
+              <div class="action-cell">
+                <button class="btn btn-secondary btn-sm action-btn" @click="openEditModal(s)">
                   <Edit :size="14" /> Edit
                 </button>
-                <button class="btn btn-primary btn-sm" @click="goToDetail(s.id)" style="display: inline-flex; align-items: center; gap: 6px">
+                <button class="btn btn-primary btn-sm action-btn" @click="goToDetail(s.id)">
                   <Info :size="14" /> Detail
                 </button>
-                <button class="btn btn-danger btn-sm" @click="deleteService(s.id, s.ticket_number)" style="display: inline-flex; align-items: center; gap: 6px">
+                <button class="btn btn-danger btn-sm action-btn" @click="deleteService(s.id, s.ticket_number)">
                   <Trash2 :size="14" /> Hapus
                 </button>
               </div>
@@ -116,162 +83,42 @@
       </table>
     </div>
 
-    <!-- Custom Pagination -->
-    <div
-      class="pagination-controls"
-      v-if="totalPages > 1"
-      style="
-        margin-top: 25px;
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        align-items: center;
-      "
-    >
-      <button
-        class="btn btn-secondary btn-sm"
-        :disabled="currentPage === 1"
-        @click="loadServices(currentPage - 1)"
-        style="border-radius: 20px; padding: 6px 16px; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;"
-        onmouseover="if(!this.disabled) this.style.transform='translateX(-3px)'"
-        onmouseout="if(!this.disabled) this.style.transform='translateX(0)'"
-      >
-        <ChevronLeft :size="16" /> Sebelumnya
-      </button>
-      <span
-        style="
-          font-weight: 500;
-          color: var(--text-muted);
-          background: var(--card-bg);
-          padding: 4px 12px;
-          border-radius: 20px;
-          border: 1px solid var(--border-color);
-        "
-        >Halaman {{ currentPage }} dari {{ totalPages }}</span
-      >
-      <button
-        class="btn btn-secondary btn-sm"
-        :disabled="currentPage >= totalPages"
-        @click="loadServices(currentPage + 1)"
-        style="border-radius: 20px; padding: 6px 16px; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;"
-        onmouseover="if(!this.disabled) this.style.transform='translateX(3px)'"
-        onmouseout="if(!this.disabled) this.style.transform='translateX(0)'"
-      >
-        Selanjutnya <ChevronRight :size="16" />
-      </button>
-    </div>
+    <Pagination
+      :current-page="currentPage"
+      :total-pages="totalPages"
+      @change="loadServices"
+    />
 
-    <!-- Modal Tambah Tiket -->
-    <div v-if="isModalOpen" class="modal show">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>{{ editId ? 'Edit Tiket Servis' : 'Buat Tiket Servis Baru' }}</h2>
-          <button class="btn-close" @click="isModalOpen = false"><X :size="20" /></button>
-        </div>
-        <div class="modal-body">
-          <form @submit.prevent="saveService">
-            <div class="form-group">
-              <label>Pelanggan</label>
-              <select
-                v-model="form.customer_id"
-                @change="onCustomerChange"
-                required
-                class="form-control"
-              >
-                <option value="">-- Pilih Pelanggan --</option>
-                <option v-for="c in customers" :key="c.id" :value="c.id">
-                  {{ c.name }} ({{ c.phone || '-' }})
-                </option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Perangkat</label>
-              <select
-                v-model="form.device_id"
-                @change="onDeviceChange"
-                required
-                :disabled="!form.customer_id"
-                class="form-control"
-              >
-                <option value="">-- Pilih Perangkat --</option>
-                <option v-for="d in customerDevices" :key="d.id" :value="d.id">
-                  {{ d.brand || '' }} {{ d.model || '' }} - {{ d.device_type }} (SN:
-                  {{ d.serial_number || '-' }})
-                </option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Keluhan / Kerusakan (Diisi berdasarkan laporan pelanggan)</label>
-              <textarea
-                v-model="form.customer_complaint"
-                rows="3"
-                required
-                class="form-control"
-                placeholder="Contoh: Mati total, layar bergaris..."
-                style="resize: vertical;"
-              ></textarea>
-            </div>
-            <div class="form-group" v-if="!editId">
-              <label>Kelengkapan & Kondisi Fisik (Opsional)</label>
-              <textarea
-                v-model="form.physical_condition"
-                rows="2"
-                class="form-control"
-                placeholder="Contoh: Bawa charger dan tas. Bodi bawah lecet pemakaian."
-                style="resize: vertical;"
-              ></textarea>
-            </div>
-            <div
-              class="modal-footer"
-              style="
-                display: flex;
-                gap: 10px;
-                justify-content: flex-end;
-                margin-top: 20px;
-                padding-top: 15px;
-                border-top: 1px solid var(--border-color);
-              "
-            >
-              <button
-                type="button"
-                class="btn btn-cancel"
-                @click="isModalOpen = false"
-                style="padding: 8px 20px"
-              >
-                <X :size="16" style="margin-right: 5px;" /> Batal
-              </button>
-              <button
-                type="submit"
-                class="btn btn-primary"
-                style="display: flex; align-items: center; gap: 5px"
-                :disabled="!form.customer_id || !form.device_id"
-              >
-                <Save :size="16" /> {{ editId ? 'Simpan Perubahan' : 'Buat Tiket' }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <ServiceFormModal
+      :is-open="isModalOpen"
+      :title="modalTitle"
+      :is-add-mode="!editId"
+      :customers="customers"
+      :initial-data="formInitialData"
+      @close="isModalOpen = false"
+      @save="saveService"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, ChevronLeft, ChevronRight, Edit, Trash2, Info, Wrench, Save, X } from 'lucide-vue-next'
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { Plus, Edit, Trash2, Info, Wrench } from 'lucide-vue-next'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import type { ServiceOrder, Customer, Device, PaginatedResponse } from '../../shared/types'
-import { ServiceStatus } from '../../shared/types'
+import type { ServiceOrder, Customer, PaginatedResponse } from '../../shared/types'
 import { ServiceOrderSchema } from '@/utils/validators'
 import { ServiceOrderService } from '@/services/ServiceOrderService'
 import { CustomerService } from '@/services/CustomerService'
-import { DeviceService } from '@/services/DeviceService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
 import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
 
+import SearchBar from '@/components/common/SearchBar.vue'
+import Pagination from '@/components/common/Pagination.vue'
+import StatusBadge from '@/components/common/StatusBadge.vue'
+import ServiceFormModal from '@/components/modals/ServiceFormModal.vue'
+
 const router = useRouter()
 const route = useRoute()
-const customerDevices = ref<Device[]>([])
 const searchQuery = ref<string>('')
 const sortBy = ref<string>('id_desc')
 const currentPage = ref<number>(1)
@@ -296,38 +143,6 @@ const formatCurrency = (amount: number | string | undefined | null) => {
     currency: 'IDR',
     minimumFractionDigits: 0
   }).format(Number(amount || 0))
-}
-
-const getStatusColor = (status: string) => {
-  let bg = '#e2e8f0'
-  let color = '#334155'
-  if (status === ServiceStatus.SELESAI_SUDAH_DIAMBIL) {
-    bg = '#10b981'
-    color = 'white'
-  } else if (status === ServiceStatus.SELESAI_BELUM_DIAMBIL) {
-    bg = '#34d399'
-    color = 'white'
-  } else if (status === ServiceStatus.PROSES_PERBAIKAN) {
-    bg = '#3b82f6'
-    color = 'white'
-  } else if (status === ServiceStatus.MENUNGGU_SPAREPART) {
-    bg = '#f59e0b'
-    color = 'white'
-  } else if (status === ServiceStatus.BATAL || status === 'Dibatalkan') {
-    bg = '#ef4444'
-    color = 'white'
-  }
-
-  return {
-    padding: '4px 8px',
-    borderRadius: '4px',
-    background: bg,
-    color: color,
-    fontSize: '0.85rem',
-    fontWeight: '500',
-    boxShadow: `0 0 10px ${bg}66`,
-    border: `1px solid ${bg}`
-  }
 }
 
 const isWarrantyActive = (dateStr?: string) => {
@@ -367,38 +182,6 @@ const loadCustomersDropdown = async () => {
   }
 }
 
-const onCustomerChange = async () => {
-  customerDevices.value = []
-  form.device_id = ''
-  if (form.customer_id) {
-    try {
-      customerDevices.value = (await DeviceService.getByCustomer(
-        Number(form.customer_id)
-      )) as Device[]
-    } catch (error) {
-      console.error('Failed to load devices for customer:', error)
-    }
-  }
-}
-
-const onDeviceChange = async () => {
-  if (form.device_id) {
-    try {
-      const warranty = await ServiceOrderService.checkWarranty(Number(form.device_id))
-      if (warranty && warranty.status === 'valid') {
-        const dateStr = new Date(warranty.warranty_end_date as string).toLocaleDateString('id-ID')
-        AppAlert.fire({
-          icon: 'warning',
-          title: 'Perhatian!',
-          html: `Perangkat ini <b>masih dalam masa garansi</b> dari tiket <b>${warranty.ticket_number}</b> hingga tanggal <b>${dateStr}</b>.`
-        })
-      }
-    } catch (error) {
-      console.error('Gagal mengecek garansi', error)
-    }
-  }
-}
-
 const goToDetail = (id: number) => {
   router.push(`/services/${id}`)
 }
@@ -426,7 +209,14 @@ const deleteService = async (id: number, ticketNo: string) => {
 // Modal Form Logic
 const isModalOpen = ref<boolean>(false)
 const editId = ref<number | null>(null)
-const form = reactive({
+const modalTitle = computed(() => editId.value ? 'Edit Tiket Servis' : 'Buat Tiket Servis Baru')
+
+const formInitialData = ref<{
+  customer_id: string | number
+  device_id: string | number
+  customer_complaint: string
+  physical_condition: string
+}>({
   customer_id: '',
   device_id: '',
   customer_complaint: '',
@@ -435,12 +225,12 @@ const form = reactive({
 
 const openAddModal = async () => {
   editId.value = null
-  form.customer_id = ''
-  form.device_id = ''
-  form.customer_complaint = ''
-  form.physical_condition = ''
-  customerDevices.value = []
-
+  formInitialData.value = {
+    customer_id: '',
+    device_id: '',
+    customer_complaint: '',
+    physical_condition: ''
+  }
   await loadCustomersDropdown()
   isModalOpen.value = true
 }
@@ -449,31 +239,30 @@ const openEditModal = async (s: ServiceOrder) => {
   editId.value = s.id
   await loadCustomersDropdown()
   
-  form.customer_id = String(s.customer_id)
-  await onCustomerChange()
-  
-  form.device_id = String(s.device_id)
-  form.customer_complaint = s.customer_complaint
-  form.physical_condition = '' // Tidak dipakai saat edit karena sudah digabung
+  formInitialData.value = {
+    customer_id: s.customer_id,
+    device_id: s.device_id,
+    customer_complaint: s.customer_complaint,
+    physical_condition: '' // Tidak dipakai saat edit karena sudah digabung
+  }
   
   isModalOpen.value = true
 }
 
 
-const saveService = async () => {
+const saveService = async (data: any) => {
   try {
-    const finalComplaint = form.physical_condition 
-      ? `${form.customer_complaint}\n\n[Kelengkapan & Kondisi Fisik]:\n${form.physical_condition}` 
-      : form.customer_complaint;
+    const finalComplaint = data.physical_condition 
+      ? `${data.customer_complaint}\n\n[Kelengkapan & Kondisi Fisik]:\n${data.physical_condition}` 
+      : data.customer_complaint;
 
     // Validasi dengan Zod
     try {
-      // parse estimated_cost if string
       const payload = {
-        ...form,
+        ...data,
         customer_complaint: finalComplaint,
-        customer_id: Number(form.customer_id),
-        device_id: Number(form.device_id)
+        customer_id: Number(data.customer_id),
+        device_id: Number(data.device_id)
       }
       ServiceOrderSchema.parse(payload)
     } catch (validationError: unknown) {
@@ -488,10 +277,10 @@ const saveService = async () => {
     }
 
     const finalPayload = {
-      ...form,
+      ...data,
       customer_complaint: finalComplaint,
-      customer_id: Number(form.customer_id),
-      device_id: Number(form.device_id)
+      customer_id: Number(data.customer_id),
+      device_id: Number(data.device_id)
     }
 
     if (editId.value) {
@@ -501,7 +290,7 @@ const saveService = async () => {
     }
     
     isModalOpen.value = false
-    loadServices()
+    loadServices(currentPage.value)
     Toast.fire({
       icon: 'success',
       title: editId.value ? 'Perubahan berhasil disimpan.' : 'Tiket servis berhasil dibuat.'
@@ -522,8 +311,6 @@ const handleKeydown = (e: KeyboardEvent) => {
   }
 }
 
-
-
 onMounted(() => {
   if (route.query.search) {
     searchQuery.value = route.query.search as string
@@ -537,3 +324,76 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
 })
 </script>
+
+<style scoped>
+.action-bar-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sort-select {
+  width: max-content;
+  min-width: 200px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.add-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 20px;
+}
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+.empty-icon {
+  margin-bottom: 15px;
+  color: var(--primary);
+  display: inline-flex;
+}
+.empty-state-content h3 {
+  margin: 0 0 10px;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+.empty-state-content p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.warranty-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #10b981;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+.action-cell {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+</style>

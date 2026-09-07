@@ -1,37 +1,16 @@
 <template>
   <div class="view-section" style="position: relative;">
-    <div
-      class="action-bar"
-      style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px"
-    >
-      <div style="position: relative; flex: 1; max-width: 400px">
-        <Search
-          class="search-icon"
-          :size="18"
-          style="
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.5;
-            color: var(--text-primary);
-          "
-        />
-        <input
-          type="text"
-          v-model="searchQuery"
-          @input="debounceSearch"
-          placeholder="Cari item di katalog (Kode / Nama)..."
-          class="form-control"
-          style="width: 100%; padding-left: 38px; border-radius: 20px"
-        />
-      </div>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap">
+    <div class="action-bar-container">
+      <SearchBar
+        v-model="searchQuery"
+        @input="debounceSearch"
+        placeholder="Cari item di katalog (Kode / Nama)..."
+      />
+      <div class="action-buttons">
         <select
           v-model="sortBy"
           @change="loadParts(1)"
-          class="form-control"
-          style="width: max-content; min-width: 200px; padding: 8px 16px; border-radius: 20px; cursor: pointer"
+          class="form-control sort-select"
         >
           <option value="name_asc">Urutan: Nama (A-Z)</option>
           <option value="name_desc">Urutan: Nama (Z-A)</option>
@@ -41,8 +20,7 @@
 
         <button
           @click="openAddModal"
-          class="btn btn-primary"
-          style="display: flex; align-items: center; gap: 6px; border-radius: 20px"
+          class="btn btn-primary add-btn"
         >
           <Plus :size="18" /> Tambah Item
         </button>
@@ -63,13 +41,13 @@
         </thead>
         <tbody>
           <tr v-if="parts.length === 0">
-            <td colspan="7" style="text-align: center; padding: 40px 20px">
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.7;">
-                <div class="empty-icon" style="margin-bottom: 15px; color: var(--primary); display: inline-flex;">
+            <td colspan="7" class="empty-state">
+              <div class="empty-state-content">
+                <div class="empty-icon">
                   <Box :size="48" />
                 </div>
-                <h3 style="margin: 0 0 10px; font-weight: 600; font-size: 1.2rem;">Belum Ada Data Sparepart</h3>
-                <p style="margin: 0; font-size: 0.95rem;">Klik tombol "Tambah Sparepart" di atas untuk menambahkan data pertama Anda.</p>
+                <h3>Belum Ada Data Sparepart</h3>
+                <p>Klik tombol "Tambah Sparepart" di atas untuk menambahkan data pertama Anda.</p>
               </div>
             </td>
           </tr>
@@ -81,23 +59,21 @@
             <td>{{ formatCurrency(p.sell_price) }}</td>
             <td :style="{ color: p.sell_price > p.buy_price ? '#10b981' : (p.sell_price < p.buy_price ? '#ef4444' : 'inherit'), fontWeight: 'bold' }">
               {{ formatCurrency((p.sell_price || 0) - (p.buy_price || 0)) }}
-              <span v-if="p.buy_price > 0" style="font-size: 0.8em; opacity: 0.8">
+              <span v-if="p.buy_price > 0" class="margin-percent">
                 ({{ Math.round(((p.sell_price - p.buy_price) / p.buy_price) * 100) }}%)
               </span>
             </td>
             <td>
-              <div style="display: flex; justify-content: center; gap: 8px;">
+              <div class="action-cell">
                 <button
-                  class="btn btn-secondary btn-sm"
+                  class="btn btn-secondary btn-sm action-btn"
                   @click="editPart(p)"
-                  style="display: inline-flex; align-items: center; gap: 6px"
                 >
                   <Edit :size="14" /> Edit
                 </button>
                 <button
-                  class="btn btn-danger btn-sm"
+                  class="btn btn-danger btn-sm action-btn"
                   @click="deletePart(p.id)"
-                  style="display: inline-flex; align-items: center; gap: 6px"
                 >
                   <Trash2 :size="14" /> Hapus
                 </button>
@@ -108,146 +84,34 @@
       </table>
     </div>
 
-    <!-- Custom Pagination -->
-    <div class="pagination" v-if="totalPages > 1">
-      <button 
-        class="page-btn" 
-        :disabled="currentPage === 1" 
-        @click="prevPage"
-      >
-        <ChevronLeft :size="18" />
-      </button>
-      <span class="page-info">Halaman {{ currentPage }} dari {{ totalPages }}</span>
-      <button 
-        class="page-btn" 
-        :disabled="currentPage === totalPages" 
-        @click="nextPage"
-      >
-        <ChevronRight :size="18" />
-      </button>
-    </div>
+    <Pagination
+      :current-page="currentPage"
+      :total-pages="totalPages"
+      @change="loadParts"
+    />
 
-    <!-- Modal Tambah/Edit -->
-    <div v-if="isModalOpen" class="modal show">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>{{ modalTitle }}</h2>
-          <span class="close-modal" @click="isModalOpen = false">&times;</span>
-        </div>
-        <div class="modal-body">
-          <form @submit.prevent="savePart">
-            <div style="display: flex; gap: 15px">
-              <div class="form-group" style="flex: 1">
-                <label>Kode Barang (Opsional)</label>
-                <input
-                  type="text"
-                  v-model="form.part_code"
-                  class="form-control"
-                  placeholder="Contoh: LCD-IP-11"
-                />
-              </div>
-              <div class="form-group" style="flex: 1">
-                <label>Kategori</label>
-                <input
-                  type="text"
-                  v-model="form.category"
-                  class="form-control"
-                  placeholder="Contoh: LCD, Baterai..."
-                />
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Nama Item</label>
-              <input
-                type="text"
-                v-model="form.name"
-                required
-                class="form-control"
-                placeholder="Nama barang / jasa"
-              />
-            </div>
-            <div style="display: flex; gap: 15px">
-              <div class="form-group" style="flex: 1">
-                <label>Satuan (Opsional)</label>
-                <input
-                  type="text"
-                  v-model="form.unit"
-                  class="form-control"
-                  placeholder="Pcs, Unit..."
-                />
-              </div>
-            </div>
-            <div style="display: flex; gap: 15px">
-              <div class="form-group" style="flex: 1">
-                <label>Harga Beli / Modal (Rp)</label>
-                <input
-                  type="number"
-                  v-model.number="form.buy_price"
-                  required
-                  min="0"
-                  class="form-control"
-                />
-              </div>
-              <div class="form-group" style="flex: 1">
-                <label>Harga Jual (Rp)</label>
-                <input
-                  type="number"
-                  v-model.number="form.sell_price"
-                  required
-                  min="0"
-                  class="form-control"
-                />
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Catatan Tambahan</label>
-              <textarea
-                v-model="form.notes"
-                rows="2"
-                class="form-control"
-                style="resize: vertical;"
-              ></textarea>
-            </div>
-            <div
-              class="modal-footer"
-              style="
-                display: flex;
-                gap: 10px;
-                justify-content: flex-end;
-                margin-top: 20px;
-                padding-top: 15px;
-                border-top: 1px solid var(--border-color);
-              "
-            >
-              <button
-                type="button"
-                class="btn btn-cancel"
-                @click="isModalOpen = false"
-                style="padding: 8px 20px"
-              >
-                <X :size="16" style="margin-right: 5px;" /> Batal
-              </button>
-              <button type="submit" class="btn btn-primary" style="padding: 8px 20px">
-                <Save :size="16" style="margin-right: 5px;" /> Simpan
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
+    <PartFormModal
+      :is-open="isModalOpen"
+      :title="modalTitle"
+      :initial-data="formInitialData"
+      @close="isModalOpen = false"
+      @save="savePart"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Box, Save, X } from 'lucide-vue-next'
-import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
+import { Plus, Edit, Trash2, Box } from 'lucide-vue-next'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
 import { PartService } from '@/services/PartService'
 import { useAppCacheStore } from '@/stores/appCacheStore'
 import { Toast, AppAlert, ConfirmDialog } from '@/utils/alert'
 
+import SearchBar from '@/components/common/SearchBar.vue'
+import Pagination from '@/components/common/Pagination.vue'
+import PartFormModal from '@/components/modals/PartFormModal.vue'
 
 const route = useRoute()
 const parts = ref<Part[]>([])
@@ -271,7 +135,7 @@ let searchTimeout: ReturnType<typeof setTimeout> | null = null
 const debounceSearch = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    currentPage.value = 1 // Reset to first page on search
+    currentPage.value = 1
     loadParts()
   }, 300)
 }
@@ -307,26 +171,19 @@ const loadParts = async (page: number = 1) => {
   }
 }
 
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-    loadParts()
-  }
-}
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-    loadParts()
-  }
-}
-
-
 // Modal Form Logic
 const isModalOpen = ref<boolean>(false)
 const modalTitle = ref<string>('Tambah Item')
 const formId = ref<number | null>(null)
-const form = reactive({
+const formInitialData = ref<{
+  part_code: string
+  name: string
+  category: string
+  buy_price: number
+  sell_price: number
+  unit: string
+  notes: string
+}>({
   part_code: '',
   name: '',
   category: '',
@@ -339,17 +196,17 @@ const form = reactive({
 const openAddModal = () => {
   modalTitle.value = 'Tambah Item'
   formId.value = null
-  form.part_code = ''
-  form.name = ''
-  form.category = ''
-  form.buy_price = 0
-  form.sell_price = 0
-  form.unit = 'Pcs'
-  form.notes = ''
+  formInitialData.value = {
+    part_code: '',
+    name: '',
+    category: '',
+    buy_price: 0,
+    sell_price: 0,
+    unit: 'Pcs',
+    notes: ''
+  }
   isModalOpen.value = true
 }
-
-// History Logic removed
 
 const editPart = async (p: Part) => {
   try {
@@ -357,13 +214,15 @@ const editPart = async (p: Part) => {
     if (detail) {
       modalTitle.value = 'Edit Item'
       formId.value = detail.id || null
-      form.part_code = detail.part_code || ''
-      form.name = detail.name || ''
-      form.category = detail.category || ''
-      form.buy_price = detail.buy_price || 0
-      form.sell_price = detail.sell_price || 0
-      form.unit = detail.unit || ''
-      form.notes = detail.notes || ''
+      formInitialData.value = {
+        part_code: detail.part_code || '',
+        name: detail.name || '',
+        category: detail.category || '',
+        buy_price: detail.buy_price || 0,
+        sell_price: detail.sell_price || 0,
+        unit: detail.unit || '',
+        notes: detail.notes || ''
+      }
       isModalOpen.value = true
     }
   } catch (error) {
@@ -372,15 +231,15 @@ const editPart = async (p: Part) => {
   }
 }
 
-const savePart = async () => {
+const savePart = async (data: Omit<Part, 'id'>) => {
   try {
     if (formId.value) {
-      await PartService.update(formId.value, { ...form })
+      await PartService.update(formId.value, data)
     } else {
-      await PartService.create({ ...form })
+      await PartService.create(data)
     }
     isModalOpen.value = false
-    loadParts()
+    loadParts(currentPage.value) // Use current page to stay where they were
     Toast.fire({
       icon: 'success',
       title: 'Data sparepart berhasil disimpan.'
@@ -403,15 +262,13 @@ const deletePart = async (id: number) => {
     try {
       await PartService.delete(id)
       Toast.fire({ icon: 'success', title: 'Sparepart berhasil dihapus.' })
-      loadParts()
+      loadParts(currentPage.value)
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)
       AppAlert.fire('Error', msg || 'Gagal menghapus.', 'error')
     }
   }
 }
-
-
 
 const handleKeydown = (e: KeyboardEvent) => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
@@ -431,3 +288,69 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
 })
 </script>
+
+<style scoped>
+.action-bar-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sort-select {
+  width: max-content;
+  min-width: 200px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 20px;
+}
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+.empty-icon {
+  margin-bottom: 15px;
+  color: var(--primary);
+  display: inline-flex;
+}
+.empty-state-content h3 {
+  margin: 0 0 10px;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+.empty-state-content p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.margin-percent {
+  font-size: 0.8em;
+  opacity: 0.8;
+}
+.action-cell {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+</style>
