@@ -1,0 +1,1 @@
+import{Wn as e}from"./lucide-vue-next-CWHr592y.js";var t,n=e((()=>{t={async getSettings(){if(!window.api?.getSettings)throw Error(`API not available`);return window.api.getSettings()},async updateSettings(e){if(!window.api?.updateSettings)throw Error(`API not available`);return window.api.updateSettings(e)}}}));export{n,t};

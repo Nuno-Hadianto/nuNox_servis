@@ -1,4 +1,4 @@
-import{n as e}from"./rolldown-runtime-D2aABDIb.js";var t,n,r,i,a,o,s,c=e((()=>{t=(e,t,n)=>(e||={},`
+import{Wn as e}from"./lucide-vue-next-CWHr592y.js";var t,n,r,i,a,o,s,c=e((()=>{t=(e,t,n)=>(e||={},`
         <div class="print-nota nota-wrapper">
             <!-- Header -->
             <div class="nota-header">
