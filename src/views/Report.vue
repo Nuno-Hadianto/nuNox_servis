@@ -213,9 +213,11 @@ import {
   printHtml,
   exportHtmlToPdf
 } from '../utils/printUtils'
-import { Toast } from '../utils/toast'
-import StatCard from '../components/StatCard.vue'
+import { Toast } from '@/utils/toast'
+import StatCard from '@/components/StatCard.vue'
 import type { ServiceOrder, Settings } from '../../shared/types'
+import { ReportService } from '@/services/ReportService'
+import { SettingsService } from '@/services/SettingsService'
 
 const startDate = ref<string>('')
 const endDate = ref<string>('')
@@ -242,40 +244,36 @@ onMounted(() => {
 
 const generateReport = async () => {
   if (!startDate.value || !endDate.value) return
-  if (window.api && window.api.getCompletedServices) {
-    try {
-      const data = (await window.api.getCompletedServices(
-        startDate.value,
-        endDate.value
-      )) as unknown as (ServiceOrder & { total_modal?: number })[]
-      services.value = data
+  try {
+    const data = (await ReportService.getCompletedServices(
+      startDate.value,
+      endDate.value
+    )) as unknown as (ServiceOrder & { total_modal?: number })[]
+    services.value = data
 
-      let omset = 0
-      let modal = 0
-      data.forEach((s) => {
-        omset += s.total_cost || 0
-        modal += s.total_modal || 0
-      })
+    let omset = 0
+    let modal = 0
+    data.forEach((s) => {
+      omset += s.total_cost || 0
+      modal += s.total_modal || 0
+    })
 
-      totalOmset.value = omset
-      totalModal.value = modal
-      netProfit.value = omset - modal
-      
-      if (window.api.getReportBreakdown) {
-          const bd = await window.api.getReportBreakdown(startDate.value, endDate.value)
-          breakdownData.value = bd
-      }
-    } catch (error) {
-      console.error(error)
-    }
+    totalOmset.value = omset
+    totalModal.value = modal
+    netProfit.value = omset - modal
+    
+    const bd = await ReportService.getReportBreakdown(startDate.value, endDate.value)
+    breakdownData.value = bd as Record<string, Record<string, number>>
+  } catch (error) {
+    console.error(error)
   }
 }
 
 
 
 const getCommonData = async () => {
-  const settings = (await window.api.getSettings()) as Settings
-  const logoBase64 = window.api.getLogoBase64 ? await window.api.getLogoBase64() : ''
+  const settings = (await SettingsService.getSettings()) as Settings
+  const logoBase64 = window.api && window.api.getLogoBase64 ? await window.api.getLogoBase64() : ''
   return { settings, logoBase64 }
 }
 
@@ -286,8 +284,10 @@ const exportPdf = async () => {
   try {
     const { settings, logoBase64 } = await getCommonData()
     let topParts: { part_name: string; total_sold: number; }[] = []
-    if (window.api && window.api.getTopSpareparts) {
-      topParts = (await window.api.getTopSpareparts(startDate.value, endDate.value)) as { part_name: string; total_sold: number; }[]
+    try {
+      topParts = (await ReportService.getTopSpareparts(startDate.value, endDate.value)) as { part_name: string; total_sold: number; }[]
+    } catch (e) {
+      console.error(e)
     }
 
     const html = generateReportHtml(

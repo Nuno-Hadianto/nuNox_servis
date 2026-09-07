@@ -25,10 +25,10 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useThemeStore } from './stores/theme'
+import { useThemeStore } from '@/stores/theme'
 import type { Settings } from '../shared/types'
-import Sidebar from './components/Sidebar.vue'
-import Topbar from './components/Topbar.vue'
+import Sidebar from '@/components/Sidebar.vue'
+import Topbar from '@/components/Topbar.vue'
 
 const route = useRoute()
 

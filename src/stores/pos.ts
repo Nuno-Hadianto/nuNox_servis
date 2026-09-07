@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Part } from '../../shared/types'
-import { Toast } from '../utils/toast'
+import { Toast } from '@/utils/toast'
 
 export interface CartItem {
   id: number

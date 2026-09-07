@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue'
 import Chart from 'chart.js/auto'
-import { useThemeStore } from '../../stores/theme'
+import { useThemeStore } from '@/stores/theme'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{

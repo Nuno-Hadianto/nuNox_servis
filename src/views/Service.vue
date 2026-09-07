@@ -262,7 +262,10 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { ServiceOrder, Customer, Device, PaginatedResponse } from '../../shared/types'
 import { ServiceStatus } from '../../shared/types'
-import { ServiceOrderSchema } from '../utils/validators'
+import { ServiceOrderSchema } from '@/utils/validators'
+import { ServiceOrderService } from '@/services/ServiceOrderService'
+import { CustomerService } from '@/services/CustomerService'
+import { DeviceService } from '@/services/DeviceService'
 
 const router = useRouter()
 const route = useRoute()
@@ -331,40 +334,44 @@ const isWarrantyActive = (dateStr?: string) => {
 }
 
 const loadServices = async (page: number = 1) => {
-  if (window.api && window.api.getServices) {
-    try {
-      const result = await window.api.getServices(searchQuery.value, page, itemsPerPage, undefined, sortBy.value) as PaginatedResponse<ServiceOrder>
-      services.value = result.data || []
-      totalItems.value = result.total || 0
-      currentPage.value = result.page || 1
-    } catch (error) {
-      console.error('Failed to load services:', error)
-    }
+  try {
+    const result = await ServiceOrderService.getAll(searchQuery.value, page, itemsPerPage, undefined, sortBy.value) as PaginatedResponse<ServiceOrder>
+    services.value = result.data || []
+    totalItems.value = result.total || 0
+    currentPage.value = result.page || 1
+  } catch (error) {
+    console.error('Failed to load services:', error)
   }
 }
 
 const loadCustomersDropdown = async () => {
-  if (window.api && window.api.getCustomers) {
-    const result = await window.api.getCustomers('', 1, 1000)
+  try {
+    const result = await CustomerService.getAll('', 1, 1000)
     customers.value = (result.data as Customer[]) || []
+  } catch (error) {
+    console.error('Failed to load customers for dropdown:', error)
   }
 }
 
 const onCustomerChange = async () => {
   customerDevices.value = []
   form.device_id = ''
-  if (form.customer_id && window.api && window.api.getDevicesByCustomer) {
-    customerDevices.value = (await window.api.getDevicesByCustomer(
-      Number(form.customer_id)
-    )) as Device[]
+  if (form.customer_id) {
+    try {
+      customerDevices.value = (await DeviceService.getByCustomer(
+        Number(form.customer_id)
+      )) as Device[]
+    } catch (error) {
+      console.error('Failed to load devices for customer:', error)
+    }
   }
 }
 
 const onDeviceChange = async () => {
-  if (form.device_id && window.api && window.api.checkWarranty) {
+  if (form.device_id) {
     try {
-      const warranty = await window.api.checkWarranty(Number(form.device_id))
-      if (warranty) {
+      const warranty = await ServiceOrderService.checkWarranty(Number(form.device_id))
+      if (warranty && warranty.status === 'valid') {
         const dateStr = new Date(warranty.warranty_end_date as string).toLocaleDateString('id-ID')
         window.Swal.fire({
           icon: 'warning',
@@ -397,7 +404,7 @@ const deleteService = async (id: number, ticketNo: string) => {
 
   if (result.isConfirmed) {
     try {
-      await window.api.deleteService(id)
+      await ServiceOrderService.delete(id)
       window.Swal.fire('Terhapus!', 'Tiket servis berhasil dihapus.', 'success')
       loadServices(currentPage.value)
     } catch (error: unknown) {
@@ -480,9 +487,9 @@ const saveService = async () => {
     }
 
     if (editId.value) {
-      await window.api.updateServiceDetails(editId.value, finalPayload)
+      await ServiceOrderService.updateDetails(editId.value, finalPayload)
     } else {
-      await window.api.addService(finalPayload)
+      await ServiceOrderService.create(finalPayload)
     }
     
     isModalOpen.value = false

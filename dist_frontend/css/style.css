@@ -76,6 +76,16 @@ body:not(.dark-mode) {
   100% { background-position: 0% 50%; }
 }
 
+@keyframes float-icon {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.empty-icon {
+  animation: float-icon 2.5s ease-in-out infinite;
+}
+
 body {
   font-family: var(--font-family);
   background: var(--bg-gradient);
@@ -319,6 +329,32 @@ a {
   transform: scale(0.95);
 }
 
+/* Icon Animations inside buttons */
+.btn svg {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  stroke-width: 2.5px !important;
+}
+
+.btn:hover svg {
+  transform: scale(1.15);
+}
+
+.btn-primary:hover svg {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.btn-danger:hover svg {
+  animation: wiggle 0.4s ease-in-out forwards;
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(0deg) scale(1.15); }
+  25% { transform: rotate(-10deg) scale(1.15); }
+  50% { transform: rotate(8deg) scale(1.15); }
+  75% { transform: rotate(-4deg) scale(1.15); }
+  100% { transform: rotate(0deg) scale(1.15); }
+}
+
 .btn-sm {
   padding: 6px 14px;
   font-size: 0.85rem;
@@ -344,6 +380,8 @@ a {
 
 .btn-secondary:hover {
   background: var(--secondary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
 }
 
 .btn-outline {
@@ -354,6 +392,8 @@ a {
 .btn-outline:hover {
   background: var(--hover-bg);
   border-color: var(--text-muted);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .btn-cancel {
@@ -364,6 +404,11 @@ a {
 .btn-cancel:hover {
   background: var(--danger);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+.btn-cancel:hover svg {
+  animation: wiggle 0.4s ease-in-out forwards;
 }
 
 .btn-danger {
@@ -375,6 +420,21 @@ a {
 .btn-danger:hover {
   background: var(--danger);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.btn-warning:hover {
+  background: var(--warning);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 /* Cards (Glassmorphism) */
@@ -387,6 +447,12 @@ a {
   box-shadow: var(--glass-shadow);
   padding: 24px;
   transition: var(--transition);
+}
+
+.form-control:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  border-color: var(--primary);
 }
 
 .card:hover {
@@ -445,14 +511,21 @@ a {
   letter-spacing: 0.5px;
   color: white;
   background: var(--primary);
+  transition: var(--transition);
 }
+
+
 
 .data-table tbody tr {
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .data-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  position: relative;
+  z-index: 10;
 }
 
 .data-table td .btn {
@@ -514,11 +587,44 @@ a {
   transition: var(--transition);
 }
 
+select.form-control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+  padding-right: 40px !important;
+}
+
 .form-control:focus {
   border-color: var(--primary);
   background: var(--input-bg-focus, rgba(0, 0, 0, 0.3));
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
+
+/* Custom Date Picker Styling */
+.modern-date-input:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  border-color: var(--primary);
+}
+.modern-date-input::-webkit-calendar-picker-indicator {
+  background-color: transparent;
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 6px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.modern-date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+.dark-mode .modern-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
 
 /* Badges */
 .badge {
@@ -533,24 +639,28 @@ a {
   background: rgba(16, 185, 129, 0.15);
   color: #34d399;
   border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
 }
 
 .badge-warning {
   background: rgba(245, 158, 11, 0.15);
   color: #fbbf24;
   border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
 }
 
 .badge-info {
   background: rgba(59, 130, 246, 0.15);
   color: #60a5fa;
   border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
 }
 
 .badge-danger {
   background: rgba(239, 68, 68, 0.15);
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
 }
 
 /* Login Screen Styles */
@@ -639,6 +749,13 @@ a {
   background: var(--card-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
+  transition: var(--transition);
+}
+
+.table-container:hover {
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
 }
 
 .data-table {
@@ -659,7 +776,9 @@ a {
   text-transform: uppercase;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
+  transition: var(--transition);
 }
+
 
 .data-table tr {
   transition: var(--transition);
@@ -670,7 +789,11 @@ a {
 }
 
 .data-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  position: relative;
+  z-index: 10;
 }
 
 .modal {

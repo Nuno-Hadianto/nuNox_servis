@@ -88,12 +88,14 @@
 import { ref, onMounted } from 'vue'
 
 import { Wrench, Hourglass, CheckCircle, Wallet, TrendingUp, LineChart, PieChart } from 'lucide-vue-next'
-import StatCard from '../components/StatCard.vue'
-import TodoWidget from '../components/dashboard/TodoWidget.vue'
-import AbandonedWidget from '../components/dashboard/AbandonedWidget.vue'
-import IncomeChart from '../components/charts/IncomeChart.vue'
-import StatusChart from '../components/charts/StatusChart.vue'
+import StatCard from '@/components/StatCard.vue'
+import TodoWidget from '@/components/dashboard/TodoWidget.vue'
+import AbandonedWidget from '@/components/dashboard/AbandonedWidget.vue'
+import IncomeChart from '@/components/charts/IncomeChart.vue'
+import StatusChart from '@/components/charts/StatusChart.vue'
 import type { DashboardStats, AbandonedService } from '../../shared/types'
+import { DashboardService } from '@/services/DashboardService'
+import { SettingsService } from '@/services/SettingsService'
 
 const isLoading = ref(true)
 
@@ -145,21 +147,17 @@ Mohon konfirmasinya. Terima kasih.`
 
 const loadDashboard = async () => {
   isLoading.value = true
-  if (window.api && window.api.getDashboardStats) {
-    try {
-      const data = await window.api.getDashboardStats()
-      stats.value = data
+  try {
+    const data = await DashboardService.getStats()
+    stats.value = data
 
-      const settings = await window.api.getSettings()
-      if (settings && settings.wa_template_status) {
-        waTemplate.value = settings.wa_template_status
-      }
-    } catch (error) {
-      console.error('Failed to load dashboard stats:', error)
-    } finally {
-      isLoading.value = false
+    const settings = await SettingsService.getSettings()
+    if (settings && settings.wa_template_status) {
+      waTemplate.value = settings.wa_template_status
     }
-  } else {
+  } catch (error) {
+    console.error('Failed to load dashboard stats:', error)
+  } finally {
     isLoading.value = false
   }
 }

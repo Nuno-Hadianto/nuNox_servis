@@ -240,6 +240,8 @@
 import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Monitor, Save, X } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import type { Device, Customer } from '../../shared/types'
+import { DeviceService } from '@/services/DeviceService'
+import { CustomerService } from '@/services/CustomerService'
 
 const devices = ref<Device[]>([])
 const customers = ref<Customer[]>([])
@@ -259,28 +261,28 @@ const debounceSearch = () => {
 }
 
 const loadDevices = async () => {
-  if (window.api && window.api.getDevices) {
-    try {
-      const result = (await window.api.getDevices(searchQuery.value, sortBy.value)) as Device[] | { data: Device[]; total: number; page: number }
-      // Adjust based on how getDevices actually returns. Assuming it returns { data, total, page } like Customer
-      if (Array.isArray(result)) {
-        devices.value = result
-        totalItems.value = result.length // Or don't use pagination
-      } else {
-        devices.value = result.data || []
-        totalItems.value = result.total || 0
-        currentPage.value = result.page || 1
-      }
-    } catch (error) {
-      console.error('Failed to load devices:', error)
+  try {
+    const result = (await DeviceService.getAll(searchQuery.value, sortBy.value)) as Device[] | { data: Device[]; total: number; page: number }
+    // Adjust based on how getDevices actually returns. Assuming it returns { data, total, page } like Customer
+    if (Array.isArray(result)) {
+      devices.value = result
+      totalItems.value = result.length // Or don't use pagination
+    } else {
+      devices.value = result.data || []
+      totalItems.value = result.total || 0
+      currentPage.value = result.page || 1
     }
+  } catch (error) {
+    console.error('Failed to load devices:', error)
   }
 }
 
 const loadCustomersDropdown = async () => {
-  if (window.api && window.api.getCustomers) {
-    const result = await window.api.getCustomers('', 1, 1000)
+  try {
+    const result = await CustomerService.getAll('', 1, 1000)
     customers.value = (result.data as Customer[]) || []
+  } catch (error) {
+    console.error('Failed to load customers for dropdown:', error)
   }
 }
 
@@ -319,7 +321,7 @@ const openAddModal = async () => {
 
 const editDevice = async (d: Device) => {
   try {
-    const detail = (await window.api.getDevice(d.id)) as Device
+    const detail = (await DeviceService.getById(d.id)) as Device
     if (detail) {
       modalTitle.value = 'Edit Perangkat'
       formId.value = detail.id || null
@@ -347,9 +349,9 @@ const editDevice = async (d: Device) => {
 const saveDevice = async () => {
   try {
     if (formId.value) {
-      await window.api.updateDevice(formId.value, { ...form, customer_id: Number(form.customer_id) })
+      await DeviceService.update(formId.value, { ...form, customer_id: Number(form.customer_id) })
     } else {
-      await window.api.addDevice({ ...form, customer_id: Number(form.customer_id) })
+      await DeviceService.create({ ...form, customer_id: Number(form.customer_id) })
     }
     isModalOpen.value = false
     loadDevices()
@@ -380,7 +382,7 @@ const deleteDevice = async (id: number) => {
 
   if (result.isConfirmed) {
     try {
-      await window.api.deleteDevice(id)
+      await DeviceService.delete(id)
       window.Swal.fire('Terhapus!', 'Perangkat berhasil dihapus.', 'success')
       loadDevices()
     } catch (error: unknown) {

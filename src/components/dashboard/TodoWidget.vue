@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 import { ClipboardList, ArrowRight } from 'lucide-vue-next'
-import SkeletonLoader from '../SkeletonLoader.vue'
+import SkeletonLoader from '@/components/SkeletonLoader.vue'
 import type { TodoItem } from '../../../shared/types'
 import { useRouter } from 'vue-router'
 

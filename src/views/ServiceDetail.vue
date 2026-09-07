@@ -56,20 +56,23 @@ import type {
   Part,
   Settings
 } from '../../shared/types'
-import { ServiceItemSchema, PaymentSchema } from '../utils/validators'
+import { ServiceItemSchema, PaymentSchema } from '@/utils/validators'
+import { ServiceOrderService } from '@/services/ServiceOrderService'
+import { PartService } from '@/services/PartService'
+import { SettingsService } from '@/services/SettingsService'
 import {
   generateInvoiceHtml,
   generateNotaHtml,
   printHtml
 } from '../utils/printUtils.js'
 
-import ServiceActionBar from '../components/ServiceDetail/ServiceActionBar.vue'
-import ServiceInfo from '../components/ServiceDetail/ServiceInfo.vue'
-import ServiceStatusUpdate from '../components/ServiceDetail/ServiceStatusUpdate.vue'
-import ServiceHistory from '../components/ServiceDetail/ServiceHistory.vue'
-import ServiceItems from '../components/ServiceDetail/ServiceItems.vue'
-import ServicePayments from '../components/ServiceDetail/ServicePayments.vue'
-import ServiceWaModal from '../components/ServiceDetail/ServiceWaModal.vue'
+import ServiceActionBar from '@/components/ServiceDetail/ServiceActionBar.vue'
+import ServiceInfo from '@/components/ServiceDetail/ServiceInfo.vue'
+import ServiceStatusUpdate from '@/components/ServiceDetail/ServiceStatusUpdate.vue'
+import ServiceHistory from '@/components/ServiceDetail/ServiceHistory.vue'
+import ServiceItems from '@/components/ServiceDetail/ServiceItems.vue'
+import ServicePayments from '@/components/ServiceDetail/ServicePayments.vue'
+import ServiceWaModal from '@/components/ServiceDetail/ServiceWaModal.vue'
 
 const route = useRoute()
 const service = ref<ServiceOrder | null>(null)
@@ -102,56 +105,61 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 
 const loadServiceDetail = async () => {
   const id = route.params.id as string
-  if (window.api && window.api.getService) {
-    try {
-      const detail = (await window.api.getService(Number(id))) as ServiceOrder
-      if (detail) {
-        service.value = detail
-      }
-    } catch (error) {
-      console.error(error)
+  try {
+    const detail = (await ServiceOrderService.getById(Number(id))) as ServiceOrder
+    if (detail) {
+      service.value = detail
     }
+  } catch (error) {
+    console.error(error)
   }
 }
 
 const loadHistory = async () => {
   const id = route.params.id as string
-  if (window.api && window.api.getServiceHistory) {
-    history.value = (await window.api.getServiceHistory(Number(id))) as ServiceHistoryType[]
+  try {
+    history.value = (await ServiceOrderService.getHistory(Number(id))) as ServiceHistoryType[]
+  } catch (e) {
+    console.error(e)
   }
 }
 
 const loadItems = async () => {
   const id = route.params.id as string
-  if (window.api && window.api.getServiceItems) {
-    items.value = (await window.api.getServiceItems(Number(id))) as ServiceItemType[]
+  try {
+    items.value = (await ServiceOrderService.getItems(Number(id))) as ServiceItemType[]
+  } catch (e) {
+    console.error(e)
   }
 }
 
 const loadPayments = async () => {
   const id = route.params.id as string
-  if (window.api && window.api.getPayments) {
-    payments.value = (await window.api.getPayments(Number(id))) as Payment[]
+  try {
+    payments.value = (await ServiceOrderService.getPayments(Number(id))) as Payment[]
+  } catch (e) {
+    console.error(e)
   }
 }
 
 const loadParts = async () => {
-  if (window.api && window.api.getParts) {
-    parts.value = (await window.api.getParts('')) as Part[]
+  try {
+    const res = await PartService.getAll('', 1, 1000)
+    parts.value = (res.data as Part[]) || []
+  } catch (e) {
+    console.error(e)
   }
 }
 
 const waTemplate = ref<string>('')
 const loadSettings = async () => {
-  if (window.api && window.api.getSettings) {
-    try {
-      const settings = await window.api.getSettings()
-      if (settings && settings.wa_template_status) {
-        waTemplate.value = settings.wa_template_status
-      }
-    } catch (e) {
-      console.error(e)
+  try {
+    const settings = await SettingsService.getSettings()
+    if (settings && settings.wa_template_status) {
+      waTemplate.value = settings.wa_template_status
     }
+  } catch (e) {
+    console.error(e)
   }
 }
 
@@ -163,7 +171,7 @@ const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken:
       actions_taken: updateForm.actions_taken,
       technician_notes: updateForm.technician_notes
     }
-    await window.api.updateServiceDetails(service.value.id as number, data)
+    await ServiceOrderService.updateDetails(service.value.id as number, data)
 
     if (updateForm.status !== service.value.service_status) {
       let warrantyDays = 0
@@ -181,7 +189,7 @@ const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken:
           warrantyDays = parseInt(days)
         }
       }
-      await window.api.updateServiceStatus(
+      await ServiceOrderService.updateStatus(
         service.value.id as number,
         updateForm.status,
         updateForm.actions_taken || 'Status diupdate',
@@ -234,7 +242,7 @@ const addItem = async (itemForm: { desc: string; type: string; qty: number; cost
   }
 
   try {
-    await window.api.addServiceItem(finalData)
+    await ServiceOrderService.addItem(finalData)
 
     await loadItems()
     await loadServiceDetail()
@@ -253,7 +261,7 @@ const deleteItem = async (itemId: number) => {
     confirmButtonText: 'Ya, Hapus'
   })
   if (result.isConfirmed) {
-    await window.api.deleteServiceItem(itemId)
+    await ServiceOrderService.deleteItem(itemId)
     await loadItems()
     await loadServiceDetail()
     await loadParts()
@@ -290,7 +298,7 @@ const addPayment = async (paymentForm: { amount: number; method: string }) => {
   }
 
   try {
-    await window.api.addPayment(data as Payment)
+    await ServiceOrderService.addPayment(data as Payment)
     await loadPayments()
     await loadServiceDetail()
   } catch (error: unknown) {
@@ -308,15 +316,15 @@ const deletePayment = async (paymentId: number) => {
     confirmButtonText: 'Ya, Hapus'
   })
   if (result.isConfirmed) {
-    await window.api.deletePayment(paymentId)
+    await ServiceOrderService.deletePayment(paymentId)
     await loadPayments()
     await loadServiceDetail()
   }
 }
 
 const getCommonData = async () => {
-  const settings = (await window.api.getSettings()) as Settings
-  const logoBase64 = window.api.getLogoBase64 ? await window.api.getLogoBase64() : ''
+  const settings = (await SettingsService.getSettings()) as Settings
+  const logoBase64 = window.api && window.api.getLogoBase64 ? await window.api.getLogoBase64() : ''
   return { settings, logoBase64 }
 }
 

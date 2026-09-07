@@ -104,6 +104,7 @@ import { ref, computed, onMounted } from 'vue';
 import { RefreshCcw, Trash, Trash2, Search } from 'lucide-vue-next';
 import type { RecycleBinItem } from '../../shared/types';
 import Swal from 'sweetalert2';
+import { RecycleBinService } from '@/services/RecycleBinService';
 
 const deletedItems = ref<RecycleBinItem[]>([]);
 const loading = ref(false);
@@ -150,7 +151,7 @@ const formatDate = (dateStr: string) => {
 const loadDeletedItems = async () => {
   loading.value = true;
   try {
-    const response = await window.api.getDeletedItems();
+    const response = await RecycleBinService.getAll();
     if (response.success) {
       deletedItems.value = response.data || [];
     } else {
@@ -177,7 +178,7 @@ const restoreItem = async (item: RecycleBinItem) => {
 
   if (result.isConfirmed) {
     try {
-      const res = await window.api.restoreItem(item.id, item.type);
+      const res = await RecycleBinService.restoreItem(item.id, item.type as 'customer' | 'device' | 'service' | 'part');
       if (res.success) {
         Swal.fire('Berhasil!', 'Data telah dipulihkan.', 'success');
         loadDeletedItems();
@@ -205,7 +206,7 @@ const hardDeleteItem = async (item: RecycleBinItem) => {
 
   if (result.isConfirmed) {
     try {
-      const res = await window.api.hardDeleteItem(item.id, item.type);
+      const res = await RecycleBinService.deletePermanent(item.id, item.type as 'customer' | 'device' | 'service' | 'part');
       if (res.success) {
         Swal.fire('Terhapus!', 'Data telah dihapus permanen.', 'success');
         loadDeletedItems();

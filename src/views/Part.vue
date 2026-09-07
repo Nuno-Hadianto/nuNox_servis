@@ -244,6 +244,7 @@ import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Box, Save, X } f
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Part } from '../../shared/types'
+import { PartService } from '@/services/PartService'
 
 
 const route = useRoute()
@@ -285,14 +286,12 @@ const loadParts = async (page?: number) => {
   if (page) {
     currentPage.value = page
   }
-  if (window.api && window.api.getParts) {
-    try {
-      const response = await window.api.getParts(searchQuery.value, currentPage.value, limit, sortBy.value) as { data: Part[], total: number };
-      parts.value = response.data;
-      totalPages.value = Math.ceil(response.total / limit) || 1;
-    } catch (error) {
-      console.error('Failed to load parts:', error)
-    }
+  try {
+    const response = await PartService.getAll(searchQuery.value, currentPage.value, limit, sortBy.value) as { data: Part[], total: number };
+    parts.value = response.data;
+    totalPages.value = Math.ceil(response.total / limit) || 1;
+  } catch (error) {
+    console.error('Failed to load parts:', error)
   }
 }
 
@@ -342,7 +341,7 @@ const openAddModal = () => {
 
 const editPart = async (p: Part) => {
   try {
-    const detail = (await window.api.getPart(p.id)) as Part
+    const detail = (await PartService.getById(p.id)) as Part
     if (detail) {
       modalTitle.value = 'Edit Item'
       formId.value = detail.id || null
@@ -364,9 +363,9 @@ const editPart = async (p: Part) => {
 const savePart = async () => {
   try {
     if (formId.value) {
-      await window.api.updatePart(formId.value, { ...form })
+      await PartService.update(formId.value, { ...form })
     } else {
-      await window.api.addPart({ ...form })
+      await PartService.create({ ...form })
     }
     isModalOpen.value = false
     loadParts()
@@ -397,7 +396,7 @@ const deletePart = async (id: number) => {
 
   if (result.isConfirmed) {
     try {
-      await window.api.deletePart(id)
+      await PartService.delete(id)
       window.Swal.fire('Terhapus!', 'Sparepart berhasil dihapus.', 'success')
       loadParts()
     } catch (error: unknown) {

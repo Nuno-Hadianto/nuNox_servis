@@ -75,7 +75,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Clock, Sun, Moon, Bell } from 'lucide-vue-next'
-import { useThemeStore } from '../stores/theme'
+import { useThemeStore } from '@/stores/theme'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 

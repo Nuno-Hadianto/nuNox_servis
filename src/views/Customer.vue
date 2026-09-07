@@ -158,7 +158,9 @@
                 required
                 placeholder="Contoh: Budi Santoso"
                 class="form-control"
+                :class="{ 'is-invalid': formErrors.name }"
               />
+              <small v-if="formErrors.name" class="error-text" style="color: #ef4444; margin-top: 4px; display: block;">{{ formErrors.name }}</small>
             </div>
             <div class="form-group">
               <label>No. HP/WhatsApp</label>
@@ -168,7 +170,9 @@
                 required
                 placeholder="Contoh: 08123456789"
                 class="form-control"
+                :class="{ 'is-invalid': formErrors.phone }"
               />
+              <small v-if="formErrors.phone" class="error-text" style="color: #ef4444; margin-top: 4px; display: block;">{{ formErrors.phone }}</small>
             </div>
             <div class="form-group">
               <label>Alamat (Opsional)</label>
@@ -178,7 +182,9 @@
                 placeholder="Alamat lengkap"
                 class="form-control"
                 style="resize: vertical;"
+                :class="{ 'is-invalid': formErrors.address }"
               ></textarea>
+              <small v-if="formErrors.address" class="error-text" style="color: #ef4444; margin-top: 4px; display: block;">{{ formErrors.address }}</small>
             </div>
 
             <div
@@ -215,8 +221,8 @@
 import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, FolderOpen, Save, X } from 'lucide-vue-next'
 import { ref, reactive, computed, onMounted } from 'vue'
 import type { Customer } from '../../shared/types'
-import { CustomerSchema } from '../utils/validators'
-
+import { CustomerSchema } from '@/utils/validators'
+import { CustomerService } from '@/services/CustomerService'
 
 const customers = ref<Customer[]>([])
 const searchQuery = ref<string>('')
@@ -235,15 +241,13 @@ const debounceSearch = () => {
 }
 
 const loadCustomers = async (page: number = 1) => {
-  if (window.api && window.api.getCustomers) {
-    try {
-      const result = await window.api.getCustomers(searchQuery.value, page, itemsPerPage, sortBy.value)
-      customers.value = (result.data as Customer[]) || []
-      totalItems.value = result.total || 0
-      currentPage.value = result.page || 1
-    } catch (error) {
-      console.error('Failed to load customers:', error)
-    }
+  try {
+    const result = await CustomerService.getAll(searchQuery.value, page, itemsPerPage, sortBy.value)
+    customers.value = (result.data as Customer[]) || []
+    totalItems.value = result.total || 0
+    currentPage.value = result.page || 1
+  } catch (error) {
+    console.error('Failed to load customers:', error)
   }
 }
 
@@ -257,6 +261,7 @@ const form = reactive({
   address: '',
   notes: ''
 })
+const formErrors = reactive<Record<string, string>>({})
 
 const openAddModal = () => {
   modalTitle.value = 'Tambah Pelanggan'
@@ -265,12 +270,13 @@ const openAddModal = () => {
   form.phone = ''
   form.address = ''
   form.notes = ''
+  Object.keys(formErrors).forEach(key => delete formErrors[key])
   isModalOpen.value = true
 }
 
 const editCustomer = async (c: Customer) => {
   try {
-    const detail = (await window.api.getCustomer(c.id)) as Customer
+    const detail = (await CustomerService.getById(c.id)) as Customer
     if (detail) {
       modalTitle.value = 'Edit Pelanggan'
       formId.value = detail.id || null
@@ -278,6 +284,7 @@ const editCustomer = async (c: Customer) => {
       form.phone = detail.phone || ''
       form.address = detail.address || ''
       form.notes = detail.notes || ''
+      Object.keys(formErrors).forEach(key => delete formErrors[key])
       isModalOpen.value = true
     }
   } catch (error) {
@@ -288,24 +295,24 @@ const editCustomer = async (c: Customer) => {
 
 const saveCustomer = async () => {
   try {
+    Object.keys(formErrors).forEach(key => delete formErrors[key])
+    
     // Validasi dengan Zod
-    try {
-      CustomerSchema.parse(form)
-    } catch (validationError: unknown) {
-      const err = validationError as { issues?: { message: string }[] }
-      const errMsgs = err.issues?.map((e) => e.message).join('<br/>') || 'Validasi Gagal'
-      window.Swal.fire({
-        icon: 'error',
-        title: 'Validasi Gagal',
-        html: errMsgs
+    const validation = CustomerSchema.safeParse(form)
+    if (!validation.success) {
+      validation.error.issues.forEach(issue => {
+        if (issue.path[0]) {
+          formErrors[issue.path[0].toString()] = issue.message
+        }
       })
+      // Optional: still show a small generic toast or let the inline errors be enough
       return
     }
 
     if (formId.value) {
-      await window.api.updateCustomer(formId.value, { ...form })
+      await CustomerService.update(formId.value, { ...form })
     } else {
-      await window.api.addCustomer({ ...form })
+      await CustomerService.create({ ...form })
     }
     isModalOpen.value = false
     loadCustomers(currentPage.value)
@@ -336,7 +343,7 @@ const deleteCustomer = async (id: number) => {
 
   if (result.isConfirmed) {
     try {
-      await window.api.deleteCustomer(id)
+      await CustomerService.delete(id)
       window.Swal.fire('Terhapus!', 'Pelanggan berhasil dihapus.', 'success')
       loadCustomers(currentPage.value)
     } catch (error: unknown) {
