@@ -80,7 +80,6 @@ export interface Device {
   serial_number: string;
   color: string;
   accessories: string;
-  physical_condition: string;
   notes: string;
 }
 

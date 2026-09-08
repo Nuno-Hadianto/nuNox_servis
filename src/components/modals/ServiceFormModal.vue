@@ -169,7 +169,6 @@ const onDeviceChange = async () => {
     if (selectedDev) {
       const cond = []
       if (selectedDev.accessories) cond.push(selectedDev.accessories)
-      if (selectedDev.physical_condition) cond.push(selectedDev.physical_condition)
       form.physical_condition = cond.join('. ')
     }
   }

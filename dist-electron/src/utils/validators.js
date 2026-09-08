@@ -25,7 +25,6 @@ exports.DeviceSchema = zod_1.z.object({
     serial_number: zod_1.z.string().optional().nullable(),
     color: zod_1.z.string().optional().nullable(),
     accessories: zod_1.z.string().optional().nullable(),
-    physical_condition: zod_1.z.string().optional().nullable(),
     notes: zod_1.z.string().optional().nullable()
 });
 exports.ServiceOrderSchema = zod_1.z.object({

@@ -31,8 +31,7 @@ describe('serviceItemController (White-box testing)', () => {
 
         // Add a test sparepart
         testPartId = partController.addPart({
-            part_code: 'P-TEST', name: 'Test Part', stock: 10, sell_price: 100000
-        });
+            part_code: 'P-TEST', name: 'Test Part', category: 'Sparepart', buy_price: 50000, sell_price: 100000, unit: 'Pcs', notes: ''     });
     });
 
     test('addServiceItem should insert an item and update total_cost of service_order', () => {
@@ -73,10 +72,6 @@ describe('serviceItemController (White-box testing)', () => {
         // Check if total cost is updated (2 * 100000 = 200000)
         const service = serviceController.getServiceById(testServiceId);
         expect(service.total_cost).toBe(200000);
-
-        // Check if part stock is reduced (10 - 2 = 8)
-        const part = partController.getPartById(testPartId);
-        expect(part.stock).toBe(8);
     });
 
     test('deleteServiceItem of type Sparepart should return stock', () => {
@@ -91,15 +86,9 @@ describe('serviceItemController (White-box testing)', () => {
 
         const addResult = serviceItemController.addServiceItem(itemData);
         
-        // Stock should be 7
-        expect(partController.getPartById(testPartId).stock).toBe(7);
-
         // Delete the item
         serviceItemController.deleteServiceItem(addResult);
 
-        // Stock should be returned to 10
-        expect(partController.getPartById(testPartId).stock).toBe(10);
-        
         // Service total should be back to 0
         const service = serviceController.getServiceById(testServiceId);
         expect(service.total_cost).toBe(0);

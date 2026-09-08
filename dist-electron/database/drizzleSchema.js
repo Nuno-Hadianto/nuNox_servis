@@ -24,7 +24,6 @@ exports.devices = (0, sqlite_core_1.sqliteTable)('devices', {
     serial_number: (0, sqlite_core_1.text)('serial_number'),
     color: (0, sqlite_core_1.text)('color'),
     accessories: (0, sqlite_core_1.text)('accessories'),
-    physical_condition: (0, sqlite_core_1.text)('physical_condition'),
     notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),

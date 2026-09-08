@@ -79,16 +79,6 @@
           </div>
 
           <div class="form-group">
-            <label>Kondisi Fisik</label>
-            <input
-              type="text"
-              v-model="form.physical_condition"
-              class="form-control"
-              placeholder="Misal: Mulus, Lecet pemakaian"
-            />
-          </div>
-
-          <div class="form-group">
             <label>Catatan</label>
             <textarea
               v-model="form.notes"
@@ -133,7 +123,6 @@ const props = defineProps<{
     serial_number?: string
     color?: string
     accessories?: string
-    physical_condition?: string
     notes?: string
   }
 }>()
@@ -148,7 +137,6 @@ const emit = defineEmits<{
     serial_number: string
     color: string
     accessories: string
-    physical_condition: string
     notes: string
   }): void
 }>()
@@ -168,7 +156,6 @@ const form = reactive({
   serial_number: '',
   color: '',
   accessories: '',
-  physical_condition: '',
   notes: ''
 })
 
@@ -181,7 +168,6 @@ watch(() => props.isOpen, (newVal) => {
     form.serial_number = props.initialData?.serial_number || ''
     form.color = props.initialData?.color || ''
     form.accessories = props.initialData?.accessories || ''
-    form.physical_condition = props.initialData?.physical_condition || ''
     form.notes = props.initialData?.notes || ''
   }
 })

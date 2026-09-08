@@ -1,4 +1,4 @@
-import{Wn as e}from"./lucide-vue-next-CWHr592y.js";var t,n,r,i,a,o,s,c=e((()=>{t=(e,t,n)=>(e||={},`
+import{qn as e}from"./lucide-vue-next-5cDKL-Lc.js";var t,n,r,i,a,o,s,c=e((()=>{t=(e,t,n)=>(e||={},`
         <div class="print-nota nota-wrapper">
             <!-- Header -->
             <div class="nota-header">
@@ -40,9 +40,9 @@ import{Wn as e}from"./lucide-vue-next-CWHr592y.js";var t,n,r,i,a,o,s,c=e((()=>{t
                 </div>
                 
                 <!-- Keluhan -->
-                <div class="nota-col">
+                <div class="nota-col" style="flex: 1.5;">
                     <h4 class="nota-col-title">Keluhan / Kerusakan</h4>
-                    <div class="nota-complaint">${t?t.customer_complaint:`..................................................<br/>..................................................<br/>..................................................`}</div>
+                    <div class="nota-complaint" style="white-space: pre-wrap;">${t?(()=>{let e=t.customer_complaint||``,n=e.indexOf(`\\n\\n[Kelengkapan & Kondisi Fisik]:\\n`);return n===-1?e:e.substring(0,n)+`<br/><br/><strong>Kelengkapan & Kondisi Fisik:</strong><br/>`+e.substring(n+36)})():`..................................................<br/>..................................................<br/>..................................................`}</div>
                 </div>
             </div>
             

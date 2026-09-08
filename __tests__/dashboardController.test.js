@@ -33,7 +33,7 @@ describe('Dashboard Controller Integration Tests', () => {
         const customerId = customerController.addCustomer({ name: 'Test', phone: '081', address: 'Test', notes: '' });
         const deviceId = deviceController.addDevice({ 
             customer_id: customerId, device_type: 'HP', brand: 'Samsung', model: 'A50', 
-            serial_number: '', color: '', accessories: '', physical_condition: '', notes: '' 
+            serial_number: '', color: '', accessories: '', notes: '' 
         });
 
         // Buat Service Order

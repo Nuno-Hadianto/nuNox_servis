@@ -47,7 +47,6 @@ describe('Customer & Device Controller Integration Tests', () => {
             serial_number: 'SN123',
             color: 'Black',
             accessories: 'Charger',
-            physical_condition: 'Good',
             notes: ''
         });
         
@@ -87,7 +86,7 @@ describe('Customer & Device Controller Integration Tests', () => {
         const customerId = customerController.addCustomer({ name: 'Budi', phone: '081', address: '', notes: '' });
         const deviceId = deviceController.addDevice({ 
             customer_id: customerId, device_type: 'HP', brand: 'Samsung', model: 'A50', 
-            serial_number: '', color: '', accessories: '', physical_condition: '', notes: '' 
+            serial_number: '', color: '', accessories: '', notes: '' 
         });
         
         serviceController.addService({
