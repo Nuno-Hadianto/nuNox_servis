@@ -34,6 +34,8 @@ function getServices(searchQuery: string = '', page: number = 1, limit: number =
         received_date: serviceOrders.received_date,
         estimated_completion_date: serviceOrders.estimated_completion_date,
         customer_complaint: serviceOrders.customer_complaint,
+        accessories: serviceOrders.accessories,
+        physical_condition: serviceOrders.physical_condition,
         diagnosis_result: serviceOrders.diagnosis_result,
         actions_taken: serviceOrders.actions_taken,
         technician_notes: serviceOrders.technician_notes,
@@ -127,6 +129,8 @@ function getServiceById(id: number | string) {
         received_date: serviceOrders.received_date,
         estimated_completion_date: serviceOrders.estimated_completion_date,
         customer_complaint: serviceOrders.customer_complaint,
+        accessories: serviceOrders.accessories,
+        physical_condition: serviceOrders.physical_condition,
         diagnosis_result: serviceOrders.diagnosis_result,
         actions_taken: serviceOrders.actions_taken,
         technician_notes: serviceOrders.technician_notes,
@@ -164,7 +168,7 @@ function getServiceStatusHistory(serviceOrderId: number | string) {
 }
 
 function addService(data: ServiceOrder) {
-    const { customer_id, device_id, estimated_completion_date, customer_complaint } = data;
+    const { customer_id, device_id, estimated_completion_date, customer_complaint, accessories, physical_condition } = data;
     const ticket_number = generateTicketNumber();
     
     return db.transaction(() => {
@@ -173,7 +177,9 @@ function addService(data: ServiceOrder) {
             customer_id, 
             device_id, 
             estimated_completion_date, 
-            customer_complaint, 
+            customer_complaint,
+            accessories,
+            physical_condition,
             service_status: 'Diterima'
         }).run();
         
@@ -234,6 +240,8 @@ function updateServiceDetails(id: number | string, data: Partial<ServiceOrder>) 
     if (data.customer_id !== undefined) setValues.customer_id = data.customer_id;
     if (data.device_id !== undefined) setValues.device_id = data.device_id;
     if (data.customer_complaint !== undefined) setValues.customer_complaint = data.customer_complaint;
+    if (data.accessories !== undefined) setValues.accessories = data.accessories;
+    if (data.physical_condition !== undefined) setValues.physical_condition = data.physical_condition;
     
     db.drizzle.update(serviceOrders).set(setValues).where(eq(serviceOrders.id, Number(id))).run();
     

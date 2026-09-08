@@ -38,6 +38,8 @@ exports.serviceOrders = (0, sqlite_core_1.sqliteTable)('service_orders', {
     received_date: (0, sqlite_core_1.text)('received_date').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     estimated_completion_date: (0, sqlite_core_1.text)('estimated_completion_date'),
     customer_complaint: (0, sqlite_core_1.text)('customer_complaint'),
+    accessories: (0, sqlite_core_1.text)('accessories'),
+    physical_condition: (0, sqlite_core_1.text)('physical_condition'),
     diagnosis_result: (0, sqlite_core_1.text)('diagnosis_result'),
     actions_taken: (0, sqlite_core_1.text)('actions_taken'),
     technician_notes: (0, sqlite_core_1.text)('technician_notes'),
@@ -68,7 +70,6 @@ exports.spareParts = (0, sqlite_core_1.sqliteTable)('spare_parts', {
     category: (0, sqlite_core_1.text)('category'),
     buy_price: (0, sqlite_core_1.real)('buy_price').default(0),
     sell_price: (0, sqlite_core_1.real)('sell_price').default(0),
-    unit: (0, sqlite_core_1.text)('unit'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     deleted_at: (0, sqlite_core_1.text)('deleted_at')

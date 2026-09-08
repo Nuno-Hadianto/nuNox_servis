@@ -39,17 +39,6 @@
           </div>
           <div class="form-row">
             <div class="form-group flex-1">
-              <label>Satuan (Opsional)</label>
-              <input
-                type="text"
-                v-model="form.unit"
-                class="form-control"
-                placeholder="Pcs, Unit..."
-              />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group flex-1">
               <label>Harga Beli / Modal (Rp)</label>
               <input
                 type="number"
@@ -102,7 +91,6 @@ const props = defineProps<{
     category?: string
     buy_price?: number | ''
     sell_price?: number | ''
-    unit?: string
   }
 }>()
 
@@ -114,7 +102,6 @@ const emit = defineEmits<{
     category: string
     buy_price: number
     sell_price: number
-    unit: string
   }): void
 }>()
 
@@ -123,8 +110,7 @@ const form = reactive({
   name: '',
   category: '',
   buy_price: 0,
-  sell_price: '' as number | '',
-  unit: 'Pcs'
+  sell_price: '' as number | ''
 })
 
 watch(() => props.isOpen, (newVal) => {
@@ -134,7 +120,6 @@ watch(() => props.isOpen, (newVal) => {
     form.category = props.initialData?.category || ''
     form.buy_price = props.initialData?.buy_price || 0
     form.sell_price = props.initialData?.sell_price !== undefined ? props.initialData.sell_price : ''
-    form.unit = props.initialData?.unit || 'Pcs'
   }
 })
 

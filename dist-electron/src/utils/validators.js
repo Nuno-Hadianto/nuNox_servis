@@ -13,8 +13,7 @@ exports.SparepartSchema = zod_1.z.object({
     name: zod_1.z.string().min(1, 'Nama sparepart wajib diisi.').max(150, 'Nama terlalu panjang.'),
     category: zod_1.z.string().optional().nullable(),
     buy_price: zod_1.z.number().min(0, 'Harga beli tidak boleh negatif.').optional().default(0),
-    sell_price: zod_1.z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0),
-    unit: zod_1.z.string().optional().nullable()
+    sell_price: zod_1.z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0)
 });
 exports.DeviceSchema = zod_1.z.object({
     customer_id: zod_1.z.number().int('ID Pelanggan tidak valid.'),
@@ -30,6 +29,8 @@ exports.ServiceOrderSchema = zod_1.z.object({
     device_id: zod_1.z.number().int('ID Perangkat tidak valid.'),
     estimated_completion_date: zod_1.z.string().optional().nullable(),
     customer_complaint: zod_1.z.string().optional().nullable(),
+    accessories: zod_1.z.string().optional().nullable(),
+    physical_condition: zod_1.z.string().optional().nullable(),
     diagnosis_result: zod_1.z.string().optional().nullable(),
     actions_taken: zod_1.z.string().optional().nullable(),
     technician_notes: zod_1.z.string().optional().nullable()

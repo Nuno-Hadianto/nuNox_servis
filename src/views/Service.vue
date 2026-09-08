@@ -226,8 +226,8 @@ const openEditModal = async (s: ServiceOrder) => {
     customer_id: s.customer_id,
     device_id: s.device_id,
     customer_complaint: s.customer_complaint,
-    physical_condition: '', // Tidak dipakai saat edit karena sudah digabung
-    accessories: '' // Sama, tidak dipakai saat edit
+    physical_condition: s.physical_condition || '',
+    accessories: s.accessories || ''
   }
   
   isModalOpen.value = true
@@ -236,23 +236,10 @@ const openEditModal = async (s: ServiceOrder) => {
 
 const saveService = async (data: { customer_id: number; device_id: number; customer_complaint: string; physical_condition: string; accessories: string }) => {
   try {
-    let extraNotes = '';
-    if (data.accessories) {
-      extraNotes += `\n[Kelengkapan]: ${data.accessories}`;
-    }
-    if (data.physical_condition) {
-      extraNotes += `\n[Kondisi Fisik]: ${data.physical_condition}`;
-    }
-
-    const finalComplaint = extraNotes
-      ? `${data.customer_complaint}\n${extraNotes}`
-      : data.customer_complaint;
-
     // Validasi dengan Zod
     try {
       const payload = {
         ...data,
-        customer_complaint: finalComplaint,
         customer_id: Number(data.customer_id),
         device_id: Number(data.device_id)
       }
@@ -270,7 +257,6 @@ const saveService = async (data: { customer_id: number; device_id: number; custo
 
     const finalPayload = {
       ...data,
-      customer_complaint: finalComplaint,
       customer_id: Number(data.customer_id),
       device_id: Number(data.device_id)
     }

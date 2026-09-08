@@ -39,6 +39,8 @@ export const serviceOrders = sqliteTable('service_orders', {
   received_date: text('received_date').default(sql`CURRENT_TIMESTAMP`),
   estimated_completion_date: text('estimated_completion_date'),
   customer_complaint: text('customer_complaint'),
+  accessories: text('accessories'),
+  physical_condition: text('physical_condition'),
   diagnosis_result: text('diagnosis_result'),
   actions_taken: text('actions_taken'),
   technician_notes: text('technician_notes'),
@@ -71,7 +73,6 @@ export const spareParts = sqliteTable('spare_parts', {
   category: text('category'),
   buy_price: real('buy_price').default(0),
   sell_price: real('sell_price').default(0),
-  unit: text('unit'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
   deleted_at: text('deleted_at')

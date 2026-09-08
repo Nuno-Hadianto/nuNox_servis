@@ -12,8 +12,7 @@ export const SparepartSchema = z.object({
   name: z.string().min(1, 'Nama sparepart wajib diisi.').max(150, 'Nama terlalu panjang.'),
   category: z.string().optional().nullable(),
   buy_price: z.number().min(0, 'Harga beli tidak boleh negatif.').optional().default(0),
-  sell_price: z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0),
-  unit: z.string().optional().nullable()
+  sell_price: z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0)
 })
 
 export const DeviceSchema = z.object({
@@ -31,6 +30,8 @@ export const ServiceOrderSchema = z.object({
   device_id: z.number().int('ID Perangkat tidak valid.'),
   estimated_completion_date: z.string().optional().nullable(),
   customer_complaint: z.string().optional().nullable(),
+  accessories: z.string().optional().nullable(),
+  physical_condition: z.string().optional().nullable(),
   diagnosis_result: z.string().optional().nullable(),
   actions_taken: z.string().optional().nullable(),
   technician_notes: z.string().optional().nullable()

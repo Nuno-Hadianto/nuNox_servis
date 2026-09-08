@@ -44,6 +44,8 @@ function getServices(searchQuery = '', page = 1, limit = 50, technicianFilter, s
         received_date: drizzleSchema_1.serviceOrders.received_date,
         estimated_completion_date: drizzleSchema_1.serviceOrders.estimated_completion_date,
         customer_complaint: drizzleSchema_1.serviceOrders.customer_complaint,
+        accessories: drizzleSchema_1.serviceOrders.accessories,
+        physical_condition: drizzleSchema_1.serviceOrders.physical_condition,
         diagnosis_result: drizzleSchema_1.serviceOrders.diagnosis_result,
         actions_taken: drizzleSchema_1.serviceOrders.actions_taken,
         technician_notes: drizzleSchema_1.serviceOrders.technician_notes,
@@ -118,6 +120,8 @@ function getServiceById(id) {
         received_date: drizzleSchema_1.serviceOrders.received_date,
         estimated_completion_date: drizzleSchema_1.serviceOrders.estimated_completion_date,
         customer_complaint: drizzleSchema_1.serviceOrders.customer_complaint,
+        accessories: drizzleSchema_1.serviceOrders.accessories,
+        physical_condition: drizzleSchema_1.serviceOrders.physical_condition,
         diagnosis_result: drizzleSchema_1.serviceOrders.diagnosis_result,
         actions_taken: drizzleSchema_1.serviceOrders.actions_taken,
         technician_notes: drizzleSchema_1.serviceOrders.technician_notes,
@@ -152,7 +156,7 @@ function getServiceStatusHistory(serviceOrderId) {
         .orderBy((0, drizzle_orm_1.asc)(drizzleSchema_1.serviceStatusHistory.id)).all();
 }
 function addService(data) {
-    const { customer_id, device_id, estimated_completion_date, customer_complaint } = data;
+    const { customer_id, device_id, estimated_completion_date, customer_complaint, accessories, physical_condition } = data;
     const ticket_number = generateTicketNumber();
     return db_1.default.transaction(() => {
         const info = db_1.default.drizzle.insert(drizzleSchema_1.serviceOrders).values({
@@ -161,6 +165,8 @@ function addService(data) {
             device_id,
             estimated_completion_date,
             customer_complaint,
+            accessories,
+            physical_condition,
             service_status: 'Diterima'
         }).run();
         const serviceOrderId = info.lastInsertRowid;
@@ -215,6 +221,10 @@ function updateServiceDetails(id, data) {
         setValues.device_id = data.device_id;
     if (data.customer_complaint !== undefined)
         setValues.customer_complaint = data.customer_complaint;
+    if (data.accessories !== undefined)
+        setValues.accessories = data.accessories;
+    if (data.physical_condition !== undefined)
+        setValues.physical_condition = data.physical_condition;
     db_1.default.drizzle.update(drizzleSchema_1.serviceOrders).set(setValues).where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.id, Number(id))).run();
     return true;
 }

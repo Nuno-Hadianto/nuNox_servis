@@ -52,9 +52,9 @@ function getPartById(id) {
 }
 function addPart(data) {
     return db_1.default.transaction(() => {
-        const { part_code, name, category, buy_price, sell_price, unit } = data;
+        const { part_code, name, category, buy_price, sell_price } = data;
         const result = db_1.default.drizzle.insert(drizzleSchema_1.spareParts).values({
-            part_code, name, category, buy_price, sell_price, unit
+            part_code, name, category, buy_price, sell_price
         }).run();
         const partId = result.lastInsertRowid;
         return partId;
@@ -62,9 +62,9 @@ function addPart(data) {
 }
 function updatePart(id, data) {
     return db_1.default.transaction(() => {
-        const { part_code, name, category, buy_price, sell_price, unit } = data;
+        const { part_code, name, category, buy_price, sell_price } = data;
         db_1.default.drizzle.update(drizzleSchema_1.spareParts).set({
-            part_code, name, category, buy_price, sell_price, unit, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
+            part_code, name, category, buy_price, sell_price, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
         }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.spareParts.id, Number(id))).run();
         return true;
     })();

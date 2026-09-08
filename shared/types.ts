@@ -65,7 +65,6 @@ export interface Part {
   category: string;
   buy_price: number;
   sell_price: number;
-  unit: string;
 }
 
 export interface Device {
@@ -99,13 +98,14 @@ export interface ServiceOrder {
   received_date: string;
   estimated_completion_date?: string;
   completed_date?: string;
+  accessories: string;
+  physical_condition: string;
   diagnosis_result?: string;
   actions_taken?: string;
   technician_notes?: string;
   warranty_end_date?: string;
   created_at?: string;
   customer_address?: string;
-  accessories?: string;
 }
 
 export interface ServiceHistory {

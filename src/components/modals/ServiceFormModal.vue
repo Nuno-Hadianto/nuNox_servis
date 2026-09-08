@@ -36,7 +36,7 @@
               placeholder="Contoh: Mati total, layar bergaris..."
             ></textarea>
           </div>
-          <div class="form-group" v-if="isAddMode">
+          <div class="form-group">
             <label>Kelengkapan / Aksesoris (Opsional)</label>
             <textarea
               v-model="form.accessories"
@@ -45,7 +45,7 @@
               placeholder="Contoh: Bawa charger, tas, dus..."
             ></textarea>
           </div>
-          <div class="form-group" v-if="isAddMode">
+          <div class="form-group">
             <label>Kondisi Fisik (Opsional)</label>
             <textarea
               v-model="form.physical_condition"
