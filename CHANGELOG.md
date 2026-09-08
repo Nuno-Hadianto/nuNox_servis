@@ -8,16 +8,23 @@ Format pencatatan ini didasarkan pada [Keep a Changelog](https://keepachangelog.
 
 ### Added
 
+- **Recycle Bin (Soft Delete):** Menggunakan kolom `deleted_at` untuk pemulihan data (Pelanggan, Perangkat, Servis, Sparepart) tanpa penghapusan permanen.
+- **Sistem Cache Real-time:** Migrasi ke *state management* Pinia (`appCacheStore`) untuk melakukan *auto-refresh* data pada semua tabel secara reaktif.
+- **Komponen CustomSelect:** *Dropdown* pencarian bergaya *glassmorphism* untuk menyaring Pelanggan & Perangkat pada antarmuka pengguna.
 - Fitur peringatan otomatis untuk barang yang terlantar (_abandoned services_) dan stok menipis (_low stock_).
 - Integrasi Drizzle ORM untuk manajemen skema database SQLite.
 - _End-to-End Testing_ menggunakan Playwright untuk memvalidasi _UI state_.
 - GitHub Actions untuk CI/CD (E2E Tests, Build Release).
 - Pengaturan Git Hooks dengan `husky` dan `lint-staged` untuk standarisasi kode.
 - Panduan arsitektur lokal (`docs/ARCHITECTURE.md`).
+- ERD (Entity Relationship Diagram) Database (`DATABASE.md`).
 
 ### Changed
 
-- _Refactoring_ sistem antarmuka utama (UI) ke desain yang lebih modern (_Glassmorphism_) dan membersihkan seluruh penggunaan tipe `any` pada Typescript untuk jaminan _type-safety_.
+- **UI Redesign (Glassmorphism):** Rombak total antarmuka (UI) menggunakan desain *glassmorphism* premium (animasi *fade-in*, *backdrop-filter*, warna bergradasi).
+- **Service Detail:** Teks "Keluhan" dan "Kelengkapan Fisik" dipisah (*parsed*) agar lebih rapi saat dicetak pada Tanda Terima, Invoice, dan ditampilkan di dasbor.
+- **Tabel Perangkat:** Kolom "Kondisi Fisik" kini menggabungkan informasi detail Kelengkapan (Plus) dan Catatan Teknisi dalam satu kolom terpadu.
+- _Refactoring_ sistem antarmuka utama (UI) ke desain yang lebih modern dan membersihkan seluruh penggunaan tipe `any` pada Typescript untuk jaminan _type-safety_.
 
 ### Fixed
 
