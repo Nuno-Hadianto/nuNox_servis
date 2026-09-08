@@ -40,6 +40,15 @@
         <option value="Biaya lainnya">Lainnya</option>
       </select>
 
+      <div v-if="form.type === 'Sparepart'" style="width: 220px;">
+        <CustomSelect
+          v-model="form.selectedPartId"
+          :options="partOptions"
+          placeholder="Pilih dari Katalog..."
+          @change="onPartSelected"
+        />
+      </div>
+
       <input
         type="text"
         v-model="form.desc"
@@ -173,9 +182,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { Trash2, Plus } from 'lucide-vue-next'
 import type { ServiceItem, Part } from '../../../shared/types'
+import CustomSelect from '../common/CustomSelect.vue'
 
 defineProps<{
   items: ServiceItem[]
@@ -189,9 +199,26 @@ const form = reactive({
   type: 'Jasa',
   desc: '',
   qty: 1,
-  costPrice: 0,
-  price: 0
+  costPrice: '' as number | '',
+  price: '' as number | '',
+  selectedPartId: '' as number | string
 })
+
+const partOptions = computed(() => {
+  return props.parts.map(p => ({
+    value: p.id!,
+    label: `${p.name} - ${formatCurrency(p.sell_price)}`
+  }))
+})
+
+const onPartSelected = (id: number | string) => {
+  const part = props.parts.find(p => p.id === id)
+  if (part) {
+    form.desc = part.name
+    form.costPrice = part.buy_price
+    form.price = part.sell_price
+  }
+}
 
 const formatCurrency = (amount: number | string | undefined | null) => {
   return new Intl.NumberFormat('id-ID', {
@@ -203,17 +230,19 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 
 const onItemTypeChange = () => {
   form.desc = ''
-  form.costPrice = 0
-  form.price = 0
+  form.costPrice = ''
+  form.price = ''
+  form.selectedPartId = ''
 }
 
 const addItem = async () => {
-  emit('add', { ...form })
+  emit('add', { ...form, price: form.price || 0, costPrice: form.costPrice || 0 })
   
   // reset form after emit
   form.desc = ''
-  form.costPrice = 0
-  form.price = 0
+  form.costPrice = ''
+  form.price = ''
   form.qty = 1
+  form.selectedPartId = ''
 }
 </script>

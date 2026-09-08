@@ -209,16 +209,33 @@ const saveUpdate = async (updateForm: { diagnosis_result: string; actions_taken:
   }
 }
 
-const addItem = async (itemForm: { desc: string; type: string; qty: number; costPrice?: number; price: number }) => {
+const addItem = async (itemForm: { desc: string; type: string; qty: number; costPrice?: number; price: number; selectedPartId?: string | number }) => {
   if (!service.value) return
   const desc = itemForm.desc
 
   if (!desc) return AppAlert.fire('Info', 'Keterangan wajib diisi!', 'info')
 
+  let finalSparePartId = itemForm.selectedPartId ? Number(itemForm.selectedPartId) : null
+
+  if (itemForm.type === 'Sparepart' && !finalSparePartId) {
+    try {
+      const newPartId = await PartService.create({
+        part_code: '',
+        name: desc,
+        category: 'Umum',
+        buy_price: itemForm.costPrice || 0,
+        sell_price: itemForm.price || 0
+      })
+      finalSparePartId = newPartId
+    } catch (e) {
+      console.warn('Gagal menyimpan otomatis ke katalog:', e)
+    }
+  }
+
   const data = {
     service_order_id: service.value.id,
     item_type: itemForm.type,
-    spare_part_id: null,
+    spare_part_id: finalSparePartId,
     description: desc,
     quantity: Number(itemForm.qty),
     price: Number(itemForm.price),
