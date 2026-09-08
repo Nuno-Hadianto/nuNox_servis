@@ -64,9 +64,13 @@
       <div
         style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color)"
       >
-        <p>
+        <p style="white-space: pre-wrap; margin-bottom: 5px;">
           <strong>Keluhan:</strong>
-          <span style="color: #ef4444; font-weight: 500">{{ service.customer_complaint }}</span>
+          <span style="color: #ef4444; font-weight: 500">{{ parsedComplaint.main }}</span>
+        </p>
+        <p v-if="parsedComplaint.physical" style="white-space: pre-wrap; margin-top: 8px;">
+          <strong>Kelengkapan & Kondisi Fisik:</strong>
+          <span style="color: #d97706; font-weight: 500">{{ parsedComplaint.physical }}</span>
         </p>
       </div>
     </div>
@@ -84,6 +88,20 @@ const props = defineProps<{
 const formattedDate = computed(() => {
   if (!props.service) return ''
   return new Date(props.service.received_date + 'Z').toLocaleDateString('id-ID')
+})
+
+const parsedComplaint = computed(() => {
+  if (!props.service?.customer_complaint) return { main: '', physical: '' }
+  const text = props.service.customer_complaint
+  const separator = '\n\n[Kelengkapan & Kondisi Fisik]:\n'
+  const splitIdx = text.indexOf(separator)
+  if (splitIdx !== -1) {
+    return {
+      main: text.substring(0, splitIdx),
+      physical: text.substring(splitIdx + separator.length)
+    }
+  }
+  return { main: text, physical: '' }
 })
 
 const statusStyle = (status: string) => {

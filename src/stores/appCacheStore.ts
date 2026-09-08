@@ -54,6 +54,21 @@ export const useAppCacheStore = defineStore('appCache', {
     setDashboardCache(stats: DashboardStats) {
       this.dashboard.stats = stats
       this.dashboard.hasCached = true
+    },
+    invalidateCustomerCache() {
+      this.customers.hasCached = false
+    },
+    invalidateDeviceCache() {
+      this.devices.hasCached = false
+    },
+    invalidateServiceCache() {
+      this.services.hasCached = false
+    },
+    invalidatePartCache() {
+      this.parts.hasCached = false
+    },
+    invalidateDashboardCache() {
+      this.dashboard.hasCached = false
     }
   }
 })

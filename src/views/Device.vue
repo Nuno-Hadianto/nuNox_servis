@@ -33,7 +33,7 @@
             <th>Pelanggan</th>
             <th>Tipe & Merek</th>
             <th>SN / Warna</th>
-            <th>Kondisi Fisik</th>
+            <th>Kondisi & Catatan</th>
             <th style="text-align: center">Aksi</th>
           </tr>
         </thead>
@@ -52,8 +52,8 @@
           <tr v-for="d in devices" :key="d.id">
             <td>{{ d.id }}</td>
             <td>
-              <div style="font-weight: 500">{{ d.customers?.name || 'Tidak Diketahui' }}</div>
-              <div style="font-size: 0.85em; opacity: 0.8">{{ d.customers?.phone || '-' }}</div>
+              <div style="font-weight: 500">{{ d.customer_name || 'Tidak Diketahui' }}</div>
+              <div style="font-size: 0.85em; opacity: 0.8">{{ d.customer_phone || '-' }}</div>
             </td>
             <td>
               <div>{{ d.device_type }}</div>
@@ -64,8 +64,14 @@
               <div style="font-size: 0.85em; opacity: 0.8">Warna: {{ d.color || '-' }}</div>
             </td>
             <td>
-              <div style="font-size: 0.9em; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" :title="d.physical_condition || '-'">
+              <div style="font-size: 0.9em; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" :title="d.physical_condition || '-'">
                 {{ d.physical_condition || '-' }}
+              </div>
+              <div v-if="d.accessories" style="font-size: 0.85em; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; margin-top: 2px;" :title="d.accessories">
+                <span style="font-weight: 500;">Plus:</span> {{ d.accessories }}
+              </div>
+              <div v-if="d.notes" style="font-size: 0.85em; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #d97706; margin-top: 2px;" :title="d.notes">
+                <span style="font-weight: 500;">Catatan:</span> {{ d.notes }}
               </div>
             </td>
             <td>
@@ -229,6 +235,7 @@ const saveDevice = async (data: Omit<Device, 'id'>) => {
       await DeviceService.create(data)
     }
     isModalOpen.value = false
+    cacheStore.invalidateDeviceCache()
     loadDevices(currentPage.value)
     Toast.fire({
       icon: 'success',
@@ -252,6 +259,7 @@ const deleteDevice = async (id: number) => {
     try {
       await DeviceService.delete(id)
       Toast.fire({ icon: 'success', title: 'Perangkat berhasil dihapus.' })
+      cacheStore.invalidateDeviceCache()
       loadDevices(currentPage.value)
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)

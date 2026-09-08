@@ -8,7 +8,7 @@
       <div class="modal-body">
         <form @submit.prevent="submitForm">
           <div class="form-group">
-            <label>Nama Lengkap</label>
+            <label>Nama Pelanggan</label>
             <input
               type="text"
               v-model="form.name"

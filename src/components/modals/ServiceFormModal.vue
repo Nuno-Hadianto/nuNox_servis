@@ -9,32 +9,22 @@
         <form @submit.prevent="submitForm">
           <div class="form-group">
             <label>Pelanggan</label>
-            <select
+            <CustomSelect
               v-model="form.customer_id"
+              :options="customerOptions"
+              placeholder="-- Pilih Pelanggan --"
               @change="onCustomerChange"
-              required
-              class="form-control"
-            >
-              <option value="">-- Pilih Pelanggan --</option>
-              <option v-for="c in customers" :key="c.id" :value="c.id">
-                {{ c.name }} ({{ c.phone || '-' }})
-              </option>
-            </select>
+            />
           </div>
           <div class="form-group">
             <label>Perangkat</label>
-            <select
+            <CustomSelect
               v-model="form.device_id"
+              :options="deviceOptions"
+              placeholder="-- Pilih Perangkat --"
               @change="onDeviceChange"
-              required
               :disabled="!form.customer_id"
-              class="form-control"
-            >
-              <option value="">-- Pilih Perangkat --</option>
-              <option v-for="d in customerDevices" :key="d.id" :value="d.id">
-                {{ d.brand || '' }} {{ d.model || '' }} - {{ d.device_type }} (SN: {{ d.serial_number || '-' }})
-              </option>
-            </select>
+            />
           </div>
           <div class="form-group">
             <label>Keluhan / Kerusakan (Diisi berdasarkan laporan pelanggan)</label>
@@ -76,7 +66,8 @@
 <script setup lang="ts">
 import { ref, reactive, watch, computed } from 'vue'
 import { X, Save } from 'lucide-vue-next'
-import type { Customer, Device } from '../../shared/types'
+import CustomSelect from '../common/CustomSelect.vue'
+import type { Customer, Device } from '../../../shared/types'
 import { DeviceService } from '@/services/DeviceService'
 import { ServiceOrderService } from '@/services/ServiceOrderService'
 import { AppAlert } from '@/utils/alert'
@@ -105,6 +96,20 @@ const emit = defineEmits<{
 }>()
 
 const customerDevices = ref<Device[]>([])
+
+const customerOptions = computed(() => {
+  return props.customers.map(c => ({
+    value: c.id,
+    label: `${c.name} (${c.phone || '-'})`
+  }))
+})
+
+const deviceOptions = computed(() => {
+  return customerDevices.value.map(d => ({
+    value: d.id,
+    label: `${d.brand || ''} ${d.model || ''} - ${d.device_type} (SN: ${d.serial_number || '-'})`
+  }))
+})
 
 const form = reactive({
   customer_id: '' as string | number,

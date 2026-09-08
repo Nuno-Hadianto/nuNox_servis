@@ -165,6 +165,7 @@ const saveCustomer = async (data: Omit<Customer, 'id'>) => {
       await CustomerService.create(data)
     }
     isModalOpen.value = false
+    cacheStore.invalidateCustomerCache()
     loadCustomers(currentPage.value)
     Toast.fire({
       icon: 'success',
@@ -188,6 +189,7 @@ const deleteCustomer = async (id: number) => {
     try {
       await CustomerService.delete(id)
       Toast.fire({ icon: 'success', title: 'Pelanggan berhasil dihapus.' })
+      cacheStore.invalidateCustomerCache()
       loadCustomers(currentPage.value)
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)

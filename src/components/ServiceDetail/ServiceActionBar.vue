@@ -12,46 +12,41 @@
     <button
       @click="$emit('back')"
       class="btn btn-secondary"
-      style="display: flex; align-items: center; gap: 6px; border-radius: 20px; padding: 8px 16px"
+      style="display: flex; align-items: center; gap: 6px;"
     >
       <span>&larr;</span> Kembali
     </button>
     <div style="display: flex; gap: 10px; flex-wrap: wrap">
       <button
         @click="$emit('send-wa')"
-        class="btn"
-        style="
-          background-color: #25d366;
-          color: white;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          border-radius: 20px;
-        "
+        class="btn btn-success"
+        style="display: flex; align-items: center; gap: 6px;"
       >
-        💬 Kirim WA
+        <MessageCircle :size="18" /> Kirim WA
       </button>
 
 
       <button
         @click="$emit('print-nota')"
         class="btn btn-secondary"
-        style="display: flex; align-items: center; gap: 6px; border-radius: 20px"
+        style="display: flex; align-items: center; gap: 6px;"
       >
-        Cetak Tanda Terima
+        <FileText :size="18" /> Cetak Tanda Terima
       </button>
       <button
         @click="$emit('print-receipt')"
         class="btn btn-primary"
-        style="display: flex; align-items: center; gap: 6px; border-radius: 20px"
+        style="display: flex; align-items: center; gap: 6px;"
       >
-        Cetak Invoice
+        <Printer :size="18" /> Cetak Invoice
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { MessageCircle, Printer, FileText } from 'lucide-vue-next'
+
 defineEmits([
   'back',
   'send-wa',

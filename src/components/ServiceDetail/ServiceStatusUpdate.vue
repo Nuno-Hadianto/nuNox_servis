@@ -68,9 +68,9 @@
       <button
         class="btn btn-primary"
         @click="saveUpdate"
-        style="align-self: flex-end; padding: 10px 24px; border-radius: 20px"
+        style="align-self: flex-end; display: flex; align-items: center; gap: 6px;"
       >
-        💾 Simpan Perubahan
+        <Save :size="18" /> Simpan Perubahan
       </button>
     </div>
   </div>
@@ -78,6 +78,7 @@
 
 <script setup lang="ts">
 import { reactive, watch } from 'vue'
+import { Save } from 'lucide-vue-next'
 import type { ServiceOrder } from '../../../shared/types'
 import { ServiceStatus } from '../../../shared/types'
 

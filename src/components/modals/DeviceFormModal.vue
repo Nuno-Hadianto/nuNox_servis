@@ -9,16 +9,11 @@
         <form @submit.prevent="submitForm">
           <div class="form-group">
             <label>Pelanggan</label>
-            <select
+            <CustomSelect
               v-model="form.customer_id"
-              required
-              class="form-control"
-            >
-              <option value="">-- Pilih Pelanggan --</option>
-              <option v-for="c in customers" :key="c.id" :value="c.id">
-                {{ c.name }} ({{ c.phone || '-' }})
-              </option>
-            </select>
+              :options="customerOptions"
+              placeholder="-- Pilih Pelanggan --"
+            />
           </div>
           <div class="form-row">
             <div class="form-group flex-1">
@@ -121,8 +116,9 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { reactive, watch, computed } from 'vue'
 import { X, Save } from 'lucide-vue-next'
+import CustomSelect from '../common/CustomSelect.vue'
 import type { Customer } from '../../../shared/types'
 
 const props = defineProps<{
@@ -156,6 +152,13 @@ const emit = defineEmits<{
     notes: string
   }): void
 }>()
+
+const customerOptions = computed(() => {
+  return props.customers.map(c => ({
+    value: c.id,
+    label: `${c.name} (${c.phone || '-'})`
+  }))
+})
 
 const form = reactive({
   customer_id: '' as string | number,

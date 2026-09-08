@@ -176,6 +176,7 @@ const deleteService = async (id: number, ticketNo: string) => {
     try {
       await ServiceOrderService.delete(id)
       Toast.fire({ icon: 'success', title: 'Tiket servis berhasil dihapus.' })
+      cacheStore.invalidateServiceCache()
       loadServices(currentPage.value)
     } catch (error: unknown) {
       console.error(error)
@@ -269,6 +270,7 @@ const saveService = async (data: { customer_id: number; device_id: number; custo
     }
     
     isModalOpen.value = false
+    cacheStore.invalidateServiceCache()
     loadServices(currentPage.value)
     Toast.fire({
       icon: 'success',

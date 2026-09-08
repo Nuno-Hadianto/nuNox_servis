@@ -93,7 +93,7 @@
       <button
         @click="addItem"
         class="btn btn-primary"
-        style="padding: 8px 16px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;"
+        style="display: flex; align-items: center; justify-content: center; width: 40px; padding: 0;"
       >
         <Plus :size="20" />
       </button>

@@ -73,10 +73,7 @@ export interface Device {
   id: number;
   customer_id: number;
   customer_name?: string;
-  customers?: {
-    name: string;
-    phone: string;
-  };
+  customer_phone?: string;
   device_type: string;
   brand: string;
   model: string;

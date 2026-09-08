@@ -48,9 +48,21 @@ export const generateNotaHtml = (
                 </div>
                 
                 <!-- Keluhan -->
-                <div class="nota-col">
+                <div class="nota-col" style="flex: 1.5;">
                     <h4 class="nota-col-title">Keluhan / Kerusakan</h4>
-                    <div class="nota-complaint">${service ? service.customer_complaint : '..................................................<br/>..................................................<br/>..................................................'}</div>
+                    <div class="nota-complaint" style="white-space: pre-wrap;">${
+                        service 
+                        ? (() => {
+                            const txt = service.customer_complaint || '';
+                            const sep = '\\n\\n[Kelengkapan & Kondisi Fisik]:\\n';
+                            const idx = txt.indexOf(sep);
+                            if (idx !== -1) {
+                                return txt.substring(0, idx) + '<br/><br/><strong>Kelengkapan & Kondisi Fisik:</strong><br/>' + txt.substring(idx + sep.length);
+                            }
+                            return txt;
+                        })()
+                        : '..................................................<br/>..................................................<br/>..................................................'
+                    }</div>
                 </div>
             </div>
             
@@ -579,8 +591,24 @@ export const generateThermalNotaHtml = (
             
             <div class="thm-dashed"></div>
             
-            <div class="thm-bold thm-section-title">KELUHAN:</div>
-            <div class="thm-text-sm">${service ? service.customer_complaint : '-'}</div>
+            ${(() => {
+                const txt = service?.customer_complaint || '';
+                const sep = '\\n\\n[Kelengkapan & Kondisi Fisik]:\\n';
+                const idx = txt.indexOf(sep);
+                if (idx !== -1) {
+                    return `
+                        <div class="thm-bold thm-section-title">KELUHAN:</div>
+                        <div class="thm-text" style="white-space: pre-wrap;">${txt.substring(0, idx)}</div>
+                        <br/>
+                        <div class="thm-bold thm-section-title" style="margin-top: 5px;">KELENGKAPAN & FISIK:</div>
+                        <div class="thm-text" style="white-space: pre-wrap;">${txt.substring(idx + sep.length)}</div>
+                    `;
+                }
+                return `
+                    <div class="thm-bold thm-section-title">KELUHAN:</div>
+                    <div class="thm-text" style="white-space: pre-wrap;">${txt}</div>
+                `;
+            })()}
             
             <div class="thm-dashed"></div>
             

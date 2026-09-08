@@ -103,8 +103,18 @@
 import { ref, computed, onMounted } from 'vue';
 import { RefreshCcw, Trash, Trash2, Search } from 'lucide-vue-next';
 import type { RecycleBinItem } from '../../shared/types';
-import Swal from 'sweetalert2';
+import { ConfirmDialog, Toast, AppAlert } from '@/utils/alert';
 import { RecycleBinService } from '@/services/RecycleBinService';
+import { useAppCacheStore } from '@/stores/appCacheStore';
+
+const cacheStore = useAppCacheStore();
+
+const invalidateCacheForType = (type: string) => {
+  if (type === 'customer') cacheStore.invalidateCustomerCache();
+  if (type === 'device') cacheStore.invalidateDeviceCache();
+  if (type === 'service') cacheStore.invalidateServiceCache();
+  if (type === 'part') cacheStore.invalidatePartCache();
+};
 
 const deletedItems = ref<RecycleBinItem[]>([]);
 const loading = ref(false);
@@ -165,57 +175,49 @@ const loadDeletedItems = async () => {
 };
 
 const restoreItem = async (item: RecycleBinItem) => {
-  const result = await Swal.fire({
+  const result = await ConfirmDialog.fire({
     title: 'Pulihkan Data?',
     text: `Anda yakin ingin memulihkan ${getTypeName(item.type)} "${item.name}"? Data akan dikembalikan seperti semula.`,
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#10b981',
-    cancelButtonColor: '#6b7280',
-    confirmButtonText: 'Ya, Pulihkan',
-    cancelButtonText: 'Batal'
+    confirmButtonText: 'Ya, Pulihkan'
   });
 
   if (result.isConfirmed) {
     try {
       const res = await RecycleBinService.restoreItem(item.id, item.type as 'customer' | 'device' | 'service' | 'part');
       if (res.success) {
-        Swal.fire('Berhasil!', 'Data telah dipulihkan.', 'success');
+        Toast.fire({ icon: 'success', title: 'Data telah dipulihkan.' });
+        invalidateCacheForType(item.type);
         loadDeletedItems();
       } else {
-        Swal.fire('Gagal', res.error || 'Terjadi kesalahan', 'error');
+        AppAlert.fire('Gagal', res.error || 'Terjadi kesalahan', 'error');
       }
     } catch (e) {
       console.error(e);
-      Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
+      AppAlert.fire('Error', 'Terjadi kesalahan sistem', 'error');
     }
   }
 };
 
 const hardDeleteItem = async (item: RecycleBinItem) => {
-  const result = await Swal.fire({
+  const result = await ConfirmDialog.fire({
     title: 'Hapus Permanen?',
     text: `PERINGATAN: ${getTypeName(item.type)} "${item.name}" akan dihapus SELAMANYA dari database dan tidak bisa dipulihkan kembali!`,
     icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#ef4444',
-    cancelButtonColor: '#6b7280',
-    confirmButtonText: 'Ya, Hapus Permanen',
-    cancelButtonText: 'Batal'
+    confirmButtonText: 'Ya, Hapus Permanen'
   });
 
   if (result.isConfirmed) {
     try {
       const res = await RecycleBinService.deletePermanent(item.id, item.type as 'customer' | 'device' | 'service' | 'part');
       if (res.success) {
-        Swal.fire('Terhapus!', 'Data telah dihapus permanen.', 'success');
+        Toast.fire({ icon: 'success', title: 'Data telah dihapus permanen.' });
         loadDeletedItems();
       } else {
-        Swal.fire('Gagal', res.error || 'Terjadi kesalahan', 'error');
+        AppAlert.fire('Gagal', res.error || 'Terjadi kesalahan', 'error');
       }
     } catch (e) {
       console.error(e);
-      Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
+      AppAlert.fire('Error', 'Terjadi kesalahan sistem', 'error');
     }
   }
 };

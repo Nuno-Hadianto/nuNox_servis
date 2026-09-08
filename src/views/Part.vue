@@ -233,6 +233,7 @@ const savePart = async (data: {
       await PartService.create(parsedData)
     }
     isModalOpen.value = false
+    cacheStore.invalidatePartCache()
     loadParts(currentPage.value)
     Toast.fire({
       icon: 'success',
@@ -256,6 +257,7 @@ const deletePart = async (id: number) => {
     try {
       await PartService.delete(id)
       Toast.fire({ icon: 'success', title: 'Data berhasil dihapus.' })
+      cacheStore.invalidatePartCache()
       loadParts(currentPage.value)
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error)
