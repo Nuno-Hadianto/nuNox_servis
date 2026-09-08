@@ -14,8 +14,7 @@ exports.SparepartSchema = zod_1.z.object({
     category: zod_1.z.string().optional().nullable(),
     buy_price: zod_1.z.number().min(0, 'Harga beli tidak boleh negatif.').optional().default(0),
     sell_price: zod_1.z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0),
-    unit: zod_1.z.string().optional().nullable(),
-    notes: zod_1.z.string().optional().nullable()
+    unit: zod_1.z.string().optional().nullable()
 });
 exports.DeviceSchema = zod_1.z.object({
     customer_id: zod_1.z.number().int('ID Pelanggan tidak valid.'),

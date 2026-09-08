@@ -66,7 +66,6 @@ export interface Part {
   buy_price: number;
   sell_price: number;
   unit: string;
-  notes: string;
 }
 
 export interface Device {

@@ -69,7 +69,6 @@ exports.spareParts = (0, sqlite_core_1.sqliteTable)('spare_parts', {
     buy_price: (0, sqlite_core_1.real)('buy_price').default(0),
     sell_price: (0, sqlite_core_1.real)('sell_price').default(0),
     unit: (0, sqlite_core_1.text)('unit'),
-    notes: (0, sqlite_core_1.text)('notes'),
     created_at: (0, sqlite_core_1.text)('created_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     updated_at: (0, sqlite_core_1.text)('updated_at').default((0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`),
     deleted_at: (0, sqlite_core_1.text)('deleted_at')

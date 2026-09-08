@@ -70,15 +70,6 @@
               />
             </div>
           </div>
-          <div class="form-group">
-            <label>Catatan Tambahan</label>
-            <textarea
-              v-model="form.notes"
-              rows="2"
-              class="form-control textarea-resize"
-              placeholder="Info tambahan (opsional)"
-            ></textarea>
-          </div>
 
           <div class="modal-footer action-footer">
             <button
@@ -112,7 +103,6 @@ const props = defineProps<{
     buy_price?: number | ''
     sell_price?: number | ''
     unit?: string
-    notes?: string
   }
 }>()
 
@@ -125,7 +115,6 @@ const emit = defineEmits<{
     buy_price: number
     sell_price: number
     unit: string
-    notes: string
   }): void
 }>()
 
@@ -134,9 +123,8 @@ const form = reactive({
   name: '',
   category: '',
   buy_price: 0,
-  sell_price: 0,
-  unit: 'Pcs',
-  notes: ''
+  sell_price: '' as number | '',
+  unit: 'Pcs'
 })
 
 watch(() => props.isOpen, (newVal) => {
@@ -145,9 +133,8 @@ watch(() => props.isOpen, (newVal) => {
     form.name = props.initialData?.name || ''
     form.category = props.initialData?.category || ''
     form.buy_price = props.initialData?.buy_price || 0
-    form.sell_price = props.initialData?.sell_price || 0
+    form.sell_price = props.initialData?.sell_price !== undefined ? props.initialData.sell_price : ''
     form.unit = props.initialData?.unit || 'Pcs'
-    form.notes = props.initialData?.notes || ''
   }
 })
 

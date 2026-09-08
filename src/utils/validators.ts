@@ -13,8 +13,7 @@ export const SparepartSchema = z.object({
   category: z.string().optional().nullable(),
   buy_price: z.number().min(0, 'Harga beli tidak boleh negatif.').optional().default(0),
   sell_price: z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0),
-  unit: z.string().optional().nullable(),
-  notes: z.string().optional().nullable()
+  unit: z.string().optional().nullable()
 })
 
 export const DeviceSchema = z.object({

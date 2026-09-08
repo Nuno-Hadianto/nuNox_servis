@@ -72,7 +72,6 @@ export const spareParts = sqliteTable('spare_parts', {
   buy_price: real('buy_price').default(0),
   sell_price: real('sell_price').default(0),
   unit: text('unit'),
-  notes: text('notes'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
   deleted_at: text('deleted_at')

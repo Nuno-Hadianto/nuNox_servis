@@ -162,15 +162,13 @@ const formInitialData = ref<{
   buy_price: number | ''
   sell_price: number | ''
   unit: string
-  notes: string
 }>({
   part_code: '',
   name: '',
   category: 'Sparepart',
   buy_price: '',
   sell_price: '',
-  unit: 'Pcs',
-  notes: ''
+  unit: 'Pcs'
 })
 
 const openAddModal = () => {
@@ -182,8 +180,7 @@ const openAddModal = () => {
     category: 'Sparepart',
     buy_price: '',
     sell_price: '',
-    unit: 'Pcs',
-    notes: ''
+    unit: 'Pcs'
   }
   isModalOpen.value = true
 }
@@ -200,8 +197,7 @@ const editPart = async (p: Part) => {
         category: detail.category || '',
         buy_price: detail.buy_price || '',
         sell_price: detail.sell_price || '',
-        unit: detail.unit || '',
-        notes: detail.notes || ''
+        unit: detail.unit || ''
       }
       isModalOpen.value = true
     }
@@ -218,7 +214,6 @@ const savePart = async (data: {
   buy_price: number | ''
   sell_price: number | ''
   unit: string
-  notes: string
 }) => {
   try {
     const parsedData: Omit<Part, 'id'> = {
