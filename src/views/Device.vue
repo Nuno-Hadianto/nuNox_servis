@@ -66,7 +66,7 @@
             <td>
 
 
-              <div v-if="d.notes" style="font-size: 0.85em; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #d97706; margin-top: 2px;" :title="d.notes">
+              <div v-if="d.notes" style="font-size: 0.85em; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;" :title="d.notes">
                 {{ d.notes }}
               </div>
             </td>
