@@ -12,7 +12,6 @@ function getDevices(searchQuery = '', sortBy = 'name_asc'): Device[] {
         model: devices.model,
         serial_number: devices.serial_number,
         color: devices.color,
-        accessories: devices.accessories,
         notes: devices.notes,
         created_at: devices.created_at,
         updated_at: devices.updated_at,
@@ -63,17 +62,17 @@ function getDevicesByCustomerId(customerId: number | string) {
 }
 
 function addDevice(data: Device) {
-    const { customer_id, device_type, brand, model, serial_number, color, accessories, notes } = data;
+    const { customer_id, device_type, brand, model, serial_number, color, notes } = data;
     const result = db.drizzle.insert(devices).values({
-        customer_id, device_type, brand, model, serial_number, color, accessories, notes
+        customer_id, device_type, brand, model, serial_number, color, notes
     }).run();
     return result.lastInsertRowid;
 }
 
 function updateDevice(id: number | string, data: Device) {
-    const { customer_id, device_type, brand, model, serial_number, color, accessories, notes } = data;
+    const { customer_id, device_type, brand, model, serial_number, color, notes } = data;
     db.drizzle.update(devices).set({
-        customer_id, device_type, brand, model, serial_number, color, accessories, notes, updated_at: sql`CURRENT_TIMESTAMP`
+        customer_id, device_type, brand, model, serial_number, color, notes, updated_at: sql`CURRENT_TIMESTAMP`
     }).where(eq(devices.id, Number(id))).run();
     return true;
 }

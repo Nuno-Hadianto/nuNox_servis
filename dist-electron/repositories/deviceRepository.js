@@ -22,7 +22,6 @@ function getDevices(searchQuery = '', sortBy = 'name_asc') {
         model: drizzleSchema_1.devices.model,
         serial_number: drizzleSchema_1.devices.serial_number,
         color: drizzleSchema_1.devices.color,
-        accessories: drizzleSchema_1.devices.accessories,
         notes: drizzleSchema_1.devices.notes,
         created_at: drizzleSchema_1.devices.created_at,
         updated_at: drizzleSchema_1.devices.updated_at,
@@ -59,16 +58,16 @@ function getDevicesByCustomerId(customerId) {
         .orderBy((0, drizzle_orm_1.desc)(drizzleSchema_1.devices.id)).all();
 }
 function addDevice(data) {
-    const { customer_id, device_type, brand, model, serial_number, color, accessories, notes } = data;
+    const { customer_id, device_type, brand, model, serial_number, color, notes } = data;
     const result = db_1.default.drizzle.insert(drizzleSchema_1.devices).values({
-        customer_id, device_type, brand, model, serial_number, color, accessories, notes
+        customer_id, device_type, brand, model, serial_number, color, notes
     }).run();
     return result.lastInsertRowid;
 }
 function updateDevice(id, data) {
-    const { customer_id, device_type, brand, model, serial_number, color, accessories, notes } = data;
+    const { customer_id, device_type, brand, model, serial_number, color, notes } = data;
     db_1.default.drizzle.update(drizzleSchema_1.devices).set({
-        customer_id, device_type, brand, model, serial_number, color, accessories, notes, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
+        customer_id, device_type, brand, model, serial_number, color, notes, updated_at: (0, drizzle_orm_1.sql) `CURRENT_TIMESTAMP`
     }).where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.id, Number(id))).run();
     return true;
 }

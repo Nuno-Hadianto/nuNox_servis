@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const db = require('../database/db').default;
 const customerController = require('../controllers/customerController');
 const deviceController = require('../controllers/deviceController');
@@ -46,7 +47,6 @@ describe('Customer & Device Controller Integration Tests', () => {
             model: 'ROG',
             serial_number: 'SN123',
             color: 'Black',
-            accessories: 'Charger',
             notes: ''
         });
         
@@ -86,7 +86,7 @@ describe('Customer & Device Controller Integration Tests', () => {
         const customerId = customerController.addCustomer({ name: 'Budi', phone: '081', address: '', notes: '' });
         const deviceId = deviceController.addDevice({ 
             customer_id: customerId, device_type: 'HP', brand: 'Samsung', model: 'A50', 
-            serial_number: '', color: '', accessories: '', notes: '' 
+            serial_number: '', color: '', notes: '' 
         });
         
         serviceController.addService({

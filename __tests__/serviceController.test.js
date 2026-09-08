@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const db = require('../database/db').default;
 const serviceController = require('../controllers/serviceController');
 const customerController = require('../controllers/customerController');
@@ -22,7 +23,7 @@ describe('Service Controller Integration Tests', () => {
         });
         deviceId = deviceController.addDevice({
             customer_id: customerId, device_type: 'Laptop', brand: 'Asus', model: 'ROG', 
-            serial_number: '', color: '', accessories: '', notes: ''
+            serial_number: '', color: '', notes: ''
         });
     });
 

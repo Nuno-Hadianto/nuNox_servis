@@ -33,7 +33,7 @@
             <th>Pelanggan</th>
             <th>Tipe & Merek</th>
             <th>SN / Warna</th>
-            <th>Aksesoris & Catatan</th>
+            <th>Catatan</th>
             <th style="text-align: center">Aksi</th>
           </tr>
         </thead>
@@ -65,11 +65,9 @@
             </td>
             <td>
 
-              <div v-if="d.accessories" style="font-size: 0.85em; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; margin-top: 2px;" :title="d.accessories">
-                <span style="font-weight: 500;">Plus:</span> {{ d.accessories }}
-              </div>
+
               <div v-if="d.notes" style="font-size: 0.85em; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #d97706; margin-top: 2px;" :title="d.notes">
-                <span style="font-weight: 500;">Catatan:</span> {{ d.notes }}
+                {{ d.notes }}
               </div>
             </td>
             <td>
@@ -162,7 +160,6 @@ const formInitialData = ref<{
   model: string
   serial_number: string
   color: string
-  accessories: string
   notes: string
 }>({
   customer_id: '',
@@ -171,7 +168,6 @@ const formInitialData = ref<{
   model: '',
   serial_number: '',
   color: '',
-  accessories: '',
   notes: ''
 })
 
@@ -185,7 +181,6 @@ const openAddModal = async () => {
     model: '',
     serial_number: '',
     color: '',
-    accessories: '',
     notes: ''
   }
 
@@ -209,7 +204,6 @@ const editDevice = async (d: Device) => {
         model: detail.model || '',
         serial_number: detail.serial_number || '',
         color: detail.color || '',
-        accessories: detail.accessories || '',
         notes: detail.notes || ''
       }
 

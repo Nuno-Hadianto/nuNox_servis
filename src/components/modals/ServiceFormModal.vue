@@ -37,12 +37,21 @@
             ></textarea>
           </div>
           <div class="form-group" v-if="isAddMode">
-            <label>Kelengkapan & Kondisi Fisik (Opsional)</label>
+            <label>Kelengkapan / Aksesoris (Opsional)</label>
+            <textarea
+              v-model="form.accessories"
+              rows="2"
+              class="form-control textarea-resize"
+              placeholder="Contoh: Bawa charger, tas, dus..."
+            ></textarea>
+          </div>
+          <div class="form-group" v-if="isAddMode">
+            <label>Kondisi Fisik (Opsional)</label>
             <textarea
               v-model="form.physical_condition"
               rows="2"
               class="form-control textarea-resize"
-              placeholder="Contoh: Bawa charger dan tas. Bodi bawah lecet pemakaian."
+              placeholder="Contoh: Bodi bawah lecet pemakaian, layar gores..."
             ></textarea>
           </div>
           <div class="modal-footer action-footer">
@@ -82,6 +91,7 @@ const props = defineProps<{
     device_id?: string | number
     customer_complaint?: string
     physical_condition?: string
+    accessories?: string
   }
 }>()
 
@@ -92,6 +102,7 @@ const emit = defineEmits<{
     device_id: number
     customer_complaint: string
     physical_condition: string
+    accessories: string
   }): void
 }>()
 
@@ -115,7 +126,8 @@ const form = reactive({
   customer_id: '' as string | number,
   device_id: '' as string | number,
   customer_complaint: '',
-  physical_condition: ''
+  physical_condition: '',
+  accessories: ''
 })
 
 watch(() => props.isOpen, async (newVal) => {
@@ -124,6 +136,7 @@ watch(() => props.isOpen, async (newVal) => {
     form.device_id = props.initialData?.device_id || ''
     form.customer_complaint = props.initialData?.customer_complaint || ''
     form.physical_condition = props.initialData?.physical_condition || ''
+    form.accessories = props.initialData?.accessories || ''
 
     if (form.customer_id) {
       await loadCustomerDevices(Number(form.customer_id))
@@ -165,12 +178,7 @@ const onDeviceChange = async () => {
       console.error('Gagal mengecek garansi', error)
     }
 
-    const selectedDev = customerDevices.value.find((d) => d.id === Number(form.device_id))
-    if (selectedDev) {
-      const cond = []
-      if (selectedDev.accessories) cond.push(selectedDev.accessories)
-      form.physical_condition = cond.join('. ')
-    }
+
   }
 }
 
@@ -183,7 +191,8 @@ const submitForm = () => {
     customer_id: Number(form.customer_id),
     device_id: Number(form.device_id),
     customer_complaint: form.customer_complaint,
-    physical_condition: form.physical_condition
+    physical_condition: form.physical_condition,
+    accessories: form.accessories
   })
 }
 </script>

@@ -196,11 +196,13 @@ const formInitialData = ref<{
   device_id: string | number
   customer_complaint: string
   physical_condition: string
+  accessories: string
 }>({
   customer_id: '',
   device_id: '',
   customer_complaint: '',
-  physical_condition: ''
+  physical_condition: '',
+  accessories: ''
 })
 
 const openAddModal = async () => {
@@ -209,7 +211,8 @@ const openAddModal = async () => {
     customer_id: '',
     device_id: '',
     customer_complaint: '',
-    physical_condition: ''
+    physical_condition: '',
+    accessories: ''
   }
   await loadCustomersDropdown()
   isModalOpen.value = true
@@ -223,17 +226,26 @@ const openEditModal = async (s: ServiceOrder) => {
     customer_id: s.customer_id,
     device_id: s.device_id,
     customer_complaint: s.customer_complaint,
-    physical_condition: '' // Tidak dipakai saat edit karena sudah digabung
+    physical_condition: '', // Tidak dipakai saat edit karena sudah digabung
+    accessories: '' // Sama, tidak dipakai saat edit
   }
   
   isModalOpen.value = true
 }
 
 
-const saveService = async (data: { customer_id: number; device_id: number; customer_complaint: string; physical_condition: string }) => {
+const saveService = async (data: { customer_id: number; device_id: number; customer_complaint: string; physical_condition: string; accessories: string }) => {
   try {
-    const finalComplaint = data.physical_condition 
-      ? `${data.customer_complaint}\n\n[Kelengkapan & Kondisi Fisik]:\n${data.physical_condition}` 
+    let extraNotes = '';
+    if (data.accessories) {
+      extraNotes += `\n[Kelengkapan]: ${data.accessories}`;
+    }
+    if (data.physical_condition) {
+      extraNotes += `\n[Kondisi Fisik]: ${data.physical_condition}`;
+    }
+
+    const finalComplaint = extraNotes
+      ? `${data.customer_complaint}\n${extraNotes}`
       : data.customer_complaint;
 
     // Validasi dengan Zod

@@ -135,8 +135,7 @@ function getServiceById(id) {
         model: drizzleSchema_1.devices.model,
         device_type: drizzleSchema_1.devices.device_type,
         serial_number: drizzleSchema_1.devices.serial_number,
-        color: drizzleSchema_1.devices.color,
-        accessories: drizzleSchema_1.devices.accessories
+        color: drizzleSchema_1.devices.color
     }).from(drizzleSchema_1.serviceOrders)
         .innerJoin(drizzleSchema_1.customers, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, drizzleSchema_1.customers.id))
         .innerJoin(drizzleSchema_1.devices, (0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.device_id, drizzleSchema_1.devices.id))

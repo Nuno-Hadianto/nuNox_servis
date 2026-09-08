@@ -24,7 +24,6 @@ export const DeviceSchema = z.object({
   model: z.string().optional().nullable(),
   serial_number: z.string().optional().nullable(),
   color: z.string().optional().nullable(),
-  accessories: z.string().optional().nullable(),
   notes: z.string().optional().nullable()
 })
 

@@ -79,7 +79,6 @@ export interface Device {
   model: string;
   serial_number: string;
   color: string;
-  accessories: string;
   notes: string;
 }
 

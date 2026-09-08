@@ -144,8 +144,7 @@ function getServiceById(id: number | string) {
         model: devices.model,
         device_type: devices.device_type,
         serial_number: devices.serial_number,
-        color: devices.color,
-        accessories: devices.accessories
+        color: devices.color
     }).from(serviceOrders)
       .innerJoin(customers, eq(serviceOrders.customer_id, customers.id))
       .innerJoin(devices, eq(serviceOrders.device_id, devices.id))

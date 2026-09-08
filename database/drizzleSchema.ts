@@ -23,7 +23,6 @@ export const devices = sqliteTable('devices', {
   model: text('model'),
   serial_number: text('serial_number'),
   color: text('color'),
-  accessories: text('accessories'),
   notes: text('notes'),
   created_at: text('created_at').default(sql`CURRENT_TIMESTAMP`),
   updated_at: text('updated_at').default(sql`CURRENT_TIMESTAMP`),

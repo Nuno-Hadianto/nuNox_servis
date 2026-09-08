@@ -57,25 +57,14 @@
             </div>
           </div>
           
-          <div class="form-row">
-            <div class="form-group flex-1">
-              <label>Warna</label>
-              <input
-                type="text"
-                v-model="form.color"
-                class="form-control"
-                placeholder="Misal: Hitam, Putih"
-              />
-            </div>
-            <div class="form-group flex-1">
-              <label>Kelengkapan (Aksesoris)</label>
-              <input
-                type="text"
-                v-model="form.accessories"
-                class="form-control"
-                placeholder="Misal: Charger, Tas"
-              />
-            </div>
+          <div class="form-group">
+            <label>Warna</label>
+            <input
+              type="text"
+              v-model="form.color"
+              class="form-control"
+              placeholder="Misal: Hitam, Putih"
+            />
           </div>
 
           <div class="form-group">
@@ -122,7 +111,6 @@ const props = defineProps<{
     model?: string
     serial_number?: string
     color?: string
-    accessories?: string
     notes?: string
   }
 }>()
@@ -136,7 +124,6 @@ const emit = defineEmits<{
     model: string
     serial_number: string
     color: string
-    accessories: string
     notes: string
   }): void
 }>()
@@ -155,7 +142,6 @@ const form = reactive({
   model: '',
   serial_number: '',
   color: '',
-  accessories: '',
   notes: ''
 })
 
@@ -167,7 +153,6 @@ watch(() => props.isOpen, (newVal) => {
     form.model = props.initialData?.model || ''
     form.serial_number = props.initialData?.serial_number || ''
     form.color = props.initialData?.color || ''
-    form.accessories = props.initialData?.accessories || ''
     form.notes = props.initialData?.notes || ''
   }
 })
