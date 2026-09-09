@@ -14,17 +14,15 @@ describe('partController (White-box testing)', () => {
             category: 'Layar',
 
             buy_price: 500000,
-            sell_price: 650000,
-            unit: 'pcs',
-            notes: 'Test Part'
+            sell_price: 650000
         };
 
         const result = partController.addPart(data);
         expect(typeof result).toBe('number');
 
         const parts = partController.getParts('');
-        expect(parts.length).toBe(1);
-        expect(parts[0].part_code).toBe('P-001');
+        expect(parts.data.length).toBe(1);
+        expect(parts.data[0].part_code).toBe('P-001');
 
     });
 

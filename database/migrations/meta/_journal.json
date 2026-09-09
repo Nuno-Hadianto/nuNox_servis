@@ -64,6 +64,13 @@
       "when": 1788599175792,
       "tag": "0008_adorable_vin_gonzales",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1788915435937,
+      "tag": "0009_common_the_captain",
+      "breakpoints": true
     }
   ]
 }
