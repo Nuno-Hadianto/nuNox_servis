@@ -34,7 +34,7 @@
               v-model="form.name"
               required
               class="form-control"
-              placeholder="Nama barang / jasa"
+              placeholder="Nama barang"
             />
           </div>
           <div class="form-row">

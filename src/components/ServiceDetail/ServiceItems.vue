@@ -38,7 +38,6 @@
       >
         <option value="Jasa">Jasa</option>
         <option value="Sparepart">Sparepart</option>
-        <option value="Biaya lainnya">Lainnya</option>
       </select>
 
       <div v-if="form.type === 'Sparepart'" style="width: 220px;">

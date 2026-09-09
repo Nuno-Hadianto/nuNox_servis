@@ -153,7 +153,7 @@ const formatCurrency = (amount: number | string | undefined | null) => {
 
 // Modal Form Logic
 const isModalOpen = ref<boolean>(false)
-const modalTitle = ref<string>('Tambah Sparepart/Jasa')
+const modalTitle = ref<string>('Tambah Sparepart')
 const formId = ref<number | null>(null)
 const formInitialData = ref<{
   part_code: string
@@ -170,7 +170,7 @@ const formInitialData = ref<{
 })
 
 const openAddModal = () => {
-  modalTitle.value = 'Tambah Sparepart/Jasa'
+  modalTitle.value = 'Tambah Sparepart'
   formId.value = null
   formInitialData.value = {
     part_code: '',
@@ -186,7 +186,7 @@ const editPart = async (p: Part) => {
   try {
     const detail = (await PartService.getById(p.id)) as Part
     if (detail) {
-      modalTitle.value = 'Edit Sparepart/Jasa'
+      modalTitle.value = 'Edit Sparepart'
       formId.value = detail.id || null
       formInitialData.value = {
         part_code: detail.part_code || '',
