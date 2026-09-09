@@ -1,15 +1,16 @@
 <template>
-  <div class="card" style="margin-bottom: 20px; padding: 25px">
+  <div class="card hover-container" style="margin-bottom: 20px; padding: 25px">
     <h2
       style="
         font-size: 1.2rem;
         margin-bottom: 15px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        color: var(--primary-color);
       "
     >
-      💰 Rincian Biaya & Sparepart
+      <Receipt :size="22" /> Rincian Biaya & Sparepart
     </h2>
 
     <div
@@ -101,8 +102,9 @@
       />
       <button
         @click="addItem"
-        class="btn btn-primary"
-        style="display: flex; align-items: center; justify-content: center; width: 40px; padding: 0;"
+        class="btn-icon-primary"
+        title="Tambah Item"
+        style="width: 36px; height: 36px; margin-left: 5px;"
       >
         <Plus :size="20" />
       </button>
@@ -145,18 +147,10 @@
             }}</span>
             <button
               @click="$emit('delete', item.id)"
-              class="btn btn-danger"
-              style="
-                padding: 4px 8px;
-                font-size: 0.75rem;
-                border-radius: 4px;
-                opacity: 0.8;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-              "
+              class="btn-icon-danger"
+              title="Hapus"
             >
-              <Trash2 :size="14" /> Hapus
+              <Trash2 :size="16" />
             </button>
           </div>
         </li>
@@ -183,11 +177,11 @@
 
 <script setup lang="ts">
 import { reactive, computed } from 'vue'
-import { Trash2, Plus } from 'lucide-vue-next'
+import { Trash2, Plus, Receipt } from 'lucide-vue-next'
 import type { ServiceItem, Part } from '../../../shared/types'
 import CustomSelect from '../common/CustomSelect.vue'
 
-defineProps<{
+const props = defineProps<{
   items: ServiceItem[]
   parts: Part[]
   totalCost: number

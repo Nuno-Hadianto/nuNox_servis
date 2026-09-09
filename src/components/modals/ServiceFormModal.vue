@@ -37,7 +37,7 @@
             ></textarea>
           </div>
           <div class="form-group">
-            <label>Kelengkapan / Aksesoris (Opsional)</label>
+            <label>Kelengkapan (Opsional)</label>
             <textarea
               v-model="form.accessories"
               rows="2"

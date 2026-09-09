@@ -53,13 +53,21 @@ export const generateNotaHtml = (
                     <div class="nota-complaint" style="white-space: pre-wrap;">${
                         service 
                         ? (() => {
+                            let out = '';
                             const txt = service.customer_complaint || '';
                             const sep = '\\n\\n[Kelengkapan & Kondisi Fisik]:\\n';
                             const idx = txt.indexOf(sep);
                             if (idx !== -1) {
-                                return txt.substring(0, idx) + '<br/><br/><strong>Kelengkapan & Kondisi Fisik:</strong><br/>' + txt.substring(idx + sep.length);
+                                out += txt.substring(0, idx);
+                                if (!service.accessories && !service.physical_condition) {
+                                    out += '<br/><br/><strong>Kelengkapan & Kondisi Fisik (Legacy):</strong><br/>' + txt.substring(idx + sep.length);
+                                }
+                            } else {
+                                out += txt;
                             }
-                            return txt;
+                            if (service.accessories) out += '<br/><br/><strong>Kelengkapan:</strong> ' + service.accessories;
+                            if (service.physical_condition) out += '<br/><br/><strong>Kondisi Fisik:</strong> ' + service.physical_condition;
+                            return out || '..................................................<br/>..................................................<br/>..................................................';
                         })()
                         : '..................................................<br/>..................................................<br/>..................................................'
                     }</div>
@@ -592,28 +600,44 @@ export const generateThermalNotaHtml = (
             <div class="thm-dashed"></div>
             
             ${(() => {
+                let out = '';
                 const txt = service?.customer_complaint || '';
                 const sep = '\\n\\n[Kelengkapan & Kondisi Fisik]:\\n';
                 const idx = txt.indexOf(sep);
                 if (idx !== -1) {
-                    return `
+                    out += `
                         <div class="thm-bold thm-section-title">KELUHAN:</div>
                         <div class="thm-text" style="white-space: pre-wrap;">${txt.substring(0, idx)}</div>
-                        <br/>
-                        <div class="thm-bold thm-section-title" style="margin-top: 5px;">KELENGKAPAN & FISIK:</div>
-                        <div class="thm-text" style="white-space: pre-wrap;">${txt.substring(idx + sep.length)}</div>
+                    `;
+                    if (!service?.accessories && !service?.physical_condition) {
+                        out += `
+                            <br/>
+                            <div class="thm-bold thm-section-title" style="margin-top: 5px;">KELENGKAPAN (Lama):</div>
+                            <div class="thm-text" style="white-space: pre-wrap;">${txt.substring(idx + sep.length)}</div>
+                        `;
+                    }
+                } else {
+                    out += `
+                        <div class="thm-bold thm-section-title">KELUHAN:</div>
+                        <div class="thm-text" style="white-space: pre-wrap;">${txt}</div>
                     `;
                 }
-                return `
-                    <div class="thm-bold thm-section-title">KELUHAN:</div>
-                    <div class="thm-text" style="white-space: pre-wrap;">${txt}</div>
-                `;
+                
+                if (service?.physical_condition) {
+                    out += `
+                        <br/>
+                        <div class="thm-bold thm-section-title" style="margin-top: 5px;">KONDISI FISIK:</div>
+                        <div class="thm-text" style="white-space: pre-wrap;">${service.physical_condition}</div>
+                    `;
+                }
+                
+                return out;
             })()}
             
             <div class="thm-dashed"></div>
             
             <div class="thm-bold thm-section-title">KELENGKAPAN:</div>
-            <div class="thm-text-sm">${service ? service.accessories || '-' : '-'}</div>
+            <div class="thm-text-sm">${service?.accessories ? service.accessories : '-'}</div>
             
             <div class="thm-dashed"></div>
             

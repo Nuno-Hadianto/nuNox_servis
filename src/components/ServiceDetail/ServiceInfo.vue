@@ -65,12 +65,20 @@
         style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color)"
       >
         <p style="white-space: pre-wrap; margin-bottom: 5px;">
-          <strong>Keluhan:</strong>
-          <span style="color: #ef4444; font-weight: 500">{{ parsedComplaint.main }}</span>
+          <strong>Keluhan: </strong>
+          <span style="color: #ef4444; font-weight: 500">{{ parsedComplaint }}</span>
         </p>
-        <p v-if="parsedComplaint.physical" style="white-space: pre-wrap; margin-top: 8px;">
-          <strong>Kelengkapan & Kondisi Fisik:</strong>
-          <span style="color: #d97706; font-weight: 500">{{ parsedComplaint.physical }}</span>
+        <p v-if="service.accessories" style="white-space: pre-wrap; margin-top: 8px;">
+          <strong>Kelengkapan: </strong>
+          <span style="color: #10b981; font-weight: 500">{{ service.accessories }}</span>
+        </p>
+        <p v-if="service.physical_condition" style="white-space: pre-wrap; margin-top: 8px;">
+          <strong>Kondisi Fisik: </strong>
+          <span style="color: #d97706; font-weight: 500">{{ service.physical_condition }}</span>
+        </p>
+        <p v-if="!service.accessories && !service.physical_condition && legacyPhysical" style="white-space: pre-wrap; margin-top: 8px;">
+          <strong>Kelengkapan & Kondisi Fisik (Lama): </strong>
+          <span style="color: #d97706; font-weight: 500">{{ legacyPhysical }}</span>
         </p>
       </div>
     </div>
@@ -91,17 +99,24 @@ const formattedDate = computed(() => {
 })
 
 const parsedComplaint = computed(() => {
-  if (!props.service?.customer_complaint) return { main: '', physical: '' }
+  if (!props.service?.customer_complaint) return ''
   const text = props.service.customer_complaint
   const separator = '\n\n[Kelengkapan & Kondisi Fisik]:\n'
   const splitIdx = text.indexOf(separator)
   if (splitIdx !== -1) {
-    return {
-      main: text.substring(0, splitIdx),
-      physical: text.substring(splitIdx + separator.length)
-    }
+    return text.substring(0, splitIdx)
   }
-  return { main: text, physical: '' }
+  return text
+})
+
+const legacyPhysical = computed(() => {
+  const text = props.service?.customer_complaint || ''
+  const separator = '\n\n[Kelengkapan & Kondisi Fisik]:\n'
+  const splitIdx = text.indexOf(separator)
+  if (splitIdx !== -1) {
+    return text.substring(splitIdx + separator.length)
+  }
+  return ''
 })
 
 const statusStyle = (status: string) => {

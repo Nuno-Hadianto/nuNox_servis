@@ -1,6 +1,8 @@
 <template>
-  <div class="card">
-    <h2>Pembayaran</h2>
+  <div class="card hover-container">
+    <h2 style="display: flex; align-items: center; gap: 10px; color: var(--primary-color);">
+      <CreditCard :size="22" /> Pembayaran
+    </h2>
     <div
       style="
         display: flex;
@@ -43,16 +45,11 @@
           >
           <button
             @click="$emit('delete', p.id)"
-            class="btn btn-danger"
-            style="
-              padding: 2px 5px;
-              font-size: 0.7rem;
-              display: inline-flex;
-              align-items: center;
-              gap: 6px;
-            "
+            class="btn-icon-danger"
+            title="Hapus"
+            style="width: 24px; height: 24px;"
           >
-            <Trash2 :size="14" /> Hapus
+            <Trash2 :size="12" />
           </button>
         </div>
       </li>
@@ -100,7 +97,7 @@
 
 <script setup lang="ts">
 import { reactive, watch } from 'vue'
-import { Trash2 } from 'lucide-vue-next'
+import { Trash2, CreditCard } from 'lucide-vue-next'
 import type { Payment } from '../../../shared/types'
 import { PaymentStatus } from '../../../shared/types'
 

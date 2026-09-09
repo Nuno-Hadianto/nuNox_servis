@@ -1,15 +1,16 @@
 <template>
-  <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px">
+  <div class="hover-container" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px">
     <h3
       style="
         margin-bottom: 15px;
         font-size: 1.1rem;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        color: var(--text-color);
       "
     >
-      🕰️ Riwayat Status
+      <History :size="20" /> Riwayat Status
     </h3>
     <div
       style="
@@ -71,6 +72,7 @@
 </template>
 
 <script setup lang="ts">
+import { History } from 'lucide-vue-next'
 import type { ServiceHistory } from '../../../shared/types'
 
 defineProps<{

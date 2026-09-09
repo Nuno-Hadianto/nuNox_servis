@@ -1,15 +1,16 @@
 <template>
-  <div style="margin-top: 25px">
+  <div class="hover-container" style="margin-top: 25px">
     <h3
       style="
         margin-bottom: 15px;
         font-size: 1.1rem;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        color: var(--text-color);
       "
     >
-      📝 Update Status & Catatan
+      <ClipboardEdit :size="20" /> Update Status & Catatan
     </h3>
     <div style="display: flex; flex-direction: column; gap: 15px">
       <div class="form-group" style="margin: 0">
@@ -78,7 +79,7 @@
 
 <script setup lang="ts">
 import { reactive, watch } from 'vue'
-import { Save } from 'lucide-vue-next'
+import { Save, ClipboardEdit } from 'lucide-vue-next'
 import type { ServiceOrder } from '../../../shared/types'
 import { ServiceStatus } from '../../../shared/types'
 
