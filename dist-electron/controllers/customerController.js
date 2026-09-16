@@ -56,8 +56,9 @@ function updateCustomer(id, data) {
 }
 function deleteCustomer(id) {
     const hasServiceOrders = customerRepository.checkCustomerHasServiceOrders(id);
-    if (hasServiceOrders) {
-        throw new Error("Pelanggan tidak bisa dihapus karena masih memiliki riwayat tiket servis.");
+    const hasDevices = customerRepository.checkCustomerHasDevices(id);
+    if (hasServiceOrders || hasDevices) {
+        throw new Error("Pelanggan tidak bisa dihapus karena masih memiliki riwayat perangkat atau tiket servis.");
     }
     return customerRepository.deleteCustomer(id);
 }

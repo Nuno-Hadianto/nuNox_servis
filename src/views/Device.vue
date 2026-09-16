@@ -198,7 +198,7 @@ const editDevice = async (d: Device) => {
       await loadCustomersDropdown()
 
       formInitialData.value = {
-        customer_id: detail.customer_id.toString(),
+        customer_id: detail.customer_id,
         device_type: detail.device_type || '',
         brand: detail.brand || '',
         model: detail.model || '',

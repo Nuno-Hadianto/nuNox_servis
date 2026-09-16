@@ -8,6 +8,7 @@ exports.getCustomerById = getCustomerById;
 exports.addCustomer = addCustomer;
 exports.updateCustomer = updateCustomer;
 exports.checkCustomerHasServiceOrders = checkCustomerHasServiceOrders;
+exports.checkCustomerHasDevices = checkCustomerHasDevices;
 exports.deleteCustomer = deleteCustomer;
 const db_1 = __importDefault(require("../database/db"));
 const drizzleSchema_1 = require("../database/drizzleSchema");
@@ -73,6 +74,11 @@ function updateCustomer(id, data) {
 function checkCustomerHasServiceOrders(id) {
     const result = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.serviceOrders)
         .where((0, drizzle_orm_1.eq)(drizzleSchema_1.serviceOrders.customer_id, Number(id))).get();
+    return result.count > 0;
+}
+function checkCustomerHasDevices(id) {
+    const result = db_1.default.drizzle.select({ count: (0, drizzle_orm_1.sql) `count(*)` }).from(drizzleSchema_1.devices)
+        .where((0, drizzle_orm_1.eq)(drizzleSchema_1.devices.customer_id, Number(id))).get();
     return result.count > 0;
 }
 function deleteCustomer(id) {

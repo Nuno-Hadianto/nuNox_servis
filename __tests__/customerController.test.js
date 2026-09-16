@@ -100,7 +100,21 @@ describe('Customer & Device Controller Integration Tests', () => {
 
         expect(() => {
             customerController.deleteCustomer(customerId);
-        }).toThrow(/tidak bisa dihapus karena masih memiliki riwayat tiket servis/i);
+        }).toThrow(/tidak bisa dihapus karena masih memiliki riwayat perangkat atau tiket servis/i);
+    });
+
+    it('seharusnya menolak penghapusan pelanggan jika ada perangkat terdaftar (meski tanpa tiket servis)', () => {
+        const customerId = customerController.addCustomer({ name: 'Andi', phone: '0812', address: '', notes: '' });
+        
+        // Hanya tambah perangkat, tanpa tiket servis
+        deviceController.addDevice({ 
+            customer_id: customerId, device_type: 'Laptop', brand: 'Asus', model: '', 
+            serial_number: '', color: '', notes: '' 
+        });
+
+        expect(() => {
+            customerController.deleteCustomer(customerId);
+        }).toThrow(/tidak bisa dihapus karena masih memiliki riwayat perangkat atau tiket servis/i);
     });
 
     it('seharusnya dapat melakukan pagination dengan benar', () => {

@@ -1,6 +1,6 @@
 import { Customer } from '../shared/types';
 import db from '../database/db';
-import {  customers, serviceOrders  } from '../database/drizzleSchema';
+import {  customers, serviceOrders, devices  } from '../database/drizzleSchema';
 import {  eq, like, or, and, asc, desc, sql, isNull  } from 'drizzle-orm';
 
 function getCustomers(searchQuery: string = '', page: number = 1, limit: number = 50, sortBy: string = 'name_asc') {
@@ -70,6 +70,12 @@ function checkCustomerHasServiceOrders(id: number | string) {
     return result.count > 0;
 }
 
+function checkCustomerHasDevices(id: number | string) {
+    const result = db.drizzle.select({ count: sql`count(*)` }).from(devices)
+        .where(eq(devices.customer_id, Number(id))).get();
+    return result.count > 0;
+}
+
 function deleteCustomer(id: number | string) {
     db.drizzle.update(customers)
         .set({ deleted_at: sql`CURRENT_TIMESTAMP` })
@@ -83,6 +89,7 @@ export {
     addCustomer,
     updateCustomer,
     checkCustomerHasServiceOrders,
+    checkCustomerHasDevices,
     deleteCustomer
  };
 

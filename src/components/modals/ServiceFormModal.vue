@@ -177,8 +177,6 @@ const onDeviceChange = async () => {
     } catch (error) {
       console.error('Gagal mengecek garansi', error)
     }
-
-
   }
 }
 
