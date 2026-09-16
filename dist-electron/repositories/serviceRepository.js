@@ -159,15 +159,23 @@ function addService(data) {
     const { customer_id, device_id, estimated_completion_date, customer_complaint, accessories, physical_condition } = data;
     const ticket_number = generateTicketNumber();
     return db_1.default.transaction(() => {
+        let finalComplaint = customer_complaint;
+        let finalPaymentStatus = 'Belum Bayar';
+        const warranty = checkWarranty(device_id);
+        if (warranty) {
+            finalComplaint = `(Klaim Garansi dari ${warranty.ticket_number}) ${customer_complaint || ''}`;
+            finalPaymentStatus = 'Gratis';
+        }
         const info = db_1.default.drizzle.insert(drizzleSchema_1.serviceOrders).values({
             ticket_number,
             customer_id,
             device_id,
             estimated_completion_date,
-            customer_complaint,
+            customer_complaint: finalComplaint,
             accessories,
             physical_condition,
-            service_status: 'Diterima'
+            service_status: 'Diterima',
+            payment_status: finalPaymentStatus
         }).run();
         const serviceOrderId = info.lastInsertRowid;
         db_1.default.drizzle.insert(drizzleSchema_1.serviceStatusHistory).values({

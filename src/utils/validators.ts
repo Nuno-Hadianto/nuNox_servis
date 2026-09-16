@@ -13,6 +13,9 @@ export const SparepartSchema = z.object({
   category: z.string().optional().nullable(),
   buy_price: z.number().min(0, 'Harga beli tidak boleh negatif.').optional().default(0),
   sell_price: z.number().min(0, 'Harga jual tidak boleh negatif.').optional().default(0)
+}).refine(data => data.sell_price >= data.buy_price, {
+  message: "Harga jual tidak boleh lebih kecil dari harga beli/modal.",
+  path: ["sell_price"]
 })
 
 export const DeviceSchema = z.object({
@@ -28,7 +31,12 @@ export const DeviceSchema = z.object({
 export const ServiceOrderSchema = z.object({
   customer_id: z.number().int('ID Pelanggan tidak valid.'),
   device_id: z.number().int('ID Perangkat tidak valid.'),
-  estimated_completion_date: z.string().optional().nullable(),
+  estimated_completion_date: z.string().optional().nullable().refine(val => {
+    if (!val) return true;
+    const inputDate = new Date(val).setHours(0,0,0,0);
+    const today = new Date().setHours(0,0,0,0);
+    return inputDate >= today;
+  }, { message: 'Estimasi selesai tidak boleh di masa lalu.' }),
   customer_complaint: z.string().optional().nullable(),
   accessories: z.string().optional().nullable(),
   physical_condition: z.string().optional().nullable(),

@@ -51,7 +51,9 @@ function updateServicePaymentStatus(serviceOrderId: number | string) {
     
     // 3. Determine status
     let status = 'Belum Bayar';
-    if (totalPaid >= totalCost && totalCost > 0) {
+    if (totalPaid > totalCost && totalCost > 0) {
+        status = 'Lunas (Kelebihan Bayar)';
+    } else if (totalPaid >= totalCost && totalCost > 0) {
         status = 'Lunas';
     } else if (totalPaid > 0) {
         status = 'DP / Sebagian';

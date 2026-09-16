@@ -64,7 +64,12 @@
                 🛡️ Garansi Aktif
               </div>
             </td>
-            <td>{{ formatCurrency(s.total_cost) }}</td>
+            <td>
+              <div>{{ formatCurrency(s.total_cost) }}</div>
+              <div v-if="s.payment_status === 'Gratis' && (s.customer_complaint && s.customer_complaint.includes('Klaim Garansi'))" class="claim-badge">
+                🛠️ Klaim Garansi
+              </div>
+            </td>
             <td>
               <div class="action-cell">
                 <button class="btn btn-secondary btn-sm action-btn" @click="openEditModal(s)">
@@ -364,6 +369,17 @@ onUnmounted(() => {
   font-size: 0.75rem;
   font-weight: 600;
   box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+.claim-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #f59e0b;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
 }
 .action-cell {
   display: flex;
