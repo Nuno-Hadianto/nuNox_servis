@@ -21,7 +21,7 @@ sequenceDiagram
     participant Electron as Electron (Main)
     participant DB as SQLite (better-sqlite3)
 
-    Vue->>Preload: window.electron.getServices()
+    Vue->>Preload: window.api.getServices()
     Preload->>Electron: ipcRenderer.invoke('get-services')
     Electron->>DB: repository.getServices()
     DB-->>Electron: { data }
@@ -31,11 +31,11 @@ sequenceDiagram
 
 ### 1. Lapisan Akses (Frontend)
 
-Pada direktori `src/`, aplikasi Vue **tidak pernah** melakukan kontak langsung ke database. Vue hanya memanggil fungsionalitas yang terekspos di objek global: `window.electron`.
+Pada direktori `src/`, aplikasi Vue **tidak pernah** melakukan kontak langsung ke database. Vue hanya memanggil fungsionalitas yang terekspos di objek global: `window.api`.
 Contoh:
 
 ```javascript
-const services = await window.electron.getServices()
+const services = await window.api.getServices()
 ```
 
 ### 2. Jembatan IPC (Preload Script)
@@ -61,13 +61,14 @@ db.drizzle.select().from(services).where(eq(services.status, 'Selesai')).all()
 - `public/` - Aset statis dan _styling_ dasar (`style.css`).
 - `src/` - Seluruh komponen, halaman (views), dan logika _Frontend_ (Vue).
 - `electron/` - _Main process_ Electron dan _preload script_.
-- `database/` - Skema Drizzle ORM (`drizzleSchema.js`) dan inisialisasi koneksi `better-sqlite3`.
+- `database/` - Skema Drizzle ORM (`drizzleSchema.ts`) dan inisialisasi koneksi `better-sqlite3`.
 - `repositories/` - Modul khusus abstraksi _database_ (CRUD).
 - `controllers/` - Pendaftaran _event-listener_ IPC yang menyambungkan _Frontend_ ke _repositories_.
 
 ## Mode Development
 
-Saat menjalankan perintah `npm run dev:all`, ada dua entitas yang berjalan secara paralel:
+Saat menjalankan perintah `npm run dev:all`, ada tiga entitas yang berjalan secara paralel (melalui `concurrently`):
 
-1. **Vite Dev Server**: Melayani file Vue di `localhost` agar mendukung _Hot Module Replacement_ (HMR).
-2. **Electron Watcher**: Mengawasi perubahan file TypeScript/JavaScript di _Backend_. Jika ada perubahan, server Electron akan memuat ulang (melalui _electron-reload_).
+1. **Vite Dev Server** (`dev:vite`): Melayani file Vue di `localhost:5173` agar mendukung _Hot Module Replacement_ (HMR).
+2. **TypeScript Compiler Watch** (`dev:electron:watch`): Mengawasi perubahan file TypeScript di _Backend_ dan mengompilasinya secara otomatis ke direktori `dist-electron/`.
+3. **Electron Runner** (`dev:electron:start`): Menjalankan aplikasi Electron melalui `nodemon` yang akan memuat ulang otomatis setiap kali ada perubahan file hasil kompilasi.

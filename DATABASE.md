@@ -24,8 +24,6 @@ erDiagram
         text model
         text serial_number
         text color
-        text accessories
-        text physical_condition
         text notes
         text created_at
         text updated_at
@@ -40,6 +38,8 @@ erDiagram
         text received_date
         text estimated_completion_date
         text customer_complaint
+        text accessories
+        text physical_condition
         text diagnosis_result
         text actions_taken
         text technician_notes
@@ -81,8 +81,6 @@ erDiagram
         text category
         real buy_price "Default: 0"
         real sell_price "Default: 0"
-        text unit
-        text notes
         text created_at
         text updated_at
         text deleted_at "Soft delete flag"
@@ -121,8 +119,8 @@ erDiagram
 ## Penjelasan Relasi (Relationships)
 
 1. **Pelanggan & Perangkat (1:N)**: Satu `Customer` dapat mendaftarkan banyak `Device`. Penghapusan Pelanggan bersifat *Soft Delete*, sehingga perangkat tetap terhubung di database namun disembunyikan.
-2. **Servis & Perangkat**: Setiap `Service_Order` wajib merujuk kepada 1 `Customer` dan 1 `Device` tertentu.
+2. **Servis & Perangkat**: Setiap `Service_Order` wajib merujuk kepada 1 `Customer` dan 1 `Device` tertentu. Data kelengkapan (`accessories`) dan kondisi fisik (`physical_condition`) dicatat per-servis, bukan per-perangkat.
 3. **Servis & Item/Sparepart**: Setiap Servis bisa memiliki banyak Rincian Biaya (`Service_Items`), baik itu berupa "Jasa" maupun "Sparepart".
 4. **Riwayat Status & Pembayaran**: Sistem akan mencatat riwayat perubahan status (`Service_Status_History`) dan terminasi pembayaran (`Payments`) secara terpisah.
 
-File migrasi dan pengaturan Drizzle dapat ditemukan di folder `database/drizzleSchema.ts`.
+File skema Drizzle ORM dapat ditemukan di `database/drizzleSchema.ts`.

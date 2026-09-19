@@ -19,11 +19,11 @@ Aplikasi ini dikembangkan untuk memberikan solusi terhadap kendala stabilitas ko
 
 ## ✨ Fitur Utama
 
-- 📊 **Dashboard Analitik**: Menyediakan ringkasan eksekutif secara *real-time* mengenai status perbaikan, estimasi pendapatan bulanan, serta peringatan otomatis untuk antrean yang tertunda atau peringatan kekurangan ketersediaan suku cadang (*spareparts*).
+- 📊 **Dashboard Analitik**: Menyediakan ringkasan eksekutif secara *real-time* mengenai status perbaikan, estimasi pendapatan bulanan, serta peringatan otomatis untuk antrean yang tertunda (*abandoned services*).
 - 👥 **Manajemen Pelanggan & Integrasi WhatsApp**: Sistem pencatatan basis data pelanggan yang terstruktur. Dilengkapi dengan fungsionalitas untuk mengirim nota tagihan atau pembaruan status servis secara instan melalui WhatsApp Web.
 - 🔧 **Pelacakan Siklus Servis (Service Tracking)**: Memantau setiap tahapan operasional secara mendetail, mulai dari *Penerimaan*, *Proses Pengerjaan*, *Selesai*, hingga terminasi pembayaran (uang muka ataupun pelunasan).
-- 📦 **Manajemen Inventaris**: Fitur otomatisasi pengurangan stok suku cadang saat digunakan dalam sesi perbaikan. Terintegrasi dengan fitur analitik untuk mengidentifikasi suku cadang yang paling sering digunakan.
-- 🖨️ **Pencetakan Bukti Transaksi & Pelaporan**: Fasilitas pencetakan nota cetak (*struk*) untuk pelanggan, serta fitur ekspor laporan keuangan bulanan secara komprehensif ke dalam format dokumen PDF.
+- 📦 **Katalog Harga Sparepart**: Basis data harga beli dan harga jual suku cadang. Terintegrasi dengan fitur analitik di Dashboard untuk mengidentifikasi suku cadang yang paling sering digunakan.
+- 🖨️ **Ekspor Dokumen & Pelaporan**: Fasilitas ekspor nota tagihan (*invoice*) dan tanda terima dalam format PDF untuk pelanggan, serta fitur ekspor laporan keuangan bulanan secara komprehensif.
 - ♻️ **Recycle Bin (Soft Delete)**: Data yang dihapus tidak langsung hilang permanen, melainkan dipindahkan ke keranjang sampah (Recycle Bin) untuk mencegah kehilangan data akibat kelalaian (human error).
 - 🎨 **Antarmuka Glassmorphism Premium**: Desain UI modern dengan elemen *glassmorphism* tembus pandang yang elegan dan animasi interaktif yang responsif.
 - ⚡ **Sistem Cache Real-time**: Transisi perpindahan antar menu yang instan dan *auto-refresh* tabel data setiap kali ada perubahan data (tanpa perlu reload halaman manual).
