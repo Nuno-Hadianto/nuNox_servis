@@ -1,14 +1,5 @@
-<!-- markdownlint-disable MD033 MD041 -->
-<div align="center">
-  <img src="public/img/logo.png" alt="nuNox Servis Logo" height="120" />
-  <h1>nuNox Servis</h1>
-  <p><strong>Aplikasi Point of Sales (POS) & Manajemen Layanan Servis Komputer/Laptop Offline</strong></p>
-  
-  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-  [![Vue](https://img.shields.io/badge/Vue.js-3.x-4FC08D?logo=vue.js)](https://vuejs.org/)
-  [![Electron](https://img.shields.io/badge/Electron-Latest-47848F?logo=electron)](https://www.electronjs.org/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-</div>
+# nuNox Servis
+**Aplikasi Point of Sales (POS) & Manajemen Layanan Servis Komputer/Laptop Offline**
 
 ---
 
