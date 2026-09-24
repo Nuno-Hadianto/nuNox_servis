@@ -133,13 +133,13 @@ const hasErrors = computed(() => {
   return Object.values(formErrors).some(err => err !== '')
 })
 
-const validateField = (field: string, value: any) => {
+const validateField = (field: string, value: unknown) => {
   try {
     const parsedValue = (field === 'buy_price' || field === 'sell_price') && value === '' ? 0 : value
-    const schema = SparepartSchema.pick({ [field]: true } as any)
+    const schema = SparepartSchema.pick({ [field]: true } as never)
     schema.parse({ [field]: parsedValue })
     formErrors[field] = ''
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       formErrors[field] = error.issues[0].message
     }

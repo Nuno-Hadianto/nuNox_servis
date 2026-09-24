@@ -102,12 +102,12 @@ const hasErrors = computed(() => {
   return Object.values(formErrors).some(err => err !== '')
 })
 
-const validateField = (field: string, value: any) => {
+const validateField = (field: string, value: unknown) => {
   try {
-    const schema = CustomerSchema.pick({ [field]: true } as any)
+    const schema = CustomerSchema.pick({ [field]: true } as never)
     schema.parse({ [field]: value })
     formErrors[field] = ''
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       formErrors[field] = error.issues[0].message
     }

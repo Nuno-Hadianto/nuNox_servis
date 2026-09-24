@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD033 MD041 -->
 <div align="center">
   <img src="public/img/logo.png" alt="nuNox Servis Logo" height="120" />
   <h1>nuNox Servis</h1>
@@ -13,9 +14,9 @@
 
 ## 📖 Tentang Aplikasi
 
-**nuNox Servis** adalah perangkat lunak desktop *offline* yang dirancang secara khusus untuk memfasilitasi kebutuhan manajemen operasional pada pusat layanan perbaikan (servis) perangkat elektronik, seperti komputer, laptop, dan ponsel pintar. 
+**nuNox Servis** adalah perangkat lunak desktop *offline* yang dirancang secara khusus untuk memfasilitasi kebutuhan manajemen operasional pada pusat layanan perbaikan (servis) perangkat elektronik, seperti komputer, laptop, dan ponsel pintar.
 
-Aplikasi ini dikembangkan untuk memberikan solusi terhadap kendala stabilitas konektivitas internet di lapangan. Dengan arsitektur yang beroperasi secara sepenuhnya *offline*, seluruh data pelanggan, riwayat servis, serta laporan keuangan dicatat dan disimpan dengan aman secara lokal di dalam perangkat pengguna. 
+Aplikasi ini dikembangkan untuk memberikan solusi terhadap kendala stabilitas konektivitas internet di lapangan. Dengan arsitektur yang beroperasi secara sepenuhnya *offline*, seluruh data pelanggan, riwayat servis, serta laporan keuangan dicatat dan disimpan dengan aman secara lokal di dalam perangkat pengguna.
 
 ## ✨ Fitur Utama
 
@@ -33,24 +34,28 @@ Aplikasi ini dikembangkan untuk memberikan solusi terhadap kendala stabilitas ko
 Bagi pengembang yang ingin menjalankan, memodifikasi, atau berkontribusi pada basis kode:
 
 ### Persyaratan Sistem
+
 - [Node.js](https://nodejs.org/) (Versi 18 atau yang lebih baru)
 - Package Manager: `npm` atau `yarn`
 
 ### Langkah Instalasi
 
 1. **Kloning Repositori**
+
    ```bash
    git clone https://github.com/Nuno-Hadianto/nuNox_servis.git
    cd nuNox_servis
    ```
 
 2. **Instalasi Dependensi**
+
    ```bash
    npm install
    ```
 
 3. **Menjalankan Aplikasi (Mode Development)**
    Aplikasi ini menggunakan kombinasi ekosistem Vite untuk modul antarmuka (Frontend) dan Electron untuk modul sistem inti (Backend). Eksekusi perintah berikut untuk memuat kedua servis secara paralel:
+
    ```bash
    npm run dev:all
    ```
@@ -62,6 +67,7 @@ Untuk memaketkan kode sumber menjadi aplikasi distribusi mandiri *installer* Win
 ```bash
 npm run build
 ```
+
 Berkas eksekusi hasil *build* akan di-generate dan diletakkan di dalam direktori `dist/`.
 
 ## 🛠️ Stack Teknologi (Tech Stack)
